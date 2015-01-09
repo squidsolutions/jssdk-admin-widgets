@@ -1,0 +1,10 @@
+<table>
+{{#each users}}
+<tr>
+    <td>{{login}}</td> 
+    <td>{{name}}</td>
+    <td>{{email}}</td>
+    <td>{{#each groups}}{{this}}{{/each}}</td>
+</tr>
+{{/each}}
+</table>
