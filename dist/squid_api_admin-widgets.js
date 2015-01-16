@@ -119,40 +119,43 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         deleteGroup: function(item) {
+            if (confirm('Are you sure you want to remove this group?')) {
+                // Obtain current groupId
+                var groupItems = $(item.currentTarget).siblings('div');
+                var groups = [];
+                for (i=0; i<groupItems.length; i++) {
+                    groups.push($(groupItems[i]).attr('attr-value'));
+                }
 
-            // Obtain current groupId
-            var groupItems = $(item.currentTarget).siblings('div');
-            var groups = [];
-            for (i=0; i<groupItems.length; i++) {
-                groups.push($(groupItems[i]).attr('attr-value'));
+                // Get the ID to find model in collection
+                var modelId = $(item.currentTarget).parents('tr').attr('data-id');
+
+                // Model to remove
+                var model = this.model.get(modelId);
+
+                // Create new object for model
+                var data = {};
+                data.groups = groups;
+
+                // Save onto the server
+                model.save(data);
             }
-
-            // Get the ID to find model in collection
-            var modelId = $(item.currentTarget).parents('tr').attr('data-id');
-
-            // Model to remove
-            var model = this.model.get(modelId);
-
-            // Create new object for model
-            var data = {};
-            data.groups = groups;
-
-            // Save onto the server
-            model.save(data);
         },
 
         deleteUser: function(item) {
-            // Get the ID to find model in collection
-            var modelId = $(item.currentTarget).parents('tr').attr('data-id');
+            if (confirm('Are you sure you want to remove this user?')) {
+                // Get the ID to find model in collection
+                var modelId = $(item.currentTarget).parents('tr').attr('data-id');
 
-            // Model to remove
-            var model = this.model.get(modelId);
+                // Model to remove
+                var model = this.model.get(modelId);
 
-            // Remove from collection
-            this.model.remove(modelId);
+                // Remove from collection
+                this.model.remove(modelId);
 
-            // Delete on the server
-            model.destroy();
+                // Delete on the server
+                model.destroy();
+            }
         },
 
         edit: function(item) {
