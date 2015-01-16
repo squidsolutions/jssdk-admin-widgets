@@ -60,11 +60,47 @@
         events: {
             'click td'  : 'edit',
             'click .save'  : 'saveUser',
-            'click .delete'  : 'delete',
-            'blur .edit' : 'close'
+            'click .delete'  : 'deleteUser',
+            'blur .edit' : 'close',
+            'click .group-value' : 'deleteGroup',
+            'mouseover .group-value' : 'groupMouseOver',
+            'mouseout .group-value' : 'groupMouseOut'
         },
 
-        delete: function(item) {
+        groupMouseOver: function(item) {
+            $(item.currentTarget).animate({backgroundColor:'#e74c3c'}, "fast");
+            $(item.currentTarget).css("color", "#ffffff");
+        },
+
+        groupMouseOut: function(item) {
+            $(item.currentTarget).animate({backgroundColor:'#ffffff'});
+            $(item.currentTarget).css("color", "#000000");
+        },
+
+        deleteGroup: function(item) {
+
+            // Obtain current groupId
+            var groupItems = $(item.currentTarget).siblings('div');
+            var groups = [];
+            for (i=0; i<groupItems.length; i++) {
+                groups.push($(groupItems[i]).attr('attr-value'));
+            }
+
+            // Get the ID to find model in collection
+            var modelId = $(item.currentTarget).parents('tr').attr('data-id');
+
+            // Model to remove
+            var model = this.model.get(modelId);
+
+            // Create new object for model
+            var data = {};
+            data.groups = groups;
+
+            // Save onto the server
+            model.save(data);
+        },
+
+        deleteUser: function(item) {
             // Get the ID to find model in collection
             var modelId = $(item.currentTarget).parents('tr').attr('data-id');
 
@@ -202,13 +238,13 @@
                         // Groups colour logic
                         for (i=0; i<g.length; i++) {
                             if (g[i] === "admin") {
-                                data += "<div attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
+                                data += "<div class='group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                             } else {
                                 var pattern = /admin_/;
                                 if (pattern.test(g[i])) {
-                                    data += "<div attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
+                                    data += "<div class='group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                 } else {
-                                    data += "<div attr-id='groupId' attr-value='" + g[i] + "'></div>";
+                                    data += "<div class='group-value' attr-id='groupId' attr-value='" + g[i] + "'></div>";
                                 }
                             }    
                         }
@@ -235,6 +271,8 @@
             this.$el.find("#squid-api-admin-widgets-user-table").DataTable({
                 "lengthChange": false
             });
+
+            console.log('render end');
 
         },
 
