@@ -29,15 +29,31 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             
             // init the model
             if (!this.model) {
+                // Connect to the api to retrieve user/group collections
                 var users = new squid_api.model.UserCollection({"id" : {"customerId" : squid_api.customerId}});
+                var groups = new squid_api.model.GroupCollection({"id" : {"customerId" : squid_api.customerId}});
+
+                // Make these collections accessible
                 this.model = users;
+                this.groups = groups;
+
+                // Retrieve collections
                 squid_api.model.login.on('change:login', function(model) {
-                    // performed when login is updated
+                    // Performed when login is updated
                     if (model.get("login")) {
-                        //init the users
+                        // Init the users
                         users.fetch({
                             success : function(model, response) {
-                                // console.log(model);
+
+                            },
+                            error : function(model, response) {
+                                console.log(model);
+                            }
+                        });
+                        // Init the groups
+                        groups.fetch({
+                            success : function(model, response) {
+
                             },
                             error : function(model, response) {
                                 console.log(model);
@@ -47,7 +63,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 });
             }
 
+            // Collection change events
             this.model.on("reset change remove sync", this.render, this);
+            this.groups.on("reset change sync", this.render, this);
         },
 
         events: {
@@ -72,21 +90,44 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         edit: function(item) {
-            // Show text inputs and focus on the clicked field
+            // Show text inputs
             $(".editing").removeClass("editing");
             $(item.currentTarget).addClass("editing");
             $(item.currentTarget).find("input").focus();
         },
 
         close: function(item) {
-            // Previous Value
-            var previousValue = this.$('.editing label').text();
+            /*
+                Called after input areas have been manually focused by the user
+            */
 
-            // Updated Value
-            var value = this.$('.editing .edit').val();
+            // Variable setup
+            var previousValue;
+            var groupData;
+            var groupArray = [];
+
+            // Retrieve previous value from label / div fields
+            if (this.$('.editing label').length > 0) {
+                previousValue = this.$('.editing label').text();
+            }
+            else {
+                groupData = this.$('.editing div');
+                for (i=0; i<groupData.length; i++) {
+                    groupArray.push($(groupData[i]).attr('attr-value'));
+                }
+                previousValue = "";
+            }
 
             // Model Attribute to update
             var modelAttr = this.$('.editing .edit').attr('data-attribute');
+
+            // Updated Value
+            var value;
+            if (this.$('.editing select.edit').length === 0) {
+                value = this.$('.editing input.edit').val();
+            } else {
+                value = this.$('.editing select.edit option:selected').val();
+            }
 
             // Get the ID to find model in collection
             var modelId = this.$('.editing').parent("tr").attr('data-id');
@@ -101,16 +142,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                     // Create new object for model
                     var data = {};
-                    data[modelAttr] = value;
 
+                    if (modelAttr === 'groups') {
+                        groupArray.push(value);
+                        data[modelAttr] = groupArray;
+                    } else {
+                        data[modelAttr] = value;  
+                    }
+                    
                     // Update model (which also updates collection)
                     model.set(data);
 
                     // Update on server
                     model.save();
                 }
-            } else {
-                this.clear();
             }
 
             $(".editing").removeClass("editing");
@@ -133,9 +178,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // Collection models as an array of objects
             var users = this.model.toJSON();
+            var groups = this.groups.toJSON();
 
             // If users exist then create data table in D3
-            if (users) {
+            if (users && groups) {
                 var tableRows = d3.select(globalID + " tbody").selectAll("tr")
                     .data(users)
                     .enter()
@@ -167,18 +213,28 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         // Groups colour logic
                         for (i=0; i<g.length; i++) {
                             if (g[i] === "admin") {
-                                data += "<div class='red'>" + g[i] + "</div>";
+                                data += "<div attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                             } else {
                                 var pattern = /admin_/;
                                 if (pattern.test(g[i])) {
-                                    data += "<div class='orange'>" + g[i] + "</div>";
+                                    data += "<div attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                 } else {
-                                    data += "<div>" + g[i] + "</div>";
+                                    data += "<div attr-id='groupId' attr-value='" + g[i] + "'></div>";
                                 }
                             }    
                         }
+                        data += "<select class='edit form-control input-sm' data-attribute='groups'>";
+                            for (var key in groups) {
+                                if (groups[key].id) {
+                                    data += "<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>";
+                                }
+                            }
+                        data += "</select>";
                         return data;
                     });
+                
+                // Print group names instead of their Id's
+                this.assignGroupNames();
 
                 var actionValues = tableRows.append("td")
                     .html(function(d) {
@@ -191,8 +247,26 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "lengthChange": false
             });
 
-        }
+        },
 
+        assignGroupNames: function() {
+            /*
+                Retrive groupId / attribute values and match with api group data
+                If we have a match, print the name of the group directly as the dom el.
+            */
+            var groupIds = $('div[attr-id="groupId"]');
+            var groups = this.groups.toJSON();
+            if (groupIds.length > 0) {
+                for (i=0; i<groupIds.length; i++) {
+                    for (var key in groups) {
+                        if (groups[key].oid === $(groupIds[i]).attr('attr-value')) {
+                            $(groupIds[i]).text(groups[key].name);
+                        }
+                    }
+                    var id = $(groupIds[i]).attr('attr-value');
+                }
+            }
+        }
     });
 
     return View;
