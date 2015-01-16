@@ -79,13 +79,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         groupMouseOver: function(item) {
+            this.groupColor = $(item.currentTarget).css('background-color');
             $(item.currentTarget).animate({backgroundColor:'#e74c3c'}, "fast");
-            $(item.currentTarget).css("color", "#ffffff");
         },
 
         groupMouseOut: function(item) {
-            $(item.currentTarget).animate({backgroundColor:'#ffffff'});
-            $(item.currentTarget).css("color", "#000000");
+            $(item.currentTarget).animate({backgroundColor: this.groupColor});      
         },
 
         deleteGroup: function(item) {
@@ -249,11 +248,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         // Groups colour logic
                         for (i=0; i<g.length; i++) {
                             if (g[i] === "admin") {
-                                data += "<div class='group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
+                                data += "<div class='red group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                             } else {
                                 var pattern = /admin_/;
                                 if (pattern.test(g[i])) {
-                                    data += "<div class='group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
+                                    data += "<div class='orange group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                 } else {
                                     data += "<div class='group-value' attr-id='groupId' attr-value='" + g[i] + "'></div>";
                                 }
