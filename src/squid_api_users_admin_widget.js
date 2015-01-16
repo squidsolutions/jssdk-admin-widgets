@@ -5,6 +5,7 @@
 
     var View = Backbone.View.extend({
         template : null,
+        widgetContainer : '#squid-api-admin-widgets-user-table',
 
         initialize: function(options) {
             var me = this;
@@ -58,13 +59,43 @@
         },
 
         events: {
-            'click td'  : 'edit',
+            'click td.user-value'  : 'edit',
             'click .save'  : 'saveUser',
             'click .delete'  : 'deleteUser',
+            'click button.add'  : 'addUser',
             'blur .edit' : 'close',
             'click .group-value' : 'deleteGroup',
             'mouseover .group-value' : 'groupMouseOver',
             'mouseout .group-value' : 'groupMouseOut'
+        },
+
+        addUser: function(item) {
+            // Get all input fields
+            var inputFields = $(item.currentTarget).parents('tr').find('td input');
+
+            // Set to user Add mode
+            if ($(item.currentTarget).attr('data-value') === 'add') {
+                // Change add button to save and change attr-value
+                $(item.currentTarget).attr('data-value', 'save');
+                $(item.currentTarget).text('save');
+            
+                // Show input fields
+                $(inputFields).show();
+
+                // Focus on all input fields
+                $(inputFields).focus();
+            } else {
+                var data = {};
+                for(i=0; i<inputFields.length; i++) {
+                    var attr = $(inputFields[i]).attr('data-attribute');
+                    var value = $(inputFields[i]).val();
+                    data[attr] = value;
+                }
+
+                // Add to collection and sync
+                data.id = {'userId' : null};
+                this.model.create(data);
+            }
         },
 
         groupMouseOver: function(item) {
@@ -73,7 +104,7 @@
         },
 
         groupMouseOut: function(item) {
-            $(item.currentTarget).animate({backgroundColor: this.groupColor});      
+            $(item.currentTarget).animate({backgroundColor: this.groupColor});    
         },
 
         deleteGroup: function(item) {
@@ -135,7 +166,7 @@
                 previousValue = this.$('.editing label').text();
             }
             else {
-                groupData = this.$('.editing div');
+                groupData = this.$(this.widgetContainer + ' .editing div');
                 for (i=0; i<groupData.length; i++) {
                     groupArray.push($(groupData[i]).attr('attr-value'));
                 }
@@ -143,14 +174,14 @@
             }
 
             // Model Attribute to update
-            var modelAttr = this.$('.editing .edit').attr('data-attribute');
+            var modelAttr = this.$(this.widgetContainer + ' .editing .edit').attr('data-attribute');
 
             // Updated Value
             var value;
-            if (this.$('.editing select.edit').length === 0) {
-                value = this.$('.editing input.edit').val();
+            if (this.$(this.widgetContainer + ' .editing select.edit').length === 0) {
+                value = this.$(this.widgetContainer + ' .editing input.edit').val();
             } else {
-                value = this.$('.editing select.edit option:selected').val();
+                value = this.$(this.widgetContainer + ' .editing select.edit option:selected').val();
             }
 
             // Get the ID to find model in collection
@@ -182,7 +213,7 @@
                 }
             }
 
-            $(".editing").removeClass("editing");
+            $(this.widgetContainer + ' .editing').removeClass('editing');
         },
 
         render: function() {
@@ -217,17 +248,26 @@
                 var loginValue = tableRows.append("td")
                     .html(function(d) {
                         return "<label>" + d.login + "</label><input class='edit form-control input-sm' data-attribute='login' value='" + d.login + "'/>" ;
-                    });
+                    })
+                    .attr('class','user-value');
 
                 var emailValue = tableRows.append("td")
                     .html(function(d) {
                         return "<label>" + d.email + "</label><input class='edit form-control input-sm' data-attribute='email' value='" + d.email + "'/>" ;
-                    });
+                    })
+                    .attr('class','user-value');
+
+                var passWordValue = tableRows.append("td")
+                    .html(function(d) {
+                        return "<label>*****</label><input class='edit form-control input-sm' data-attribute='password' value='null'/>" ;
+                    })
+                    .attr('class','user-value');
 
                 var nameValue = tableRows.append("td")
                     .html(function(d) {
                         return "N/A";
-                    });
+                    })
+                    .attr('class','user-value');
 
                 var groupValues = tableRows.append("td")
                     .html(function(d) {
@@ -255,7 +295,8 @@
                             }
                         data += "</select>";
                         return data;
-                    });
+                    })
+                    .attr('class','user-value');
                 
                 // Print group names instead of their Id's
                 this.assignGroupNames();
@@ -270,9 +311,6 @@
             this.$el.find("#squid-api-admin-widgets-user-table").DataTable({
                 "lengthChange": false
             });
-
-            console.log('render end');
-
         },
 
         assignGroupNames: function() {
@@ -280,7 +318,7 @@
                 Retrive groupId / attribute values and match with api group data
                 If we have a match, print the name of the group directly as the dom el.
             */
-            var groupIds = $('div[attr-id="groupId"]');
+            var groupIds = $(this.widgetContainer + ' div[attr-id="groupId"]');
             var groups = this.groups.toJSON();
             if (groupIds.length > 0) {
                 for (i=0; i<groupIds.length; i++) {
