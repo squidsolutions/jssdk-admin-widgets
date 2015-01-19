@@ -59,7 +59,7 @@
         },
 
         events: {
-            'click td.user-value'  : 'edit',
+            'click td.user-value'  : 'addGroup',
             'click .save'  : 'saveUser',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
@@ -89,7 +89,13 @@
                 for(i=0; i<inputFields.length; i++) {
                     var attr = $(inputFields[i]).attr('data-attribute');
                     var value = $(inputFields[i]).val();
-                    data[attr] = value;
+                    if (attr !== undefined) {
+                        if (attr === 'groups') {
+                            data[attr] = [value];
+                        } else {
+                            data[attr] = value;
+                        }
+                    }
                 }
 
                 // Add to collection and sync
@@ -108,6 +114,7 @@
         },
 
         deleteGroup: function(item) {
+            var itemData = $(item.currentTarget).parents('td');
             if (confirm('Are you sure you want to remove this group?')) {
                 // Obtain current groupId
                 var groupItems = $(item.currentTarget).siblings('div');
@@ -128,6 +135,11 @@
 
                 // Save onto the server
                 model.save(data);
+            } else {
+                // To be refactored, (To remove the class after user-value click event)
+                setTimeout(function() {
+                    $(itemData).removeClass('editing');
+                }, 1);
             }
         },
 
@@ -147,7 +159,20 @@
             }
         },
 
-        edit: function(item) {
+        addGroup: function(item) {
+            // Fill select box with values
+            var groups = this.groups.toJSON();
+
+            // Remove existing select options
+            $(item.currentTarget).find("select options").remove();
+
+            // Append groups to dropdown
+            for (var key in groups) {
+                if (groups[key].id) {
+                    $(item.currentTarget).find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
+                }
+            }
+
             // Show text inputs
             $(".editing").removeClass("editing");
             $(item.currentTarget).addClass("editing");
@@ -290,13 +315,7 @@
                                 }
                             }    
                         }
-                        data += "<select class='edit form-control input-sm' data-attribute='groups'>";
-                            for (var key in groups) {
-                                if (groups[key].id) {
-                                    data += "<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>";
-                                }
-                            }
-                        data += "</select>";
+                        data += "<select class='edit form-control input-sm' data-attribute='groups'></select>";
                         return data;
                     })
                     .attr('class','user-value');

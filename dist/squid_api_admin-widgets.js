@@ -7,7 +7,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<table id=\"squid-api-admin-widgets-user-table\" class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\"></td>\n            <td></td>\n            <td></td>\n            <td><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<table id=\"squid-api-admin-widgets-user-table\" class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\"></td>\n            <td></td>\n            <td class=\"user-value\"><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
   });
 (function (root, factory) {
     root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
@@ -70,7 +70,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         events: {
-            'click td.user-value'  : 'edit',
+            'click td.user-value'  : 'addGroup',
             'click .save'  : 'saveUser',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
@@ -100,7 +100,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 for(i=0; i<inputFields.length; i++) {
                     var attr = $(inputFields[i]).attr('data-attribute');
                     var value = $(inputFields[i]).val();
-                    data[attr] = value;
+                    if (attr !== undefined) {
+                        if (attr === 'groups') {
+                            data[attr] = [value];
+                        } else {
+                            data[attr] = value;
+                        }
+                    }
                 }
 
                 // Add to collection and sync
@@ -119,6 +125,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         deleteGroup: function(item) {
+            var itemData = $(item.currentTarget).parents('td');
             if (confirm('Are you sure you want to remove this group?')) {
                 // Obtain current groupId
                 var groupItems = $(item.currentTarget).siblings('div');
@@ -139,6 +146,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                 // Save onto the server
                 model.save(data);
+            } else {
+                // To be refactored, (To remove the class after user-value click event)
+                setTimeout(function() {
+                    $(itemData).removeClass('editing');
+                }, 1);
             }
         },
 
@@ -158,7 +170,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
         },
 
-        edit: function(item) {
+        addGroup: function(item) {
+            // Fill select box with values
+            var groups = this.groups.toJSON();
+
+            // Remove existing select options
+            $(item.currentTarget).find("select options").remove();
+
+            // Append groups to dropdown
+            for (var key in groups) {
+                if (groups[key].id) {
+                    $(item.currentTarget).find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
+                }
+            }
+
             // Show text inputs
             $(".editing").removeClass("editing");
             $(item.currentTarget).addClass("editing");
@@ -301,13 +326,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                 }
                             }    
                         }
-                        data += "<select class='edit form-control input-sm' data-attribute='groups'>";
-                            for (var key in groups) {
-                                if (groups[key].id) {
-                                    data += "<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>";
-                                }
-                            }
-                        data += "</select>";
+                        data += "<select class='edit form-control input-sm' data-attribute='groups'></select>";
                         return data;
                     })
                     .attr('class','user-value');
