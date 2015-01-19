@@ -71,7 +71,8 @@
 
         addUser: function(item) {
             // Get all input fields
-            var inputFields = $(item.currentTarget).parents('tr').find('td input');
+            var toShow = $(item.currentTarget).parents('tr').find('td input');
+            var inputFields = $(item.currentTarget).parents('tr').find('td .add');
 
             // Set to user Add mode
             if ($(item.currentTarget).attr('data-value') === 'add') {
@@ -80,10 +81,12 @@
                 $(item.currentTarget).text('save');
             
                 // Show input fields
-                $(inputFields).show();
+                $(toShow).show();
 
                 // Focus on all input fields
-                $(inputFields).focus();
+                $(toShow).focus();
+
+                // Hide Select
             } else {
                 var data = {};
                 for(i=0; i<inputFields.length; i++) {
