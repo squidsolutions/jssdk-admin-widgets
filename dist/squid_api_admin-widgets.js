@@ -7,7 +7,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<table id=\"squid-api-admin-widgets-user-table\" class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\"></td>\n            <td></td>\n            <td class=\"user-value\"><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\"></td>\n            <td></td>\n            <td class=\"user-value group-section\"><i class='add-group fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
   });
 (function (root, factory) {
     root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
@@ -17,6 +17,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     var View = Backbone.View.extend({
         template : null,
         widgetContainer : '#squid-api-admin-widgets-user-table',
+        groupData : {},
 
         initialize: function(options) {
             var me = this;
@@ -71,19 +72,32 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         events: {
             'click td.user-value'  : 'addGroup',
-            'click .save'  : 'saveUser',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
             'blur .edit' : 'close',
             'click .group-value' : 'deleteGroup',
             'mouseover .group-value' : 'groupMouseOver',
-            'mouseout .group-value' : 'groupMouseOut'
+            'mouseout .group-value' : 'groupMouseOut',
+            'mouseover .group-section' : 'groupIconOver',
+            'mouseout .group-section' : 'groupIconOut',
+        },
+
+        groupIconOver: function(item) {
+            $(item.currentTarget).addClass('group-on');
+        },
+
+        groupIconOut: function(item) {
+            $(item.currentTarget).removeClass('group-on');
         },
 
         addUser: function(item) {
+            var me = this;
+
             // Get all input fields
             var toShow = $(item.currentTarget).parents('tr').find('td input');
             var inputFields = $(item.currentTarget).parents('tr').find('td .add');
+
+            var data = {};
 
             // Set to user Add mode
             if ($(item.currentTarget).attr('data-value') === 'add') {
@@ -93,38 +107,61 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             
                 // Show input fields
                 $(toShow).show();
+                $(item.currentTarget).parents('tr').find('td span.send-email-label').show();
 
                 // Focus on all input fields
                 $(toShow).focus();
 
                 // Hide Select
             } else {
-                var data = {};
                 for(i=0; i<inputFields.length; i++) {
                     var attr = $(inputFields[i]).attr('data-attribute');
                     var value = $(inputFields[i]).val();
                     if (attr !== undefined) {
-                        if (attr === 'groups') {
-                            data[attr] = [value];
-                        } else {
-                            data[attr] = value;
+                        if (attr !== 'sendemail') {
+                            if (attr === 'groups') {
+                                if (value !== null) {
+                                    data[attr] = [value];
+                                }
+                            } else {
+                                if (value !== null) {
+                                    data[attr] = value;
+                                }
+                            }
                         }
                     }
                 }
 
                 // Add to collection and sync
                 data.id = {'userId' : null};
-                this.model.create(data);
+
+                // Get checkbox status before model refresh
+                var sendEmail = $(this.widgetContainer + ' .email-checkbox').is(':checked');
+
+                this.model.create(data, {
+                    success: function(model, response){
+                        // Should we send an email?
+                        if (sendEmail) {
+                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
+                            $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
+                        }
+                    },
+                    error: function(model, response){
+                        this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
+                    }
+                });
             }
         },
 
         groupMouseOver: function(item) {
-            this.groupColor = $(item.currentTarget).css('background-color');
-            $(item.currentTarget).animate({backgroundColor:'#e74c3c'}, "fast");
+            this.groupData.width = $(item.currentTarget).width();
+            this.groupData.value = $(item.currentTarget).text();
+            $(item.currentTarget).html("<i data-id='group-cross' class='fa fa-times'></i>");
         },
 
         groupMouseOut: function(item) {
-            $(item.currentTarget).animate({backgroundColor: this.groupColor});    
+            $(item.currentTarget).text(this.groupData.value);
+            $(item.currentTarget).width(this.groupData.width);
         },
 
         deleteGroup: function(item) {
@@ -194,6 +231,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         close: function(item) {
+            var me = this;
+
             /*
                 Called after input areas have been manually focused by the user
             */
@@ -251,7 +290,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     model.set(data);
 
                     // Update on server
-                    model.save();
+                    model.save(data, {
+                        success : function(model, response) {
+                            console.log('success');
+                        },
+                        error : function(model, response) {
+                            me.model.fetch();
+                            this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
+                        }
+                    });
                 }
             }
 
@@ -312,39 +359,42 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     .attr('class','user-value');
 
                 var groupValues = tableRows.append("td")
+
                     .html(function(d) {
                         var g = d.groups;
                         var data = "";
 
                         // Groups colour logic
-                        for (i=0; i<g.length; i++) {
-                            if (g[i] === "admin") {
-                                data += "<div class='red group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
-                            } else {
-                                var pattern = /admin_/;
-                                if (pattern.test(g[i])) {
-                                    data += "<div class='orange group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
+                        if (g) {
+                            for (i=0; i<g.length; i++) {
+                                if (g[i] === "admin") {
+                                    data += "<div class='red group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                                 } else {
-                                    data += "<div class='group-value' attr-id='groupId' attr-value='" + g[i] + "'></div>";
-                                }
-                            }    
+                                    var pattern = /admin_/;
+                                    if (pattern.test(g[i])) {
+                                        data += "<div class='orange group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
+                                    } else {
+                                        data += "<div class='group-value' attr-id='groupId' attr-value='" + g[i] + "'></div>";
+                                    }
+                                }    
+                            }
                         }
-                        data += "<select class='edit form-control input-sm' data-attribute='groups'></select>";
+                        data += "<i class='add-group fa fa-plus-square'></i> <select class='edit form-control input-sm' data-attribute='groups'></select>";
                         return data;
                     })
-                    .attr('class','user-value');
+                    .attr('class','user-value group-section');
                 
                 // Print group names instead of their Id's
                 this.assignGroupNames();
 
                 var actionValues = tableRows.append("td")
                     .html(function(d) {
-                        return "<button class='delete btn btn-default'>x</button>";
+                        return "<button class='delete form-control'>Delete</button>";
                     });
             }
 
             // Instantiate Data Table Plugin
-            this.$el.find("#squid-api-admin-widgets-user-table").DataTable({
+            this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
             });
         },
