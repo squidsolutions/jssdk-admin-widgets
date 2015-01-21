@@ -145,7 +145,7 @@
         groupMouseOver: function(item) {
             this.groupData.width = $(item.currentTarget).width();
             this.groupData.value = $(item.currentTarget).text();
-            $(item.currentTarget).html("<i data-id='group-cross' class='fa fa-times'></i>");
+            $(item.currentTarget).html("x");
         },
 
         groupMouseOut: function(item) {
