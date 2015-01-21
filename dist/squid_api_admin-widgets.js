@@ -75,6 +75,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
             'blur .edit' : 'close',
+            'keypress .edit' : 'close',
             'click .group-value' : 'deleteGroup',
             'mouseover .group-value' : 'groupMouseOver',
             'mouseout .group-value' : 'groupMouseOut',
@@ -230,80 +231,81 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             $(item.currentTarget).find("input").focus();
         },
 
-        close: function(item) {
+        close: _.throttle(function(item) {
             var me = this;
 
-            /*
-                Called after input areas have been manually focused by the user
-            */
+            if (item.which == 13 || item.type == "focusout") {
+                /*
+                    Called after input areas have been manually focused by the user
+                */
 
-            // Variable setup
-            var previousValue;
-            var groupData;
-            var groupArray = [];
+                // Variable setup
+                var previousValue;
+                var groupData;
+                var groupArray = [];
 
-            // Retrieve previous value from label / div fields
-            if (this.$('.editing label').length > 0) {
-                previousValue = this.$('.editing label').text();
-            }
-            else {
-                groupData = this.$(this.widgetContainer + ' .editing div');
-                for (i=0; i<groupData.length; i++) {
-                    groupArray.push($(groupData[i]).attr('attr-value'));
+                // Retrieve previous value from label / div fields
+                if (this.$('.editing label').length > 0) {
+                    previousValue = this.$('.editing label').text();
                 }
-                previousValue = "";
-            }
-
-            // Model Attribute to update
-            var modelAttr = this.$(this.widgetContainer + ' .editing .edit').attr('data-attribute');
-
-            // Updated Value
-            var value;
-            if (this.$(this.widgetContainer + ' .editing select.edit').length === 0) {
-                value = this.$(this.widgetContainer + ' .editing input.edit').val();
-            } else {
-                value = this.$(this.widgetContainer + ' .editing select.edit option:selected').val();
-            }
-
-            // Get the ID to find model in collection
-            var modelId = this.$('.editing').parent("tr").attr('data-id');
-
-            // Trim the value
-            var trimmedValue = value.trim();
-
-            if (trimmedValue) {
-                if (previousValue !== trimmedValue) {
-                    // Get model to update
-                    var model = this.model.get(modelId);
-
-                    // Create new object for model
-                    var data = {};
-
-                    if (modelAttr === 'groups') {
-                        groupArray.push(value);
-                        data[modelAttr] = groupArray;
-                    } else {
-                        data[modelAttr] = value;  
+                else {
+                    groupData = this.$(this.widgetContainer + ' .editing div');
+                    for (i=0; i<groupData.length; i++) {
+                        groupArray.push($(groupData[i]).attr('attr-value'));
                     }
-                    
-                    // Update model (which also updates collection)
-                    model.set(data);
-
-                    // Update on server
-                    model.save(data, {
-                        success : function(model, response) {
-                            console.log('success');
-                        },
-                        error : function(model, response) {
-                            me.model.fetch();
-                            this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
-                        }
-                    });
+                    previousValue = "";
                 }
-            }
 
-            $(this.widgetContainer + ' .editing').removeClass('editing');
-        },
+                // Model Attribute to update
+                var modelAttr = this.$(this.widgetContainer + ' .editing .edit').attr('data-attribute');
+
+                // Updated Value
+                var value;
+                if (this.$(this.widgetContainer + ' .editing select.edit').length === 0) {
+                    value = this.$(this.widgetContainer + ' .editing input.edit').val();
+                } else {
+                    value = this.$(this.widgetContainer + ' .editing select.edit option:selected').val();
+                }
+
+                // Get the ID to find model in collection
+                var modelId = this.$('.editing').parent("tr").attr('data-id');
+
+                // Trim the value
+                var trimmedValue = value.trim();
+
+                if (trimmedValue) {
+                    if (previousValue !== trimmedValue) {
+                        // Get model to update
+                        var model = this.model.get(modelId);
+
+                        // Create new object for model
+                        var data = {};
+
+                        if (modelAttr === 'groups') {
+                            groupArray.push(value);
+                            data[modelAttr] = groupArray;
+                        } else {
+                            data[modelAttr] = value;  
+                        }
+                    
+                        // Update model (which also updates collection)
+                        model.set(data);
+
+                        // Update on server
+                        model.save(data, {
+                            success : function(model, response) {
+                                console.log('success');
+                            },
+                            error : function(model, response) {
+                                me.model.fetch();
+                                this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
+                            }
+                        });
+                    }
+                }
+                $(this.widgetContainer + ' .editing').removeClass('editing');
+            }
+        }, 100),
 
         render: function() {
             var me = this;
