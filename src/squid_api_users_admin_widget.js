@@ -7,6 +7,7 @@
         template : null,
         widgetContainer : '#squid-api-admin-widgets-user-table',
         groupData : {},
+        messageToDisplay: '',
 
         initialize: function(options) {
             var me = this;
@@ -68,16 +69,16 @@
             'click .group-value' : 'deleteGroup',
             'mouseover .group-value' : 'groupMouseOver',
             'mouseout .group-value' : 'groupMouseOut',
-            'mouseover .group-section' : 'groupIconOver',
-            'mouseout .group-section' : 'groupIconOut',
+            'mouseover td' : 'groupIconOver',
+            'mouseout td' : 'groupIconOut',
         },
 
         groupIconOver: function(item) {
-            $(item.currentTarget).addClass('group-on');
+            $(item.currentTarget).addClass('field-icon-on');
         },
 
         groupIconOut: function(item) {
-            $(item.currentTarget).removeClass('group-on');
+            $(item.currentTarget).removeClass('field-icon-on');
         },
 
         addUser: function(item) {
@@ -134,6 +135,9 @@
                         if (sendEmail) {
                             var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
                             $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
+                            me.messageToDisplay = "<span class='success'>You have successfully saved user with login: <b>" + data.login + "</b> and a confirmation email has been sent to: <b>" + data.email + "</b></span>";
+                        } else {
+                            me.messageToDisplay = "<span class='success'>You have successfully saved user with login: <b>" + data.login + "</b></span>";
                         }
                     },
                     error: function(model, response){
@@ -155,6 +159,8 @@
         },
 
         deleteGroup: function(item) {
+            var me = this;
+
             var itemData = $(item.currentTarget).parents('td');
             if (confirm('Are you sure you want to remove this group?')) {
                 // Obtain current groupId
@@ -175,7 +181,16 @@
                 data.groups = groups;
 
                 // Save onto the server
-                model.save(data);
+                model.save(data, {
+                    success : function(model, response) {
+                        me.messageToDisplay = '<span class="success">Group sucessfully deleted</span>';
+                    },
+                    error : function(model, response) {
+                        me.$(me.widgetContainer + " .api-feedback").html("<span class='error'>Error deleting group</span>");
+                    }
+                });
+
+
             } else {
                 // To be refactored, (To remove the class after user-value click event)
                 setTimeout(function() {
@@ -283,11 +298,11 @@
                         // Update on server
                         model.save(data, {
                             success : function(model, response) {
-                                console.log('success');
+                                me.messageToDisplay = '<span class="success">Modification Success</span>';
                             },
                             error : function(model, response) {
+                                me.messageToDisplay = '<span class="error">' + model.responseJSON.error + '</span>';
                                 me.model.fetch();
-                                this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
                             }
                         });
                     }
@@ -327,19 +342,19 @@
 
                 var loginValue = tableRows.append("td")
                     .html(function(d) {
-                        return "<label>" + d.login + "</label><input class='edit form-control input-sm' data-attribute='login' value='" + d.login + "'/>" ;
+                        return "<label>" + d.login + "</label><input class='edit form-control input-sm' data-attribute='login' value='" + d.login + "'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
                     .attr('class','user-value');
 
                 var emailValue = tableRows.append("td")
                     .html(function(d) {
-                        return "<label>" + d.email + "</label><input class='edit form-control input-sm' data-attribute='email' value='" + d.email + "'/>" ;
+                        return "<label>" + d.email + "</label><input class='edit form-control input-sm' data-attribute='email' value='" + d.email + "'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
                     .attr('class','user-value');
 
                 var passWordValue = tableRows.append("td")
                     .html(function(d) {
-                        return "<label>*****</label><input class='edit form-control input-sm' data-attribute='password' value='null'/>" ;
+                        return "<label>*****</label><input class='edit form-control input-sm' data-attribute='password' value='null'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
                     .attr('class','user-value');
 
@@ -370,7 +385,7 @@
                                 }    
                             }
                         }
-                        data += "<i class='add-group fa fa-plus-square'></i> <select class='edit form-control input-sm' data-attribute='groups'></select>";
+                        data += "<i class='field-icon fa fa-plus-square'></i> <select class='edit form-control input-sm' data-attribute='groups'></select>";
                         return data;
                     })
                     .attr('class','user-value group-section');
@@ -388,6 +403,9 @@
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
             });
+
+            // Display Message
+             this.$(me.widgetContainer + " .api-feedback").html(this.messageToDisplay);
         },
 
         assignGroupNames: function() {
