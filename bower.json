@@ -5,7 +5,7 @@
   "authors": [
     "obalbous <oba@squid>"
   ],
-  "main": "dist/squid_api_admin-widgets.js",
+  "main": ["dist/squid_api_admin-widgets.js","dist/squid_api_admin-widgets.css"],
   "license": "MIT",
   "private": true,
   "ignore": [
