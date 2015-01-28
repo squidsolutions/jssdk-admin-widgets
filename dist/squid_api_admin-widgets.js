@@ -7,7 +7,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\"></td>\n            <td></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Name</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
   });
 (function (root, factory) {
     root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
@@ -28,6 +28,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.template = options.template;
             } else {
                 this.template = squid_api.template.squid_api_users_admin_widget;
+            }
+
+            if (options.status) {
+                this.status = options.status;
             }
             
             // init the model
@@ -68,7 +72,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // Collection change events
             this.model.on("reset change remove sync", this.render, this);
-            this.groups.on("reset change remove sync", this.render, this);
+            this.groups.on("reset change sync", this.render, this);
         },
 
         events: {
@@ -85,11 +89,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         groupIconOver: function(item) {
-            $(item.currentTarget).addClass('field-icon-on');
+            if ($(item.currentTarget).siblings('.action-section').find('button').attr('data-value') !== 'add') {
+                $(item.currentTarget).addClass('field-icon-on');
+            }
         },
 
         groupIconOut: function(item) {
-            $(item.currentTarget).removeClass('field-icon-on');
+            if ($(item.currentTarget).siblings('.action-section').find('button').attr('data-value') !== 'add') {
+                $(item.currentTarget).removeClass('field-icon-on');
+            }
         },
 
         addUser: function(item) {
@@ -146,13 +154,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         if (sendEmail) {
                             var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
                             $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
-                            me.messageToDisplay = "<span class='success'>You have successfully saved user with login: <b>" + data.login + "</b> and a confirmation email has been sent to: <b>" + data.email + "</b></span>";
+                            me.status.set('message', 'You have successfully saved user with login: ' + data.login + 'and a confirmation email has been sent to:' + data.email + '');
                         } else {
-                            me.messageToDisplay = "<span class='success'>You have successfully saved user with login: <b>" + data.login + "</b></span>";
+                            me.status.set('message', 'You have successfully saved user with login: ' + data.login);
                         }
-                    },
-                    error: function(model, response){
-                        this.$(me.widgetContainer + " .api-feedback").html("<span class='error'>" + model.responseJSON.error + "</span>");
                     }
                 });
             }
@@ -194,10 +199,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 // Save onto the server
                 model.save(data, {
                     success : function(model, response) {
-                        me.messageToDisplay = '<span class="success">Group sucessfully deleted</span>';
-                    },
-                    error : function(model, response) {
-                        me.$(me.widgetContainer + " .api-feedback").html("<span class='error'>Error deleting group</span>");
+                        me.status.set('message', 'group successfully deleted');
                     }
                 });
 
@@ -211,6 +213,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         deleteUser: function(item) {
+            var me = this;
+
             if (confirm('Are you sure you want to remove this user?')) {
                 // Get the ID to find model in collection
                 var modelId = $(item.currentTarget).parents('tr').attr('data-id');
@@ -222,7 +226,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.model.remove(modelId);
 
                 // Delete on the server
-                model.destroy();
+                model.destroy({success: function(model, response) {
+                    me.status.set('message', 'user with login ' + model.get('login') + 'successfully deleted');
+                }});
             }
         },
 
@@ -309,10 +315,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         // Update on server
                         model.save(data, {
                             success : function(model, response) {
-                                me.messageToDisplay = '<span class="success">Modification Success</span>';
+                                me.status.set('message', 'successfully updated user with login : ' + model.get('login'));
                             },
-                            error : function(model, response) {
-                                me.messageToDisplay = '<span class="error">' + model.responseJSON.error + '</span>';
+                            error: function(model, response) {
                                 me.model.fetch();
                             }
                         });
@@ -365,7 +370,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                 var passWordValue = tableRows.append("td")
                     .html(function(d) {
-                        return "<label>*****</label><input class='edit form-control input-sm' data-attribute='password' value='null'/><i class='field-icon fa fa-pencil'></i>" ;
+                        return "<label>*****</label><input class='edit form-control input-sm' type='password' data-attribute='password' value='null'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
                     .attr('class','user-value');
 
@@ -414,9 +419,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
             });
-
-            // Display Message
-             this.$(me.widgetContainer + " .api-feedback").html(this.messageToDisplay);
         },
 
         assignGroupNames: function() {

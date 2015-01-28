@@ -28,8 +28,7 @@ module.exports = function(grunt) {
                         dest : 'dist/squid_api_admin-widgets.js',
                     },
                     css : {
-                        src : [ 'build/templates.js',
-                                'src/*.css' ],
+                        src : [ 'src/*.css' ],
                         dest : 'dist/squid_api_admin-widgets.css',
                     }
                 },
