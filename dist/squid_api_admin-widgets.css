@@ -1,7 +1,3 @@
-#squid-api-admin-widgets-user-table .test {
-	display: none;
-}
-
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;
@@ -10,6 +6,13 @@
 	margin: 5px;
 	cursor: pointer;
 	text-align: center;
+	position: relative;
+}
+
+#squid-api-admin-widgets-user-table td .group-value .badge {
+	position: absolute;
+	top: -5px;
+	right: -11px;
 }
 
 #squid-api-admin-widgets-user-table td .orange {
@@ -92,6 +95,9 @@
 	cursor: pointer;
 	color: #707070;
 	display: none;
+	position: absolute;
+	right: 8px;
+	top: 40%;
 }
 
 #squid-api-admin-widgets-user-table td.field-icon-on i.field-icon {
@@ -156,6 +162,7 @@
 	border-top: 1px solid #ffffff;
 	border-bottom:1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
+	padding: 8px 20px;
 }
 #squid-api-admin-widgets-user-table table tr.even td {
 	background: #f6f6f6;

@@ -70,9 +70,9 @@
             'click button.add'  : 'addUser',
             'blur .edit' : 'close',
             'keypress .edit' : 'close',
-            'click .group-value' : 'deleteGroup',
-            'mouseover .group-value' : 'groupMouseOver',
-            'mouseout .group-value' : 'groupMouseOut',
+            'click .group-value .badge' : 'deleteGroup',
+            'mouseenter .group-value' : 'groupMouseOver',
+            'mouseleave .group-value' : 'groupMouseOut',
             'mouseover td' : 'groupIconOver',
             'mouseout td' : 'groupIconOut',
         },
@@ -155,12 +155,13 @@
         groupMouseOver: function(item) {
             this.groupData.width = $(item.currentTarget).width();
             this.groupData.value = $(item.currentTarget).text();
-            $(item.currentTarget).html("x");
+            $(item.currentTarget).append("<span class='badge'>x</span>");
         },
 
         groupMouseOut: function(item) {
             $(item.currentTarget).text(this.groupData.value);
             $(item.currentTarget).width(this.groupData.width);
+            $(item.currentTarget).remove('.badge');
         },
 
         deleteGroup: function(item) {
@@ -360,12 +361,6 @@
                 var passWordValue = tableRows.append("td")
                     .html(function(d) {
                         return "<label>*****</label><input class='edit form-control input-sm' type='password' data-attribute='password' value='null'/><i class='field-icon fa fa-pencil'></i>" ;
-                    })
-                    .attr('class','user-value');
-
-                var nameValue = tableRows.append("td")
-                    .html(function(d) {
-                        return "N/A";
                     })
                     .attr('class','user-value');
 
