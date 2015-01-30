@@ -33,6 +33,11 @@
                 this.model = users;
                 this.groups = groups;
 
+                if (options.fetchRecordsLater) {
+                    users.fetch();
+                    groups.fetch();
+                }
+
                 // Retrieve collections
                 squid_api.model.login.on('change:login', function(model) {
                     // Performed when login is updated
@@ -218,6 +223,12 @@
                     me.status.set('message', 'user with login ' + model.get('login') + ' successfully deleted');
                 }});
             }
+        },
+
+        remove: function() {
+            this.$el.empty().off(); /* off to unbind the events */
+            this.stopListening();
+            return this;
         },
 
         modifyUserValue: function(item) {
