@@ -76,7 +76,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         events: {
-            'click td.user-value'  : 'addGroup',
+            'click td.user-value'  : 'modifyUserValue',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
             'blur .edit' : 'close',
@@ -84,8 +84,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             'click .group-value .badge' : 'deleteGroup',
             'mouseenter .group-value' : 'groupMouseOver',
             'mouseleave .group-value' : 'groupMouseOut',
-            'mouseover td' : 'groupIconOver',
-            'mouseout td' : 'groupIconOut',
+            'mouseover td.user-value' : 'groupIconOver',
+            'mouseout td.user-value' : 'groupIconOut',
         },
 
         groupIconOver: function(item) {
@@ -154,7 +154,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         if (sendEmail) {
                             var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
                             $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
-                            me.status.set('message', 'You have successfully saved user with login: ' + data.login + 'and a confirmation email has been sent to:' + data.email + '');
+                            me.status.set('message', 'You have successfully saved user with login: ' + data.login + ' and a confirmation email has been sent to:' + data.email + '');
                         } else {
                             me.status.set('message', 'You have successfully saved user with login: ' + data.login);
                         }
@@ -164,14 +164,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         groupMouseOver: function(item) {
-            this.groupData.width = $(item.currentTarget).width();
             this.groupData.value = $(item.currentTarget).text();
             $(item.currentTarget).append("<span class='badge'>x</span>");
         },
 
         groupMouseOut: function(item) {
             $(item.currentTarget).text(this.groupData.value);
-            $(item.currentTarget).width(this.groupData.width);
             $(item.currentTarget).remove('.badge');
         },
 
@@ -228,29 +226,33 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                 // Delete on the server
                 model.destroy({success: function(model, response) {
-                    me.status.set('message', 'user with login ' + model.get('login') + 'successfully deleted');
+                    me.status.set('message', 'user with login ' + model.get('login') + ' successfully deleted');
                 }});
             }
         },
 
-        addGroup: function(item) {
-            // Fill select box with values
-            var groups = this.groups.toJSON();
-
-            // Remove existing select options
-            $(item.currentTarget).find("select options").remove();
-
-            // Append groups to dropdown
-            for (var key in groups) {
-                if (groups[key].id) {
-                    $(item.currentTarget).find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
-                }
-            }
-
+        modifyUserValue: function(item) {
             // Show text inputs
             $(".editing").removeClass("editing");
             $(item.currentTarget).addClass("editing");
+
+            // Focus on input fields
             $(item.currentTarget).find("input").focus();
+
+            // If Select Box
+            if ($(item.currentTarget).find('select').length > 0) {
+                var groups = this.groups.toJSON();
+
+                // Remove existing select options
+                $(item.currentTarget).find("select options").remove();
+
+                // Append groups to dropdown
+                for (var key in groups) {
+                    if (groups[key].id) {
+                        $(item.currentTarget).find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
+                    }
+                }
+            }
         },
 
         close: _.throttle(function(item) {
@@ -361,19 +363,31 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     .html(function(d) {
                         return "<label>" + d.login + "</label><input class='edit form-control input-sm' data-attribute='login' value='" + d.login + "'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
-                    .attr('class','user-value');
+                    .attr('class', function(d) {
+                        if (d._role !== "READ") {
+                            return 'user-value';
+                        }
+                    });
 
                 var emailValue = tableRows.append("td")
                     .html(function(d) {
                         return "<label>" + d.email + "</label><input class='edit form-control input-sm' data-attribute='email' value='" + d.email + "'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
-                    .attr('class','user-value');
+                    .attr('class', function(d) {
+                        if (d._role !== "READ") {
+                            return 'user-value';
+                        }
+                    });
 
                 var passWordValue = tableRows.append("td")
                     .html(function(d) {
                         return "<label>*****</label><input class='edit form-control input-sm' type='password' data-attribute='password' value='null'/><i class='field-icon fa fa-pencil'></i>" ;
                     })
-                    .attr('class','user-value');
+                    .attr('class', function(d) {
+                        if (d._role !== "READ") {
+                            return 'user-value';
+                        }
+                    });
 
                 var groupValues = tableRows.append("td")
 
@@ -399,14 +413,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         data += "<i class='field-icon fa fa-plus-square'></i> <select class='edit form-control input-sm' data-attribute='groups'></select>";
                         return data;
                     })
-                    .attr('class','user-value group-section');
+                    .attr('class', function(d) {
+                        if (d._role !== "READ") {
+                            return ['user-value' + ' group-section'];
+                        }
+                    });
                 
                 // Print group names instead of their Id's
                 this.assignGroupNames();
 
                 var actionValues = tableRows.append("td")
                     .html(function(d) {
-                        return "<button class='delete form-control'>Delete</button>";
+                        if (d._role !== "READ") {
+                            return "<button class='delete form-control'>Delete</button>";
+                        }
                     });
             }
 
