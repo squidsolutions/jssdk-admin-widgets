@@ -158,6 +158,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         } else {
                             me.status.set('message', 'You have successfully saved user with login: ' + data.login);
                         }
+                    },
+                    error: function(model, response){
+                        alert('error');
                     }
                 });
             }
@@ -351,7 +354,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // If users exist then create data table in D3
             if (users && groups) {
-                var tableRows = d3.select(globalID + " tbody").selectAll("tr")
+                var tableRows = d3.select(globalID + " tbody").selectAll("tbody")
                     .data(users)
                     .enter()
                     .append("tr") 
