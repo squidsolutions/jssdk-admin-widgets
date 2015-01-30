@@ -336,9 +336,6 @@
             // Render Template
             this.$el.html(this.template());
 
-            // Check for add user privileges
-            this.addUserCheck();
-
             // Set ID for Table Render
             var globalID;
 
@@ -437,21 +434,28 @@
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
             });
+
+            this.addUserCheck();
         },
 
         addUserCheck: function() {
             var me = this;
             // Hide Add User
-            me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").hide();
+            var addRow = me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first");
+            if ($(addRow).attr('data-attr') == 'add') {
+                $(addRow).hide();
+            }
             // Retrieve Customer Info
             var customerInfo = new squid_api.model.CustomerInfoModel({"id" : {"customerId" : squid_api.customerId}});
             customerInfo.fetch({
                 success : function(model, response) {
                     if (response._role !== "OWNER" && response._role !== "WRITE") {
-                        me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").remove();
+                        if ($(addRow).attr('data-attr') == 'add') {
+                            me.$el.find(addRow).remove();
+                        }
                     } else {
                         // Show Add User
-                        me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").show();
+                        $(addRow).show();
                     }
                 }
             });

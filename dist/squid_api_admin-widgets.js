@@ -7,7 +7,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr data-attr=\"add\">\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
   });
 (function (root, factory) {
     root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
@@ -347,9 +347,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // Render Template
             this.$el.html(this.template());
 
-            // Check for add user privileges
-            this.addUserCheck();
-
             // Set ID for Table Render
             var globalID;
 
@@ -448,21 +445,28 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
             });
+
+            this.addUserCheck();
         },
 
         addUserCheck: function() {
             var me = this;
             // Hide Add User
-            me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").hide();
+            var addRow = me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first");
+            if ($(addRow).attr('data-attr') == 'add') {
+                $(addRow).hide();
+            }
             // Retrieve Customer Info
             var customerInfo = new squid_api.model.CustomerInfoModel({"id" : {"customerId" : squid_api.customerId}});
             customerInfo.fetch({
                 success : function(model, response) {
                     if (response._role !== "OWNER" && response._role !== "WRITE") {
-                        me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").remove();
+                        if ($(addRow).attr('data-attr') == 'add') {
+                            me.$el.find(addRow).remove();
+                        }
                     } else {
                         // Show Add User
-                        me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first").show();
+                        $(addRow).show();
                     }
                 }
             });
