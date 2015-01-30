@@ -158,9 +158,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         } else {
                             me.status.set('message', 'You have successfully saved user with login: ' + data.login);
                         }
-                    },
-                    error: function(model, response){
-                        alert('error');
                     }
                 });
             }
