@@ -33,51 +33,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (options.status) {
                 this.status = options.status;
             }
-            
-            // init the model
-            if (!this.model) {
+
+            if (! this.model) {
                 // Connect to the api to retrieve user/group collections
-                var users = new squid_api.model.UserCollection({"id" : {"customerId" : squid_api.customerId}});
-                var groups = new squid_api.model.GroupCollection({"id" : {"customerId" : squid_api.customerId}});
-
-                // Make these collections accessible
-                this.model = users;
-                this.groups = groups;
-
-                if (options.fetchRecordsLater) {
-                    users.fetch();
-                    groups.fetch();
-                }
-
-                // Retrieve collections
-                squid_api.model.login.on('change:login', function(model) {
-                    // Performed when login is updated
-                    if (model.get("login")) {
-                        // Init the users
-                        users.fetch({
-                            success : function(model, response) {
-
-                            },
-                            error : function(model, response) {
-                                console.log(model);
-                            }
-                        });
-                        // Init the groups
-                        groups.fetch({
-                            success : function(model, response) {
-
-                            },
-                            error : function(model, response) {
-                                console.log(model);
-                            }
-                        });
-                    }
-                });
+                this.model = new squid_api.model.UserCollection({"id" : {"customerId" : squid_api.customerId}});
+                this.groups = new squid_api.model.GroupCollection({"id" : {"customerId" : squid_api.customerId}});
             }
 
-            // Collection change events
             this.model.on("reset change remove sync", this.render, this);
-            this.groups.on("reset change sync", this.render, this);
+
+            this.render();
         },
 
         events: {
@@ -341,9 +306,23 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
         }, 100),
 
-        render: function() {
+        fetchModels: function() {
             var me = this;
 
+            this.groups.fetch({
+                success : function(model, response) {
+                    me.model.fetch({
+                    success : function(model, response) {
+                            
+                        }
+                    });
+                }
+            });
+        },
+
+        render: function() {
+            var me = this;
+            
             // Render Template
             this.$el.html(this.template());
 
@@ -405,18 +384,23 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     .html(function(d) {
                         var g = d.groups;
                         var data = "";
+                        var canEdit;
+
+                        if (d._role !== "READ") {
+                            canEdit = 'group-value';
+                        }
 
                         // Groups colour logic
                         if (g) {
                             for (i=0; i<g.length; i++) {
                                 if (g[i] === "admin") {
-                                    data += "<div class='red group-value' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
+                                    data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                                 } else {
                                     var pattern = /admin_/;
                                     if (pattern.test(g[i])) {
-                                        data += "<div class='orange group-value' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
+                                        data += "<div class='orange " + canEdit + "' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                     } else {
-                                        data += "<div class='group-value' attr-id='groupId' attr-value='" + g[i] + "'></div>";
+                                        data += "<div class='" + canEdit + "' attr-id='groupId' attr-value='" + g[i] + "'></div>";
                                     }
                                 }    
                             }
