@@ -4,10 +4,19 @@ this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, self=this;
+
+function program1(depth0,data) {
   
+  
+  return "\n        <tr data-attr=\"add\">\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    ";
+  }
 
-
-  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr data-attr=\"add\">\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    </tbody>\n</table>";
+  buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.canAdd), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </tbody>\n</table>";
+  return buffer;
   });
 (function (root, factory) {
     root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
@@ -36,8 +45,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             if (! this.model) {
                 // Connect to the api to retrieve user/group collections
-                this.model = new squid_api.model.UserCollection({"id" : {"customerId" : squid_api.customerId}});
-                this.groups = new squid_api.model.GroupCollection({"id" : {"customerId" : squid_api.customerId}});
+                this.model = new squid_api.model.UserCollection();
+                this.groups = new squid_api.model.GroupCollection();
             }
 
             this.model.on("reset change remove sync", this.render, this);
@@ -322,9 +331,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         render: function() {
             var me = this;
-            
+
+            var role;
+            var canAdd = true;
+            if (squid_api.model.customer) {
+                role = squid_api.model.customer.get("_role");
+            }
+            if (role !== "WRITE" && role !== "OWNER") {
+                canAdd = false;
+            }
             // Render Template
-            this.$el.html(this.template());
+            this.$el.html(this.template({
+                canAdd : canAdd
+            }));
 
             // Set ID for Table Render
             var globalID;
@@ -428,31 +447,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // Instantiate Data Table Plugin
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
-            });
-
-            this.addUserCheck();
-        },
-
-        addUserCheck: function() {
-            var me = this;
-            // Hide Add User
-            var addRow = me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first");
-            if ($(addRow).attr('data-attr') == 'add') {
-                $(addRow).hide();
-            }
-            // Retrieve Customer Info
-            var customerInfo = new squid_api.model.CustomerInfoModel({"id" : {"customerId" : squid_api.customerId}});
-            customerInfo.fetch({
-                success : function(model, response) {
-                    if (response._role !== "OWNER" && response._role !== "WRITE") {
-                        if ($(addRow).attr('data-attr') == 'add') {
-                            me.$el.find(addRow).remove();
-                        }
-                    } else {
-                        // Show Add User
-                        $(addRow).show();
-                    }
-                }
             });
         },
 

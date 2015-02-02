@@ -311,9 +311,25 @@
 
         render: function() {
             var me = this;
+
+            // Store the role / ability to add
+            var role;
+            var addUser = true;
+
+            // Obtain the role
+            if (squid_api.model.customer) {
+                role = squid_api.model.customer.get("_role");
+            }
+
+            // Can add user rules
+            if (role !== "WRITE" && role !== "OWNER") {
+                addUser = false;
+            }
             
             // Render Template
-            this.$el.html(this.template());
+            this.$el.html(this.template({
+                addUser : addUser
+            }));
 
             // Set ID for Table Render
             var globalID;
@@ -417,31 +433,6 @@
             // Instantiate Data Table Plugin
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
                 "lengthChange": false
-            });
-
-            this.addUserCheck();
-        },
-
-        addUserCheck: function() {
-            var me = this;
-            // Hide Add User
-            var addRow = me.$el.find("#squid-api-admin-widgets-user-table tbody tr:first");
-            if ($(addRow).attr('data-attr') == 'add') {
-                $(addRow).hide();
-            }
-            // Retrieve Customer Info
-            var customerInfo = new squid_api.model.CustomerInfoModel({"id" : {"customerId" : squid_api.customerId}});
-            customerInfo.fetch({
-                success : function(model, response) {
-                    if (response._role !== "OWNER" && response._role !== "WRITE") {
-                        if ($(addRow).attr('data-attr') == 'add') {
-                            me.$el.find(addRow).remove();
-                        }
-                    } else {
-                        // Show Add User
-                        $(addRow).show();
-                    }
-                }
             });
         },
 
