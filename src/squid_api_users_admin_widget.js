@@ -195,7 +195,7 @@
         },
 
         remove: function() {
-            this.$el.empty().off(); /* off to unbind the events */
+            this.$el.empty();
             this.stopListening();
             return this;
         },

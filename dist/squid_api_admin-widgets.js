@@ -13,7 +13,7 @@ function program1(depth0,data) {
   }
 
   buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.canAdd), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.addUser), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </tbody>\n</table>";
   return buffer;
@@ -129,14 +129,18 @@ function program1(depth0,data) {
 
                 this.model.create(data, {
                     success: function(model, response){
-                        // Should we send an email?
+                        var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
-                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
-                            $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
-                            me.status.set('message', 'You have successfully saved user with login: ' + data.login + ' and a confirmation email has been sent to:' + data.email + '');
-                        } else {
-                            me.status.set('message', 'You have successfully saved user with login: ' + data.login);
+                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token={access_token}#!user";
+                            var sendMailUrl = squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl;
+                            
+                            $.get(sendMailUrl).done(function() {
+                                message = message + ' and a confirmation email has been sent to:' + data.email;
+                            }).fail(function() {
+                                message = message + ' but confirmation email was not sent';
+                            });
                         }
+                        me.status.set('message', message);
                     }
                 });
             }
@@ -211,7 +215,7 @@ function program1(depth0,data) {
         },
 
         remove: function() {
-            this.$el.empty().off(); /* off to unbind the events */
+            this.$el.empty();
             this.stopListening();
             return this;
         },
@@ -332,17 +336,23 @@ function program1(depth0,data) {
         render: function() {
             var me = this;
 
+            // Store the role / ability to add
             var role;
-            var canAdd = true;
+            var addUser = true;
+
+            // Obtain the role
             if (squid_api.model.customer) {
                 role = squid_api.model.customer.get("_role");
             }
+
+            // Can add user rules
             if (role !== "WRITE" && role !== "OWNER") {
-                canAdd = false;
+                addUser = false;
             }
+            
             // Render Template
             this.$el.html(this.template({
-                canAdd : canAdd
+                addUser : addUser
             }));
 
             // Set ID for Table Render
