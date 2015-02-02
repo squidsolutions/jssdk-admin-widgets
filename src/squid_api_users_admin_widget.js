@@ -127,13 +127,11 @@
         },
 
         groupMouseOver: function(item) {
-            this.groupData.value = $(item.currentTarget).text();
             $(item.currentTarget).append("<span class='badge'>x</span>");
         },
 
         groupMouseOut: function(item) {
-            $(item.currentTarget).text(this.groupData.value);
-            $(item.currentTarget).remove('.badge');
+            $(this.widgetContainer + ' .badge').remove();
         },
 
         deleteGroup: function(item) {
