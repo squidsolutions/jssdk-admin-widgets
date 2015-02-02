@@ -109,14 +109,18 @@
 
                 this.model.create(data, {
                     success: function(model, response){
-                        // Should we send an email?
+                        var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
-                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token=" + squid_api.model.login.get("accessToken") + "#!user";
-                            $.get(squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl);
-                            me.status.set('message', 'You have successfully saved user with login: ' + data.login + ' and a confirmation email has been sent to:' + data.email + '');
-                        } else {
-                            me.status.set('message', 'You have successfully saved user with login: ' + data.login);
+                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token={access_token}#!user";
+                            var sendMailUrl = squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl;
+                            
+                            $.get(sendMailUrl).done(function() {
+                                message = message + ' and a confirmation email has been sent to:' + data.email;
+                            }).fail(function() {
+                                message = message + ' but confirmation email was not sent';
+                            });
                         }
+                        me.status.set('message', message);
                     }
                 });
             }
