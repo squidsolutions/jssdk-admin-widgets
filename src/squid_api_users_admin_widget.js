@@ -400,10 +400,10 @@
                         // Groups colour logic
                         if (g) {
                             for (i=0; i<g.length; i++) {
-                                if (g[i] === "admin") {
+                                if (g[i] === "superuser") {
                                     data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                                 } else {
-                                    var pattern = /admin_/;
+                                    var pattern = /admin/;
                                     if (pattern.test(g[i])) {
                                         data += "<div class='orange " + canEdit + "' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                     } else {
@@ -440,7 +440,7 @@
 
         assignGroupNames: function() {
             /*
-                Retrive groupId / attribute values and match with api group data
+                Retrieve groupId / attribute values and match with api group data
                 If we have a match, print the name of the group directly as the dom el.
             */
             var groupIds = $(this.widgetContainer + ' div[attr-id="groupId"]');
