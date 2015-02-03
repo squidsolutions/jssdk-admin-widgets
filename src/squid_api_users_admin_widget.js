@@ -38,8 +38,8 @@
             'click td.user-value'  : 'modifyUserValue',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
-            'blur .edit' : 'close',
-            'keypress .edit' : 'close',
+            'blur .edit' : 'updateValue',
+            'keypress .edit' : 'updateValue',
             'click .group-value .badge' : 'deleteGroup',
             'mouseenter .group-value' : 'groupMouseOver',
             'mouseleave .group-value' : 'groupMouseOut',
@@ -222,7 +222,7 @@
             }
         },
 
-        close: _.throttle(function(item) {
+        updateValue: function(item) {
             var me = this;
 
             if (item.which == 13 || item.type == "focusout") {
@@ -295,7 +295,7 @@
                 }
                 $(this.widgetContainer + ' .editing').removeClass('editing');
             }
-        }, 100),
+        },
 
         fetchModels: function() {
             var me = this;
@@ -400,10 +400,10 @@
                         // Groups colour logic
                         if (g) {
                             for (i=0; i<g.length; i++) {
-                                if (g[i] === "superuser") {
+                                if (g[i] === "admin") {
                                     data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
                                 } else {
-                                    var pattern = /admin/;
+                                    var pattern = /admin_/;
                                     if (pattern.test(g[i])) {
                                         data += "<div class='orange " + canEdit + "' attr-id='groupId' class='orange' attr-value='" + g[i] + "'></div>";
                                     } else {
@@ -440,7 +440,7 @@
 
         assignGroupNames: function() {
             /*
-                Retrieve groupId / attribute values and match with api group data
+                Retrive groupId / attribute values and match with api group data
                 If we have a match, print the name of the group directly as the dom el.
             */
             var groupIds = $(this.widgetContainer + ' div[attr-id="groupId"]');

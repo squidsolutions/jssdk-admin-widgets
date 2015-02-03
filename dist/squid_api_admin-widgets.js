@@ -58,8 +58,8 @@ function program1(depth0,data) {
             'click td.user-value'  : 'modifyUserValue',
             'click .delete'  : 'deleteUser',
             'click button.add'  : 'addUser',
-            'blur .edit' : 'close',
-            'keypress .edit' : 'close',
+            'blur .edit' : 'updateValue',
+            'keypress .edit' : 'updateValue',
             'click .group-value .badge' : 'deleteGroup',
             'mouseenter .group-value' : 'groupMouseOver',
             'mouseleave .group-value' : 'groupMouseOut',
@@ -242,7 +242,7 @@ function program1(depth0,data) {
             }
         },
 
-        close: _.throttle(function(item) {
+        updateValue: function(item) {
             var me = this;
 
             if (item.which == 13 || item.type == "focusout") {
@@ -315,7 +315,7 @@ function program1(depth0,data) {
                 }
                 $(this.widgetContainer + ' .editing').removeClass('editing');
             }
-        }, 100),
+        },
 
         fetchModels: function() {
             var me = this;
