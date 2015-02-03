@@ -160,7 +160,7 @@ function program1(depth0,data) {
             var itemData = $(item.currentTarget).parents('td');
             if (confirm('Are you sure you want to remove this group?')) {
                 // Obtain current groupId
-                var groupItems = $(item.currentTarget).siblings('div');
+                var groupItems = $(item.currentTarget).parent("div").siblings('div');
                 var groups = [];
                 for (i=0; i<groupItems.length; i++) {
                     groups.push($(groupItems[i]).attr('attr-value'));
@@ -454,7 +454,8 @@ function program1(depth0,data) {
 
             // Instantiate Data Table Plugin
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
-                "lengthChange": false
+                "lengthChange": false,
+                "paging": false
             });
         },
 
