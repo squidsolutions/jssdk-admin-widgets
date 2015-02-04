@@ -421,7 +421,7 @@ function program1(depth0,data) {
                         if (g) {
                             for (i=0; i<g.length; i++) {
                                 if (g[i] === "superuser") {
-                                    data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
+                                    data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "'></div>";
                                 } else {
                                     var pattern = /admin/;
                                     if (pattern.test(g[i])) {
