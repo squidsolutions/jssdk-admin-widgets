@@ -22,6 +22,7 @@
 
 #squid-api-admin-widgets-user-table td .red {
 	background: #e74c3c;
+	color: #fff;
 }
 
 #squid-api-admin-widgets-user-table a {

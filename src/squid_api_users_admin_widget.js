@@ -108,6 +108,7 @@
                 var sendEmail = $(this.widgetContainer + ' .email-checkbox').is(':checked');
 
                 this.model.create(data, {
+                    wait: true,
                     success: function(model, response){
                         var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
@@ -143,7 +144,7 @@
             var itemData = $(item.currentTarget).parents('td');
             if (confirm('Are you sure you want to remove this group?')) {
                 // Obtain current groupId
-                var groupItems = $(item.currentTarget).siblings('div');
+                var groupItems = $(item.currentTarget).parent("div").siblings('div');
                 var groups = [];
                 for (i=0; i<groupItems.length; i++) {
                     groups.push($(groupItems[i]).attr('attr-value'));
@@ -216,6 +217,8 @@
                 // Remove existing select options
                 $(item.currentTarget).find("select options").remove();
 
+                // Make sure select box is empty
+                $(item.currentTarget).find("select").empty();
                 // Append groups to dropdown
                 for (var key in groups) {
                     if (groups[key].id) {
@@ -265,7 +268,10 @@
                 var modelId = this.$('.editing').parent("tr").attr('data-id');
 
                 // Trim the value
-                var trimmedValue = value.trim();
+                var trimmedValue = false;
+                if (value !== "null") {
+                    trimmedValue = value.trim();
+                }
 
                 if (trimmedValue) {
                     if (previousValue !== trimmedValue) {
@@ -404,7 +410,7 @@
                         if (g) {
                             for (i=0; i<g.length; i++) {
                                 if (g[i] === "superuser") {
-                                    data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "></div>";
+                                    data += "<div class='red " + canEdit + "' attr-id='groupId' class='red' attr-value='" + g[i] + "'></div>";
                                 } else {
                                     var pattern = /admin/;
                                     if (pattern.test(g[i])) {
@@ -437,7 +443,8 @@
 
             // Instantiate Data Table Plugin
             this.$el.find("#squid-api-admin-widgets-user-table table").DataTable({
-                "lengthChange": false
+                "lengthChange": false,
+                "paging": false
             });
         },
 
