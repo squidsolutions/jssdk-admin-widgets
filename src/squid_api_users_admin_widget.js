@@ -264,7 +264,10 @@
                 var modelId = this.$('.editing').parent("tr").attr('data-id');
 
                 // Trim the value
-                var trimmedValue = value.trim();
+                var trimmedValue = false;
+                if (value !== "null") {
+                    trimmedValue = value.trim();
+                }
 
                 if (trimmedValue) {
                     if (previousValue !== trimmedValue) {
