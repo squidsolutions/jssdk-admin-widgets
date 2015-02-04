@@ -213,6 +213,8 @@
                 // Remove existing select options
                 $(item.currentTarget).find("select options").remove();
 
+                // Make sure select box is empty
+                $(item.currentTarget).find("select").empty();
                 // Append groups to dropdown
                 for (var key in groups) {
                     if (groups[key].id) {
