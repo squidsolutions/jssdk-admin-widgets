@@ -132,16 +132,19 @@ function program1(depth0,data) {
                     success: function(model, response){
                         var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
-                            var linkUrl = "https://api.squidsolutions.com/release/admin/console/index.html?access_token={access_token}#!user";
+                            var linkUrl = encodeURIComponent("https://api.squidsolutions.com/release/admin/console/index.html?access_token={access_token}#!user");
                             var sendMailUrl = squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl;
-                            
+
                             $.get(sendMailUrl).done(function() {
                                 message = message + ' and a confirmation email has been sent to:' + data.email;
+                                me.status.set('message', message);
                             }).fail(function() {
                                 message = message + ' but confirmation email was not sent';
+                                me.status.set('message', message);
                             });
+                        } else {
+                            me.status.set('message', message);
                         }
-                        me.status.set('message', message);
                     }
                 });
             }
