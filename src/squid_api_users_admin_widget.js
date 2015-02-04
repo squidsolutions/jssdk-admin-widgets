@@ -107,7 +107,7 @@
                 // Get checkbox status before model refresh
                 var sendEmail = $(this.widgetContainer + ' .email-checkbox').is(':checked');
 
-                this.model.create(data, {
+                this.model.create(data, {wait: true}, {
                     success: function(model, response){
                         var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
