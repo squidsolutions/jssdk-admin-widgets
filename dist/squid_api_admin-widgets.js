@@ -1,6 +1,15 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
+this["squid_api"]["template"]["squid_api_shortcuts_admin_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div id=\"squid-api-shortcuts-widgets\">\n<form>\n<div class=\"form-group\">\n    <label for=\"shortcutId\">Id</label>\n    <p class=\"help-block\">\n    This is the shortcut identifier which will be used as a URL parameter (\"index.html?shortcut=myid\").\n    If not set it will automatically be generated.</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutId\">\n</div>\n<div class=\"form-group\">\n    <label for=\"shortcutName\">Name</label>\n    <p class=\"help-block\">This is a descriptive name for your shortcut. (Optional)</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutName\">\n</div>\n<a href=\"#\" class=\"btn btn-primary\" id=\"saveBtn\">Save</a>\n</form>\n</div>";
+  });
+
 this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -15,11 +24,84 @@ function program1(depth0,data) {
   buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.addUser), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </tbody>\n</table>";
+  buffer += "\n    </tbody>\n</table>\n</div>";
   return buffer;
   });
 (function (root, factory) {
-    root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
+    root.squid_api.view.ShortcutsAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_shortcuts_admin_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        template : null,
+        onSave : null,
+
+        initialize: function(options) {
+
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            
+            if (options.onSave) {
+                this.onSave = options.onSave;
+            }
+            
+            if (!this.model) {
+                this.model = squid_api.model.status;
+            }
+
+            this.render();
+        },
+
+        events: {
+            'click #saveBtn'  : 'saveShortcut',
+        },
+
+        render: function() {
+            var me = this;
+            this.$el.html(this.template());
+        },
+        
+        saveShortcut : function(event) {
+            event.preventDefault();
+            var me = this;
+            var shortcutId = this.$el.find("#shortcutId").val();
+            if (shortcutId === "") {
+                shortcutId =  null;
+            }
+            var shortcutName = this.$el.find("#shortcutName").val();
+            var currentStateId = this.model.get("state").get("oid");
+            var shortcutModel = new squid_api.model.ShortcutModel();
+            var data = {
+                "id" : {
+                    "customerId" : this.customerId,
+                    "shortcutId" : shortcutId
+                },
+                "name" : shortcutName,
+                "stateId" : currentStateId
+            };
+            shortcutModel.save(data, {
+                success : function(model, response, options) {
+                    me.model.set("message", "Shortcut successfully saved with Id : "+model.get("oid"));
+                    if (me.onSave) {
+                        me.onSave.call();
+                    }
+                },
+                error : function(model, response, options) {
+                    me.model.set('error', 'Shortcut save failed');
+                }
+            });
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_users_admin_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -36,7 +118,7 @@ function program1(depth0,data) {
             if (options.template) {
                 this.template = options.template;
             } else {
-                this.template = squid_api.template.squid_api_users_admin_widget;
+                this.template = template;
             }
 
             if (options.status) {
