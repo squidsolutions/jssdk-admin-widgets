@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_usersadmin_widget);
+    root.squid_api.view.UsersAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_users_admin_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -16,7 +16,7 @@
             if (options.template) {
                 this.template = options.template;
             } else {
-                this.template = squid_api.template.squid_api_users_admin_widget;
+                this.template = template;
             }
 
             if (options.status) {
