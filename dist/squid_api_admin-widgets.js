@@ -48,10 +48,6 @@ function program1(depth0,data) {
             if (options.onSave) {
                 this.onSave = options.onSave;
             }
-            
-            if (!this.model) {
-                this.model = squid_api.model.status;
-            }
 
             this.render();
         },
@@ -73,27 +69,30 @@ function program1(depth0,data) {
                 shortcutId =  null;
             }
             var shortcutName = this.$el.find("#shortcutName").val();
-            var currentStateId = this.model.get("state").get("oid");
-            var shortcutModel = new squid_api.model.ShortcutModel();
-            var data = {
-                "id" : {
-                    "customerId" : this.customerId,
-                    "shortcutId" : shortcutId
-                },
-                "name" : shortcutName,
-                "stateId" : currentStateId
-            };
-            shortcutModel.save(data, {
-                success : function(model, response, options) {
-                    me.model.set("message", "Shortcut successfully saved with Id : "+model.get("oid"));
-                    if (me.onSave) {
-                        me.onSave.call();
+            var currentStateId = squid_api.model.state.get("oid");
+            // TODO handle the case when state ins't existing yet
+            if (currentStateId) {
+                var shortcutModel = new squid_api.model.ShortcutModel();
+                var data = {
+                    "id" : {
+                        "customerId" : this.customerId,
+                        "shortcutId" : shortcutId
+                    },
+                    "name" : shortcutName,
+                    "stateId" : currentStateId
+                };
+                shortcutModel.save(data, {
+                    success : function(model, response, options) {
+                        squid_api.model.status.set("message", "Shortcut successfully saved with Id : "+model.get("oid"));
+                        if (me.onSave) {
+                            me.onSave.call();
+                        }
+                    },
+                    error : function(model, response, options) {
+                        squid_api.model.status.set('error', 'Shortcut save failed');
                     }
-                },
-                error : function(model, response, options) {
-                    me.model.set('error', 'Shortcut save failed');
-                }
-            });
+                });
+            }
         }
     });
 
