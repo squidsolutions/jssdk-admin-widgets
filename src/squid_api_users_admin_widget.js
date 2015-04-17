@@ -142,16 +142,19 @@
             var me = this;
 
             var itemData = $(item.currentTarget).parents('td');
+
+            // Obtain current groupId
+            var groupItems = $(item.currentTarget).parent("div").siblings('div');
+
+            // Get the ID to find model in collection
+            var modelId = $(item.currentTarget).parents('tr').attr('data-id');
+
             if (confirm('Are you sure you want to remove this group?')) {
-                // Obtain current groupId
-                var groupItems = $(item.currentTarget).parent("div").siblings('div');
+                
                 var groups = [];
                 for (i=0; i<groupItems.length; i++) {
                     groups.push($(groupItems[i]).attr('attr-value'));
                 }
-
-                // Get the ID to find model in collection
-                var modelId = $(item.currentTarget).parents('tr').attr('data-id');
 
                 // Model to remove
                 var model = this.model.get(modelId);
@@ -166,8 +169,6 @@
                         me.status.set('message', 'group successfully deleted');
                     }
                 });
-
-
             } else {
                 // To be refactored, (To remove the class after user-value click event)
                 setTimeout(function() {
@@ -179,10 +180,10 @@
         deleteUser: function(item) {
             var me = this;
 
-            if (confirm('Are you sure you want to remove this user?')) {
-                // Get the ID to find model in collection
-                var modelId = $(item.currentTarget).parents('tr').attr('data-id');
+            // Get the ID to find model in collection
+            var modelId = $(item.currentTarget).parents('tr').attr('data-id');
 
+            if (confirm('Are you sure you want to remove this user?')) {
                 // Model to remove
                 var model = this.model.get(modelId);
 
@@ -205,24 +206,26 @@
         modifyUserValue: function(item) {
             // Show text inputs
             $(".editing").removeClass("editing");
-            $(item.currentTarget).addClass("editing");
+            var currentTarget = $(item.currentTarget);
+            
+            currentTarget.addClass("editing");
 
             // Focus on input fields
-            $(item.currentTarget).find("input").focus();
+            currentTarget.find("input").focus();
 
             // If Select Box
-            if ($(item.currentTarget).find('select').length > 0) {
+            if (currentTarget.find('select').length > 0 && currentTarget.find('select option').length < 1) {
                 var groups = this.groups.toJSON();
 
                 // Remove existing select options
-                $(item.currentTarget).find("select options").remove();
+                currentTarget.find("select options").remove();
 
                 // Make sure select box is empty
-                $(item.currentTarget).find("select").empty();
+                currentTarget.find("select").empty();
                 // Append groups to dropdown
                 for (var key in groups) {
                     if (groups[key].id) {
-                        $(item.currentTarget).find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
+                        currentTarget.find("select").append("<option value='" + groups[key].id.userGroupId + "'>" + groups[key].name + "</option>");
                     }
                 }
             }
