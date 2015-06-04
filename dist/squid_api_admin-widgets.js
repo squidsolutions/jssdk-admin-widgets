@@ -124,7 +124,15 @@ function program1(depth0,data) {
                     } else {
                         var data = me.manipulateData(formContent.getValue());
                         me.model.save(data, {
-                            type: 'POST'
+                            type: 'POST',
+                            success: function (collection, response, options) {
+                                var msg = response.objectType + " successfully saved with name " + response.name;
+                                squid_api.model.status.set('message', msg);
+                            },
+                            error: function (collection, response, options) {
+                                var msg = response.objectType + " error saving with name " + response.name;
+                                squid_api.model.status.set('message', msg);
+                            }
                         });
                     }
                 });
