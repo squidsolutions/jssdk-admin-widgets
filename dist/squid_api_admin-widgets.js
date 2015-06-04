@@ -11,11 +11,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n	<button type=\"button\" class=\"btn btn-default\" data-toggle=\"modal\" data-target=\"#";
-  if (helper = helpers.modal) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.modal); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+    + "\">\n	<button type=\"button\" class=\"btn btn-default\">";
+  if (helper = helpers.definition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.definition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">Create</button>\n	</button>\n</div>";
+    + "</button>\n	</button>\n</div>";
   return buffer;
   });
 
@@ -54,6 +54,7 @@ function program1(depth0,data) {
 
         definition : null,
         definitionProperties : null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
 
         initialize: function(options) {
             var me = this;
@@ -112,7 +113,10 @@ function program1(depth0,data) {
                     animate: true,
                 }).open();
 
-                // Form Events
+                // modal wrapper class
+                $(formModal.el).addClass(this.modalElementClassName);
+
+                // form events
                 formModal.on('ok', function() {
                     var validForm = formContent.validate();
                     if (validForm) {
@@ -240,7 +244,7 @@ function program1(depth0,data) {
 
         render: function(currentView) {
             var me = this;
-            var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "modal" : this.definition};
+            var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "definition" : this.definition};
 
             // Print Template
             this.$el.html(this.template(jsonData));

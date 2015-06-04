@@ -7,6 +7,7 @@
 
         definition : null,
         definitionProperties : null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
 
         initialize: function(options) {
             var me = this;
@@ -65,7 +66,10 @@
                     animate: true,
                 }).open();
 
-                // Form Events
+                // modal wrapper class
+                $(formModal.el).addClass(this.modalElementClassName);
+
+                // form events
                 formModal.on('ok', function() {
                     var validForm = formContent.validate();
                     if (validForm) {
@@ -193,7 +197,7 @@
 
         render: function(currentView) {
             var me = this;
-            var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "modal" : this.definition};
+            var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "definition" : this.definition};
 
             // Print Template
             this.$el.html(this.template(jsonData));
