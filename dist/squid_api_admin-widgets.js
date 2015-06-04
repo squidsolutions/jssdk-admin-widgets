@@ -15,15 +15,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.modal) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modal); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">Create</button>\n	<!-- Modal -->\n	<div class=\"modal fade\" id=\"";
-  if (helper = helpers.modal) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.modal); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">\n  		<div class=\"modal-dialog\">\n    		<div class=\"modal-content\">\n      			<div class=\"modal-header\">\n        			<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        			<h4 class=\"modal-title\" id=\"myModalLabel\">Modal title</h4>\n      			</div>\n      			<div class=\"modal-body ";
-  if (helper = helpers.modal) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.modal); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n\n      			</div>\n			      <div class=\"modal-footer\">\n			        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n			        <button type=\"button\" class=\"btn btn-primary submit-form\">Save changes</button>\n			      </div>\n			    </div>\n			</div>\n		</div>\n	</div>\n</button>\n</div>";
+    + "\">Create</button>\n	</button>\n</div>";
   return buffer;
   });
 
@@ -101,19 +93,38 @@ function program1(depth0,data) {
         },
 
         events: {
-            "click button.submit-form" : function() {
-                var invalidFields = this.form.validate();
-                if (!invalidFields) {
-                    // manipulate data
-                    var data = this.manipulateData(this.form.getValue());
-                    // save
+            "click button" : function() {
+                var me = this;
 
-                    console.log(data);
-                    this.model.save(data, {
-                        type: 'POST'
-                    });
-                }
-            }
+                var formContent = new Backbone.Form({
+                    schema: me.schema
+                }).render();
+
+                var formView = Backbone.View.extend({
+                    render: function() {
+                        this.$el.html(formContent.el);
+                        return this;
+                    }
+                });
+
+                var formModal = new Backbone.BootstrapModal({ 
+                    content: new formView(),
+                    animate: true,
+                }).open();
+
+                // Form Events
+                formModal.on('ok', function() {
+                    var validForm = formContent.validate();
+                    if (validForm) {
+                        formModal.preventClose();
+                    } else {
+                        var data = me.manipulateData(formContent.getValue());
+                        me.model.save(data, {
+                            type: 'POST'
+                        });
+                    }
+                });
+            },
         },
 
         getPropertyType: function(type) {
@@ -213,7 +224,7 @@ function program1(depth0,data) {
                     }
                 }
                 if (baseModel === null) {
-                    baseModel = new Backbone.Model ();
+                    baseModel = new squid_api.model.BaseModel();
                 }
 
                 // set project id
@@ -231,15 +242,8 @@ function program1(depth0,data) {
             var me = this;
             var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "modal" : this.definition};
 
-            this.form = new Backbone.Form({
-                schema: me.schema
-            }).render();
-
             // Print Template
             this.$el.html(this.template(jsonData));
-
-            // Print Form
-            this.$el.find("." + jsonData.view + " ." + jsonData.modal).append(this.form.el);
         }
     });
 

@@ -46,19 +46,38 @@
         },
 
         events: {
-            "click button.submit-form" : function() {
-                var invalidFields = this.form.validate();
-                if (!invalidFields) {
-                    // manipulate data
-                    var data = this.manipulateData(this.form.getValue());
-                    // save
+            "click button" : function() {
+                var me = this;
 
-                    console.log(data);
-                    this.model.save(data, {
-                        type: 'POST'
-                    });
-                }
-            }
+                var formContent = new Backbone.Form({
+                    schema: me.schema
+                }).render();
+
+                var formView = Backbone.View.extend({
+                    render: function() {
+                        this.$el.html(formContent.el);
+                        return this;
+                    }
+                });
+
+                var formModal = new Backbone.BootstrapModal({ 
+                    content: new formView(),
+                    animate: true,
+                }).open();
+
+                // Form Events
+                formModal.on('ok', function() {
+                    var validForm = formContent.validate();
+                    if (validForm) {
+                        formModal.preventClose();
+                    } else {
+                        var data = me.manipulateData(formContent.getValue());
+                        me.model.save(data, {
+                            type: 'POST'
+                        });
+                    }
+                });
+            },
         },
 
         getPropertyType: function(type) {
@@ -158,7 +177,7 @@
                     }
                 }
                 if (baseModel === null) {
-                    baseModel = new Backbone.Model ();
+                    baseModel = new squid_api.model.BaseModel();
                 }
 
                 // set project id
@@ -176,15 +195,8 @@
             var me = this;
             var jsonData = {"view" : "squid-api-admin-widgets-" + this.definition, "modal" : this.definition};
 
-            this.form = new Backbone.Form({
-                schema: me.schema
-            }).render();
-
             // Print Template
             this.$el.html(this.template(jsonData));
-
-            // Print Form
-            this.$el.find("." + jsonData.view + " ." + jsonData.modal).append(this.form.el);
         }
     });
 
