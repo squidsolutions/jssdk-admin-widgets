@@ -1,0 +1,15 @@
+.squid-api-admin-widgets-project-create button.create-project { 
+    position: relative;
+    vertical-align: top;
+    height: 40px;
+    width: 100%;
+    font-size: 14px;
+    color: #777;
+    text-align: center;
+    background: #ecf0f1;
+    border: 0;
+    border-bottom: 2px solid #bdc3c7;
+    cursor: pointer;
+    -webkit-box-shadow: inset 0 -2px #bdc3c7;
+    box-shadow: inset 0 -2px #bdc3c7;
+}
