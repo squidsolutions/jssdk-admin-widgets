@@ -30,78 +30,127 @@
         },
 
         manipulateData : function(data) {
-            // remove empty strings
+            // manipuldate data before save
             for (var x in data) {
-                if (data[x].length === 0) {
-                    data[x] = undefined;
+                if (data[x]) {
+                    if (data[x].length === 0) {
+                        data[x] = undefined;
+                    }
                 }
             }
-            // store id
-            var id = data.id;
-            // create id obj
-            data.id = {};
-            // store id in correct format
-            data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
+
+            if (this.model.get("id")) {
+                data.id = {};
+                data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
+            } else {
+                var id = data.id;
+                data.id = {};
+                data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
+            }
 
             return data;
         },
 
+        getDbSchemas : function(collection) {
+            var me = this;
+
+            // 1. obtain schemas, set schemas for form & hide id field
+            var request = $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/projects/" + collection.id + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                dataType: 'json',
+                success:function(collection) {
+                    squid_api.model.status.set('message', 'please set a db schema');
+                    me.schema.dbSchemas.options = collection.definitions;
+                    me.renderForm();
+                },
+                error: function() {
+                    squid_api.model.status.set('message', 'error fetching project database schemas');
+                }
+            });
+        },
+
+        saveForm : function(formContent) {
+            var me = this;
+
+            /*
+                1. validate form (if errors, display them & keep modal open)
+                2. save data
+            */
+
+            var validForm = formContent.validate();
+            if (validForm) {
+                me.formModal.preventClose();
+            } else {
+                var data = me.manipulateData(formContent.getValue());
+                me.model.save(data, {
+                    success: function (collection, response) {
+                        var msg = response.objectType + " successfully saved with name " + response.name;
+                        squid_api.model.status.set('message', msg);
+                        // project exception 
+                        if (me.model.definition == "Project") {
+                            me.schema.id.type = "Hidden";
+                            if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
+                                me.getDbSchemas(collection);
+                            }
+                        } else {
+                            if (me.successHandler) {
+                                me.successHandler.call(collection);
+                            } 
+                        }
+                    },
+                    error: function (collection, response) {
+                        var msg = response.objectType + " error saving with name " + response.name;
+                        squid_api.model.status.set('message', msg);
+
+                        if (me.errorHandler) {
+                            me.errorHandler.call(collection);
+                        }
+                    }
+                });
+            }
+        },
+
+        renderForm : function() {
+            var me = this;
+
+            // instantiate a new backbone form with an empty model & predefined schema
+            var formContent = new Backbone.Form({
+                schema: me.schema,
+                model: me.model
+            }).render();
+
+            // render form content
+            var formView = Backbone.View.extend({
+                render: function() {
+                    this.$el.html(formContent.el);
+                    return this;
+                }
+            });
+
+            // automatically open a new bootstrap modal
+            this.formModal = new Backbone.BootstrapModal({ 
+                content: new formView(),
+                animate: true,
+            }).open();
+
+            // modal wrapper class
+            $(this.formModal.el).addClass(this.modalElementClassName);
+
+            // modal definition class
+            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
+
+            // ok button click on form
+            this.formModal.on('ok', function() {
+                me.saveForm(formContent);
+            });
+        },
+
         events: {
             "click button" : function() {
-                var me = this;
-
-                var formContent = new Backbone.Form({
-                    schema: me.schema
-                }).render();
-
-                var formView = Backbone.View.extend({
-                    render: function() {
-                        this.$el.html(formContent.el);
-                        return this;
-                    }
-                });
-
-                var formModal = new Backbone.BootstrapModal({ 
-                    content: new formView(),
-                    animate: true,
-                }).open();
-
-                // modal wrapper class
-                $(formModal.el).addClass(this.modalElementClassName);
-
-                // modal definition class
-                $(formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-                // form events
-                formModal.on('ok', function() {
-                    var validForm = formContent.validate();
-                    if (validForm) {
-                        formModal.preventClose();
-                    } else {
-                        var data = me.manipulateData(formContent.getValue());
-                        me.model.save(data, {
-                            type: 'POST',
-                            success: function (collection, response, options) {
-                                var msg = response.objectType + " successfully saved with name " + response.name;
-                                squid_api.model.status.set('message', msg);
-                                me.model.set('data', collection);
-
-                                if (me.successHandler) {
-                                    me.successHandler.call(collection);
-                                } 
-                            },
-                            error: function (collection, response, options) {
-                                var msg = response.objectType + " error saving with name " + response.name;
-                                squid_api.model.status.set('message', msg);
-
-                                if (me.errorHandler) {
-                                    me.errorHandler.call(collection);
-                                }
-                            }
-                        });
-                    }
-                });
-            },
+                // visually render form
+                this.renderForm();
+            }
         },
 
         getPropertyType: function(type) {
@@ -111,13 +160,13 @@
                 case "int32":
                     return "Number";
                 case "array":
-                    return "List";
+                    return "Checkboxes";
                 default:
                     return "Text";
             }
         },
 
-        setSchema: function(def) {
+        setSchema: function(property) {
             var me = this;
             
             squid_api.getSchema().done(function(data) {
@@ -165,6 +214,7 @@
                                     nestedModel[subProperty].type = me.getPropertyType(subProp[subProperty].type);
                                 }
                                 nestedModel[subProperty].editorClass = "form-control";
+                                nestedModel[subProperty].disabled = true;
                             }
                             
                             schema[property].type = "List";
@@ -173,6 +223,12 @@
                         } else {
                             type = me.getPropertyType(properties[property].type);
                             schema[property].type = type;
+                        }
+
+                        // if select
+                        if (schema[property].type == "Checkboxes") {
+                            schema[property].options = [];
+                        } else {
                             schema[property].editorClass = "form-control";
                         }
                     }
