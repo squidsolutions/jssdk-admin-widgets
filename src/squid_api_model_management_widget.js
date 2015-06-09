@@ -144,7 +144,8 @@
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({ 
                 content: new this.formView(),
-                animate: true
+                animate: true,
+                title: me.model.definition
             }).open();
 
             // modal wrapper class

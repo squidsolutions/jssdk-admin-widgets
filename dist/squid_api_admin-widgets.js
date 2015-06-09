@@ -96,8 +96,6 @@ function program1(depth0,data) {
                 this.buttonLabel = options.buttonLabel;
             }
 
-            this.model.on("change", this.setSchema, this);
-
             // Set Form Schema
             this.setSchema();
         },
@@ -213,7 +211,8 @@ function program1(depth0,data) {
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({ 
                 content: new this.formView(),
-                animate: true
+                animate: true,
+                title: me.model.definition
             }).open();
 
             // modal wrapper class

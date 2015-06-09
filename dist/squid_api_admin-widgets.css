@@ -2,6 +2,53 @@
     border: 2px solid #e74c3c;
 }
 
+.squid-api-admin-widgets-modal-form form ul {
+	padding-left: 10px;
+	display: inline-block;
+}
+
+.squid-api-admin-widgets-modal-form form ul li {
+	float: left;
+	list-style-type: none;
+	min-width: 200px;
+	display: block;
+}
+
+.squid-api-admin-widgets-modal-form form ul li label {
+	padding-left: 10px;
+}
+
+.squid-api-admin-widgets-modal-form .modal-header {
+	background-color: #f8f8f8;
+}
+
+.squid-api-admin-widgets-modal-form .modal-footer a.ok {
+	position: relative;
+	vertical-align: top;
+	color: #777;
+	text-align: center;
+	background: #ecf0f1;
+	border: 0;
+	border-bottom: 2px solid #bdc3c7;
+	cursor: pointer;
+	-webkit-box-shadow: inset 0 -2px #bdc3c7;
+	box-shadow: inset 0 -2px #bdc3c7;
+}
+
+.squid-api-admin-widgets-modal-form .modal-footer a.cancel {
+	border: 1px solid #e5e5e5;
+  	color: #777;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body {
+	padding-top: 0px;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body label {
+	font-weight: normal;
+  	margin-top: 10px;
+}
+
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;
