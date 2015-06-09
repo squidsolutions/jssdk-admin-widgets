@@ -4,18 +4,38 @@ this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n			";
+  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n		";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n			";
+  if (helper = helpers.definition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.definition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n		";
+  return buffer;
+  }
 
   buffer += "<div class=\"";
   if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n	<button type=\"button\" class=\"btn btn-default\">";
-  if (helper = helpers.definition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.definition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</button>\n	</button>\n</div>";
+    + "\">\n	<button type=\"button\" class=\"btn btn-default\">\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	</button>\n</div>";
   return buffer;
   });
 
@@ -55,6 +75,7 @@ function program1(depth0,data) {
         successHandler: null,
         errorHandler: null,
         modalElementClassName : "squid-api-admin-widgets-modal-form",
+        buttonLabel : null,
 
         initialize: function(options) {
             var me = this;
@@ -71,21 +92,19 @@ function program1(depth0,data) {
             if (options.errorHandler) {
                 this.errorHandler = options.errorHandler;
             }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
+            }
 
             // Set Form Schema
             this.setSchema();
         },
 
         manipulateData : function(data) {
+            var me = this;
+            var project = squid_api.model.project.get("id");
+            
             // manipuldate data before save
-            for (var x in data) {
-                if (data[x]) {
-                    if (data[x].length === 0) {
-                        data[x] = undefined;
-                    }
-                }
-            }
-
             if (this.model.get("id")) {
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
@@ -93,6 +112,13 @@ function program1(depth0,data) {
                 var id = data.id;
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
+            }
+
+            // add project id
+            if (project) {
+                if (project.projectId && me.model.definition !== "Project") {
+                    data.id.projectId = project.projectId;
+                }
             }
 
             return data;
@@ -300,7 +326,7 @@ function program1(depth0,data) {
 
         render: function(currentView) {
             var me = this;
-            var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition};
+            var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition, "buttonLabel" : me.buttonLabel};
 
             // Print Template
             this.$el.html(this.template(jsonData));

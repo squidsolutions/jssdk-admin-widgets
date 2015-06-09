@@ -1,4 +1,9 @@
 <div class="{{view}}">
-	<button type="button" class="btn btn-default">{{definition}}</button>
+	<button type="button" class="btn btn-default">
+		{{#if buttonLabel}}
+			{{buttonLabel}}
+		{{else}}
+			{{definition}}
+		{{/if}}
 	</button>
 </div>

@@ -8,6 +8,7 @@
         successHandler: null,
         errorHandler: null,
         modalElementClassName : "squid-api-admin-widgets-modal-form",
+        buttonLabel : null,
 
         initialize: function(options) {
             var me = this;
@@ -24,21 +25,19 @@
             if (options.errorHandler) {
                 this.errorHandler = options.errorHandler;
             }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
+            }
 
             // Set Form Schema
             this.setSchema();
         },
 
         manipulateData : function(data) {
+            var me = this;
+            var project = squid_api.model.project.get("id");
+            
             // manipuldate data before save
-            for (var x in data) {
-                if (data[x]) {
-                    if (data[x].length === 0) {
-                        data[x] = undefined;
-                    }
-                }
-            }
-
             if (this.model.get("id")) {
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
@@ -46,6 +45,13 @@
                 var id = data.id;
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
+            }
+
+            // add project id
+            if (project) {
+                if (project.projectId && me.model.definition !== "Project") {
+                    data.id.projectId = project.projectId;
+                }
             }
 
             return data;
@@ -253,7 +259,7 @@
 
         render: function(currentView) {
             var me = this;
-            var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition};
+            var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition, "buttonLabel" : me.buttonLabel};
 
             // Print Template
             this.$el.html(this.template(jsonData));
