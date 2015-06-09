@@ -96,6 +96,8 @@ function program1(depth0,data) {
                 this.buttonLabel = options.buttonLabel;
             }
 
+            this.model.on("change", this.setSchema, this);
+
             // Set Form Schema
             this.setSchema();
         },
@@ -103,7 +105,7 @@ function program1(depth0,data) {
         manipulateData : function(data) {
             var me = this;
             var project = squid_api.model.project.get("id");
-            
+
             // manipuldate data before save
             if (this.model.get("id")) {
                 data.id = {};
@@ -135,10 +137,12 @@ function program1(depth0,data) {
                 success:function(collection) {
                     squid_api.model.status.set('message', 'please set a db schema');
                     me.schema.dbSchemas.options = collection.definitions;
-                    me.renderForm();
+                    me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                 },
                 error: function() {
-                    squid_api.model.status.set('message', 'error fetching project database schemas');
+                    setTimeout(function() {
+                        squid_api.model.status.set({'message' : 'error fetching project database schemas'});
+                    }, 500);
                 }
             });
         },
@@ -151,20 +155,24 @@ function program1(depth0,data) {
                 2. save data
             */
 
-            var validForm = formContent.validate();
+            var validForm = this.formContent.validate();
             if (validForm) {
                 me.formModal.preventClose();
             } else {
-                var data = me.manipulateData(formContent.getValue());
+                var data = me.manipulateData(this.formContent.getValue());
+                if (this.model.definition == "Project" && this.schema.dbSchemas.options.length === 0) {
+                    me.formModal.preventClose();
+                }
                 me.model.save(data, {
                     success: function (collection, response) {
-                        var msg = response.objectType + " successfully saved with name " + response.name;
-                        squid_api.model.status.set('message', msg);
                         // project exception 
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
                             if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
                                 me.getDbSchemas(collection);
+                            } else {
+                                var msg = response.objectType + " successfully saved with name " + response.name;
+                                squid_api.model.status.set('message', msg);
                             }
                         } else {
                             if (me.successHandler) {
@@ -185,26 +193,27 @@ function program1(depth0,data) {
         },
 
         renderForm : function() {
+            // called when we want to set the model / schema & render the form via a modal
             var me = this;
-
-            // instantiate a new backbone form with an empty model & predefined schema
-            var formContent = new Backbone.Form({
+            
+            // set base schema & modal into form
+            this.formContent = new Backbone.Form({
                 schema: me.schema,
                 model: me.model
             }).render();
 
-            // render form content
-            var formView = Backbone.View.extend({
+            // render the form into a backbone view
+            this.formView = Backbone.View.extend({
                 render: function() {
-                    this.$el.html(formContent.el);
+                    this.$el.html(me.formContent.el);
                     return this;
                 }
             });
 
-            // automatically open a new bootstrap modal
+            // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({ 
-                content: new formView(),
-                animate: true,
+                content: new this.formView(),
+                animate: true
             }).open();
 
             // modal wrapper class
@@ -213,15 +222,14 @@ function program1(depth0,data) {
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
 
-            // ok button click on form
+            // saveForm on 'ok' click
             this.formModal.on('ok', function() {
-                me.saveForm(formContent);
+                me.saveForm();
             });
         },
 
         events: {
             "click button" : function() {
-                // visually render form
                 this.renderForm();
             }
         },
