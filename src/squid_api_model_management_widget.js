@@ -66,16 +66,20 @@
                 url: squid_api.apiURL + "/projects/" + collection.id + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
                 dataType: 'json',
                 success:function(collection) {
-                    squid_api.model.status.set('message', 'please set a db schema');
+                    me.setStatusMessage('please set a db schema');
                     me.schema.dbSchemas.options = collection.definitions;
                     me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                 },
                 error: function() {
-                    setTimeout(function() {
-                        squid_api.model.status.set({'message' : 'error fetching project database schemas'});
-                    }, 500);
+                    me.setStatusMessage('error fetching project database schemas');
                 }
             });
+        },
+
+        setStatusMessage: function(message) {
+            setTimeout(function() {
+                squid_api.model.status.set({'message' : message});
+            }, 500);
         },
 
         saveForm : function(formContent) {
@@ -103,7 +107,7 @@
                                 me.getDbSchemas(collection);
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
-                                squid_api.model.status.set('message', msg);
+                                me.setStatusMessage(msg);
                             }
                         } else {
                             if (me.successHandler) {
@@ -113,7 +117,7 @@
                     },
                     error: function (collection, response) {
                         var msg = response.objectType + " error saving with name " + response.name;
-                        squid_api.model.status.set('message', msg);
+                        me.setStatusMessage(msg);
 
                         if (me.errorHandler) {
                             me.errorHandler.call(collection);
