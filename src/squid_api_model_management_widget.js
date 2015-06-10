@@ -31,6 +31,10 @@
 
             // Set Form Schema
             this.setSchema();
+
+            if (this.model) {
+                this.listenTo(this.model, 'change', this.setSchema);
+            }
         },
 
         manipulateData : function(data) {
@@ -183,6 +187,13 @@
             }
         },
 
+        remove: function() {
+            this.undelegateEvents();
+            this.$el.empty();
+            this.stopListening();
+            return this;
+        },
+
         setSchema: function(property) {
             var me = this;
             
@@ -244,7 +255,11 @@
 
                         // if select
                         if (schema[property].type == "Checkboxes") {
-                            schema[property].options = [];
+                            if (me.model.get(property)) {
+                                schema[property].options = me.model.get(property);
+                            } else {
+                                schema[property].options = [];
+                            }
                         } else {
                             schema[property].editorClass = "form-control";
                         }
@@ -262,6 +277,11 @@
 
                 // set schema
                 me.schema = schema;
+
+                // if schema already set, hide id
+                if (me.model.get("id")) {
+                    me.schema.id.type = "Hidden";
+                }
 
                 // Render View
                 me.render();
