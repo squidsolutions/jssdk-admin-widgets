@@ -68,7 +68,7 @@
             // 1. obtain schemas, set schemas for form & hide id field
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "Id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
                 dataType: 'json',
                 success:function(collection) {
                     if (me.model.get("dbSchemas").length === 0) {
