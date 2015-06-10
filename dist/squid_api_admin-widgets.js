@@ -19,13 +19,8 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n			";
-  if (helper = helpers.definition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.definition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n		";
-  return buffer;
+  
+  return "\n			<i class=\"fa fa-pencil-square-o\"></i>\n		";
   }
 
   buffer += "<div class=\"";
@@ -128,16 +123,19 @@ function program1(depth0,data) {
             return data;
         },
 
-        getDbSchemas : function(collection) {
+        getDbSchemas : function() {
             var me = this;
+            var model = me.model;
 
             // 1. obtain schemas, set schemas for form & hide id field
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + collection.id + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
                 dataType: 'json',
                 success:function(collection) {
-                    me.setStatusMessage('please set a db schema');
+                    if (me.model.get("dbSchemas").length === 0) {
+                        me.setStatusMessage('please set a db schema');
+                    }
                     me.schema.dbSchemas.options = collection.definitions;
                     me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                 },
@@ -166,7 +164,7 @@ function program1(depth0,data) {
                 me.formModal.preventClose();
             } else {
                 var data = me.manipulateData(this.formContent.getValue());
-                if (this.model.definition == "Project" && this.schema.dbSchemas.options.length === 0) {
+                if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
                     me.formModal.preventClose();
                 }
                 me.model.save(data, {
@@ -175,7 +173,7 @@ function program1(depth0,data) {
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
                             if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                                me.getDbSchemas(collection);
+                                me.getDbSchemas();
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -237,6 +235,14 @@ function program1(depth0,data) {
 
         events: {
             "click button" : function() {
+                // obtain schema values if project
+                if (this.model.definition == "Project") {
+                    if (this.model.get("dbSchemas")) {
+                        if (this.model.get("dbSchemas").length > 0) {
+                            this.getDbSchemas();
+                        }
+                    }
+                }
                 this.renderForm();
             }
         },
@@ -357,6 +363,7 @@ function program1(depth0,data) {
 
         render: function(currentView) {
             var me = this;
+
             var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition, "buttonLabel" : me.buttonLabel};
 
             // Print Template

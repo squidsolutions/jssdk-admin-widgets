@@ -61,16 +61,19 @@
             return data;
         },
 
-        getDbSchemas : function(collection) {
+        getDbSchemas : function() {
             var me = this;
+            var model = me.model;
 
             // 1. obtain schemas, set schemas for form & hide id field
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + collection.id + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
                 dataType: 'json',
                 success:function(collection) {
-                    me.setStatusMessage('please set a db schema');
+                    if (me.model.get("dbSchemas").length === 0) {
+                        me.setStatusMessage('please set a db schema');
+                    }
                     me.schema.dbSchemas.options = collection.definitions;
                     me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                 },
@@ -99,7 +102,7 @@
                 me.formModal.preventClose();
             } else {
                 var data = me.manipulateData(this.formContent.getValue());
-                if (this.model.definition == "Project" && this.schema.dbSchemas.options.length === 0) {
+                if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
                     me.formModal.preventClose();
                 }
                 me.model.save(data, {
@@ -108,7 +111,7 @@
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
                             if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                                me.getDbSchemas(collection);
+                                me.getDbSchemas();
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -170,6 +173,14 @@
 
         events: {
             "click button" : function() {
+                // obtain schema values if project
+                if (this.model.definition == "Project") {
+                    if (this.model.get("dbSchemas")) {
+                        if (this.model.get("dbSchemas").length > 0) {
+                            this.getDbSchemas();
+                        }
+                    }
+                }
                 this.renderForm();
             }
         },
@@ -290,6 +301,7 @@
 
         render: function(currentView) {
             var me = this;
+
             var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition, "buttonLabel" : me.buttonLabel};
 
             // Print Template
