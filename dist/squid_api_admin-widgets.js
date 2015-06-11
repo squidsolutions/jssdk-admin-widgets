@@ -178,6 +178,9 @@ function program1(depth0,data) {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
                             }
+                            if (me.successHandler) {
+                                me.successHandler.call(collection);
+                            }
                         } else {
                             if (me.successHandler) {
                                 me.successHandler.call(collection);
@@ -271,27 +274,22 @@ function program1(depth0,data) {
             var me = this;
             
             squid_api.getSchema().done(function(data) {
-                var schema = {};
-                var modelData = {};
+                
+                // base variables
                 var definition = data.definitions[me.model.definition];
                 var properties = definition.properties;
+                schema = modelData = {};
 
-                // replace properties with non ignored properties
+                // delete ignored properties from schema
                 if (me.model.ignoredAttributes) {
-                    var ignoredAttributes = me.model.ignoredAttributes;
-                    var updatedProperties = {};
+                    var obj = {};
                     for (var ix in properties) {
-                        var count = 0;
-                        for (i=0; i<ignoredAttributes.length; i++) {
-                            if (ignoredAttributes[i] == ix) {
-                                count++;
+                        for (i=0; i<me.model.ignoredAttributes.length; i++) {
+                            if (me.model.ignoredAttributes[i] == ix) {
+                                delete properties[ix];
                             }
                         }
-                        if (count === 0) {
-                            updatedProperties[ix] = properties[ix];
-                        }
                     }
-                    properties = updatedProperties;
                 }
 
                 // create schema
@@ -299,7 +297,7 @@ function program1(depth0,data) {
                     if (properties[property].readOnly !== true) {
                         schema[property] = {};
                         if (properties[property].items && properties[property].items.$ref) {
-                            var nestedModel = {};
+                            var nm = {};
                             // obtain reference values
                             var refValue = properties[property].items.$ref;
                             var ref = properties[property].items.$ref.substr(refValue.lastIndexOf("/") + 1);
@@ -307,21 +305,22 @@ function program1(depth0,data) {
 
                             // apply sub-properties (if exist)
                             for (var subProperty in subProp) {
-                                nestedModel[subProperty] = {};
+                                nm[subProperty] = {};
                                 if (subProp[subProperty].enum) {
-                                    nestedModel[subProperty].type = "Text";
-                                    nestedModel[subProperty].options = subProp[subProperty].enum;
+                                    nm[subProperty].type = "Text";
+                                    nm[subProperty].options = subProp[subProperty].enum;
                                 } else {
-                                    nestedModel[subProperty].type = me.getPropertyType(subProp[subProperty].type);
+                                    nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
                                 }
-                                nestedModel[subProperty].editorClass = "form-control";
-                                nestedModel[subProperty].disabled = true;
+                                nm[subProperty].editorClass = "form-control";
+                                nm[subProperty].disabled = true;
                             }
                             
                             schema[property].type = "List";
                             schema[property].itemType = "Object";
-                            schema[property].subSchema = nestedModel;
+                            schema[property].subSchema = nm;
                         } else {
+                            // domain exception
                             type = me.getPropertyType(properties[property].type);
                             schema[property].type = type;
                         }
@@ -341,7 +340,7 @@ function program1(depth0,data) {
 
                 // validation
                 var required;
-                if (data.definitions[me.model.definition].required) {
+                if (data.definitions[me.model.definition]) {
                     required = data.definitions[me.model.definition].required;
                 }
                 for (i=0; i<required.length; i++) {
@@ -364,9 +363,13 @@ function program1(depth0,data) {
         render: function(currentView) {
             var me = this;
 
-            var jsonData = {"view" : "squid-api-admin-widgets-" + me.model.definition, "definition" : me.model.definition, "buttonLabel" : me.buttonLabel};
+            var jsonData = {
+                "view" : "squid-api-admin-widgets-" + me.model.definition, 
+                "definition" : me.model.definition, 
+                "buttonLabel" : me.buttonLabel
+            };
 
-            // Print Template
+            // Print Button to trigger management widget
             this.$el.html(this.template(jsonData));
         }
     });
