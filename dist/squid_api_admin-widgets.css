@@ -49,11 +49,11 @@
 }
 
 .squid-api-model-widget-popup .new-model button {
-	position: relative;
-  	left: 17px;
-  	background: none;
-  	border: 0px;
-  	top: 10px;
+	position: absolute;
+	background: none;
+	right: 0px;
+	border: 0px;
+	top: 4px;
 }
 
 .squid-api-model-widget-popup .ui-widget-header {
@@ -63,23 +63,16 @@
 }
 
 .squid-api-model-widget-popup .ui-widget-header button {
-	border: 0px;
-	font-size: 17px;
-	top: 13px;
-	z-index: 1;
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
-	position: relative;
+	display: none;
 }
 
 .squid-api-model-widget-popup .management-type {
 	text-align: center;
-	background-color: #f3f3f3;
-	border: 0px solid;
+	border-bottom: 1px solid #e0e0e0;
 	left: -16px;
 	min-width: 299px;
 	padding: 10px;
-	top: 8px;
+	top: 0px;
 	position: relative;
 }
 
