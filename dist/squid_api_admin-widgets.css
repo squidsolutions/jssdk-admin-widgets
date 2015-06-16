@@ -1,3 +1,105 @@
+.squid-api-model-widget-popup {
+	margin-top: 35px;
+	display: inline-block;
+	background: #fff;
+	border: 1px solid #e7e7e7;
+  	border-radius: 8px;
+  	z-index: 2;
+}
+
+.squid-api-model-widget-popup table {
+	color: #666;
+	background: #eaebec;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.squid-api-model-widget-popup table td {
+	border-top: 1px solid #ffffff;
+  	padding: 2px 3px;
+  	font-size: 12px;
+  	text-align: center;
+}
+
+.squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.edit {
+	border-left: 1px solid #e0e0e0;
+}
+
+.squid-api-model-widget-popup table tr {
+	background: #fff;
+	height: 35px;
+}
+
+.squid-api-model-widget-popup table tr td {
+	cursor: pointer;
+}
+
+.squid-api-model-widget-popup table tr td:hover {
+	background: #f3f3f3;
+}
+
+.squid-api-model-widget-popup table tr td.selected {
+	background-color: #4d4d4d;
+	color: #fff;
+}
+
+.squid-api-model-widget-popup .new-model {
+	margin-bottom: 20px;
+}
+
+.squid-api-model-widget-popup .new-model button {
+	position: relative;
+  	left: 17px;
+  	background: none;
+  	border: 0px;
+  	top: 10px;
+}
+
+.squid-api-model-widget-popup .ui-widget-header {
+	position: absolute;
+	right: 0px;
+	background: none;
+}
+
+.squid-api-model-widget-popup .ui-widget-header button {
+	border: 0px;
+	font-size: 17px;
+	top: 13px;
+	z-index: 1;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	position: relative;
+}
+
+.squid-api-model-widget-popup .management-type {
+	text-align: center;
+	background-color: #f3f3f3;
+	border: 0px solid;
+	left: -16px;
+	min-width: 299px;
+	padding: 10px;
+	top: 8px;
+	position: relative;
+}
+
+.squid-api-model-widget-popup .no-data {
+	float: left;
+  	margin: 20px;
+}
+
+.squid-api-model-widget-popup:before {
+	position: absolute;
+	top: -6px;
+	left: 9px;
+	z-index: 2;
+	display: inline-block;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #ccc;
+	border-left: 7px solid transparent;
+	border-bottom-color: #fff;
+	content: '';
+}
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
 }

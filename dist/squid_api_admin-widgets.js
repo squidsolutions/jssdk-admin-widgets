@@ -1,6 +1,72 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
+this["squid_api"]["template"]["squid_api_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            <table style=\"width:100%\">\n            ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </table>\n\n        ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                <tr data-attr=\"";
+  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                    <td class=\"select";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n                    <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                    <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                </tr>\n            ";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  
+  return " selected";
+  }
+
+function program5(depth0,data) {
+  
+  
+  return "\n            <div class=\"no-data\">No Model Items Available</div>\n        ";
+  }
+
+  buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n    <button class=\"form-control selected-model squid-api-action\">\n    	Select ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n    </div>\n    <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-model-widget-popup\">\n        <div class=\"col-md-8\">\n            <div class=\"management-type\">";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "'s</div>\n        </div>\n        <div class=\"new-model col-md-4\">\n            \n        </div>\n        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </div>\n</div>\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -12,8 +78,8 @@ function program1(depth0,data) {
   buffer += "\n			";
   if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n		";
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		";
   return buffer;
   }
 
@@ -61,6 +127,213 @@ function program1(depth0,data) {
   return buffer;
   });
 (function (root, factory) {
+    root.squid_api.view.CollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        template : null,
+        collection : null,
+        config : null,
+        type : null,
+
+        initialize: function(options) {
+            var me = this;
+
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            if (options.changeEventHandler) {
+                this.changeEventHandler = options.changeEventHandler;
+            }
+            if (options.type) {
+                this.type = options.type;
+            }
+            if (options.config) {
+                this.config = options.config;
+            } else {
+                this.config = squid_api.model.config;
+            }
+
+            // set base then update
+            this.collection = new squid_api.model.BaseCollection();
+            this.updateCollection();
+
+            this.config.on("change", this.render, this);
+            this.collection.on("reset change remove sync", this.render, this);
+
+            if (options.parent) {
+                this.listenTo(options.parent, "change:id", function(parent){
+                    me.collection.fetch();
+                    me.collection.parentId = parent.get("id");
+                });
+            } else {
+                squid_api.model.login.on('change:login', function(model) {
+                    me.collection.fetch();
+                });
+            }
+
+            if (!this.model) {
+                this.model =  new squid_api.model[this.type + "Model"](); 
+            }
+        },
+
+        events: {
+            "click button": function() {
+                $(".squid-api-" + this.type + "-model-widget-popup").dialog("open");
+            }
+        },
+
+        updateCollection: function() {
+            var me = this;
+
+            // match a base collection and overwrite base
+            var collection = null;
+            for (var collectionItem in squid_api.model) {
+                var str = collectionItem;
+                var res = str.match(this.type + "Collection");
+                if (res) {
+                    this.collection = new squid_api.model[res]();
+                }
+            }
+        },
+
+        actionEvents: function() {
+            var me = this;
+
+            // select
+            $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
+                var value = $(this).parent('tr').attr('data-attr');
+
+                if (me.changeEventHandler) {
+                    $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
+                    me.changeEventHandler.call(this, value);
+                } else {
+                    console.log('no change handler defined');
+                }
+                
+                // set the selected model
+                var models = me.collection.models;
+                var model;
+                for (i=0; i<models.length; i++) {
+                    if (models[i].get("oid") == value) {
+                        model = models[i];
+                        break;
+                    }
+                }
+                me.model.set(model);
+            });
+            
+            // create base model for create
+            var baseModel = new squid_api.model[ this.type + "Model"]();
+            
+            // create
+            new api.view.ModelManagementView({
+                el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
+                model : baseModel,
+                buttonLabel : "<i class='fa fa-pencil'></i>",
+                successHandler : function() {
+                    me.collection.create(this);
+                }
+            });
+
+            // edit
+            $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
+                var id = this.parentElement.dataset.attr;
+                var model = me.collection.get(id);
+                new api.view.ModelManagementView({
+                    el : $(this),
+                    model : model,
+                    autoOpen : true,
+                    buttonLabel : "edit",
+                    successHandler : function() {
+                        me.collection.create(this);
+                    }
+                });
+            });
+
+            // delete
+            $(".squid-api-" + this.type + "-model-widget-popup .delete").on("click", function() {
+                var id = this.parentElement.dataset.attr;
+                var model = me.collection.get(id);
+
+                if (confirm("are you sure you want to delete this " + this.type + "?")) {
+                    if (true) {
+                        model.destroy();
+                    }
+                }
+            });
+        },
+
+        render: function() {
+            var me = this;
+
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type};
+            var models = this.collection.models;
+
+            // populate view data
+            for (i=0; i<models.length; i++) {
+                jsonData.selAvailable = true;
+                var selected = false;
+
+                // obtain name from model
+                if (models[i].get("id")) {
+                    if (models[i].get("id")[this.type.toLowerCase() + "Id"]) {
+                        if (this.config.get(this.type.toLowerCase()) === models[i].get("id")[this.type.toLowerCase() + "Id"]) {
+                            jsonData.selectedName = models[i].get("name");
+                            selected = true;
+                        }
+                    }
+                }
+                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected};
+                jsonData.options.push(option);
+            }
+
+            // remove old dialog's
+            $(".squid-api-" + this.type + "-model-widget-popup").remove();
+
+            // print template
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            // set button value
+            this.$el.find("button.selected-model").text(jsonData.selectedName);
+
+            // set dialog
+            this.$el.find(".squid-api-" + this.type + "-model-widget-popup").dialog({
+                dialogClass: "squid-api-model-widget-popup",
+                clickOutside: true, // clicking outside the dialog will close it
+                clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
+                autoOpen: false,
+                closeText: "x",
+                show: {
+                    effect: "fade",
+                    duration: 350
+                },
+                hide: {
+                    effect: "fade",
+                    duration: 350
+                },
+                position: { 
+                    my: "left top", at: "left bottom", of: this.$el.find("button")
+                }
+            });
+
+            // select, edit, delete events
+            this.actionEvents();
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.ModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_model_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -71,6 +344,7 @@ function program1(depth0,data) {
         errorHandler: null,
         modalElementClassName : "squid-api-admin-widgets-modal-form",
         buttonLabel : null,
+        autoOpen: null,
 
         initialize: function(options) {
             var me = this;
@@ -90,12 +364,19 @@ function program1(depth0,data) {
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
             }
+            if (options.autoOpen) {
+                this.autoOpen = options.autoOpen;
+            }
 
             // Set Form Schema
             this.setSchema();
 
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
+            }
+
+            if (this.autoOpen) {
+                this.prepareForm();
             }
         },
 
@@ -236,17 +517,21 @@ function program1(depth0,data) {
             });
         },
 
-        events: {
-            "click button" : function() {
-                // obtain schema values if project
-                if (this.model.definition == "Project") {
-                    if (this.model.get("dbSchemas")) {
-                        if (this.model.get("dbSchemas").length > 0) {
-                            this.getDbSchemas();
-                        }
+        prepareForm: function() {
+            // obtain schema values if project
+            if (this.model.definition == "Project") {
+                if (this.model.get("dbSchemas")) {
+                    if (this.model.get("dbSchemas").length > 0) {
+                        this.getDbSchemas();
                     }
                 }
-                this.renderForm();
+            }
+            this.renderForm();
+        },
+
+        events: {
+            "click button" : function() {
+                this.prepareForm();
             }
         },
 
@@ -320,7 +605,6 @@ function program1(depth0,data) {
                             schema[property].itemType = "Object";
                             schema[property].subSchema = nm;
                         } else {
-                            // domain exception
                             type = me.getPropertyType(properties[property].type);
                             schema[property].type = type;
                         }
@@ -370,7 +654,9 @@ function program1(depth0,data) {
             };
 
             // Print Button to trigger management widget
-            this.$el.html(this.template(jsonData));
+            if (! this.autoOpen) {
+                this.$el.html(this.template(jsonData));
+            }
         }
     });
 

@@ -9,6 +9,7 @@
         errorHandler: null,
         modalElementClassName : "squid-api-admin-widgets-modal-form",
         buttonLabel : null,
+        autoOpen: null,
 
         initialize: function(options) {
             var me = this;
@@ -28,12 +29,19 @@
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
             }
+            if (options.autoOpen) {
+                this.autoOpen = options.autoOpen;
+            }
 
             // Set Form Schema
             this.setSchema();
 
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
+            }
+
+            if (this.autoOpen) {
+                this.prepareForm();
             }
         },
 
@@ -174,17 +182,21 @@
             });
         },
 
-        events: {
-            "click button" : function() {
-                // obtain schema values if project
-                if (this.model.definition == "Project") {
-                    if (this.model.get("dbSchemas")) {
-                        if (this.model.get("dbSchemas").length > 0) {
-                            this.getDbSchemas();
-                        }
+        prepareForm: function() {
+            // obtain schema values if project
+            if (this.model.definition == "Project") {
+                if (this.model.get("dbSchemas")) {
+                    if (this.model.get("dbSchemas").length > 0) {
+                        this.getDbSchemas();
                     }
                 }
-                this.renderForm();
+            }
+            this.renderForm();
+        },
+
+        events: {
+            "click button" : function() {
+                this.prepareForm();
             }
         },
 
@@ -307,7 +319,9 @@
             };
 
             // Print Button to trigger management widget
-            this.$el.html(this.template(jsonData));
+            if (! this.autoOpen) {
+                this.$el.html(this.template(jsonData));
+            }
         }
     });
 
