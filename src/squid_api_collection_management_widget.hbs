@@ -1,27 +1,32 @@
 <div class="squid-api-model-widget squid-api-model-widget-{{type}}">
     <button class="form-control selected-model squid-api-action">
-    	Select {{type}}
-    </div>
+        Select {{type}}
+    </button>
     <div class="squid-api-{{type}}-model-widget-popup">
+        {{#if collectionAvailable}}
         <div class="col-md-8">
             <div class="management-type">{{type}}'s</div>
         </div>
         <div class="new-model col-md-4">
             
         </div>
-        {{#if selAvailable}}
-            <table style="width:100%">
-            {{#each options}}
-                <tr data-attr="{{value}}">
-                    <td class="select{{#if selected}} selected{{/if}}">{{label}}</td>
-                    <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-                    <td class="delete"><i class="fa fa-ban"></i></td>
-                </tr>
-            {{/each}}
-        </table>
-
+            {{#if selAvailable}}
+                <table style="width:100%">
+                    {{#each options}}
+                        <tr data-attr="{{value}}">
+                            <td class="select{{#if selected}} selected{{/if}}">{{label}}</td>
+                            <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+                            <td class="delete"><i class="fa fa-ban"></i></td>
+                        </tr>
+                    {{/each}}
+                </table>
+            {{else}}
+                <div class="no-data">No Model Items Available</div>
+            {{/if}}
+        </div>
         {{else}}
-            <div class="no-data">No Model Items Available</div>
-        {{/if}}
-    </div>
+            <div class="parent-missing">
+                
+            </div>
+    {{/if}}
 </div>

@@ -8,62 +8,77 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n            <table style=\"width:100%\">\n            ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  var buffer = "", stack1, helper;
+  buffer += "\n        <div class=\"col-md-8\">\n            <div class=\"management-type\">";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "'s</div>\n        </div>\n        <div class=\"new-model col-md-4\">\n            \n        </div>\n            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(6, program6, data),fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </table>\n\n        ";
+  buffer += "\n        </div>\n        ";
   return buffer;
   }
 function program2(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n                <table style=\"width:100%\">\n                    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                </table>\n            ";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n                <tr data-attr=\"";
+  buffer += "\n                        <tr data-attr=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                    <td class=\"select";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+    + "\">\n                            <td class=\"select";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                    <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                    <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                </tr>\n            ";
+    + "</td>\n                            <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                            <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                        </tr>\n                    ";
   return buffer;
   }
-function program3(depth0,data) {
+function program4(depth0,data) {
   
   
   return " selected";
   }
 
-function program5(depth0,data) {
+function program6(depth0,data) {
   
   
-  return "\n            <div class=\"no-data\">No Model Items Available</div>\n        ";
+  return "\n                <div class=\"no-data\">No Model Items Available</div>\n            ";
+  }
+
+function program8(depth0,data) {
+  
+  
+  return "\n            <div class=\"parent-missing\">\n                \n            </div>\n    ";
   }
 
   buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n    <button class=\"form-control selected-model squid-api-action\">\n    	Select ";
+    + "\">\n    <button class=\"form-control selected-model squid-api-action\">\n        Select ";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </div>\n    <div class=\"squid-api-";
+    + "\n    </button>\n    <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup\">\n        <div class=\"col-md-8\">\n            <div class=\"management-type\">";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "'s</div>\n        </div>\n        <div class=\"new-model col-md-4\">\n            \n        </div>\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
+    + "-model-widget-popup\">\n        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(8, program8, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </div>\n</div>\n";
+  buffer += "\n</div>\n";
   return buffer;
   });
 
@@ -136,6 +151,7 @@ function program1(depth0,data) {
         collection : null,
         config : null,
         type : null,
+        collectionAvailable : false,
 
         initialize: function(options) {
             var me = this;
@@ -157,6 +173,12 @@ function program1(depth0,data) {
             } else {
                 this.config = squid_api.model.config;
             }
+            if (options.parent) {
+                this.parent = options.parent;
+            }
+            if (!this.model) {
+                this.model =  new squid_api.model[this.type + "Model"](); 
+            }
 
             // set base then update
             this.collection = new squid_api.model.BaseCollection();
@@ -165,21 +187,12 @@ function program1(depth0,data) {
             this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
-            if (options.parent) {
-                this.listenTo(options.parent, "change:id", function(parent){
-                    me.collection.parentId = {};
-                    me.collection.parentId[parent.definition.toLowerCase() + "Id"] = parent.get("id");
-                    me.collection.fetch();
-                });
-            } else {
-                squid_api.model.login.on('change:login', function(model) {
-                    me.collection.fetch();
-                });
-            }
-
-            if (!this.model) {
-                this.model =  new squid_api.model[this.type + "Model"](); 
-            }
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.parent, "change:id", function(parent) {
+                me.collectionAvailable = true;
+                me.collection.parentId = parent.get("id");
+                me.collection.fetch();
+            });
         },
 
         events: {
@@ -238,6 +251,8 @@ function program1(depth0,data) {
                 buttonLabel : "<i class='fa fa-pencil'></i>",
                 successHandler : function() {
                     me.collection.create(this);
+                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                    squid_api.model.status.set({'message' : message});
                 }
             });
 
@@ -251,7 +266,8 @@ function program1(depth0,data) {
                     autoOpen : true,
                     buttonLabel : "edit",
                     successHandler : function() {
-                        me.collection.create(this);
+                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.status.set({'message' : message});
                     }
                 });
             });
@@ -263,7 +279,12 @@ function program1(depth0,data) {
 
                 if (confirm("are you sure you want to delete this " + this.type + "?")) {
                     if (true) {
-                        model.destroy();
+                        model.destroy({
+                            success:function(collection) {
+                                var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
                     }
                 }
             });
@@ -272,7 +293,7 @@ function program1(depth0,data) {
         render: function() {
             var me = this;
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type};
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
 
             // populate view data
