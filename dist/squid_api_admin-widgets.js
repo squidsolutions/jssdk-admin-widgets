@@ -167,8 +167,9 @@ function program1(depth0,data) {
 
             if (options.parent) {
                 this.listenTo(options.parent, "change:id", function(parent){
+                    me.collection.parentId = {};
+                    me.collection.parentId[parent.definition.toLowerCase() + "Id"] = parent.get("id");
                     me.collection.fetch();
-                    me.collection.parentId = parent.get("id");
                 });
             } else {
                 squid_api.model.login.on('change:login', function(model) {
