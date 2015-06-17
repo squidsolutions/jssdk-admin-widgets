@@ -15,11 +15,25 @@
 	border-radius: 3px;
 }
 
+.squid-api-model-widget-popup table tbody {
+	height: 300px;
+	display: table-caption;
+	overflow-y: scroll;
+}
+
 .squid-api-model-widget-popup table td {
 	border-top: 1px solid #ffffff;
   	padding: 2px 3px;
   	font-size: 12px;
   	text-align: center;
+}
+
+.squid-api-model-widget-popup table td.select {
+	min-width: 230px;
+}
+
+.squid-api-model-widget-popup table td.edit {
+  	padding: 0px 8px;
 }
 
 .squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.edit {
