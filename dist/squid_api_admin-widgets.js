@@ -356,6 +356,38 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    root.squid_api.view.DomainManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        
+        initialize: function(options) {
+            this.render();
+        },
+
+        render: function() {
+            var domainSelect = new api.view.CollectionManagementWidget({
+                el : '#domain',
+                type : "Domain",
+                changeEventHandler : function(value){
+                    value = value || null;
+                    config.set({
+                        "domain" : value
+                    });
+                },
+                parent : squid_api.model.project
+            });
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.ModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_model_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -680,6 +712,40 @@ function program1(depth0,data) {
                 this.$el.html(this.template(jsonData));
             }
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ProjectManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        
+        initialize: function(options) {
+            this.render();
+        },
+
+        render: function() {
+            var projectSelect = new api.view.CollectionManagementWidget({
+                el : this.$el,
+                type : "Project",
+                changeEventHandler : function(value){
+                    value = value || null;
+                    config.set({
+                        "project" : value,
+                        "domain" : null
+                    });
+                },
+                model : squid_api.model.project,
+                parent : squid_api.model.login
+            });
+
+            return this;
+        }
+
     });
 
     return View;
