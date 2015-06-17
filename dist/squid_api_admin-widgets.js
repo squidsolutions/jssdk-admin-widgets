@@ -14,7 +14,7 @@ function program1(depth0,data) {
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "'s</div>\n        </div>\n        <div class=\"new-model col-md-4\">\n            \n        </div>\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(6, program6, data),fn:self.program(2, program2, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(10, program10, data),fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </div>\n        ";
   return buffer;
@@ -42,7 +42,13 @@ function program3(depth0,data) {
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                            <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                            <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                        </tr>\n                    ";
+    + "</td>\n                            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tr>\n                    ";
   return buffer;
   }
 function program4(depth0,data) {
@@ -54,10 +60,22 @@ function program4(depth0,data) {
 function program6(depth0,data) {
   
   
-  return "\n                <div class=\"no-data\">No Model Items Available</div>\n            ";
+  return "\n                                <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                            ";
   }
 
 function program8(depth0,data) {
+  
+  
+  return "\n                                <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                            ";
+  }
+
+function program10(depth0,data) {
+  
+  
+  return "\n                <div class=\"no-data\">No Model Items Available</div>\n            ";
+  }
+
+function program12(depth0,data) {
   
   
   return "\n            <div class=\"parent-missing\">\n                \n            </div>\n    ";
@@ -76,7 +94,7 @@ function program8(depth0,data) {
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "-model-widget-popup\">\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(8, program8, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(12, program12, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
   return buffer;
@@ -215,7 +233,7 @@ function program1(depth0,data) {
             }
         },
 
-        actionEvents: function() {
+        actionEvents: function(roles) {
             var me = this;
 
             // select
@@ -241,20 +259,22 @@ function program1(depth0,data) {
                 me.model.set(model);
             });
             
-            // create base model for create
-            var baseModel = new squid_api.model[ this.type + "Model"]();
-            
-            // create
-            new api.view.ModelManagementView({
-                el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
-                model : baseModel,
-                buttonLabel : "<i class='fa fa-pencil'></i>",
-                successHandler : function() {
-                    me.collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
-                }
-            });
+            if (roles.create) {
+                 // create base model for create
+                var baseModel = new squid_api.model[ this.type + "Model"]();
+                
+                // create
+                new api.view.ModelManagementView({
+                    el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
+                    model : baseModel,
+                    buttonLabel : "<i class='fa fa-pencil'></i>",
+                    successHandler : function() {
+                        me.collection.create(this);
+                        var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            }
 
             // edit
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
@@ -296,6 +316,15 @@ function program1(depth0,data) {
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
 
+
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false};
+            if (this.model.get("_role") == "WRITE" || this.model.get("_role") == "OWNER") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -310,7 +339,7 @@ function program1(depth0,data) {
                         }
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected};
+                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 jsonData.options.push(option);
             }
 
@@ -345,7 +374,7 @@ function program1(depth0,data) {
             });
 
             // select, edit, delete events
-            this.actionEvents();
+            this.actionEvents(roles);
 
             return this;
         }

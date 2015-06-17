@@ -72,7 +72,7 @@
             }
         },
 
-        actionEvents: function() {
+        actionEvents: function(roles) {
             var me = this;
 
             // select
@@ -98,20 +98,22 @@
                 me.model.set(model);
             });
             
-            // create base model for create
-            var baseModel = new squid_api.model[ this.type + "Model"]();
-            
-            // create
-            new api.view.ModelManagementView({
-                el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
-                model : baseModel,
-                buttonLabel : "<i class='fa fa-pencil'></i>",
-                successHandler : function() {
-                    me.collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
-                }
-            });
+            if (roles.create) {
+                 // create base model for create
+                var baseModel = new squid_api.model[ this.type + "Model"]();
+                
+                // create
+                new api.view.ModelManagementView({
+                    el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
+                    model : baseModel,
+                    buttonLabel : "<i class='fa fa-pencil'></i>",
+                    successHandler : function() {
+                        me.collection.create(this);
+                        var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            }
 
             // edit
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
@@ -153,6 +155,15 @@
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
 
+
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false};
+            if (this.model.get("_role") == "WRITE" || this.model.get("_role") == "OWNER") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -167,7 +178,7 @@
                         }
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected};
+                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 jsonData.options.push(option);
             }
 
@@ -202,7 +213,7 @@
             });
 
             // select, edit, delete events
-            this.actionEvents();
+            this.actionEvents(roles);
 
             return this;
         }

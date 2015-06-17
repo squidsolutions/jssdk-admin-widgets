@@ -15,8 +15,12 @@
                     {{#each options}}
                         <tr data-attr="{{value}}">
                             <td class="select{{#if selected}} selected{{/if}}">{{label}}</td>
-                            <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-                            <td class="delete"><i class="fa fa-ban"></i></td>
+                            {{#if edit}}
+                                <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+                            {{/if}}
+                            {{#if delete}}
+                                <td class="delete"><i class="fa fa-ban"></i></td>
+                            {{/if}}
                         </tr>
                     {{/each}}
                 </table>
