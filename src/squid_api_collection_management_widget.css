@@ -16,20 +16,20 @@
 }
 
 .squid-api-model-widget-popup table tbody {
-	height: 300px;
+	max-height: 300px;
 	display: table-caption;
+	background-color: #f3f3f3;
 	overflow-y: scroll;
 }
 
 .squid-api-model-widget-popup table td {
-	border-top: 1px solid #ffffff;
   	padding: 2px 3px;
   	font-size: 12px;
   	text-align: center;
 }
 
 .squid-api-model-widget-popup table td.select {
-	min-width: 230px;
+	min-width: 238px;
 }
 
 .squid-api-model-widget-popup table td.edit {
@@ -50,11 +50,11 @@
 }
 
 .squid-api-model-widget-popup table tr td:hover {
-	background: #f9f9f9;
+	background: #f3f3f3;
 }
 
 .squid-api-model-widget-popup table tr td.selected {
-	background-color: #f9f9f9;
+	background-color: #f3f3f3;
 }
 
 .squid-api-model-widget-popup .new-model {
@@ -83,8 +83,9 @@
 	text-align: center;
 	border-bottom: 1px solid #e0e0e0;
 	background-color: #f9f9f9;
-	left: -16px;
-	min-width: 299px;
+	left: -15px;
+	min-width: 298px;
+	border-radius: 10px;
 	padding: 10px;
 	top: 0px;
 	position: relative;
