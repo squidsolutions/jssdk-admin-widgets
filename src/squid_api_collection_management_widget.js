@@ -8,6 +8,7 @@
         collection : null,
         config : null,
         type : null,
+        collectionAvailable : false,
 
         initialize: function(options) {
             var me = this;
@@ -29,6 +30,12 @@
             } else {
                 this.config = squid_api.model.config;
             }
+            if (options.parent) {
+                this.parent = options.parent;
+            }
+            if (!this.model) {
+                this.model =  new squid_api.model[this.type + "Model"](); 
+            }
 
             // set base then update
             this.collection = new squid_api.model.BaseCollection();
@@ -37,21 +44,12 @@
             this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
-            if (options.parent) {
-                this.listenTo(options.parent, "change:id", function(parent){
-                    me.collection.parentId = {};
-                    me.collection.parentId[parent.definition.toLowerCase() + "Id"] = parent.get("id");
-                    me.collection.fetch();
-                });
-            } else {
-                squid_api.model.login.on('change:login', function(model) {
-                    me.collection.fetch();
-                });
-            }
-
-            if (!this.model) {
-                this.model =  new squid_api.model[this.type + "Model"](); 
-            }
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.parent, "change:id", function(parent) {
+                me.collectionAvailable = true;
+                me.collection.parentId = parent.get("id");
+                me.collection.fetch();
+            });
         },
 
         events: {
@@ -74,7 +72,7 @@
             }
         },
 
-        actionEvents: function() {
+        actionEvents: function(roles) {
             var me = this;
 
             // select
@@ -100,18 +98,22 @@
                 me.model.set(model);
             });
             
-            // create base model for create
-            var baseModel = new squid_api.model[ this.type + "Model"]();
-            
-            // create
-            new api.view.ModelManagementView({
-                el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
-                model : baseModel,
-                buttonLabel : "<i class='fa fa-pencil'></i>",
-                successHandler : function() {
-                    me.collection.create(this);
-                }
-            });
+            if (roles.create) {
+                 // create base model for create
+                var baseModel = new squid_api.model[ this.type + "Model"]();
+                
+                // create
+                new api.view.ModelManagementView({
+                    el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
+                    model : baseModel,
+                    buttonLabel : "<i class='fa fa-pencil'></i>",
+                    successHandler : function() {
+                        me.collection.create(this);
+                        var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            }
 
             // edit
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
@@ -123,7 +125,8 @@
                     autoOpen : true,
                     buttonLabel : "edit",
                     successHandler : function() {
-                        me.collection.create(this);
+                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.status.set({'message' : message});
                     }
                 });
             });
@@ -135,7 +138,12 @@
 
                 if (confirm("are you sure you want to delete this " + this.type + "?")) {
                     if (true) {
-                        model.destroy();
+                        model.destroy({
+                            success:function(collection) {
+                                var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
                     }
                 }
             });
@@ -144,8 +152,17 @@
         render: function() {
             var me = this;
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type};
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
+
+
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false};
+            if (this.model.get("_role") == "WRITE" || this.model.get("_role") == "OWNER") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
 
             // populate view data
             for (i=0; i<models.length; i++) {
@@ -159,7 +176,8 @@
                         selected = true;
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected};
+
+                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 jsonData.options.push(option);
             }
 
@@ -194,7 +212,7 @@
             });
 
             // select, edit, delete events
-            this.actionEvents();
+            this.actionEvents(roles);
 
             return this;
         }
