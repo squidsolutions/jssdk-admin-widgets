@@ -37,8 +37,6 @@
             }
             if (options.parent) {
                 this.parent = options.parent;
-            } else {
-                console.log("why?");
             }
             if (options.domainSuggestionHandler) {
                 this.domainSuggestionHandler = options.domainSuggestionHandler;

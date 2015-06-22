@@ -4,25 +4,28 @@
     </button>
     <div class="squid-api-{{type}}-model-widget-popup">
         {{#if collectionAvailable}}
-        <div class="col-md-8">
-            <div class="management-type">{{type}}'s</div>
-        </div>
-        <div class="new-model col-md-4">
-            
-        </div>
             {{#if selAvailable}}
                 <table style="width:100%">
-                    {{#each options}}
-                        <tr data-attr="{{value}}">
-                            <td class="select{{#if selected}} selected{{/if}}">{{label}}</td>
-                            {{#if edit}}
-                                <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-                            {{/if}}
-                            {{#if delete}}
-                                <td class="delete"><i class="fa fa-ban"></i></td>
-                            {{/if}}
-                        </tr>
-                    {{/each}}
+                    <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
+                        {{#if create}}
+                            <div class="create"></div>
+                        {{/if}}
+                        {{#each options}}
+                            <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
+                                {{#if selected}}
+                                    <td class="select selected">{{label}}</td>
+                                    {{#if edit}}
+                                        <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+                                    {{/if}}
+                                    {{#if delete}}
+                                        <td class="delete"><i class="fa fa-ban"></i></td>
+                                    {{/if}}
+                                {{else}}
+                                    <td class="select" colspan="3">{{label}}</td>
+                                {{/if}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
                 </table>
             {{else}}
                 <div class="no-data">No Model Items Available</div>

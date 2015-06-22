@@ -112,7 +112,7 @@
                 
                 // create
                 new api.view.ModelManagementView({
-                    el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
+                    el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
                     domainSuggestionHandler : me.domainSuggestionHandler,
@@ -179,11 +179,10 @@
 
         render: function() {
             var me = this;
-
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
-            var models = this.collection.models;
-
             var roles = this.userRoles();
+
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : roles.create, "collectionAvailable" : this.collectionAvailable};
+            var models = this.collection.models;
 
             // populate view data
             for (i=0; i<models.length; i++) {
@@ -197,9 +196,13 @@
                         selected = true;
                     }
                 }
-
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
-                jsonData.options.push(option);
+                if (selected) {
+                    jsonData.valueSelected = true;
+                    jsonData.options.unshift(option);
+                } else {
+                    jsonData.options.push(option);
+                }
             }
 
             // remove old dialog's
