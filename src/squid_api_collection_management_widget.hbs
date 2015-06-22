@@ -3,13 +3,13 @@
         Select {{type}}
     </button>
     <div class="squid-api-{{type}}-model-widget-popup">
+        {{#if create}}
+            <div class="create"></div>
+        {{/if}}
         {{#if collectionAvailable}}
             {{#if selAvailable}}
                 <table style="width:100%">
                     <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
-                        {{#if create}}
-                            <div class="create"></div>
-                        {{/if}}
                         {{#each options}}
                             <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
                                 {{#if selected}}
@@ -35,5 +35,5 @@
             <div class="parent-missing">
                 
             </div>
-    {{/if}}
+        {{/if}}
 </div>

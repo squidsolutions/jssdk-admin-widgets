@@ -20,6 +20,7 @@
 	max-height: 300px;
 	display: table-caption;
 	overflow-y: scroll;
+	min-height: 148px;
 }
 
 .squid-api-model-widget-popup table tbody.no-values {

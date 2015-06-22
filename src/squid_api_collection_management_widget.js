@@ -150,7 +150,7 @@
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
 
-                if (confirm("are you sure you want to delete this " + this.type + "?")) {
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                     if (true) {
                         model.destroy({
                             success:function(collection) {
