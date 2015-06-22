@@ -168,11 +168,19 @@
                 }
             });
 
+            // modal title
+            var modalTitle;
+            if (me.model.get("id")) {
+                modalTitle = "Editing " + me.model.definition + ": " + me.model.get("name");
+            } else {
+                modalTitle = "Creating a new " + me.model.definition;
+            }
+
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({ 
                 content: new this.formView(),
                 animate: true,
-                title: me.model.definition
+                title: modalTitle
             }).open();
 
             // modal wrapper class

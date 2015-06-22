@@ -697,11 +697,19 @@ function program1(depth0,data) {
                 }
             });
 
+            // modal title
+            var modalTitle;
+            if (me.model.get("id")) {
+                modalTitle = "Editing " + me.model.definition + ": " + me.model.get("name");
+            } else {
+                modalTitle = "Creating a new " + me.model.definition;
+            }
+
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({ 
                 content: new this.formView(),
                 animate: true,
-                title: me.model.definition
+                title: modalTitle
             }).open();
 
             // modal wrapper class
@@ -937,6 +945,39 @@ function program1(depth0,data) {
     return View;
 }));
 
+(function (root, factory) {
+    root.squid_api.view.RelationManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        
+        initialize: function(options) {
+            this.render();
+        },
+
+        render: function() {
+            var relationSelect = new api.view.CollectionManagementWidget({
+                el : this.$el,
+                type : "Relation",
+                changeEventHandler : function(value){
+                    // value = value || null;
+                    // config.set({
+                    //     "project" : value,
+                    //     "domain" : null
+                    // });
+                },
+                model : squid_api.model.relation,
+                parent : squid_api.model.project
+            });
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
 
 (function (root, factory) {
     root.squid_api.view.ShortcutsAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_shortcuts_admin_widget);
