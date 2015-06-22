@@ -3,6 +3,7 @@
 	display: inline-block;
 	background: #fff;
 	border: 1px solid #e7e7e7;
+	outline: 0;
   	border-radius: 8px;
   	z-index: 2;
 }

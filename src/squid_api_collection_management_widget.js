@@ -10,6 +10,7 @@
         type : null,
         collectionAvailable : false,
         domainSuggestionHandler : null,
+        projectSchemasCallback : null,
 
         initialize: function(options) {
             var me = this;
@@ -39,6 +40,9 @@
             }
             if (options.domainSuggestionHandler) {
                 this.domainSuggestionHandler = options.domainSuggestionHandler;
+            }
+            if (options.projectSchemasCallback) {
+                this.projectSchemasCallback = options.projectSchemasCallback;
             }
 
             // set base then update
@@ -112,6 +116,7 @@
                     model : baseModel,
                     parent : me.parent,
                     domainSuggestionHandler : me.domainSuggestionHandler,
+                    projectSchemasCallback : me.projectSchemasCallback,
                     buttonLabel : "<i class='fa fa-pencil'></i>",
                     successHandler : function() {
                         me.collection.create(this);
@@ -131,6 +136,7 @@
                     parent : me.parent,
                     autoOpen : true,
                     domainSuggestionHandler : me.domainSuggestionHandler,
+                    projectSchemasCallback : me.projectSchemasCallback,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";

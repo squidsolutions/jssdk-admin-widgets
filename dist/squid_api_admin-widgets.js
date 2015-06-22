@@ -171,6 +171,7 @@ function program1(depth0,data) {
         type : null,
         collectionAvailable : false,
         domainSuggestionHandler : null,
+        projectSchemasCallback : null,
 
         initialize: function(options) {
             var me = this;
@@ -200,6 +201,9 @@ function program1(depth0,data) {
             }
             if (options.domainSuggestionHandler) {
                 this.domainSuggestionHandler = options.domainSuggestionHandler;
+            }
+            if (options.projectSchemasCallback) {
+                this.projectSchemasCallback = options.projectSchemasCallback;
             }
 
             // set base then update
@@ -273,6 +277,7 @@ function program1(depth0,data) {
                     model : baseModel,
                     parent : me.parent,
                     domainSuggestionHandler : me.domainSuggestionHandler,
+                    projectSchemasCallback : me.projectSchemasCallback,
                     buttonLabel : "<i class='fa fa-pencil'></i>",
                     successHandler : function() {
                         me.collection.create(this);
@@ -292,6 +297,7 @@ function program1(depth0,data) {
                     parent : me.parent,
                     autoOpen : true,
                     domainSuggestionHandler : me.domainSuggestionHandler,
+                    projectSchemasCallback : me.projectSchemasCallback,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
@@ -492,6 +498,7 @@ function program1(depth0,data) {
         autoOpen: null,
         parent: null,
         domainSuggestionHandler : null,
+        projectSchemasCallback : null,
 
         initialize: function(options) {
             var me = this;
@@ -521,6 +528,9 @@ function program1(depth0,data) {
             }
             if (options.domainSuggestionHandler) {
                 this.domainSuggestionHandler = options.domainSuggestionHandler;
+            }
+            if (options.projectSchemasCallback) {
+                this.projectSchemasCallback = options.projectSchemasCallback;
             }
 
             // Set Form Schema
@@ -559,28 +569,6 @@ function program1(depth0,data) {
             return data;
         },
 
-        getDbSchemas : function() {
-            var me = this;
-            var model = me.model;
-
-            // 1. obtain schemas, set schemas for form & hide id field
-            var request = $.ajax({
-                type: "GET",
-                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "Id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
-                dataType: 'json',
-                success:function(collection) {
-                    if (me.model.get("dbSchemas").length === 0) {
-                        me.setStatusMessage('please set a db schema');
-                    }
-                    me.schema.dbSchemas.options = collection.definitions;
-                    me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                },
-                error: function() {
-                    me.setStatusMessage('error fetching project database schemas');
-                }
-            });
-        },
-
         setStatusMessage: function(message) {
             setTimeout(function() {
                 squid_api.model.status.set({'message' : message});
@@ -612,8 +600,8 @@ function program1(depth0,data) {
                         // project exception 
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
-                            if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                                me.getDbSchemas();
+                            if (me.projectSchemasCallback) {
+                                me.projectSchemasCallback.call(me);
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -693,12 +681,8 @@ function program1(depth0,data) {
 
         prepareForm: function() {
             // obtain schema values if project
-            if (this.model.definition == "Project") {
-                if (this.model.get("dbSchemas")) {
-                    if (this.model.get("dbSchemas").length > 0) {
-                        this.getDbSchemas();
-                    }
-                }
+            if (this.projectSchemasCallback) {
+                this.projectSchemasCallback(this);
             }
             this.renderForm();
         },
@@ -776,6 +760,7 @@ function program1(depth0,data) {
                                     nm[subProperty].type = "Text";
                                     nm[subProperty].options = subProp[subProperty].enum;
                                 } else {
+                                    nm[subProperty].options = [];
                                     nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
                                 }
                                 nm[subProperty].editorClass = "form-control";
@@ -866,6 +851,27 @@ function program1(depth0,data) {
             this.render();
         },
 
+        getDbSchemas : function() {
+            var me = this;
+            if (this.model.get("dbSchemas")) {  
+                var request = $.ajax({
+                    type: "GET",
+                    url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                    dataType: 'json',
+                    success:function(collection) {
+                        if (me.model.get("dbSchemas").length === 0) {
+                            me.setStatusMessage('please set a db schema');
+                        }
+                        me.schema.dbSchemas.options = collection.definitions;
+                        me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
+                    },
+                    error: function() {
+                        me.setStatusMessage('error fetching project database schemas');
+                    }
+                });
+            }
+        },
+
         render: function() {
             var projectSelect = new api.view.CollectionManagementWidget({
                 el : this.$el,
@@ -877,6 +883,7 @@ function program1(depth0,data) {
                         "domain" : null
                     });
                 },
+                projectSchemasCallback : this.getDbSchemas,
                 model : squid_api.model.project,
                 parent : squid_api.model.login
             });

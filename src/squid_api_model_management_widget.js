@@ -12,6 +12,7 @@
         autoOpen: null,
         parent: null,
         domainSuggestionHandler : null,
+        projectSchemasCallback : null,
 
         initialize: function(options) {
             var me = this;
@@ -41,6 +42,9 @@
             }
             if (options.domainSuggestionHandler) {
                 this.domainSuggestionHandler = options.domainSuggestionHandler;
+            }
+            if (options.projectSchemasCallback) {
+                this.projectSchemasCallback = options.projectSchemasCallback;
             }
 
             // Set Form Schema
@@ -79,28 +83,6 @@
             return data;
         },
 
-        getDbSchemas : function() {
-            var me = this;
-            var model = me.model;
-
-            // 1. obtain schemas, set schemas for form & hide id field
-            var request = $.ajax({
-                type: "GET",
-                url: squid_api.apiURL + "/projects/" + model.get("id")[model.definition.toLowerCase() + "Id"] + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
-                dataType: 'json',
-                success:function(collection) {
-                    if (me.model.get("dbSchemas").length === 0) {
-                        me.setStatusMessage('please set a db schema');
-                    }
-                    me.schema.dbSchemas.options = collection.definitions;
-                    me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                },
-                error: function() {
-                    me.setStatusMessage('error fetching project database schemas');
-                }
-            });
-        },
-
         setStatusMessage: function(message) {
             setTimeout(function() {
                 squid_api.model.status.set({'message' : message});
@@ -132,8 +114,8 @@
                         // project exception 
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
-                            if (me.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                                me.getDbSchemas();
+                            if (me.projectSchemasCallback) {
+                                me.projectSchemasCallback.call(me);
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -213,12 +195,8 @@
 
         prepareForm: function() {
             // obtain schema values if project
-            if (this.model.definition == "Project") {
-                if (this.model.get("dbSchemas")) {
-                    if (this.model.get("dbSchemas").length > 0) {
-                        this.getDbSchemas();
-                    }
-                }
+            if (this.projectSchemasCallback) {
+                this.projectSchemasCallback(this);
             }
             this.renderForm();
         },
@@ -296,6 +274,7 @@
                                     nm[subProperty].type = "Text";
                                     nm[subProperty].options = subProp[subProperty].enum;
                                 } else {
+                                    nm[subProperty].options = [];
                                     nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
                                 }
                                 nm[subProperty].editorClass = "form-control";
