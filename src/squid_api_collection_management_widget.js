@@ -183,17 +183,16 @@
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
                 var selected = false;
-
                 // obtain name from model
-                if (models[i].get("id")) {
-                    if (models[i].get("id")[this.type.toLowerCase() + "Id"]) {
-                        if (this.config.get(this.type.toLowerCase()) === models[i].get("id")[this.type.toLowerCase() + "Id"]) {
-                            jsonData.selectedName = models[i].get("name");
-                            selected = true;
-                        }
+                var oid = models[i].get("oid");
+                if (oid) {
+                    if (this.config.get(this.type.toLowerCase()) === oid) {
+                        jsonData.selectedName = models[i].get("name");
+                        selected = true;
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : models[i].get("oid"), "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
+
+                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 jsonData.options.push(option);
             }
 
