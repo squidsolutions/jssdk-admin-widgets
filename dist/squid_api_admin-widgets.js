@@ -432,6 +432,7 @@ function program1(depth0,data) {
                 success:function(response) {
                     // remove existing dialog's
                     domainEl.siblings(".suggestions").remove();
+                    $(".squid-api-domain-suggestion-dialog").remove();
 
                     // append box if definitions exist
                     if (response.definitions && response.definitions.length > 0) {
@@ -461,6 +462,10 @@ function program1(depth0,data) {
                             closeText: "close"
                         });
                     } else {
+                        // remove existing dialog's
+                        domainEl.siblings(".suggestions").remove();
+                        $(".squid-api-domain-suggestion-dialog").remove();
+                        
                         // set message
                         squid_api.model.status.set("message", response.validateMessage);
                     }
