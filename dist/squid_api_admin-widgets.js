@@ -170,6 +170,7 @@ function program1(depth0,data) {
         config : null,
         type : null,
         collectionAvailable : false,
+        domainSuggestionHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -196,6 +197,9 @@ function program1(depth0,data) {
             }
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"](); 
+            }
+            if (options.domainSuggestionHandler) {
+                this.domainSuggestionHandler = options.domainSuggestionHandler;
             }
 
             // set base then update
@@ -267,6 +271,8 @@ function program1(depth0,data) {
                 new api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
                     model : baseModel,
+                    parent : me.parent,
+                    domainSuggestionHandler : me.domainSuggestionHandler,
                     buttonLabel : "<i class='fa fa-pencil'></i>",
                     successHandler : function() {
                         me.collection.create(this);
@@ -283,7 +289,9 @@ function program1(depth0,data) {
                 new api.view.ModelManagementView({
                     el : $(this),
                     model : model,
+                    parent : me.parent,
                     autoOpen : true,
+                    domainSuggestionHandler : me.domainSuggestionHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
@@ -310,20 +318,27 @@ function program1(depth0,data) {
             });
         },
 
+        userRoles: function() {
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false};
+
+            // write role
+            if (this.model.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
+            return roles;
+        },
+
         render: function() {
             var me = this;
 
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
 
-
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false};
-            if (this.model.get("_role") == "WRITE" || this.model.get("_role") == "OWNER") {
-                roles.create = true;
-                roles.edit = true;
-                roles.delete = true;
-            }
+            var roles = this.userRoles();
 
             // populate view data
             for (i=0; i<models.length; i++) {
@@ -360,14 +375,6 @@ function program1(depth0,data) {
                 clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
                 autoOpen: false,
                 closeText: "x",
-                show: {
-                    effect: "fade",
-                    duration: 350
-                },
-                hide: {
-                    effect: "fade",
-                    duration: 350
-                },
                 position: { 
                     my: "left top", at: "left bottom", of: this.$el.find("button")
                 }
@@ -405,12 +412,67 @@ function program1(depth0,data) {
                         "domain" : value
                     });
                 },
+                domainSuggestionHandler : this.domainSuggestions,
                 parent : squid_api.model.project
             });
 
             return this;
-        }
+        },
+        domainSuggestions: function() {
+            var me = this;
+            var domainEl = this.formContent.$el.find(".domain-subject");
+            var request = $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/domains-suggestion",
+                dataType: 'json',
+                data: {
+                    "expression" : domainEl.val(),
+                    "offset" : domainEl.prop("selectionStart") + 1,
+                    "access_token" : squid_api.model.login.get("accessToken")
+                },
+                success:function(response) {
+                    // remove existing dialog's
+                    domainEl.siblings(".suggestions").remove();
 
+                    // append box if definitions exist
+                    if (response.definitions && response.definitions.length > 0) {
+
+                        var definitions = response.definitions;
+                        
+                        // store offset
+                        var offset = response.filterIndex;
+
+                        // append div
+                        domainEl.after("<div class='suggestions squid-api-dialog'><ul></ul></div>");
+                        
+                        for (i=0; i<definitions.length; i++) {
+                            domainEl.siblings(".suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
+                        }
+
+                        domainEl.siblings(".suggestions").find("li").on("click", function(event) {
+                            var item = $(event.target).html();
+                            var str = domainEl.val().substring(0, offset) + item.substring(0);
+                            domainEl.focus().val(str);
+                        });
+
+                        // show dialog
+                        domainEl.siblings(".suggestions").dialog({
+                            dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
+                            position: { my: "center top", at: "center bottom", of: domainEl },
+                            closeText: "close"
+                        });
+                    } else {
+                        // set message
+                        squid_api.model.status.set("message", response.validateMessage);
+                    }
+
+                    domainEl.focus();
+                },
+                error: function(response, hello) {
+                    console.log(response);
+                }
+            });
+        },
     });
 
     return View;
@@ -428,6 +490,8 @@ function program1(depth0,data) {
         modalElementClassName : "squid-api-admin-widgets-modal-form",
         buttonLabel : null,
         autoOpen: null,
+        parent: null,
+        domainSuggestionHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -449,6 +513,14 @@ function program1(depth0,data) {
             }
             if (options.autoOpen) {
                 this.autoOpen = options.autoOpen;
+            }
+            if (options.parent) {
+                this.parent = options.parent;
+            } else {
+                console.log("why?");
+            }
+            if (options.domainSuggestionHandler) {
+                this.domainSuggestionHandler = options.domainSuggestionHandler;
             }
 
             // Set Form Schema
@@ -527,10 +599,14 @@ function program1(depth0,data) {
             if (validForm) {
                 me.formModal.preventClose();
             } else {
-                var data = me.manipulateData(this.formContent.getValue());
+                // remove all dialog's
+                $(".squid-api-dialog").remove();
+
                 if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
                     me.formModal.preventClose();
                 }
+
+                var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
                         // project exception 
@@ -575,6 +651,17 @@ function program1(depth0,data) {
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
+                model: me.model,
+                parent: me.parent,
+                // domain subject exception
+                events: {
+                    "keypress .domain-subject" : function() {
+                        me.domainSuggestionHandler.call(me);
+                    },
+                    "click .domain-subject" : function() {
+                        me.domainSuggestionHandler.call(me);
+                    }
+                },
                 render: function() {
                     this.$el.html(me.formContent.el);
                     return this;
@@ -597,6 +684,10 @@ function program1(depth0,data) {
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
+            });
+            // on cancel
+            this.formModal.on('cancel', function() {
+                $(".squid-api-dialog").remove();
             });
         },
 
@@ -662,14 +753,21 @@ function program1(depth0,data) {
 
                 // create schema
                 for (var property in properties) {
-                    if (properties[property].readOnly !== true) {
+                    if (! properties[property].readOnly) {
+                        // base field object
                         schema[property] = {};
+                        var refValue, ref, subProp;
+
+                        // obtain reference property values
+                        if (properties[property].items) {
+                            if (properties[property].items.$ref) {
+                                subProp = data.definitions[properties[property].items.$ref.substr(properties[property].items.$ref.lastIndexOf("/") + 1)].properties;
+                            }
+                        }
+
                         if (properties[property].items && properties[property].items.$ref) {
+                            // base nested model
                             var nm = {};
-                            // obtain reference values
-                            var refValue = properties[property].items.$ref;
-                            var ref = properties[property].items.$ref.substr(refValue.lastIndexOf("/") + 1);
-                            var subProp = data.definitions[ref].properties;
 
                             // apply sub-properties (if exist)
                             for (var subProperty in subProp) {
@@ -688,19 +786,30 @@ function program1(depth0,data) {
                             schema[property].itemType = "Object";
                             schema[property].subSchema = nm;
                         } else {
-                            type = me.getPropertyType(properties[property].type);
-                            schema[property].type = type;
-                        }
+                            // domain exception
+                            if (me.model.definition == "Domain" && property == "subject") {
+                                refValue = properties.subject.$ref;
+                                ref = properties.subject.$ref.substr(refValue.lastIndexOf("/") + 1);
+                                subProp = data.definitions[ref].properties;
 
-                        // if select
-                        if (schema[property].type == "Checkboxes") {
-                            if (me.model.get(property)) {
-                                schema[property].options = me.model.get(property);
-                            } else {
-                                schema[property].options = [];
+                                schema[property].type = "Object";
+                                schema[property].subSchema = subProp;
+                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
+                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control domain-subject";
+                            } else if (schema[property].type !== "Checkboxes") {
+                                type = me.getPropertyType(properties[property].type);
+                                schema[property].type = type;
+                                schema[property].editorClass = "form-control";
                             }
-                        } else {
-                            schema[property].editorClass = "form-control";
+                            // if select
+                            if (schema[property].type == "Checkboxes") {
+                                schema[property].editorClass = " ";
+                                if (me.model.get(property)) {
+                                    schema[property].options = me.model.get(property);
+                                } else {
+                                    schema[property].options = [];
+                                }
+                            }
                         }
                     }
                 }

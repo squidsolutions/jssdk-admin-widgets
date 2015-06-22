@@ -159,6 +159,58 @@
   	margin-top: 10px;
 }
 
+.squid-api-domain-suggestion-dialog {
+	position: absolute;
+	overflow-y: scroll;
+	background-color: #f9f9f9;
+	max-height: 85px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	cursor: pointer;
+	border: 1px solid #f3f3f3;
+	padding: 5px;
+	width: 568px !important;
+	opacity: 0.9;
+	z-index: 5000;
+}
+
+.squid-api-domain-suggestion-dialog:before {
+	position: absolute;
+	top: -6px;
+	left: 9px;
+	z-index: 2;
+	display: inline-block;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #ccc;
+	border-left: 7px solid transparent;
+	border-bottom-color: #fff;
+	content: '';
+}
+
+.squid-api-domain-suggestion-dialog ul {
+	padding-left: 0px;
+}
+
+.squid-api-domain-suggestion-dialog ul li {
+	list-style-type: none;
+	padding: 0px 10px;
+	width: 90%;
+	border-radius: 8px;
+}
+
+.squid-api-domain-suggestion-dialog ul li:hover {
+	background: #777;
+	color: #fff;
+}
+
+.squid-api-domain-suggestion-dialog:focus {
+	outline: 0;
+}
+
+.squid-api-domain-suggestion-dialog .ui-dialog-titlebar-close, .squid-api-domain-suggestion-dialog .ui-dialog-titlebar {
+	float: right;
+}
+
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;

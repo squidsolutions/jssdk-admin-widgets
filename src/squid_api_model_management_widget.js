@@ -10,6 +10,8 @@
         modalElementClassName : "squid-api-admin-widgets-modal-form",
         buttonLabel : null,
         autoOpen: null,
+        parent: null,
+        domainSuggestionHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -31,6 +33,14 @@
             }
             if (options.autoOpen) {
                 this.autoOpen = options.autoOpen;
+            }
+            if (options.parent) {
+                this.parent = options.parent;
+            } else {
+                console.log("why?");
+            }
+            if (options.domainSuggestionHandler) {
+                this.domainSuggestionHandler = options.domainSuggestionHandler;
             }
 
             // Set Form Schema
@@ -109,10 +119,14 @@
             if (validForm) {
                 me.formModal.preventClose();
             } else {
-                var data = me.manipulateData(this.formContent.getValue());
+                // remove all dialog's
+                $(".squid-api-dialog").remove();
+
                 if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
                     me.formModal.preventClose();
                 }
+
+                var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
                         // project exception 
@@ -157,6 +171,17 @@
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
+                model: me.model,
+                parent: me.parent,
+                // domain subject exception
+                events: {
+                    "keypress .domain-subject" : function() {
+                        me.domainSuggestionHandler.call(me);
+                    },
+                    "click .domain-subject" : function() {
+                        me.domainSuggestionHandler.call(me);
+                    }
+                },
                 render: function() {
                     this.$el.html(me.formContent.el);
                     return this;
@@ -179,6 +204,10 @@
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
+            });
+            // on cancel
+            this.formModal.on('cancel', function() {
+                $(".squid-api-dialog").remove();
             });
         },
 
@@ -244,14 +273,21 @@
 
                 // create schema
                 for (var property in properties) {
-                    if (properties[property].readOnly !== true) {
+                    if (! properties[property].readOnly) {
+                        // base field object
                         schema[property] = {};
+                        var refValue, ref, subProp;
+
+                        // obtain reference property values
+                        if (properties[property].items) {
+                            if (properties[property].items.$ref) {
+                                subProp = data.definitions[properties[property].items.$ref.substr(properties[property].items.$ref.lastIndexOf("/") + 1)].properties;
+                            }
+                        }
+
                         if (properties[property].items && properties[property].items.$ref) {
+                            // base nested model
                             var nm = {};
-                            // obtain reference values
-                            var refValue = properties[property].items.$ref;
-                            var ref = properties[property].items.$ref.substr(refValue.lastIndexOf("/") + 1);
-                            var subProp = data.definitions[ref].properties;
 
                             // apply sub-properties (if exist)
                             for (var subProperty in subProp) {
@@ -270,19 +306,30 @@
                             schema[property].itemType = "Object";
                             schema[property].subSchema = nm;
                         } else {
-                            type = me.getPropertyType(properties[property].type);
-                            schema[property].type = type;
-                        }
+                            // domain exception
+                            if (me.model.definition == "Domain" && property == "subject") {
+                                refValue = properties.subject.$ref;
+                                ref = properties.subject.$ref.substr(refValue.lastIndexOf("/") + 1);
+                                subProp = data.definitions[ref].properties;
 
-                        // if select
-                        if (schema[property].type == "Checkboxes") {
-                            if (me.model.get(property)) {
-                                schema[property].options = me.model.get(property);
-                            } else {
-                                schema[property].options = [];
+                                schema[property].type = "Object";
+                                schema[property].subSchema = subProp;
+                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
+                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control domain-subject";
+                            } else if (schema[property].type !== "Checkboxes") {
+                                type = me.getPropertyType(properties[property].type);
+                                schema[property].type = type;
+                                schema[property].editorClass = "form-control";
                             }
-                        } else {
-                            schema[property].editorClass = "form-control";
+                            // if select
+                            if (schema[property].type == "Checkboxes") {
+                                schema[property].editorClass = " ";
+                                if (me.model.get(property)) {
+                                    schema[property].options = me.model.get(property);
+                                } else {
+                                    schema[property].options = [];
+                                }
+                            }
                         }
                     }
                 }

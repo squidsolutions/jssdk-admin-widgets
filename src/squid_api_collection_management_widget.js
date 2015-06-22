@@ -9,6 +9,7 @@
         config : null,
         type : null,
         collectionAvailable : false,
+        domainSuggestionHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -35,6 +36,9 @@
             }
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"](); 
+            }
+            if (options.domainSuggestionHandler) {
+                this.domainSuggestionHandler = options.domainSuggestionHandler;
             }
 
             // set base then update
@@ -106,6 +110,8 @@
                 new api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .new-model"),
                     model : baseModel,
+                    parent : me.parent,
+                    domainSuggestionHandler : me.domainSuggestionHandler,
                     buttonLabel : "<i class='fa fa-pencil'></i>",
                     successHandler : function() {
                         me.collection.create(this);
@@ -122,7 +128,9 @@
                 new api.view.ModelManagementView({
                     el : $(this),
                     model : model,
+                    parent : me.parent,
                     autoOpen : true,
+                    domainSuggestionHandler : me.domainSuggestionHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
@@ -149,20 +157,27 @@
             });
         },
 
+        userRoles: function() {
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false};
+
+            // write role
+            if (this.model.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
+            return roles;
+        },
+
         render: function() {
             var me = this;
 
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], selectedName : "Select " + this.type, collectionAvailable : this.collectionAvailable};
             var models = this.collection.models;
 
-
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false};
-            if (this.model.get("_role") == "WRITE" || this.model.get("_role") == "OWNER") {
-                roles.create = true;
-                roles.edit = true;
-                roles.delete = true;
-            }
+            var roles = this.userRoles();
 
             // populate view data
             for (i=0; i<models.length; i++) {
@@ -199,14 +214,6 @@
                 clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
                 autoOpen: false,
                 closeText: "x",
-                show: {
-                    effect: "fade",
-                    duration: 350
-                },
-                hide: {
-                    effect: "fade",
-                    duration: 350
-                },
                 position: { 
                     my: "left top", at: "left bottom", of: this.$el.find("button")
                 }
