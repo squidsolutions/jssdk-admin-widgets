@@ -430,10 +430,6 @@ function program1(depth0,data) {
                     "access_token" : squid_api.model.login.get("accessToken")
                 },
                 success:function(response) {
-                    // remove existing dialog's
-                    domainEl.siblings(".suggestions").remove();
-                    $(".squid-api-domain-suggestion-dialog").remove();
-
                     // append box if definitions exist
                     if (response.definitions && response.definitions.length > 0) {
 
@@ -441,31 +437,31 @@ function program1(depth0,data) {
                         
                         // store offset
                         var offset = response.filterIndex;
+                        
+                        // remove existing dialog's
+                        $(".squid-api-pre-domain-suggestions").remove();
+                        $(".squid-api-domain-suggestion-dialog").remove();
 
                         // append div
-                        domainEl.after("<div class='suggestions squid-api-dialog'><ul></ul></div>");
+                        domainEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
                         
                         for (i=0; i<definitions.length; i++) {
-                            domainEl.siblings(".suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
+                            domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
 
-                        domainEl.siblings(".suggestions").find("li").on("click", function(event) {
+                        domainEl.siblings(".squid-api-pre-domain-suggestions").find("li").on("click", function(event) {
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.focus().val(str);
                         });
 
                         // show dialog
-                        domainEl.siblings(".suggestions").dialog({
+                        domainEl.siblings(".squid-api-pre-domain-suggestions").dialog({
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
                             position: { my: "center top", at: "center bottom", of: domainEl },
                             closeText: "close"
                         });
                     } else {
-                        // remove existing dialog's
-                        domainEl.siblings(".suggestions").remove();
-                        $(".squid-api-domain-suggestion-dialog").remove();
-                        
                         // set message
                         squid_api.model.status.set("message", response.validateMessage);
                     }
