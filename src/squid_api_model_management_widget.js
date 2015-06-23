@@ -13,6 +13,7 @@
         parent: null,
         domainSuggestionHandler : null,
         projectSchemasCallback : null,
+        beforeRenderHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -44,6 +45,9 @@
             if (options.projectSchemasCallback) {
                 this.projectSchemasCallback = options.projectSchemasCallback;
             }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
+            } 
 
             // Set Form Schema
             this.setSchema();
@@ -89,6 +93,7 @@
 
         saveForm : function(formContent) {
             var me = this;
+            var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
             /*
                 1. validate form (if errors, display them & keep modal open)
@@ -98,7 +103,7 @@
             var validForm = this.formContent.validate();
             if (validForm) {
                 me.formModal.preventClose();
-            } else {
+            } else if (! invalidExpression) {
                 // remove all dialog's
                 $(".squid-api-dialog").remove();
 
@@ -136,6 +141,8 @@
                         }
                     }
                 });
+            } else {
+                me.formModal.preventClose();
             }
         },
 
@@ -155,10 +162,10 @@
                 parent: me.parent,
                 // domain subject exception
                 events: {
-                    "keypress .domain-subject" : function() {
+                    "keyup .domain-subject" : function(e) {
                         me.domainSuggestionHandler.call(me);
                     },
-                    "click .domain-subject" : function() {
+                    "click .domain-subject" : function(e) {
                         me.domainSuggestionHandler.call(me);
                     }
                 },
@@ -202,7 +209,10 @@
         prepareForm: function() {
             // obtain schema values if project
             if (this.projectSchemasCallback) {
-                this.projectSchemasCallback(this);
+                this.projectSchemasCallback.call(this);
+            }
+            if (this.beforeRenderHandler) {
+                this.beforeRenderHandler.call(this);
             }
             this.renderForm();
         },

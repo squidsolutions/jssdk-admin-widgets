@@ -23,6 +23,10 @@
                 parent : squid_api.model.project
             });
 
+            var relationManagement = new api.view.RelationManagementWidget({
+                el : '#relation'
+            });
+
             return this;
         },
         domainSuggestions: function() {
@@ -38,6 +42,13 @@
                     "access_token" : squid_api.model.login.get("accessToken")
                 },
                 success:function(response) {
+                    // detemine if there is an error or not
+                    if (response.validateMessage.length === 0) {
+                        domainEl.removeClass("invalid-expression").addClass("valid-expression");
+                    } else {
+                        domainEl.removeClass("valid-expression").addClass("invalid-expression");
+                    }
+
                     // append box if definitions exist
                     if (response.definitions && response.definitions.length > 0) {
 
@@ -57,14 +68,18 @@
                             domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
 
-                        domainEl.siblings(".squid-api-pre-domain-suggestions").find("li").on("click", function(event) {
+                        domainEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
-                            domainEl.focus().val(str);
+                            domainEl.val(str);
+                            me.domainSuggestionHandler.call(me);
                         });
 
-                        // show dialog
+                        // // show dialog
                         domainEl.siblings(".squid-api-pre-domain-suggestions").dialog({
+                            open: function(e, ui) {
+                                e.preventDefault();
+                            },
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
                             position: { my: "center top", at: "center bottom", of: domainEl },
                             closeText: "close"
@@ -74,6 +89,7 @@
                         squid_api.model.status.set("message", response.validateMessage);
                     }
 
+                    // place the focus back onto the domain suggestionElement
                     domainEl.focus();
                 },
                 error: function(response, hello) {

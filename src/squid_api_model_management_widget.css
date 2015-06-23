@@ -49,6 +49,18 @@
   	margin-top: 10px;
 }
 
+.squid-api-admin-widgets-modal-form .modal-body .invalid-expression {
+	box-shadow: 0px 0px 6px 0px #e74c3c;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body .invalid-expression:focus, .squid-api-admin-widgets-modal-form .modal-body .valid-expression:focus {
+	border: none;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body .valid-expression {
+	box-shadow: 0px 0px 6px 0px #27ae60;
+}
+
 .squid-api-domain-suggestion-dialog {
 	position: absolute;
 	overflow-y: scroll;
@@ -62,19 +74,6 @@
 	width: 568px !important;
 	opacity: 0.9;
 	z-index: 5000;
-}
-
-.squid-api-domain-suggestion-dialog:before {
-	position: absolute;
-	top: -6px;
-	left: 9px;
-	z-index: 2;
-	display: inline-block;
-	border-right: 7px solid transparent;
-	border-bottom: 7px solid #ccc;
-	border-left: 7px solid transparent;
-	border-bottom-color: #fff;
-	content: '';
 }
 
 .squid-api-domain-suggestion-dialog ul {

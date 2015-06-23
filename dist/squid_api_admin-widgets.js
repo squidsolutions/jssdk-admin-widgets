@@ -92,7 +92,7 @@ function program13(depth0,data) {
 function program15(depth0,data) {
   
   
-  return "\n                                        <td class=\"delete\"><i class=\"fa fa-ban\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n                                    ";
   }
 
 function program17(depth0,data) {
@@ -108,8 +108,13 @@ function program17(depth0,data) {
 
 function program19(depth0,data) {
   
-  
-  return "\n                <div class=\"no-data\">No Model Items Available</div>\n            ";
+  var buffer = "", stack1, helper;
+  buffer += "\n                <div class=\"no-data\">No ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "'s Available</div>\n            ";
+  return buffer;
   }
 
 function program21(depth0,data) {
@@ -159,7 +164,7 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "\n			<i class=\"fa fa-pencil-square-o\"></i>\n		";
+  return "\n		<i class=\"fa fa-plus\"></i>\n			<i class=\"fa fa-pencil-square-o\"></i>\n		";
   }
 
   buffer += "<div class=\"";
@@ -212,6 +217,7 @@ function program1(depth0,data) {
         collectionAvailable : false,
         domainSuggestionHandler : null,
         projectSchemasCallback : null,
+        beforeRenderHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -244,6 +250,9 @@ function program1(depth0,data) {
             }
             if (options.projectSchemasCallback) {
                 this.projectSchemasCallback = options.projectSchemasCallback;
+            }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
             }
 
             // set base then update
@@ -318,7 +327,8 @@ function program1(depth0,data) {
                     parent : me.parent,
                     domainSuggestionHandler : me.domainSuggestionHandler,
                     projectSchemasCallback : me.projectSchemasCallback,
-                    buttonLabel : "<i class='fa fa-pencil'></i>",
+                    beforeRenderHandler : me.beforeRenderHandler,
+                    buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
@@ -338,6 +348,7 @@ function program1(depth0,data) {
                     autoOpen : true,
                     domainSuggestionHandler : me.domainSuggestionHandler,
                     projectSchemasCallback : me.projectSchemasCallback,
+                    beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
@@ -464,6 +475,10 @@ function program1(depth0,data) {
                 parent : squid_api.model.project
             });
 
+            var relationManagement = new api.view.RelationManagementWidget({
+                el : '#relation'
+            });
+
             return this;
         },
         domainSuggestions: function() {
@@ -479,6 +494,13 @@ function program1(depth0,data) {
                     "access_token" : squid_api.model.login.get("accessToken")
                 },
                 success:function(response) {
+                    // detemine if there is an error or not
+                    if (response.validateMessage.length === 0) {
+                        domainEl.removeClass("invalid-expression").addClass("valid-expression");
+                    } else {
+                        domainEl.removeClass("valid-expression").addClass("invalid-expression");
+                    }
+
                     // append box if definitions exist
                     if (response.definitions && response.definitions.length > 0) {
 
@@ -498,14 +520,18 @@ function program1(depth0,data) {
                             domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
 
-                        domainEl.siblings(".squid-api-pre-domain-suggestions").find("li").on("click", function(event) {
+                        domainEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
-                            domainEl.focus().val(str);
+                            domainEl.val(str);
+                            me.domainSuggestionHandler.call(me);
                         });
 
-                        // show dialog
+                        // // show dialog
                         domainEl.siblings(".squid-api-pre-domain-suggestions").dialog({
+                            open: function(e, ui) {
+                                e.preventDefault();
+                            },
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
                             position: { my: "center top", at: "center bottom", of: domainEl },
                             closeText: "close"
@@ -515,6 +541,7 @@ function program1(depth0,data) {
                         squid_api.model.status.set("message", response.validateMessage);
                     }
 
+                    // place the focus back onto the domain suggestionElement
                     domainEl.focus();
                 },
                 error: function(response, hello) {
@@ -542,6 +569,7 @@ function program1(depth0,data) {
         parent: null,
         domainSuggestionHandler : null,
         projectSchemasCallback : null,
+        beforeRenderHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -573,6 +601,9 @@ function program1(depth0,data) {
             if (options.projectSchemasCallback) {
                 this.projectSchemasCallback = options.projectSchemasCallback;
             }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
+            } 
 
             // Set Form Schema
             this.setSchema();
@@ -618,6 +649,7 @@ function program1(depth0,data) {
 
         saveForm : function(formContent) {
             var me = this;
+            var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
             /*
                 1. validate form (if errors, display them & keep modal open)
@@ -627,7 +659,7 @@ function program1(depth0,data) {
             var validForm = this.formContent.validate();
             if (validForm) {
                 me.formModal.preventClose();
-            } else {
+            } else if (! invalidExpression) {
                 // remove all dialog's
                 $(".squid-api-dialog").remove();
 
@@ -665,6 +697,8 @@ function program1(depth0,data) {
                         }
                     }
                 });
+            } else {
+                me.formModal.preventClose();
             }
         },
 
@@ -684,10 +718,10 @@ function program1(depth0,data) {
                 parent: me.parent,
                 // domain subject exception
                 events: {
-                    "keypress .domain-subject" : function() {
+                    "keyup .domain-subject" : function(e) {
                         me.domainSuggestionHandler.call(me);
                     },
-                    "click .domain-subject" : function() {
+                    "click .domain-subject" : function(e) {
                         me.domainSuggestionHandler.call(me);
                     }
                 },
@@ -731,7 +765,10 @@ function program1(depth0,data) {
         prepareForm: function() {
             // obtain schema values if project
             if (this.projectSchemasCallback) {
-                this.projectSchemasCallback(this);
+                this.projectSchemasCallback.call(this);
+            }
+            if (this.beforeRenderHandler) {
+                this.beforeRenderHandler.call(this);
             }
             this.renderForm();
         },

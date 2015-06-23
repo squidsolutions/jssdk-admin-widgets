@@ -18,7 +18,7 @@
                                         <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
                                     {{/if}}
                                     {{#if delete}}
-                                        <td class="delete"><i class="fa fa-ban"></i></td>
+                                        <td class="delete"><i class="fa fa-trash-o"></i></td>
                                     {{/if}}
                                 {{else}}
                                     <td class="select" colspan="3">{{label}}</td>
@@ -28,7 +28,7 @@
                     </tbody>
                 </table>
             {{else}}
-                <div class="no-data">No Model Items Available</div>
+                <div class="no-data">No {{type}}'s Available</div>
             {{/if}}
         </div>
         {{else}}

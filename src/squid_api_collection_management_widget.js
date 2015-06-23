@@ -11,6 +11,7 @@
         collectionAvailable : false,
         domainSuggestionHandler : null,
         projectSchemasCallback : null,
+        beforeRenderHandler : null,
 
         initialize: function(options) {
             var me = this;
@@ -43,6 +44,9 @@
             }
             if (options.projectSchemasCallback) {
                 this.projectSchemasCallback = options.projectSchemasCallback;
+            }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
             }
 
             // set base then update
@@ -117,7 +121,8 @@
                     parent : me.parent,
                     domainSuggestionHandler : me.domainSuggestionHandler,
                     projectSchemasCallback : me.projectSchemasCallback,
-                    buttonLabel : "<i class='fa fa-pencil'></i>",
+                    beforeRenderHandler : me.beforeRenderHandler,
+                    buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
@@ -137,6 +142,7 @@
                     autoOpen : true,
                     domainSuggestionHandler : me.domainSuggestionHandler,
                     projectSchemasCallback : me.projectSchemasCallback,
+                    beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";

@@ -1,16 +1,15 @@
 .squid-api-model-widget-popup {
-	margin-top: 35px;
 	display: inline-block;
 	background: #fff;
 	border: 1px solid #e7e7e7;
 	outline: 0;
   	border-radius: 8px;
+  	border-top-left-radius: 0px;
   	z-index: 2;
 }
 
 .squid-api-model-widget-popup table {
 	color: #666;
-	background: #eaebec;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -18,8 +17,9 @@
 
 .squid-api-model-widget-popup table tbody {
 	max-height: 300px;
-	display: table-caption;
-	overflow-y: scroll;
+	display: inline-block;
+	overflow-y: auto;
+	overflow-x: hidden;
 	min-height: 148px;
 }
 
@@ -30,15 +30,15 @@
 .squid-api-model-widget-popup table td {
   	padding: 2px 3px;
   	font-size: 12px;
-  	text-align: center;
 }
 
 .squid-api-model-widget-popup .create button {
 	position: absolute;
 	background-color: #f9f9f9;
-	right: -37px;
+	right: -35px;
 	top: 1px;
 	z-index: 1;
+	border-color: #e0e0e0;
 	color: #666;
 	outline: 0;
 	border-left: none;
@@ -46,20 +46,17 @@
 	border-bottom-left-radius: 0px;
 }
 
-.squid-api-model-widget-popup table td.create button {
-	outline: 0;
+.squid-api-model-widget-popup .create button, .squid-api-model-widget-popup .create button:active:focus {
+	outline: 0 !important;
 }
 
 .squid-api-model-widget-popup table td.select {
-	min-width: 238px;
+	padding-left: 20px;
 }
 
-.squid-api-model-widget-popup table tbody.no-values td.select {
+.squid-api-model-widget-popup table tr {
 	min-width: 298px;
-}
-
-.squid-api-model-widget-popup table td.selected {
-	padding-left: 50px;
+	display: table;
 }
 
 .squid-api-model-widget-popup table td.edit {
@@ -68,6 +65,16 @@
 
 .squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.edit {
 	border-left: 1px solid #e0e0e0;
+}
+
+.squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.delete {
+	text-align: center;
+	width: 20px;
+	padding-left: 10px;
+}
+
+.squid-api-model-widget-popup table td.delete {
+	padding-right: 25px;
 }
 
 .squid-api-model-widget-popup table td.edit:hover, .squid-api-model-widget-popup table td.delete:hover {
@@ -126,21 +133,8 @@
 }
 
 .squid-api-model-widget-popup .no-data {
+	margin: 45px 25%;
 	float: left;
-  	margin: 20px;
-}
-
-.squid-api-model-widget-popup:before {
-	position: absolute;
-	top: -6px;
-	left: 9px;
-	z-index: 2;
-	display: inline-block;
-	border-right: 7px solid transparent;
-	border-bottom: 7px solid #ccc;
-	border-left: 7px solid transparent;
-	border-bottom-color: #f9f9f9;
-	content: '';
 }
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
@@ -193,6 +187,18 @@
   	margin-top: 10px;
 }
 
+.squid-api-admin-widgets-modal-form .modal-body .invalid-expression {
+	box-shadow: 0px 0px 6px 0px #e74c3c;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body .invalid-expression:focus, .squid-api-admin-widgets-modal-form .modal-body .valid-expression:focus {
+	border: none;
+}
+
+.squid-api-admin-widgets-modal-form .modal-body .valid-expression {
+	box-shadow: 0px 0px 6px 0px #27ae60;
+}
+
 .squid-api-domain-suggestion-dialog {
 	position: absolute;
 	overflow-y: scroll;
@@ -206,19 +212,6 @@
 	width: 568px !important;
 	opacity: 0.9;
 	z-index: 5000;
-}
-
-.squid-api-domain-suggestion-dialog:before {
-	position: absolute;
-	top: -6px;
-	left: 9px;
-	z-index: 2;
-	display: inline-block;
-	border-right: 7px solid transparent;
-	border-bottom: 7px solid #ccc;
-	border-left: 7px solid transparent;
-	border-bottom-color: #fff;
-	content: '';
 }
 
 .squid-api-domain-suggestion-dialog ul {
