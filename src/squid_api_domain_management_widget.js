@@ -23,10 +23,6 @@
                 parent : squid_api.model.project
             });
 
-            var relationManagement = new api.view.RelationManagementWidget({
-                el : '#relation'
-            });
-
             return this;
         },
         domainSuggestions: function() {

@@ -475,10 +475,6 @@ function program1(depth0,data) {
                 parent : squid_api.model.project
             });
 
-            var relationManagement = new api.view.RelationManagementWidget({
-                el : '#relation'
-            });
-
             return this;
         },
         domainSuggestions: function() {
