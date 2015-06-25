@@ -16,7 +16,12 @@
                 changeEventHandler : function(value){
                     value = value || null;
                     config.set({
-                        "domain" : value
+                        "domain" : value,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
                     });
                 },
                 domainSuggestionHandler : this.domainSuggestions,
