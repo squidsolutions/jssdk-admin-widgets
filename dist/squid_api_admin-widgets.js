@@ -856,7 +856,12 @@ function program1(depth0,data) {
 
                     // set config
                     config.set({
-                        "domain" : value
+                        "domain" : value,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
                     });
                 },
                 domainSuggestionHandler : this.domainSuggestions,
@@ -1385,7 +1390,12 @@ function program1(depth0,data) {
                     value = value || null;
                     config.set({
                         "project" : value,
-                        "domain" : null
+                        "domain" : null,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
                     });
                 },
                 projectSchemasCallback : this.getDbSchemas,
@@ -1401,6 +1411,7 @@ function program1(depth0,data) {
     return View;
 }));
 
+<<<<<<< HEAD
 (function (root, factory) {
     root.squid_api.view.RelationModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_relation_management_widget);
 
@@ -1508,6 +1519,8 @@ function program1(depth0,data) {
     return View;
 }));
 
+=======
+>>>>>>> 66dc0a5aeacd425cc93b19182deaa4c6bee4897a
 (function (root, factory) {
     root.squid_api.view.ShortcutsAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_shortcuts_admin_widget);
 

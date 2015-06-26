@@ -38,7 +38,12 @@
                     value = value || null;
                     config.set({
                         "project" : value,
-                        "domain" : null
+                        "domain" : null,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
                     });
                 },
                 projectSchemasCallback : this.getDbSchemas,
