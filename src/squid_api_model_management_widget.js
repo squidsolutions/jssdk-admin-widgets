@@ -14,6 +14,7 @@
         domainSuggestionHandler : null,
         projectSchemasCallback : null,
         beforeRenderHandler : null,
+        modalTitle : null,
 
         initialize: function(options) {
             var me = this;
@@ -47,7 +48,10 @@
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
-            } 
+            }
+            if (options.modalTitle) {
+                this.modalTitle = options.modalTitle;
+            }
 
             // Set Form Schema
             this.setSchema();
@@ -114,7 +118,7 @@
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
-                        // project exception 
+                        // project exception
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
                             if (me.projectSchemasCallback) {
@@ -129,7 +133,7 @@
                         } else {
                             if (me.successHandler) {
                                 me.successHandler.call(collection);
-                            } 
+                            }
                         }
                     },
                     error: function (collection, response) {
@@ -149,7 +153,7 @@
         renderForm : function() {
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
-            
+
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
                 schema: me.schema,
@@ -177,14 +181,18 @@
 
             // modal title
             var modalTitle;
-            if (me.model.get("id")) {
-                modalTitle = "Editing " + me.model.definition + ": " + me.model.get("name");
+            if (this.modalTitle) {
+
             } else {
-                modalTitle = "Creating a new " + me.model.definition;
+                if (me.model.get("id")) {
+                    modalTitle = "Editing " + me.model.definition + ": " + me.model.get("name");
+                } else {
+                    modalTitle = "Creating a new " + me.model.definition;
+                }
             }
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({ 
+            this.formModal = new Backbone.BootstrapModal({
                 content: new this.formView(),
                 animate: true,
                 title: modalTitle
@@ -245,9 +253,13 @@
 
         setSchema: function(property) {
             var me = this;
-            
+
+            if (this.formContent) {
+                this.formContent.model = me.model;
+            }
+
             squid_api.getSchema().done(function(data) {
-                
+
                 // base variables
                 var definition = data.definitions[me.model.definition];
                 var properties = definition.properties;
@@ -270,7 +282,7 @@
                     if (! properties[property].readOnly) {
                         // base field object
                         schema[property] = {};
-                        var refValue, ref, subProp;
+                        var refValue, ref, subProp, nm;
 
                         // obtain reference property values
                         if (properties[property].items) {
@@ -279,9 +291,41 @@
                             }
                         }
 
+                        if (properties[property].$ref) {
+                            if (me.model.definition == "Domain" && property == "subject") {
+                                refValue = properties.subject.$ref;
+                                ref = properties.subject.$ref.substr(refValue.lastIndexOf("/") + 1);
+                                subProp = data.definitions[ref].properties;
+
+                                schema[property].type = "Object";
+                                schema[property].subSchema = subProp;
+                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
+                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control domain-subject";
+                            } else {
+                                // base nested model
+                                nm = {};
+                                subProp = data.definitions[properties[property].$ref.substr(properties[property].$ref.lastIndexOf("/") + 1)].properties;
+                                for (var subProperty1 in subProp) {
+                                    nm[subProperty1] = {};
+                                    if (subProp[subProperty1].enum) {
+                                        nm[subProperty1].type = "Text";
+                                        nm[subProperty1].options = subProp[subProperty].enum;
+                                    } else {
+                                        nm[subProperty1].options = [];
+                                        nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
+                                    }
+                                    nm[subProperty1].editorClass = "form-control";
+                                    nm[subProperty1].disabled = true;
+                                }
+
+                                schema[property].type = "Object";
+                                schema[property].subSchema = nm;
+                            }
+                        }
+
                         if (properties[property].items && properties[property].items.$ref) {
                             // base nested model
-                            var nm = {};
+                            nm = {};
 
                             // apply sub-properties (if exist)
                             for (var subProperty in subProp) {
@@ -296,22 +340,13 @@
                                 nm[subProperty].editorClass = "form-control";
                                 nm[subProperty].disabled = true;
                             }
-                            
+
                             schema[property].type = "List";
                             schema[property].itemType = "Object";
                             schema[property].subSchema = nm;
-                        } else {
+                        } else if (! properties[property].$ref) {
                             // domain exception
-                            if (me.model.definition == "Domain" && property == "subject") {
-                                refValue = properties.subject.$ref;
-                                ref = properties.subject.$ref.substr(refValue.lastIndexOf("/") + 1);
-                                subProp = data.definitions[ref].properties;
-
-                                schema[property].type = "Object";
-                                schema[property].subSchema = subProp;
-                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
-                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control domain-subject";
-                            } else if (schema[property].type !== "Checkboxes") {
+                            if (schema[property].type !== "Checkboxes") {
                                 type = me.getPropertyType(properties[property].type);
                                 schema[property].type = type;
                                 schema[property].editorClass = "form-control";
@@ -355,8 +390,8 @@
             var me = this;
 
             var jsonData = {
-                "view" : "squid-api-admin-widgets-" + me.model.definition, 
-                "definition" : me.model.definition, 
+                "view" : "squid-api-admin-widgets-" + me.model.definition,
+                "definition" : me.model.definition,
                 "buttonLabel" : me.buttonLabel
             };
 

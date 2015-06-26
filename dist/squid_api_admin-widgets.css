@@ -20,6 +20,7 @@
 	display: inline-block;
 	overflow-y: auto;
 	overflow-x: hidden;
+	background: #fff;
 	min-height: 148px;
 }
 
@@ -36,7 +37,7 @@
 	position: absolute;
 	background-color: #f9f9f9;
 	right: -35px;
-	top: 1px;
+	top: 0px;
 	z-index: 1;
 	border-color: #e0e0e0;
 	color: #666;
@@ -60,24 +61,26 @@
 }
 
 .squid-api-model-widget-popup table td.edit {
-  	padding: 0px 8px;
-}
-
-.squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.edit {
 	border-left: 1px solid #e0e0e0;
+	padding: 0px 8px;
 }
 
-.squid-api-model-widget-popup table td.edit, .squid-api-model-widget-popup table td.delete {
+.squid-api-model-widget-popup table td {
 	text-align: center;
 	width: 20px;
 	padding-left: 10px;
+}
+
+.squid-api-model-widget-popup table td.select {
+	width: auto;
+	text-align: left;
 }
 
 .squid-api-model-widget-popup table td.delete {
 	padding-right: 25px;
 }
 
-.squid-api-model-widget-popup table td.edit:hover, .squid-api-model-widget-popup table td.delete:hover {
+.squid-api-model-widget-popup table td:hover {
 	background-color: #fff;
 }
 
@@ -88,9 +91,10 @@
 
 .squid-api-model-widget-popup table tr td {
 	cursor: pointer;
+	padding: 5px;
 }
 
-.squid-api-model-widget-popup table tr td:hover {
+.squid-api-model-widget-popup table tr td.select:hover {
 	background: #f3f3f3;
 }
 
@@ -238,6 +242,57 @@
 	float: right;
 }
 
+#squid-api-relations-widget-data-table .row {
+ 	margin: 10px 0px;
+ }
+
+#squid-api-relations-widget-data-table table {
+	color: #666;
+  	-moz-border-radius: 3px;
+  	-webkit-border-radius: 3px;
+  	border-radius: 3px;
+  	-moz-box-shadow: 0 1px 2px #d1d1d1;
+  	-webkit-box-shadow: 0 1px 2px #d1d1d1;
+  	box-shadow: 0 1px 2px #d1d1d1;
+  	overflow-x: auto;
+  	width: 100%;
+  	table-layout: fixed;
+}
+
+#squid-api-relations-widget-data-table table td {
+	border-top: 1px solid #ffffff;
+  	border-bottom: 1px solid #e0e0e0;
+  	border-left: 1px solid #e0e0e0;
+  	padding: 2px 3px;
+  	font-size: 12px;
+  	text-align: center;
+}
+
+#squid-api-relations-widget-data-table table tr {
+	height: 45px;
+}
+
+#squid-api-relations-widget-data-table table thead th {
+	border-left: 1px solid #e0e0e0;
+	padding: 0px 20px 0px 10px;
+	border-top: 1px solid #e0e0e0;
+  	border-bottom: 1px solid #e0e0e0;
+  	text-align: center;
+	font-weight: normal;
+	position: relative;
+}
+
+#squid-api-relations-widget-data-table table tr:nth-child(even) {
+	  background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+}
+
+#squid-api-relations-widget-data-table a.ok {
+	display: none;
+}
+
+#squid-api-relations-widget-data-table .edit, #squid-api-relations-widget-data-table .delete {
+	cursor: pointer;
+}
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;

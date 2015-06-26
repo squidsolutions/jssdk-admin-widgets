@@ -1,17 +1,9 @@
 (function (root, factory) {
-    root.squid_api.view.CollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
+    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_domain_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
-        template : null,
-        collection : null,
-        config : null,
-        type : null,
-        collectionAvailable : false,
-        domainSuggestionHandler : null,
-        projectSchemasCallback : null,
-        beforeRenderHandler : null,
+    var View = squid_api.view.CollectionManagementWidget.extend({
 
         initialize: function(options) {
             var me = this;
@@ -48,6 +40,12 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
+            if (options.renderEl) {
+                this.renderEl = options.renderEl;
+            }
 
             // set base then update
             this.collection = new squid_api.model.BaseCollection();
@@ -62,26 +60,18 @@
                 me.collection.parentId = parent.get("id");
                 me.collection.fetch();
             });
-        },
 
-        events: {
-            "click button": function() {
-                $(".squid-api-" + this.type + "-model-widget-popup").dialog("open");
-            }
-        },
+            this.relations = new squid_api.model.RelationCollection();
 
-        updateCollection: function() {
-            var me = this;
+            // fetch relations
+            config.on("change:project", function(parent) {
+                me.relations.collectionAvailable = true;
+                me.relations.parentId = {};
+                me.relations.parentId.projectId = parent.get("project");
+                me.relations.fetch();
+            });
 
-            // match a base collection and overwrite base
-            var collection = null;
-            for (var collectionItem in squid_api.model) {
-                var str = collectionItem;
-                var res = str.match(this.type + "Collection");
-                if (res) {
-                    this.collection = new squid_api.model[res]();
-                }
-            }
+            this.render();
         },
 
         actionEvents: function(roles) {
@@ -151,6 +141,31 @@
                 });
             });
 
+            // relations
+            $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
+                var relations = me.relations.models;
+                var domain = config.get("domain");
+                var models = squid_api.utils.getDomainRelations(relations, domain);
+
+                var relationSelect = new api.view.RelationModelManagementView({
+                    el : this.el,
+                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                    type : "Relation",
+                    modalTitle : "Relation for domain: " + this.domainName,
+                    changeEventHandler : function(value){
+
+                    },
+                    collection : models,
+                    model : new squid_api.model.RelationModel(),
+                    parent : this.parent,
+                    autoOpen : true,
+                    successHandler : function() {
+                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            });
+
             // delete
             $(".squid-api-" + this.type + "-model-widget-popup .delete").on("click", function() {
                 var id = this.parentElement.dataset.attr;
@@ -167,75 +182,6 @@
                     }
                 }
             });
-        },
-
-        userRoles: function() {
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false};
-
-            // write role
-            if (this.model.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
-                roles.create = true;
-                roles.edit = true;
-                roles.delete = true;
-            }
-
-            return roles;
-        },
-
-        render: function() {
-            var me = this;
-            var roles = this.userRoles();
-
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
-            var models = this.collection.models;
-
-            // populate view data
-            for (i=0; i<models.length; i++) {
-                jsonData.selAvailable = true;
-                var selected = false;
-                // obtain name from model
-                var oid = models[i].get("oid");
-                if (oid) {
-                    if (this.config.get(this.type.toLowerCase()) === oid) {
-                        jsonData.selectedName = models[i].get("name");
-                        selected = true;
-                    }
-                }
-                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
-                if (selected) {
-                    jsonData.valueSelected = true;
-                    jsonData.options.unshift(option);
-                } else {
-                    jsonData.options.push(option);
-                }
-            }
-
-            // remove old dialog's
-            $(".squid-api-" + this.type + "-model-widget-popup").remove();
-
-            // print template
-            var html = this.template(jsonData);
-            this.$el.html(html);
-
-            // set button value
-            this.$el.find("button.selected-model").text(jsonData.selectedName);
-
-            // set dialog
-            var dialog = this.$el.find(".squid-api-" + this.type + "-model-widget-popup").dialog({
-                dialogClass: "squid-api-model-widget-popup",
-                clickOutside: true, // clicking outside the dialog will close it
-                clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
-                autoOpen: false,
-                position: {
-                    my: "left top", at: "left bottom", of: this.$el.find("button")
-                }
-            });
-
-            // select, edit, delete events
-            this.actionEvents(roles);
-
-            return this;
         }
 
     });

@@ -10,11 +10,13 @@
         },
 
         render: function() {
-            var domainSelect = new api.view.CollectionManagementWidget({
+            var domainSelect = new api.view.DomainCollectionManagementWidget({
                 el : '#domain',
                 type : "Domain",
                 changeEventHandler : function(value){
                     value = value || null;
+
+                    // set config
                     config.set({
                         "domain" : value
                     });
