@@ -1411,7 +1411,6 @@ function program1(depth0,data) {
     return View;
 }));
 
-<<<<<<< HEAD
 (function (root, factory) {
     root.squid_api.view.RelationModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_relation_management_widget);
 
@@ -1519,8 +1518,6 @@ function program1(depth0,data) {
     return View;
 }));
 
-=======
->>>>>>> 66dc0a5aeacd425cc93b19182deaa4c6bee4897a
 (function (root, factory) {
     root.squid_api.view.ShortcutsAdminView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_shortcuts_admin_widget);
 
