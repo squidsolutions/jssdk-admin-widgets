@@ -1101,11 +1101,15 @@ function program1(depth0,data) {
                         }
                     }
                 });
+                // reset status message
+                me.resetStatusMessage();
             } else {
                 me.formModal.preventClose();
             }
         },
-
+        resetStatusMessage : function() {
+            this.setStatusMessage("");
+        },
         renderForm : function() {
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
@@ -1163,10 +1167,12 @@ function program1(depth0,data) {
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
+                me.resetStatusMessage();
             });
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
+                me.resetStatusMessage();
             });
         },
 
@@ -1302,11 +1308,14 @@ function program1(depth0,data) {
                         } else if (! properties[property].$ref) {
                             // domain exception
                             if (schema[property].type !== "Checkboxes") {
-                                type = me.getPropertyType(properties[property].type);
-                                schema[property].type = type;
+                                if (property.includes("Password")) {
+                                    schema[property].type = "Password";
+                                } else {
+                                    type = me.getPropertyType(properties[property].type);
+                                    schema[property].type = type;
+                                }
                                 schema[property].editorClass = "form-control";
                             }
-                            // if select
                             if (schema[property].type == "Checkboxes") {
                                 schema[property].editorClass = " ";
                                 if (me.model.get(property)) {
@@ -1385,8 +1394,8 @@ function program1(depth0,data) {
                         me.schema.dbSchemas.options = collection.definitions;
                         me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                     },
-                    error: function() {
-                        me.setStatusMessage('error fetching project database schemas');
+                    error: function(data) {
+                        me.setStatusMessage(data.responseJSON.error);
                     }
                 });
             }

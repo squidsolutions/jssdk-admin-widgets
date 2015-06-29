@@ -23,8 +23,8 @@
                         me.schema.dbSchemas.options = collection.definitions;
                         me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
                     },
-                    error: function() {
-                        me.setStatusMessage('error fetching project database schemas');
+                    error: function(data) {
+                        me.setStatusMessage(data.responseJSON.error);
                     }
                 });
             }

@@ -141,11 +141,15 @@
                         }
                     }
                 });
+                // reset status message
+                me.resetStatusMessage();
             } else {
                 me.formModal.preventClose();
             }
         },
-
+        resetStatusMessage : function() {
+            this.setStatusMessage("");
+        },
         renderForm : function() {
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
@@ -203,10 +207,12 @@
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
+                me.resetStatusMessage();
             });
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
+                me.resetStatusMessage();
             });
         },
 
@@ -342,11 +348,14 @@
                         } else if (! properties[property].$ref) {
                             // domain exception
                             if (schema[property].type !== "Checkboxes") {
-                                type = me.getPropertyType(properties[property].type);
-                                schema[property].type = type;
+                                if (property.includes("Password")) {
+                                    schema[property].type = "Password";
+                                } else {
+                                    type = me.getPropertyType(properties[property].type);
+                                    schema[property].type = type;
+                                }
                                 schema[property].editorClass = "form-control";
                             }
-                            // if select
                             if (schema[property].type == "Checkboxes") {
                                 schema[property].editorClass = " ";
                                 if (me.model.get(property)) {
