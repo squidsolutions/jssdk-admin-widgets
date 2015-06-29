@@ -39,6 +39,7 @@
                         "selectedMetric" : null
                     });
                 };
+                // DomainCollectionManagementWidget
                 var collectionView = new api.view.CollectionManagementWidget(viewOptions);
             }
 

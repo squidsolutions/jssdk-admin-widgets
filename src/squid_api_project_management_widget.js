@@ -61,7 +61,8 @@
                         "selectedMetric" : null
                     });
                 };
-                var collectionView = new api.view.CollectionManagementWidget(viewOptions);
+                viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
+                var collectionView = new api.view.ProjectCollectionManagementWidget(viewOptions);
             }
 
             return this;
