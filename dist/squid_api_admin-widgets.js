@@ -1012,6 +1012,9 @@ function program1(depth0,data) {
             if (options.modalTitle) {
                 this.modalTitle = options.modalTitle;
             }
+            if (options.createOnlyView) {
+                this.createOnlyView = options.createOnlyView;
+            }
 
             // Set Form Schema
             this.setSchema();
@@ -1376,7 +1379,12 @@ function program1(depth0,data) {
 
     var View = Backbone.View.extend({
 
+        createOnlyView : null,
+
         initialize: function(options) {
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
             this.render();
         },
 
@@ -1402,10 +1410,19 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            var projectSelect = new api.view.CollectionManagementWidget({
-                el : this.$el,
-                type : "Project",
-                changeEventHandler : function(value){
+            var viewOptions = {"el" : this.$el, type : "Project", "schemasCallback" : this.getDbSchemas, "model" : squid_api.model.project, "parent" : squid_api.model.login};
+
+            if (this.createOnlyView) {
+                viewOptions.successHandler = function() {
+                    me.collection.create(this);
+                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                    squid_api.model.status.set({'message' : message});
+                };
+                viewOptions.buttonLabel = "Create a new one";
+                viewOptions.createOnlyView = this.createOnlyView;
+                var modelView = new api.view.ModelManagementView(viewOptions);
+            } else {
+                viewOptions.changeEventHandler = function(value){
                     value = value || null;
                     config.set({
                         "project" : value,
@@ -1416,11 +1433,9 @@ function program1(depth0,data) {
                         "chosenMetrics" : null,
                         "selectedMetric" : null
                     });
-                },
-                schemasCallback : this.getDbSchemas,
-                model : squid_api.model.project,
-                parent : squid_api.model.login
-            });
+                };
+                var collectionView = new api.view.CollectionManagementWidget(viewOptions);
+            }
 
             return this;
         }

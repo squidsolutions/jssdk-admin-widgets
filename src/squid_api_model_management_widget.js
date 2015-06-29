@@ -52,6 +52,9 @@
             if (options.modalTitle) {
                 this.modalTitle = options.modalTitle;
             }
+            if (options.createOnlyView) {
+                this.createOnlyView = options.createOnlyView;
+            }
 
             // Set Form Schema
             this.setSchema();
