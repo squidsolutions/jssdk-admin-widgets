@@ -411,8 +411,8 @@ function program1(depth0,data) {
         config : null,
         type : null,
         collectionAvailable : false,
-        domainSuggestionHandler : null,
-        projectSchemasCallback : null,
+        suggestionHandler : null,
+        schemasCallback : null,
         beforeRenderHandler : null,
 
         initialize: function(options) {
@@ -441,11 +441,11 @@ function program1(depth0,data) {
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -521,8 +521,8 @@ function program1(depth0,data) {
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
@@ -542,8 +542,8 @@ function program1(depth0,data) {
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
@@ -592,6 +592,9 @@ function program1(depth0,data) {
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
             var models = this.collection.models;
 
+            // selected obj
+            var sel = [];
+
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -607,10 +610,22 @@ function program1(depth0,data) {
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 if (selected) {
                     jsonData.valueSelected = true;
-                    jsonData.options.unshift(option);
+                    sel.push(option);
                 } else {
                     jsonData.options.push(option);
                 }
+            }
+
+            // order data alphabetically
+            jsonData.options.sort(function(a, b) {
+                var textA = a.label.toUpperCase();
+                var textB = b.label.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+
+            // place selected obj at start of array
+            if (sel[0]) {
+                jsonData.options.unshift(sel[0]);
             }
 
             // remove old dialog's
@@ -678,11 +693,11 @@ function program1(depth0,data) {
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -756,8 +771,8 @@ function program1(depth0,data) {
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
@@ -777,8 +792,8 @@ function program1(depth0,data) {
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
@@ -842,7 +857,7 @@ function program1(depth0,data) {
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        
+
         initialize: function(options) {
             this.render();
         },
@@ -864,13 +879,13 @@ function program1(depth0,data) {
                         "selectedMetric" : null
                     });
                 },
-                domainSuggestionHandler : this.domainSuggestions,
+                suggestionHandler : this.suggestionHandler,
                 parent : squid_api.model.project
             });
 
             return this;
         },
-        domainSuggestions: function() {
+        suggestionHandler: function() {
             var me = this;
             var domainEl = this.formContent.$el.find(".domain-subject");
             var request = $.ajax({
@@ -894,17 +909,17 @@ function program1(depth0,data) {
                     if (response.definitions && response.definitions.length > 0) {
 
                         var definitions = response.definitions;
-                        
+
                         // store offset
                         var offset = response.filterIndex;
-                        
+
                         // remove existing dialog's
                         $(".squid-api-pre-domain-suggestions").remove();
                         $(".squid-api-domain-suggestion-dialog").remove();
 
                         // append div
                         domainEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                        
+
                         for (i=0; i<definitions.length; i++) {
                             domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
@@ -913,7 +928,7 @@ function program1(depth0,data) {
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.val(str);
-                            me.domainSuggestionHandler.call(me);
+                            me.suggestionHandler.call(me);
                         });
 
                         // // show dialog
@@ -956,8 +971,8 @@ function program1(depth0,data) {
         buttonLabel : null,
         autoOpen: null,
         parent: null,
-        domainSuggestionHandler : null,
-        projectSchemasCallback : null,
+        suggestionHandler : null,
+        schemasCallback : null,
         beforeRenderHandler : null,
         modalTitle : null,
 
@@ -985,11 +1000,11 @@ function program1(depth0,data) {
             if (options.parent) {
                 this.parent = options.parent;
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -1018,10 +1033,6 @@ function program1(depth0,data) {
             if (this.model.get("id")) {
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
-            } else {
-                var id = data.id;
-                data.id = {};
-                data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
             }
 
             // add project id
@@ -1066,8 +1077,8 @@ function program1(depth0,data) {
                         // project exception
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
-                            if (me.projectSchemasCallback) {
-                                me.projectSchemasCallback.call(me);
+                            if (me.schemasCallback) {
+                                me.schemasCallback.call(me);
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -1112,10 +1123,10 @@ function program1(depth0,data) {
                 // domain subject exception
                 events: {
                     "keyup .domain-subject" : function(e) {
-                        me.domainSuggestionHandler.call(me);
+                        me.suggestionHandler.call(me);
                     },
                     "click .domain-subject" : function(e) {
-                        me.domainSuggestionHandler.call(me);
+                        me.suggestionHandler.call(me);
                     }
                 },
                 render: function() {
@@ -1161,8 +1172,8 @@ function program1(depth0,data) {
 
         prepareForm: function() {
             // obtain schema values if project
-            if (this.projectSchemasCallback) {
-                this.projectSchemasCallback.call(this);
+            if (this.schemasCallback) {
+                this.schemasCallback.call(this);
             }
             if (this.beforeRenderHandler) {
                 this.beforeRenderHandler.call(this);
@@ -1260,7 +1271,6 @@ function program1(depth0,data) {
                                         nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
                                     }
                                     nm[subProperty1].editorClass = "form-control";
-                                    nm[subProperty1].disabled = true;
                                 }
 
                                 schema[property].type = "Object";
@@ -1356,14 +1366,14 @@ function program1(depth0,data) {
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        
+
         initialize: function(options) {
             this.render();
         },
 
         getDbSchemas : function() {
             var me = this;
-            if (this.model.get("dbSchemas")) {  
+            if (this.model.get("dbSchemas")) {
                 var request = $.ajax({
                     type: "GET",
                     url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
@@ -1398,7 +1408,7 @@ function program1(depth0,data) {
                         "selectedMetric" : null
                     });
                 },
-                projectSchemasCallback : this.getDbSchemas,
+                schemasCallback : this.getDbSchemas,
                 model : squid_api.model.project,
                 parent : squid_api.model.login
             });

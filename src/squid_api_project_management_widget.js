@@ -4,14 +4,14 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        
+
         initialize: function(options) {
             this.render();
         },
 
         getDbSchemas : function() {
             var me = this;
-            if (this.model.get("dbSchemas")) {  
+            if (this.model.get("dbSchemas")) {
                 var request = $.ajax({
                     type: "GET",
                     url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
@@ -46,7 +46,7 @@
                         "selectedMetric" : null
                     });
                 },
-                projectSchemasCallback : this.getDbSchemas,
+                schemasCallback : this.getDbSchemas,
                 model : squid_api.model.project,
                 parent : squid_api.model.login
             });

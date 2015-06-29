@@ -31,11 +31,11 @@
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -109,8 +109,8 @@
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
@@ -130,8 +130,8 @@
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {

@@ -9,8 +9,8 @@
         config : null,
         type : null,
         collectionAvailable : false,
-        domainSuggestionHandler : null,
-        projectSchemasCallback : null,
+        suggestionHandler : null,
+        schemasCallback : null,
         beforeRenderHandler : null,
 
         initialize: function(options) {
@@ -39,11 +39,11 @@
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -119,8 +119,8 @@
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
@@ -140,8 +140,8 @@
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    domainSuggestionHandler : me.domainSuggestionHandler,
-                    projectSchemasCallback : me.projectSchemasCallback,
+                    suggestionHandler : me.suggestionHandler,
+                    schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
@@ -190,6 +190,9 @@
             var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
             var models = this.collection.models;
 
+            // selected obj
+            var sel = [];
+
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -205,10 +208,22 @@
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
                 if (selected) {
                     jsonData.valueSelected = true;
-                    jsonData.options.unshift(option);
+                    sel.push(option);
                 } else {
                     jsonData.options.push(option);
                 }
+            }
+
+            // order data alphabetically
+            jsonData.options.sort(function(a, b) {
+                var textA = a.label.toUpperCase();
+                var textB = b.label.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+
+            // place selected obj at start of array
+            if (sel[0]) {
+                jsonData.options.unshift(sel[0]);
             }
 
             // remove old dialog's

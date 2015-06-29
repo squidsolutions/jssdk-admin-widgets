@@ -4,7 +4,7 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        
+
         initialize: function(options) {
             this.render();
         },
@@ -26,13 +26,13 @@
                         "selectedMetric" : null
                     });
                 },
-                domainSuggestionHandler : this.domainSuggestions,
+                suggestionHandler : this.suggestionHandler,
                 parent : squid_api.model.project
             });
 
             return this;
         },
-        domainSuggestions: function() {
+        suggestionHandler: function() {
             var me = this;
             var domainEl = this.formContent.$el.find(".domain-subject");
             var request = $.ajax({
@@ -56,17 +56,17 @@
                     if (response.definitions && response.definitions.length > 0) {
 
                         var definitions = response.definitions;
-                        
+
                         // store offset
                         var offset = response.filterIndex;
-                        
+
                         // remove existing dialog's
                         $(".squid-api-pre-domain-suggestions").remove();
                         $(".squid-api-domain-suggestion-dialog").remove();
 
                         // append div
                         domainEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                        
+
                         for (i=0; i<definitions.length; i++) {
                             domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
@@ -75,7 +75,7 @@
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.val(str);
-                            me.domainSuggestionHandler.call(me);
+                            me.suggestionHandler.call(me);
                         });
 
                         // // show dialog

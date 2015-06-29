@@ -11,8 +11,8 @@
         buttonLabel : null,
         autoOpen: null,
         parent: null,
-        domainSuggestionHandler : null,
-        projectSchemasCallback : null,
+        suggestionHandler : null,
+        schemasCallback : null,
         beforeRenderHandler : null,
         modalTitle : null,
 
@@ -40,11 +40,11 @@
             if (options.parent) {
                 this.parent = options.parent;
             }
-            if (options.domainSuggestionHandler) {
-                this.domainSuggestionHandler = options.domainSuggestionHandler;
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
             }
-            if (options.projectSchemasCallback) {
-                this.projectSchemasCallback = options.projectSchemasCallback;
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
@@ -73,10 +73,6 @@
             if (this.model.get("id")) {
                 data.id = {};
                 data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
-            } else {
-                var id = data.id;
-                data.id = {};
-                data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(id);
             }
 
             // add project id
@@ -121,8 +117,8 @@
                         // project exception
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
-                            if (me.projectSchemasCallback) {
-                                me.projectSchemasCallback.call(me);
+                            if (me.schemasCallback) {
+                                me.schemasCallback.call(me);
                             } else {
                                 var msg = response.objectType + " successfully saved with name " + response.name;
                                 me.setStatusMessage(msg);
@@ -167,10 +163,10 @@
                 // domain subject exception
                 events: {
                     "keyup .domain-subject" : function(e) {
-                        me.domainSuggestionHandler.call(me);
+                        me.suggestionHandler.call(me);
                     },
                     "click .domain-subject" : function(e) {
-                        me.domainSuggestionHandler.call(me);
+                        me.suggestionHandler.call(me);
                     }
                 },
                 render: function() {
@@ -216,8 +212,8 @@
 
         prepareForm: function() {
             // obtain schema values if project
-            if (this.projectSchemasCallback) {
-                this.projectSchemasCallback.call(this);
+            if (this.schemasCallback) {
+                this.schemasCallback.call(this);
             }
             if (this.beforeRenderHandler) {
                 this.beforeRenderHandler.call(this);
@@ -315,7 +311,6 @@
                                         nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
                                     }
                                     nm[subProperty1].editorClass = "form-control";
-                                    nm[subProperty1].disabled = true;
                                 }
 
                                 schema[property].type = "Object";
