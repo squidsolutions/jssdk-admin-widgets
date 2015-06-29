@@ -40,7 +40,8 @@
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function() {
-                    me.collection.create(this);
+                    var collection = new squid_api.model.ProjectCollection();
+                    collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
                     squid_api.model.status.set({'message' : message});
                 };
