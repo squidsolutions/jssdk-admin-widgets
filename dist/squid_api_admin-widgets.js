@@ -858,18 +858,31 @@ function program1(depth0,data) {
 
     var View = Backbone.View.extend({
 
+        createOnlyView : null,
+
         initialize: function(options) {
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
             this.render();
         },
 
         render: function() {
-            var domainSelect = new api.view.DomainCollectionManagementWidget({
-                el : '#domain',
-                type : "Domain",
-                changeEventHandler : function(value){
-                    value = value || null;
+            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
 
-                    // set config
+            if (this.createOnlyView) {
+                viewOptions.successHandler = function() {
+                    var collection = new squid_api.model.DomainCollection();
+                    collection.create(this);
+                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                    squid_api.model.status.set({'message' : message});
+                };
+                viewOptions.buttonLabel = "Create a new one";
+                viewOptions.createOnlyView = this.createOnlyView;
+                var modelView = new api.view.ModelManagementView(viewOptions);
+            } else {
+                viewOptions.changeEventHandler = function(value){
+                    value = value || null;
                     config.set({
                         "domain" : value,
                         "selection" : null,
@@ -878,10 +891,9 @@ function program1(depth0,data) {
                         "chosenMetrics" : null,
                         "selectedMetric" : null
                     });
-                },
-                suggestionHandler : this.suggestionHandler,
-                parent : squid_api.model.project
-            });
+                };
+                var collectionView = new api.view.CollectionManagementWidget(viewOptions);
+            }
 
             return this;
         },
