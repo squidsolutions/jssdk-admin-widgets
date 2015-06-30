@@ -4,16 +4,31 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
-        
+
+        createOnlyView : null,
+
         initialize: function(options) {
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
             this.render();
         },
 
         render: function() {
-            var domainSelect = new api.view.CollectionManagementWidget({
-                el : '#domain',
-                type : "Domain",
-                changeEventHandler : function(value){
+            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
+
+            if (this.createOnlyView) {
+                viewOptions.successHandler = function() {
+                    var collection = new squid_api.model.DomainCollection();
+                    collection.create(this);
+                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                    squid_api.model.status.set({'message' : message});
+                };
+                viewOptions.buttonLabel = "Create a new one";
+                viewOptions.createOnlyView = this.createOnlyView;
+                var modelView = new api.view.ModelManagementView(viewOptions);
+            } else {
+                viewOptions.changeEventHandler = function(value){
                     value = value || null;
                     config.set({
                         "domain" : value,
@@ -23,14 +38,14 @@
                         "chosenMetrics" : null,
                         "selectedMetric" : null
                     });
-                },
-                domainSuggestionHandler : this.domainSuggestions,
-                parent : squid_api.model.project
-            });
+                };
+                // DomainCollectionManagementWidget
+                var collectionView = new api.view.CollectionManagementWidget(viewOptions);
+            }
 
             return this;
         },
-        domainSuggestions: function() {
+        suggestionHandler: function() {
             var me = this;
             var domainEl = this.formContent.$el.find(".domain-subject");
             var request = $.ajax({
@@ -54,17 +69,17 @@
                     if (response.definitions && response.definitions.length > 0) {
 
                         var definitions = response.definitions;
-                        
+
                         // store offset
                         var offset = response.filterIndex;
-                        
+
                         // remove existing dialog's
                         $(".squid-api-pre-domain-suggestions").remove();
                         $(".squid-api-domain-suggestion-dialog").remove();
 
                         // append div
                         domainEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                        
+
                         for (i=0; i<definitions.length; i++) {
                             domainEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                         }
@@ -73,7 +88,7 @@
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.val(str);
-                            me.domainSuggestionHandler.call(me);
+                            me.suggestionHandler.call(me);
                         });
 
                         // // show dialog

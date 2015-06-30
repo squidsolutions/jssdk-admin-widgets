@@ -1,6 +1,10 @@
 <div class="squid-api-model-widget squid-api-model-widget-{{type}}">
     <button class="form-control selected-model squid-api-action">
-        Select {{type}}
+        {{#if renderEl}}
+            {{{renderEl}}}
+        {{else}}
+            Select {{type}}
+        {{/if}}
     </button>
     <div class="squid-api-{{type}}-model-widget-popup">
         {{#if create}}
@@ -17,6 +21,7 @@
                                     {{#if edit}}
                                         <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
                                     {{/if}}
+                                    <td class="relation"><i class="fa fa-arrows-h"></i></td>
                                     {{#if delete}}
                                         <td class="delete"><i class="fa fa-trash-o"></i></td>
                                     {{/if}}

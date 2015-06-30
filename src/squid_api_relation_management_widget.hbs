@@ -1,0 +1,31 @@
+<div id="squid-api-relations-widget-data-table">
+	<div class="row">
+		<div class="col-md-10">
+		</div>
+		<div class="col-md-2">
+			<button class="form-control add">add</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table style="width:100%">
+				<thead>
+					<tr>
+						<th>left name</th>
+						<th>right name</th>
+						<th>edit</th>
+						<th>delete</th>
+					</tr>
+				</thead>
+				{{#each models}}
+					<tr data-value={{oid}}>
+						<td>{{leftName}}</td>
+						<td>{{rightName}}</td>
+						<td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+						<td class="delete"><i class="fa fa-trash-o"></i></td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+	</div>
+</div>
