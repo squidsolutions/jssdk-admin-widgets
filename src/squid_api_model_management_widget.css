@@ -70,7 +70,7 @@
 	position: absolute;
 	overflow-y: scroll;
 	background-color: #f9f9f9;
-	max-height: 85px;
+	max-height: 110px;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	cursor: pointer;
@@ -101,6 +101,11 @@
 	outline: 0;
 }
 
-.squid-api-domain-suggestion-dialog .ui-dialog-titlebar-close, .squid-api-domain-suggestion-dialog .ui-dialog-titlebar {
-	float: right;
+.squid-api-domain-suggestion-dialog .ui-dialog-titlebar {
+	float: left;
+}
+
+.squid-api-domain-suggestion-dialog .ui-dialog-titlebar-close {
+    position: fixed;
+    margin-left: 485px;
 }

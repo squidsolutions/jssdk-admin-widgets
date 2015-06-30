@@ -1115,7 +1115,7 @@ function program1(depth0,data) {
                                 e.preventDefault();
                             },
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom", of: domainEl },
+                            position: { my: "center top", at: "center bottom+4", of: domainEl },
                             closeText: "close"
                         });
                     } else {
@@ -1229,20 +1229,13 @@ function program1(depth0,data) {
                 }
             }
 
-            // add project id
-            if (project) {
-                if (project.projectId && me.model.definition !== "Project") {
-                    data.id.projectId = project.projectId;
-                }
-            }
-
             return data;
         },
 
         setStatusMessage: function(message) {
             setTimeout(function() {
                 squid_api.model.status.set({'message' : message});
-            }, 500);
+            }, 1000);
         },
 
         saveForm : function(formContent) {
@@ -1273,9 +1266,6 @@ function program1(depth0,data) {
                             me.schema.id.type = "Hidden";
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
-                            } else {
-                                var msg = response.objectType + " successfully saved with name " + response.name;
-                                me.setStatusMessage(msg);
                             }
                             if (me.successHandler) {
                                 me.successHandler.call(collection);
@@ -1295,8 +1285,6 @@ function program1(depth0,data) {
                         }
                     }
                 });
-                // reset status message
-                me.resetStatusMessage();
             } else {
                 me.formModal.preventClose();
             }
@@ -1361,7 +1349,6 @@ function program1(depth0,data) {
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
-                me.resetStatusMessage();
             });
             // on cancel
             this.formModal.on('cancel', function() {
@@ -1718,8 +1705,6 @@ function program1(depth0,data) {
                 viewOptions.successHandler = function() {
                     var collection = new squid_api.model.ProjectCollection();
                     collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;

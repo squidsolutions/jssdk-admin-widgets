@@ -97,7 +97,7 @@
                                 e.preventDefault();
                             },
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom", of: domainEl },
+                            position: { my: "center top", at: "center bottom+4", of: domainEl },
                             closeText: "close"
                         });
                     } else {

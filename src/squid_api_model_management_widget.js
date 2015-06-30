@@ -91,20 +91,13 @@
                 }
             }
 
-            // add project id
-            if (project) {
-                if (project.projectId && me.model.definition !== "Project") {
-                    data.id.projectId = project.projectId;
-                }
-            }
-
             return data;
         },
 
         setStatusMessage: function(message) {
             setTimeout(function() {
                 squid_api.model.status.set({'message' : message});
-            }, 500);
+            }, 1000);
         },
 
         saveForm : function(formContent) {
@@ -135,9 +128,6 @@
                             me.schema.id.type = "Hidden";
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
-                            } else {
-                                var msg = response.objectType + " successfully saved with name " + response.name;
-                                me.setStatusMessage(msg);
                             }
                             if (me.successHandler) {
                                 me.successHandler.call(collection);
@@ -157,8 +147,6 @@
                         }
                     }
                 });
-                // reset status message
-                me.resetStatusMessage();
             } else {
                 me.formModal.preventClose();
             }
@@ -223,7 +211,6 @@
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
-                me.resetStatusMessage();
             });
             // on cancel
             this.formModal.on('cancel', function() {

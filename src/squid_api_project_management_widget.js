@@ -42,8 +42,6 @@
                 viewOptions.successHandler = function() {
                     var collection = new squid_api.model.ProjectCollection();
                     collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
