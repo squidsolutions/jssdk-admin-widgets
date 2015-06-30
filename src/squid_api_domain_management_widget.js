@@ -108,8 +108,8 @@
                     // place the focus back onto the domain suggestionElement
                     domainEl.focus();
                 },
-                error: function(response, hello) {
-                    console.log(response);
+                error: function(response) {
+                    squid_api.model.status.set({'message' : response.responseJSON.error});
                 }
             });
         },
