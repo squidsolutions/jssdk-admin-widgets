@@ -259,7 +259,6 @@ function program1(depth0,data) {
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
-            this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
@@ -268,6 +267,11 @@ function program1(depth0,data) {
                 me.collection.parentId = parent.get("id");
                 me.collection.fetch();
             });
+        },
+        
+        setModel : function(model) {
+            this.model = model;
+            this.listenTo(this.model, "change", this.render);
         },
 
         events: {
@@ -934,7 +938,19 @@ function program1(depth0,data) {
 
     var View = Backbone.View.extend({
         
+        config : null,
+        projectSelect : null,
+        
         initialize: function(options) {
+            if (options) {
+                if (options.config) {
+                    this.config = options.config;
+                }
+            }
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+            this.listenTo(this.config, "change:project", this.render);
             this.render();
         },
 
@@ -960,25 +976,43 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            var projectSelect = new api.view.CollectionManagementWidget({
-                el : this.$el,
-                type : "Project",
-                changeEventHandler : function(value){
-                    value = value || null;
-                    config.set({
-                        "project" : value,
-                        "domain" : null,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
-                    });
-                },
-                projectSchemasCallback : this.getDbSchemas,
-                model : squid_api.model.project,
-                parent : squid_api.model.login
-            });
+            var me = this;
+            
+            // get the project;
+            var project;
+            project = new squid_api.model.ProjectModel();
+            
+            if (!me.projectSelect) {
+                me.projectSelect = new api.view.CollectionManagementWidget({
+                    el : me.$el,
+                    type : "Project",
+                    changeEventHandler : function(value){
+                        value = value || null;
+                        config.set({
+                            "project" : value,
+                            "domain" : null,
+                            "selection" : null,
+                            "chosenDimensions" : null,
+                            "selectedDimension" : null,
+                            "chosenMetrics" : null,
+                            "selectedMetric" : null
+                        });
+                    },
+                    projectSchemasCallback : me.getDbSchemas,
+                    parent : squid_api.model.login,
+                    model : project
+                });
+            } else {
+                me.projectSelect.setModel(project);
+            }
+            
+            var projectOid = me.config.get("project");
+            if (projectOid) {
+                project.set("id", {
+                    projectId : projectOid
+                });
+                project.fetch();
+            }
 
             return this;
         }

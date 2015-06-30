@@ -53,7 +53,6 @@
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
-            this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
@@ -62,6 +61,11 @@
                 me.collection.parentId = parent.get("id");
                 me.collection.fetch();
             });
+        },
+        
+        setModel : function(model) {
+            this.model = model;
+            this.listenTo(this.model, "change", this.render);
         },
 
         events: {
