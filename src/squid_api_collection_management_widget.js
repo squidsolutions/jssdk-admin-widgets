@@ -10,6 +10,7 @@
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
+        changeEventHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
 
@@ -60,6 +61,13 @@
             this.listenTo(this.parent, "change:id", function(parent) {
                 me.collectionAvailable = true;
                 me.collection.parentId = parent.get("id");
+                me.collection.fetch();
+            });
+
+            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
+                me.collectionAvailable = true;
+                me.collection.parentId = {};
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
         },
@@ -124,7 +132,9 @@
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
-                        me.collection.create(this);
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
                     }

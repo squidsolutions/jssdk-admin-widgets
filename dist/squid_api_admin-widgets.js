@@ -577,6 +577,7 @@ function program1(depth0,data) {
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
+        changeEventHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
 
@@ -627,6 +628,13 @@ function program1(depth0,data) {
             this.listenTo(this.parent, "change:id", function(parent) {
                 me.collectionAvailable = true;
                 me.collection.parentId = parent.get("id");
+                me.collection.fetch();
+            });
+
+            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
+                me.collectionAvailable = true;
+                me.collection.parentId = {};
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
         },
@@ -691,7 +699,9 @@ function program1(depth0,data) {
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
-                        me.collection.create(this);
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
                     }
@@ -1036,18 +1046,32 @@ function program1(depth0,data) {
             var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
 
             if (this.createOnlyView) {
-                viewOptions.successHandler = function() {
+                viewOptions.successHandler = function(value) {
                     var collection = new squid_api.model.DomainCollection();
                     collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
                     squid_api.model.status.set({'message' : message});
+
+                    if (! value) {
+                        value = this.get("id").domainId;
+                    }
+                    config.set({
+                        "domain" : value,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
+                    });
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    value = value || null;
+                    if (! value) {
+                        value = this.get("id").domainId;
+                    }
                     config.set({
                         "domain" : value,
                         "selection" : null,
@@ -1207,25 +1231,19 @@ function program1(depth0,data) {
         },
 
         manipulateData : function(data) {
-            // set empty values to null
-            var fields = data;
-            for (var value in fields) {
-                if (fields[value].length === 0) {
-                    data[value] = null;
-                }
-            }
-
             // if the definition isn't project, add the projectId
-            data.id = {};
-            if (squid_api.model.project.get("id")) {
-                var projectId = squid_api.model.project.get("id").projectId;
-                if (this.model.definition !== "Project") {
+            var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
+            if (! data.id[modelDefinitionId]) {
+                if (squid_api.model.project.get("id")) {
+                    var projectId = squid_api.model.project.get("id").projectId;
                     data.id.projectId = projectId;
-                    if (data.id[this.model.definition + "Id"]) {
-                        data.id[this.model.definition + "Id"] = data[id];
+                    if (data.id[modelDefinitionId]) {
+                        data.id[modelDefinitionId] = data.id[modelDefinitionId];
                     } else {
-                        data.id[this.model.definition + "Id"] = null;
+                        data.id[modelDefinitionId] = null;
                     }
+                } else {
+                    data.id[modelDefinitionId] = null;
                 }
             }
 
@@ -1350,6 +1368,10 @@ function program1(depth0,data) {
             this.formModal.on('ok', function() {
                 me.saveForm();
             });
+
+            // hide first div (id)
+            $(this.formModal.el).find("fieldset").first().find("div").first().hide();
+
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
@@ -1465,6 +1487,10 @@ function program1(depth0,data) {
 
                                 schema[property].type = "Object";
                                 schema[property].subSchema = nm;
+
+                                if (property == "id") {
+                                    schema[property].editorClass = "hidden";
+                                }
                             }
                         }
 
@@ -1529,9 +1555,6 @@ function program1(depth0,data) {
 
                 // set schema
                 me.schema = schema;
-
-                // if schema already set, hide id
-                me.schema.id.type = "Hidden";
 
                 // Render View
                 me.render();
@@ -1607,6 +1630,10 @@ function program1(depth0,data) {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
+
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                     }
                 });
             }
@@ -1699,19 +1726,37 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Project", "schemasCallback" : this.getDbSchemas, "model" : squid_api.model.project, "parent" : squid_api.model.login};
+            var viewOptions = {"el" : this.$el,
+                type : "Project",
+                "schemasCallback" : this.getDbSchemas,
+                "model" : squid_api.model.project,
+                "parent" : squid_api.model.login
+            };
 
             if (this.createOnlyView) {
-                viewOptions.successHandler = function() {
-                    var collection = new squid_api.model.ProjectCollection();
-                    collection.create(this);
+                viewOptions.successHandler = function(value) {
+                    // logic to update collection
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
+                    config.set({
+                        "project" : value,
+                        "domain" : null,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
+                    });
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    value = value || null;
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
                     config.set({
                         "project" : value,
                         "domain" : null,

@@ -18,18 +18,32 @@
             var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
 
             if (this.createOnlyView) {
-                viewOptions.successHandler = function() {
+                viewOptions.successHandler = function(value) {
                     var collection = new squid_api.model.DomainCollection();
                     collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
                     squid_api.model.status.set({'message' : message});
+
+                    if (! value) {
+                        value = this.get("id").domainId;
+                    }
+                    config.set({
+                        "domain" : value,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
+                    });
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    value = value || null;
+                    if (! value) {
+                        value = this.get("id").domainId;
+                    }
                     config.set({
                         "domain" : value,
                         "selection" : null,

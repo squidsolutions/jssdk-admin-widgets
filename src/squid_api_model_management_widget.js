@@ -69,25 +69,19 @@
         },
 
         manipulateData : function(data) {
-            // set empty values to null
-            var fields = data;
-            for (var value in fields) {
-                if (fields[value].length === 0) {
-                    data[value] = null;
-                }
-            }
-
             // if the definition isn't project, add the projectId
-            data.id = {};
-            if (squid_api.model.project.get("id")) {
-                var projectId = squid_api.model.project.get("id").projectId;
-                if (this.model.definition !== "Project") {
+            var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
+            if (! data.id[modelDefinitionId]) {
+                if (squid_api.model.project.get("id")) {
+                    var projectId = squid_api.model.project.get("id").projectId;
                     data.id.projectId = projectId;
-                    if (data.id[this.model.definition + "Id"]) {
-                        data.id[this.model.definition + "Id"] = data[id];
+                    if (data.id[modelDefinitionId]) {
+                        data.id[modelDefinitionId] = data.id[modelDefinitionId];
                     } else {
-                        data.id[this.model.definition + "Id"] = null;
+                        data.id[modelDefinitionId] = null;
                     }
+                } else {
+                    data.id[modelDefinitionId] = null;
                 }
             }
 
@@ -212,6 +206,10 @@
             this.formModal.on('ok', function() {
                 me.saveForm();
             });
+
+            // hide first div (id)
+            $(this.formModal.el).find("fieldset").first().find("div").first().hide();
+
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
@@ -327,6 +325,10 @@
 
                                 schema[property].type = "Object";
                                 schema[property].subSchema = nm;
+
+                                if (property == "id") {
+                                    schema[property].editorClass = "hidden";
+                                }
                             }
                         }
 
@@ -391,9 +393,6 @@
 
                 // set schema
                 me.schema = schema;
-
-                // if schema already set, hide id
-                me.schema.id.type = "Hidden";
 
                 // Render View
                 me.render();

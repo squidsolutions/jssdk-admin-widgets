@@ -36,19 +36,37 @@
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Project", "schemasCallback" : this.getDbSchemas, "model" : squid_api.model.project, "parent" : squid_api.model.login};
+            var viewOptions = {"el" : this.$el,
+                type : "Project",
+                "schemasCallback" : this.getDbSchemas,
+                "model" : squid_api.model.project,
+                "parent" : squid_api.model.login
+            };
 
             if (this.createOnlyView) {
-                viewOptions.successHandler = function() {
-                    var collection = new squid_api.model.ProjectCollection();
-                    collection.create(this);
+                viewOptions.successHandler = function(value) {
+                    // logic to update collection
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
+                    config.set({
+                        "project" : value,
+                        "domain" : null,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
+                    });
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    value = value || null;
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
                     config.set({
                         "project" : value,
                         "domain" : null,
