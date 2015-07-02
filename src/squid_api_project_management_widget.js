@@ -36,7 +36,13 @@
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Project", "schemasCallback" : this.getDbSchemas, "model" : squid_api.model.project, "parent" : squid_api.model.login};
+            var viewOptions = {
+                    "el" : this.$el,
+                    "type" : "Project",
+                    "schemasCallback" : this.getDbSchemas,
+                    "model" : squid_api.model.project,
+                    "parent" : squid_api.model.customer
+            };
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function() {
