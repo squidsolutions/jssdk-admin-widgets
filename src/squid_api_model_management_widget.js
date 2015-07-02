@@ -69,19 +69,19 @@
         },
 
         manipulateData : function(data) {
-            var me = this;
-            var project = squid_api.model.project.get("id");
-
-            // manipuldate data before save
-            if (this.model.get("id")) {
-                data.id = {};
-                data.id[this.model.definition.toLowerCase() + "Id"] = parseInt(this.model.get("id")[this.model.definition.toLowerCase() + "Id"]);
-            }
-
-            // add project id
-            if (project) {
-                if (project.projectId && me.model.definition !== "Project") {
-                    data.id.projectId = project.projectId;
+            // if the definition isn't project, add the projectId
+            var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
+            if (! data.id[modelDefinitionId]) {
+                if (squid_api.model.project.get("id")) {
+                    var projectId = squid_api.model.project.get("id").projectId;
+                    data.id.projectId = projectId;
+                    if (data.id[modelDefinitionId]) {
+                        data.id[modelDefinitionId] = data.id[modelDefinitionId];
+                    } else {
+                        data.id[modelDefinitionId] = null;
+                    }
+                } else {
+                    data.id[modelDefinitionId] = null;
                 }
             }
 
@@ -91,7 +91,7 @@
         setStatusMessage: function(message) {
             setTimeout(function() {
                 squid_api.model.status.set({'message' : message});
-            }, 500);
+            }, 1000);
         },
 
         saveForm : function(formContent) {
@@ -122,9 +122,6 @@
                             me.schema.id.type = "Hidden";
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
-                            } else {
-                                var msg = response.objectType + " successfully saved with name " + response.name;
-                                me.setStatusMessage(msg);
                             }
                             if (me.successHandler) {
                                 me.successHandler.call(collection);
@@ -144,8 +141,6 @@
                         }
                     }
                 });
-                // reset status message
-                me.resetStatusMessage();
             } else {
                 me.formModal.preventClose();
             }
@@ -210,8 +205,11 @@
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
                 me.saveForm();
-                me.resetStatusMessage();
             });
+
+            // hide first div (id)
+            $(this.formModal.el).find("fieldset").first().find("div").first().hide();
+
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
@@ -232,6 +230,9 @@
 
         events: {
             "click button" : function() {
+                // reset model defaults
+                this.model.clear().set(this.model.defaults);
+
                 this.prepareForm();
             }
         },
@@ -324,6 +325,10 @@
 
                                 schema[property].type = "Object";
                                 schema[property].subSchema = nm;
+
+                                if (property == "id") {
+                                    schema[property].editorClass = "hidden";
+                                }
                             }
                         }
 
@@ -368,6 +373,10 @@
                                 }
                             }
                         }
+                        // positions
+                        if (properties[property].position) {
+                            schema[property].position = properties[property].position;
+                        }
                     }
                 }
 
@@ -376,17 +385,14 @@
                 if (data.definitions[me.model.definition]) {
                     required = data.definitions[me.model.definition].required;
                 }
-                for (i=0; i<required.length; i++) {
-                    schema[required[i]].validators = ['required'];
+                if (required) {
+                    for (i=0; i<required.length; i++) {
+                        schema[required[i]].validators = ['required'];
+                    }
                 }
 
                 // set schema
                 me.schema = schema;
-
-                // if schema already set, hide id
-                if (me.model.get("id")) {
-                    me.schema.id.type = "Hidden";
-                }
 
                 // Render View
                 me.render();

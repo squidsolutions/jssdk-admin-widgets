@@ -45,18 +45,29 @@
             };
 
             if (this.createOnlyView) {
-                viewOptions.successHandler = function() {
-                    var collection = new squid_api.model.ProjectCollection();
-                    collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
+                viewOptions.successHandler = function(value) {
+                    // logic to update collection
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
+                    config.set({
+                        "project" : value,
+                        "domain" : null,
+                        "selection" : null,
+                        "chosenDimensions" : null,
+                        "selectedDimension" : null,
+                        "chosenMetrics" : null,
+                        "selectedMetric" : null
+                    });
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    value = value || null;
+                    if (! value) {
+                        value = this.get("id").projectId;
+                    }
                     config.set({
                         "project" : value,
                         "domain" : null,

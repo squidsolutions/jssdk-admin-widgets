@@ -10,6 +10,7 @@
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
+        changeEventHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
 
@@ -60,6 +61,20 @@
                 me.collectionAvailable = true;
                 me.collection.parentId = parent.get("id");
                 me.collection.fetch();
+            });
+
+            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
+                me.collectionAvailable = true;
+                me.collection.parentId = {};
+                me.collection.parentId = me.parent.get("id");
+                me.collection.fetch();
+
+                // set model
+                var modelDef = config.get(me.model.definition.toLowerCase());
+                var modelItem = me.collection.get(modelDef);
+                if (modelItem) {
+                    me.model.set(modelItem.toJSON());
+                }
             });
         },
         
@@ -128,7 +143,9 @@
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
-                        me.collection.create(this);
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
                     }
@@ -177,8 +194,11 @@
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false};
 
+            var modelRole = this.model.get("_role");
+            var customerRole = squid_api.model.customer.get("_role");
+
             // write role
-            if (this.model.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+            if (modelRole == "WRITE" || modelRole == "OWNER" || customerRole == "OWNER" || customerRole == "WRITE") {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
