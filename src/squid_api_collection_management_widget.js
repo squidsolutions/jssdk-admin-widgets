@@ -77,7 +77,7 @@
                 }
             });
         },
-        
+
         setModel : function(model) {
             this.model = model;
             this.listenTo(this.model, "change", this.render);
@@ -195,10 +195,10 @@
             var roles = {"create" : false, "edit" : false, "delete" : false};
 
             var modelRole = this.model.get("_role");
-            var customerRole = squid_api.model.customer.get("_role");
+            var parentRole = this.parent.get("_role");
 
             // write role
-            if (modelRole == "WRITE" || modelRole == "OWNER" || customerRole == "OWNER" || customerRole == "WRITE") {
+            if (modelRole == "WRITE" || modelRole == "OWNER" || parentRole == "OWNER" || parentRole == "WRITE") {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;

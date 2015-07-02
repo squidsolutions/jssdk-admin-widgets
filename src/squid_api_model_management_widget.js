@@ -62,6 +62,9 @@
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
+            if (this.parent) {
+                this.listenTo(this.parent, "change:id", this.render);
+            }
 
             if (this.autoOpen) {
                 this.prepareForm();
@@ -405,12 +408,19 @@
             var jsonData = {
                 "view" : "squid-api-admin-widgets-" + me.model.definition,
                 "definition" : me.model.definition,
-                "buttonLabel" : me.buttonLabel
+                "buttonLabel" : me.buttonLabel,
+                "accessible" : false,
             };
 
             // Print Button to trigger management widget
             if (! this.autoOpen) {
-                this.$el.html(this.template(jsonData));
+                if (this.parent) {
+                    if (this.parent.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+                        jsonData.accessible = true;
+                    }
+                    // print template
+                    this.$el.html(this.template(jsonData));
+                }
             }
         }
     });

@@ -1,9 +1,11 @@
 <div class="{{view}}">
-	<button type="button" class="btn btn-default">
-		{{#if buttonLabel}}
-			{{{buttonLabel}}}
-		{{else}}
-			<i class="fa fa-plus"></i>
-		{{/if}}
-	</button>
+	{{#if accessible}}
+		<button type="button"  class="btn btn-default">
+			{{#if buttonLabel}}
+				{{{buttonLabel}}}
+			{{else}}
+				<i class="fa fa-plus"></i>
+			{{/if}}
+		</button>
+	{{/if}}
 </div>

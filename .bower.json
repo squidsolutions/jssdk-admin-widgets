@@ -1,0 +1,42 @@
+{
+  "name": "squid_api_admin_widgets",
+  "version": "1.2.1",
+  "homepage": "https://github.com/squidsolutions/jssdk-admin-widgets",
+  "authors": [
+    "obalbous <oba@squid>"
+  ],
+  "main": [
+    "dist/squid_api_admin-widgets.js",
+    "dist/squid_api_admin-widgets.css"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "src",
+    "build",
+    "Gruntfile.js"
+  ],
+  "dependencies": {
+    "squid_api": "https://github.com/squidsolutions/jssdk2.git",
+    "handlebars": "~1.3.0",
+    "data_tables": "https://github.com/DataTables/DataTables.git",
+    "data_tables_css": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css",
+    "data_tables_js": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js",
+    "d3": "3",
+    "backbone-forms": "https://github.com/powmedia/backbone-forms.git#master",
+    "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#master"
+  },
+  "_release": "1.2.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.2.1",
+    "commit": "ff5fcdd70bb5d10a7a90784c5d998d46fdf32735"
+  },
+  "_source": "https://github.com/squidsolutions/jssdk-admin-widgets.git",
+  "_target": "1.2.1",
+  "_originalSource": "https://github.com/squidsolutions/jssdk-admin-widgets.git"
+}

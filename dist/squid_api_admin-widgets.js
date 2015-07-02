@@ -313,33 +313,42 @@ function program25(depth0,data) {
 this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", self=this, escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n		<button type=\"button\"  class=\"btn btn-default\">\n			";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</button>\n	";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n			";
+  buffer += "\n				";
   if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		";
+  buffer += "\n			";
   return buffer;
   }
 
-function program3(depth0,data) {
+function program4(depth0,data) {
   
   
-  return "\n			<i class=\"fa fa-plus\"></i>\n		";
+  return "\n				<i class=\"fa fa-plus\"></i>\n			";
   }
 
   buffer += "<div class=\"";
   if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n	<button type=\"button\" class=\"btn btn-default\">\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+    + "\">\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.accessible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	</button>\n</div>";
+  buffer += "\n</div>\n";
   return buffer;
   });
 
@@ -644,7 +653,7 @@ function program1(depth0,data) {
                 }
             });
         },
-        
+
         setModel : function(model) {
             this.model = model;
             this.listenTo(this.model, "change", this.render);
@@ -762,10 +771,10 @@ function program1(depth0,data) {
             var roles = {"create" : false, "edit" : false, "delete" : false};
 
             var modelRole = this.model.get("_role");
-            var customerRole = squid_api.model.customer.get("_role");
+            var parentRole = this.parent.get("_role");
 
             // write role
-            if (modelRole == "WRITE" || modelRole == "OWNER" || customerRole == "OWNER" || customerRole == "WRITE") {
+            if (modelRole == "WRITE" || modelRole == "OWNER" || parentRole == "OWNER" || parentRole == "WRITE") {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
@@ -1238,6 +1247,9 @@ function program1(depth0,data) {
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
+            if (this.parent) {
+                this.listenTo(this.parent, "change:id", this.render);
+            }
 
             if (this.autoOpen) {
                 this.prepareForm();
@@ -1581,12 +1593,19 @@ function program1(depth0,data) {
             var jsonData = {
                 "view" : "squid-api-admin-widgets-" + me.model.definition,
                 "definition" : me.model.definition,
-                "buttonLabel" : me.buttonLabel
+                "buttonLabel" : me.buttonLabel,
+                "accessible" : false,
             };
 
             // Print Button to trigger management widget
             if (! this.autoOpen) {
-                this.$el.html(this.template(jsonData));
+                if (this.parent) {
+                    if (this.parent.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+                        jsonData.accessible = true;
+                    }
+                    // print template
+                    this.$el.html(this.template(jsonData));
+                }
             }
         }
     });
