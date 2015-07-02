@@ -69,6 +69,13 @@
                 me.collection.parentId = {};
                 me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
+
+                // set model
+                var modelDef = config.get(me.model.definition.toLowerCase());
+                var modelItem = me.collection.get(modelDef);
+                if (modelItem) {
+                    me.model.set(modelItem.toJSON());
+                }
             });
         },
 
@@ -183,8 +190,11 @@
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false};
 
+            var modelRole = this.model.get("_role");
+            var customerRole = squid_api.model.customer.get("_role");
+
             // write role
-            if (this.model.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
+            if (modelRole == "WRITE" || modelRole == "OWNER" || customerRole == "OWNER" || customerRole == "WRITE") {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
