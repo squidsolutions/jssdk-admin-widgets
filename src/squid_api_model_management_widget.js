@@ -329,7 +329,9 @@
                                         nm[subProperty1].options = [];
                                         nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
                                     }
-                                    // relations exception
+                                    if (modelDefinition == "Relation" && subProperty1 == "projectId") {
+                                        nm[subProperty1].title = " ";
+                                    }
                                     if (modelDefinition == "Relation" && subProperty1 == "domainId") {
                                         var domains = me.parent.models;
                                         var domainArray = [];
@@ -349,7 +351,12 @@
                                         nm[subProperty1].editorClass = "form-control";
                                     }
                                 }
-
+                                if (modelDefinition == "Relation" && property == "leftId") {
+                                    nm[subProperty1].title = "Left Domain";
+                                } else if (modelDefinition == "Relation" && property == "rightId") {
+                                    nm[subProperty1].title = "Right Domain";
+                                }
+                                schema[property].title = " ";
                                 schema[property].type = "Object";
                                 schema[property].subSchema = nm;
 

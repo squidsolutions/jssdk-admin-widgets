@@ -1522,7 +1522,9 @@ function program1(depth0,data) {
                                         nm[subProperty1].options = [];
                                         nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
                                     }
-                                    // relations exception
+                                    if (modelDefinition == "Relation" && subProperty1 == "projectId") {
+                                        nm[subProperty1].title = " ";
+                                    }
                                     if (modelDefinition == "Relation" && subProperty1 == "domainId") {
                                         var domains = me.parent.models;
                                         var domainArray = [];
@@ -1542,7 +1544,12 @@ function program1(depth0,data) {
                                         nm[subProperty1].editorClass = "form-control";
                                     }
                                 }
-
+                                if (modelDefinition == "Relation" && property == "leftId") {
+                                    nm[subProperty1].title = "Left Domain";
+                                } else if (modelDefinition == "Relation" && property == "rightId") {
+                                    nm[subProperty1].title = "Right Domain";
+                                }
+                                schema[property].title = " ";
                                 schema[property].type = "Object";
                                 schema[property].subSchema = nm;
 
@@ -2009,10 +2016,6 @@ function program1(depth0,data) {
                 suggestionHandler: function() {
                     var me = this;
                     var relationEl = this.formContent.$el.find(".suggestion-box");
-
-                    // suggestion requirements
-
-
                     var request = $.ajax({
                         type: "GET",
                         url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion",
