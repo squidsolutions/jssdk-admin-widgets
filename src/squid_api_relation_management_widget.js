@@ -158,7 +158,7 @@
                     var relationEl = this.formContent.$el.find(".suggestion-box");
                     var request = $.ajax({
                         type: "GET",
-                        url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/relations-suggestion",
+                        url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/relations-suggestion",
                         dataType: 'json',
                         data: {
                             "expression" : relationEl.val(),
