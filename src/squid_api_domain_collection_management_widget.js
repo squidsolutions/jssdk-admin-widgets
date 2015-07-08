@@ -143,21 +143,14 @@
 
             // relations
             $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relations = me.relations.models;
-                var domain = config.get("domain");
-                var models = squid_api.utils.getDomainRelations(relations, domain);
-
                 var relationSelect = new api.view.RelationModelManagementView({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Relation",
                     modalTitle : "Relation for domain: " + this.domainName,
-                    changeEventHandler : function(value){
-
-                    },
-                    collection : models,
+                    collection : me.relations,
                     model : new squid_api.model.RelationModel(),
-                    parent : this.parent,
+                    parent : me.collection,
                     autoOpen : true,
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";

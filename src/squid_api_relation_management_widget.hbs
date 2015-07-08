@@ -8,24 +8,30 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<table style="width:100%">
-				<thead>
-					<tr>
-						<th>left name</th>
-						<th>right name</th>
-						<th>edit</th>
-						<th>delete</th>
-					</tr>
-				</thead>
-				{{#each models}}
-					<tr data-value={{oid}}>
-						<td>{{leftName}}</td>
-						<td>{{rightName}}</td>
-						<td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-						<td class="delete"><i class="fa fa-trash-o"></i></td>
-					</tr>
-				{{/each}}
-			</table>
+			{{#if models}}
+				<table style="width:100%">
+					<thead>
+						<tr>
+							<th>left name</th>
+							<th>right name</th>
+							<th>edit</th>
+							<th>delete</th>
+						</tr>
+					</thead>
+					{{#each models}}
+						<tr data-value={{oid}}>
+							<td>{{leftName}}</td>
+							<td>{{rightName}}</td>
+							<td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+							<td class="delete"><i class="fa fa-trash-o"></i></td>
+						</tr>
+					{{/each}}
+				</table>
+				{{else}}
+				<div class="no-relations-available">
+					no relations available
+				</div>
+			{{/if}}
 		</div>
 	</div>
 </div>

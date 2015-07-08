@@ -54,14 +54,14 @@
                     });
                 };
                 // DomainCollectionManagementWidget
-                var collectionView = new api.view.CollectionManagementWidget(viewOptions);
+                var collectionView = new api.view.DomainCollectionManagementWidget(viewOptions);
             }
 
             return this;
         },
         suggestionHandler: function() {
             var me = this;
-            var domainEl = this.formContent.$el.find(".domain-subject");
+            var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
                 url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/domains-suggestion",

@@ -5,10 +5,93 @@
 
     var View = squid_api.view.ModelManagementView.extend({
 
-        renderForm : function() {
-            // called when we want to set the model / schema & render the form via a modal
+        successHandler: null,
+        errorHandler: null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        buttonLabel : null,
+        autoOpen: null,
+        parent: null,
+        suggestionHandler : null,
+        schemasCallback : null,
+        beforeRenderHandler : null,
+        modalTitle : null,
+        collection : null,
+
+        initialize: function(options) {
             var me = this;
-            var models = this.collection;
+
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            if (options.successHandler) {
+                this.successHandler = options.successHandler;
+            }
+            if (options.errorHandler) {
+                this.errorHandler = options.errorHandler;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
+            }
+            if (options.autoOpen) {
+                this.autoOpen = options.autoOpen;
+            }
+            if (options.parent) {
+                this.parent = options.parent;
+            }
+            if (options.suggestionHandler) {
+                this.suggestionHandler = options.suggestionHandler;
+            }
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
+            }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
+            }
+            if (options.modalTitle) {
+                this.modalTitle = options.modalTitle;
+            }
+            if (options.createOnlyView) {
+                this.createOnlyView = options.createOnlyView;
+            }
+
+            // Set Form Schema
+            this.setSchema();
+
+            if (this.collection) {
+                this.collection.on("reset change remove sync", this.updateForm, this);
+            }
+            if (this.model) {
+                this.listenTo(this.model, 'change', this.setSchema);
+            }
+            if (this.parent) {
+                this.listenTo(this.parent, "change:id", this.render);
+            }
+            if (this.autoOpen) {
+                this.prepareForm();
+            }
+        },
+
+        updateForm : function() {
+            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var jsonData = {"models" : []};
+
+            // format and push relation collection models
+            for (i=0; i<models.length; i++) {
+                var obj = {};
+                obj.oid = models[i].get("oid");
+                obj.leftName = models[i].get("leftName");
+                obj.rightName = models[i].get("rightName");
+                jsonData.models.push(obj);
+            }
+            this.relationView.$el.html(this.template(jsonData));
+        },
+
+        renderForm : function() {
+            var me = this;
+            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
             var jsonData = {"models" : []};
 
             // format and push relation collection models
@@ -22,33 +105,37 @@
 
             // render the form into a backbone view
             this.relationView = Backbone.View.extend({
-                template: this.template,
                 events: {
                     "click .edit" : function(event) {
-                        var oid = $(event.target).parent().attr("data-value");
-                        var models = me.collection;
-                        var model;
-
-                        for (i=0; i<models.length; i++) {
-                            if (models[i].get("oid") == oid) {
-                                model = models[i];
-                            }
-                        }
-
+                        var oid = $(event.target).parents("tr").attr("data-value");
+                        var model = me.collection.get(oid);
                         new api.view.ModelManagementView({
                             el : $(this),
                             model : model,
                             parent : me.parent,
                             autoOpen : true,
-                            domainSuggestionHandler : me.domainSuggestionHandler,
-                            projectSchemasCallback : me.projectSchemasCallback,
                             beforeRenderHandler : me.beforeRenderHandler,
+                            suggestionHandler : this.suggestionHandler,
                             buttonLabel : "edit",
                             successHandler : function() {
-                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                var message = "relation successfully modified";
                                 squid_api.model.status.set({'message' : message});
                             }
                         });
+                    },
+                    "click .delete" : function(event) {
+                        var oid = $(event.target).parents("tr").attr("data-value");
+                        var model = me.collection.get(oid);
+                        if (confirm("are you sure you want to delete this relation?")) {
+                            if (true) {
+                                model.destroy({
+                                    success:function() {
+                                        squid_api.model.status.set({'message' : "relation successfully deleted"});
+                                        me.collection.trigger("change");
+                                    }
+                                });
+                            }
+                        }
                     },
                     "click .add" : function(event) {
                         new api.view.ModelManagementView({
@@ -56,16 +143,85 @@
                             model : me.model,
                             parent : me.parent,
                             autoOpen : true,
-                            domainSuggestionHandler : me.domainSuggestionHandler,
-                            projectSchemasCallback : me.projectSchemasCallback,
                             beforeRenderHandler : me.beforeRenderHandler,
+                            suggestionHandler : this.suggestionHandler,
                             buttonLabel : "edit",
                             successHandler : function() {
-                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                                squid_api.model.status.set({'message' : message});
+                                squid_api.model.status.set({'message' : "relation successfully created"});
+                                me.collection.create(this);
                             }
                         });
                     }
+                },
+                suggestionHandler: function() {
+                    var me = this;
+                    var relationEl = this.formContent.$el.find(".suggestion-box");
+                    var request = $.ajax({
+                        type: "GET",
+                        url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/relations-suggestion",
+                        dataType: 'json',
+                        data: {
+                            "expression" : relationEl.val(),
+                            "offset" : relationEl.prop("selectionStart") + 1,
+                            "leftDomainId" : this.model.get("leftId").domainId,
+                            "rightDomainId" : this.model.get("rightId").domainId,
+                            "access_token" : squid_api.model.login.get("accessToken")
+                        },
+                        success:function(response) {
+                            // detemine if there is an error or not
+                            if (response.validateMessage.length === 0) {
+                                relationEl.removeClass("invalid-expression").addClass("valid-expression");
+                            } else {
+                                relationEl.removeClass("valid-expression").addClass("invalid-expression");
+                            }
+
+                            // append box if definitions exist
+                            if (response.definitions && response.definitions.length > 0) {
+
+                                var definitions = response.definitions;
+
+                                // store offset
+                                var offset = response.filterIndex;
+
+                                // remove existing dialog's
+                                $(".squid-api-pre-domain-suggestions").remove();
+                                $(".squid-api-domain-suggestion-dialog").remove();
+
+                                // append div
+                                relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
+
+                                for (i=0; i<definitions.length; i++) {
+                                    relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
+                                }
+
+                                relationEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
+                                    var item = $(event.target).html();
+                                    var str = relationEl.val().substring(0, offset) + item.substring(0);
+                                    relationEl.val(str);
+                                    me.suggestionHandler.call(me);
+                                });
+
+                                // show dialog
+                                relationEl.siblings(".squid-api-pre-domain-suggestions").dialog({
+                                    open: function(e, ui) {
+                                        e.preventDefault();
+                                    },
+                                    dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
+                                    position: { my: "center top", at: "center bottom+4", of: relationEl },
+                                    closeText: "close"
+                                });
+                            } else {
+                                // set message
+                                squid_api.model.status.set("message", response.validateMessage);
+                            }
+
+                            // place the focus back onto the domain suggestionElement
+                            relationEl.focus();
+                        },
+                        error: function(response) {
+                            squid_api.model.status.set({'message' : response.responseJSON.error});
+                        }
+                    });
                 },
                 render: function() {
                     this.$el.html(template(jsonData));
@@ -73,12 +229,15 @@
                 }
             });
 
+            // instantiate relation view
+            this.relationView = new this.relationView();
+
             // modal title
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
-                content: new this.relationView(),
+                content: this.relationView,
                 animate: true,
                 cancelText: "close",
                 title: modalTitle

@@ -53,3 +53,8 @@
 #squid-api-relations-widget-data-table .edit, #squid-api-relations-widget-data-table .delete {
 	cursor: pointer;
 }
+
+#squid-api-relations-widget-data-table .no-relations-available {
+    padding: 15px;
+    text-align: center;
+}

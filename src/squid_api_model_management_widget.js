@@ -15,6 +15,7 @@
         schemasCallback : null,
         beforeRenderHandler : null,
         modalTitle : null,
+        collection : null,
 
         initialize: function(options) {
             var me = this;
@@ -167,10 +168,10 @@
                 parent: me.parent,
                 // domain subject exception
                 events: {
-                    "keyup .domain-subject" : function(e) {
+                    "keyup .suggestion-box" : function(e) {
                         me.suggestionHandler.call(me);
                     },
-                    "click .domain-subject" : function(e) {
+                    "click .suggestion-box" : function(e) {
                         me.suggestionHandler.call(me);
                     }
                 },
@@ -186,7 +187,10 @@
 
             } else {
                 if (me.model.get("id")) {
-                    modalTitle = "Editing " + me.model.definition + ": " + me.model.get("name");
+                    modalTitle = "Editing " + me.model.definition;
+                    if (me.model.get("name")) {
+                        modalTitle = modalTitle + ": " + me.model.get("name");
+                    }
                 } else {
                     modalTitle = "Creating a new " + me.model.definition;
                 }
@@ -292,6 +296,7 @@
                         // base field object
                         schema[property] = {};
                         var refValue, ref, subProp, nm;
+                        var modelDefinition = me.model.definition;
 
                         // obtain reference property values
                         if (properties[property].items) {
@@ -301,16 +306,17 @@
                         }
 
                         if (properties[property].$ref) {
-                            if (me.model.definition == "Domain" && property == "subject") {
-                                refValue = properties.subject.$ref;
-                                ref = properties.subject.$ref.substr(refValue.lastIndexOf("/") + 1);
+                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression") {
+                                refValue = properties[property].$ref;
+                                ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
                                 subProp = data.definitions[ref].properties;
 
                                 schema[property].type = "Object";
                                 schema[property].subSchema = subProp;
                                 schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
-                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control domain-subject";
-                            } else {
+                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control suggestion-box";
+                            }
+                            else {
                                 // base nested model
                                 nm = {};
                                 subProp = data.definitions[properties[property].$ref.substr(properties[property].$ref.lastIndexOf("/") + 1)].properties;
@@ -323,7 +329,25 @@
                                         nm[subProperty1].options = [];
                                         nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
                                     }
-                                    nm[subProperty1].editorClass = "form-control";
+                                    // relations exception
+                                    if (modelDefinition == "Relation" && subProperty1 == "domainId") {
+                                        var domains = me.parent.models;
+                                        var domainArray = [];
+
+                                        for (i=0; i<domains.length; i++) {
+                                            domainObj = {};
+                                            domainObj.val = domains[i].get("oid");
+                                            domainObj.label = domains[i].get("name");
+                                            domainArray.push(domainObj);
+                                        }
+                                        nm[subProperty1].type = "Select";
+                                        nm[subProperty1].options = domainArray;
+                                    }
+                                    if (subProperty1 == "projectId") {
+                                        nm[subProperty1].editorClass = "hidden";
+                                    } else {
+                                        nm[subProperty1].editorClass = "form-control";
+                                    }
                                 }
 
                                 schema[property].type = "Object";
@@ -365,6 +389,12 @@
                                     type = me.getPropertyType(properties[property].type);
                                     schema[property].type = type;
                                 }
+                                schema[property].editorClass = "form-control";
+                            }
+                            // dropdown boxes
+                            if (properties[property].enum && properties[property].type == "string") {
+                                schema[property].type = "Select";
+                                schema[property].options = properties[property].enum;
                                 schema[property].editorClass = "form-control";
                             }
                             if (schema[property].type == "Checkboxes") {
