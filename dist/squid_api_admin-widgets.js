@@ -2009,15 +2009,19 @@ function program1(depth0,data) {
                 suggestionHandler: function() {
                     var me = this;
                     var relationEl = this.formContent.$el.find(".suggestion-box");
+
+                    // suggestion requirements
+
+
                     var request = $.ajax({
                         type: "GET",
-                        url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/relations-suggestion",
+                        url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion",
                         dataType: 'json',
                         data: {
                             "expression" : relationEl.val(),
                             "offset" : relationEl.prop("selectionStart") + 1,
-                            "leftDomainId" : this.model.get("leftId").domainId,
-                            "rightDomainId" : this.model.get("rightId").domainId,
+                            "leftDomainId" : this.formContent.getValue().leftId.domainId,
+                            "rightDomainId" : this.formContent.getValue().rightId.domainId,
                             "access_token" : squid_api.model.login.get("accessToken")
                         },
                         success:function(response) {
