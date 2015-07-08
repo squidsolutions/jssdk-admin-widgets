@@ -249,7 +249,9 @@
 
 .squid-api-domain-suggestion-dialog .ui-dialog-titlebar-close {
     position: fixed;
-    margin-left: 485px;
+    border: none;
+    margin-left: 510px;
+    border-radius: 5px;
 }
 
 #squid-api-relations-widget-data-table .row {

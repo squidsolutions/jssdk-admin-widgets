@@ -1171,7 +1171,7 @@ function program1(depth0,data) {
                             },
                             dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
                             position: { my: "center top", at: "center bottom+4", of: domainEl },
-                            closeText: "close"
+                            closeText: "x"
                         });
                     } else {
                         // set message
@@ -2068,7 +2068,7 @@ function program1(depth0,data) {
                                     },
                                     dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
                                     position: { my: "center top", at: "center bottom+4", of: relationEl },
-                                    closeText: "close"
+                                    closeText: "x"
                                 });
                             } else {
                                 // set message
