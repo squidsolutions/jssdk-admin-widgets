@@ -1284,8 +1284,10 @@ function program1(depth0,data) {
             }
 
             // password exception
-            if (data.dbPassword.length === 0) {
-                data.dbPassword = null;
+            if (data.dbPassword) {
+                if (data.dbPassword.length === 0) {
+                    data.dbPassword = null;
+                }
             }
 
             return data;
