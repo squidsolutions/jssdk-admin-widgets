@@ -102,6 +102,7 @@
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.val(str);
+                            $(".squid-api-pre-domain-suggestions").dialog("close");
                             me.suggestionHandler.call(me);
                         });
 

@@ -89,6 +89,11 @@
                 }
             }
 
+            // password exception
+            if (data.dbPassword.length === 0) {
+                data.dbPassword = null;
+            }
+
             return data;
         },
 

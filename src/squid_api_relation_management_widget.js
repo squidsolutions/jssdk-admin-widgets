@@ -75,33 +75,27 @@
         },
 
         updateForm : function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
-            var jsonData = {"models" : []};
+            var jsonData = {"models" : this.viewData()};
+            this.relationView.$el.html(this.template(jsonData));
+        },
 
-            // format and push relation collection models
+        viewData: function() {
+            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var arr = [];
             for (i=0; i<models.length; i++) {
                 var obj = {};
                 obj.oid = models[i].get("oid");
                 obj.leftName = models[i].get("leftName");
                 obj.rightName = models[i].get("rightName");
-                jsonData.models.push(obj);
+                arr.push(obj);
             }
-            this.relationView.$el.html(this.template(jsonData));
+
+            return arr;
         },
 
         renderForm : function() {
             var me = this;
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
-            var jsonData = {"models" : []};
-
-            // format and push relation collection models
-            for (i=0; i<models.length; i++) {
-                var obj = {};
-                obj.oid = models[i].get("oid");
-                obj.leftName = models[i].get("leftName");
-                obj.rightName = models[i].get("rightName");
-                jsonData.models.push(obj);
-            }
+            var jsonData = {"models" : this.viewData()};
 
             // render the form into a backbone view
             this.relationView = Backbone.View.extend({
@@ -189,7 +183,6 @@
 
                                 // append div
                                 relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-
                                 for (i=0; i<definitions.length; i++) {
                                     relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                                 }
@@ -248,11 +241,6 @@
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            // saveForm on 'ok' click
-            this.formModal.on('ok', function() {
-                me.saveForm();
-            });
 
             // on cancel
             this.formModal.on('cancel', function() {

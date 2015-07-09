@@ -70,7 +70,7 @@
 	position: absolute;
 	overflow-y: scroll;
 	background-color: #f9f9f9;
-	max-height: 110px;
+	max-height: 210px;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	cursor: pointer;

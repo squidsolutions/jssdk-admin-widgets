@@ -212,7 +212,7 @@
 	position: absolute;
 	overflow-y: scroll;
 	background-color: #f9f9f9;
-	max-height: 110px;
+	max-height: 210px;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	cursor: pointer;
@@ -309,6 +309,10 @@
 #squid-api-relations-widget-data-table .no-relations-available {
     padding: 15px;
     text-align: center;
+}
+
+.squid-api-admin-widgets-modal-form .Relation .btn-primary {
+    display: none;
 }
 
 #squid-api-admin-widgets-user-table td .group-value {

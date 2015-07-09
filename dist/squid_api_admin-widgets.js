@@ -450,7 +450,7 @@ function program16(depth0,data) {
     + "</td>\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    <td class=\"refreshdb\"><i class=\"fa fa-refresh\"></i></td>\n                                    ";
+  buffer += "\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                ";
@@ -459,7 +459,7 @@ function program16(depth0,data) {
 function program17(depth0,data) {
   
   
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        <td class=\"refreshdb\"><i class=\"fa fa-refresh\"></i></td>\n                                    ";
   }
 
 function program19(depth0,data) {
@@ -1161,6 +1161,7 @@ function program1(depth0,data) {
                             var item = $(event.target).html();
                             var str = domainEl.val().substring(0, offset) + item.substring(0);
                             domainEl.val(str);
+                            $(".squid-api-pre-domain-suggestions").dialog("close");
                             me.suggestionHandler.call(me);
                         });
 
@@ -1280,6 +1281,11 @@ function program1(depth0,data) {
                 } else {
                     data.id[modelDefinitionId] = null;
                 }
+            }
+
+            // password exception
+            if (data.dbPassword.length === 0) {
+                data.dbPassword = null;
             }
 
             return data;
@@ -1935,33 +1941,27 @@ function program1(depth0,data) {
         },
 
         updateForm : function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
-            var jsonData = {"models" : []};
+            var jsonData = {"models" : this.viewData()};
+            this.relationView.$el.html(this.template(jsonData));
+        },
 
-            // format and push relation collection models
+        viewData: function() {
+            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var arr = [];
             for (i=0; i<models.length; i++) {
                 var obj = {};
                 obj.oid = models[i].get("oid");
                 obj.leftName = models[i].get("leftName");
                 obj.rightName = models[i].get("rightName");
-                jsonData.models.push(obj);
+                arr.push(obj);
             }
-            this.relationView.$el.html(this.template(jsonData));
+
+            return arr;
         },
 
         renderForm : function() {
             var me = this;
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
-            var jsonData = {"models" : []};
-
-            // format and push relation collection models
-            for (i=0; i<models.length; i++) {
-                var obj = {};
-                obj.oid = models[i].get("oid");
-                obj.leftName = models[i].get("leftName");
-                obj.rightName = models[i].get("rightName");
-                jsonData.models.push(obj);
-            }
+            var jsonData = {"models" : this.viewData()};
 
             // render the form into a backbone view
             this.relationView = Backbone.View.extend({
@@ -2049,7 +2049,6 @@ function program1(depth0,data) {
 
                                 // append div
                                 relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-
                                 for (i=0; i<definitions.length; i++) {
                                     relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
                                 }
@@ -2108,11 +2107,6 @@ function program1(depth0,data) {
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            // saveForm on 'ok' click
-            this.formModal.on('ok', function() {
-                me.saveForm();
-            });
 
             // on cancel
             this.formModal.on('cancel', function() {
