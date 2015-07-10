@@ -15,7 +15,7 @@
             } else {
                 this.template = template;
             }
-            
+
             if (options.onSave) {
                 this.onSave = options.onSave;
             }

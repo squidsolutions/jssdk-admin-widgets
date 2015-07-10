@@ -231,7 +231,6 @@
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
                 content: this.relationView,
-                animate: true,
                 cancelText: "close",
                 title: modalTitle
             }).open();

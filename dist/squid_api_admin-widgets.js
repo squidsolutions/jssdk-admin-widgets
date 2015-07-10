@@ -689,12 +689,8 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                var me = this;
                 this.collectionModal.open();
-                setTimeout(function() {
-                    var roles = me.userRoles();
-                    me.actionEvents(roles);
-                }, 200);
+                this.actionEvents(this.userRoles());
             }
         },
 
@@ -873,8 +869,7 @@ function program1(depth0,data) {
             // instantiate a new modal view
             this.collectionModal = new Backbone.BootstrapModal({
                 content: this.$el.find("#squid-api-" + this.type + "-model-widget-popup-container").html(),
-                title: this.type + "s",
-                animate: true,
+                title: this.type + "s"
             });
 
             // modal wrapper class
@@ -1286,7 +1281,7 @@ function program1(depth0,data) {
             // if the definition isn't project, add the projectId
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
             if (! data.id[modelDefinitionId]) {
-                if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
+                if (squid_api.model.project.get("id")) {
                     var projectId = squid_api.model.project.get("id").projectId;
                     data.id.projectId = projectId;
                     if (data.id[modelDefinitionId]) {
@@ -1416,8 +1411,7 @@ function program1(depth0,data) {
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
                 content: new this.formView(),
-                title: modalTitle,
-                animate: true
+                title: modalTitle
             }).open();
 
             // modal wrapper class
@@ -2112,7 +2106,6 @@ function program1(depth0,data) {
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
                 content: this.relationView,
-                animate: true,
                 cancelText: "close",
                 title: modalTitle
             }).open();
@@ -2150,7 +2143,7 @@ function program1(depth0,data) {
             } else {
                 this.template = template;
             }
-            
+
             if (options.onSave) {
                 this.onSave = options.onSave;
             }

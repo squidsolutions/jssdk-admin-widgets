@@ -86,12 +86,8 @@
 
         events: {
             "click button": function() {
-                var me = this;
                 this.collectionModal.open();
-                setTimeout(function() {
-                    var roles = me.userRoles();
-                    me.actionEvents(roles);
-                }, 200);
+                this.actionEvents(this.userRoles());
             }
         },
 
@@ -270,8 +266,7 @@
             // instantiate a new modal view
             this.collectionModal = new Backbone.BootstrapModal({
                 content: this.$el.find("#squid-api-" + this.type + "-model-widget-popup-container").html(),
-                title: this.type + "s",
-                animate: true,
+                title: this.type + "s"
             });
 
             // modal wrapper class
