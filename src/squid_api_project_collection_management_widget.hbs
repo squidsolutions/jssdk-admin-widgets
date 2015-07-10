@@ -6,7 +6,8 @@
             Select {{type}}
         {{/if}}
     </button>
-    <div class="squid-api-{{type}}-model-widget-popup">
+    <div id="squid-api-{{type}}-model-widget-popup-container">
+    <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
         {{#if create}}
             <div class="create"></div>
         {{/if}}
@@ -36,6 +37,7 @@
                 <div class="no-data">No {{type}}'s Available</div>
             {{/if}}
         </div>
+    </div>
         {{else}}
             <div class="parent-missing">
 

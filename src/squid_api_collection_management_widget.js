@@ -7,6 +7,7 @@
         template : null,
         collection : null,
         config : null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
@@ -85,7 +86,12 @@
 
         events: {
             "click button": function() {
-                $(".squid-api-" + this.type + "-model-widget-popup").dialog("open");
+                var me = this;
+                this.collectionModal.open();
+                setTimeout(function() {
+                    var roles = me.userRoles();
+                    me.actionEvents(roles);
+                }, 200);
             }
         },
 
@@ -141,7 +147,6 @@
                     suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
-                    buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
@@ -250,9 +255,6 @@
                 jsonData.options.unshift(sel[0]);
             }
 
-            // remove old dialog's
-            $(".squid-api-" + this.type + "-model-widget-popup").remove();
-
             // print template
             var html = this.template(jsonData);
             this.$el.html(html);
@@ -260,19 +262,24 @@
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
 
-            // set dialog
-            var dialog = this.$el.find(".squid-api-" + this.type + "-model-widget-popup").dialog({
-                dialogClass: "squid-api-model-widget-popup",
-                clickOutside: true, // clicking outside the dialog will close it
-                clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
-                autoOpen: false,
-                position: {
-                    my: "left top", at: "left bottom", of: this.$el.find("button")
-                }
+            // close existing modal if one is already open
+            if (this.collectionModal) {
+                this.collectionModal.close();
+            }
+
+            // instantiate a new modal view
+            this.collectionModal = new Backbone.BootstrapModal({
+                content: this.$el.find("#squid-api-" + this.type + "-model-widget-popup-container").html(),
+                title: this.type + "s",
+                animate: true,
             });
 
-            // select, edit, delete events
-            this.actionEvents(roles);
+            // modal wrapper class
+            $(this.collectionModal.el).addClass(this.modalElementClassName);
+            $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+
+            // remove popup information from the view
+            this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();
 
             return this;
         }

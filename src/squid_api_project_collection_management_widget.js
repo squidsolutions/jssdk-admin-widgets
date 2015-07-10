@@ -32,18 +32,15 @@
             });
 
             if (roles.create) {
-                 // create base model for create
-                var baseModel = new squid_api.model[ this.type + "Model"]();
-
                 // create
                 new api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
-                    model : baseModel,
+                    model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
                     suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
-                    buttonLabel : "<i class='fa fa-plus'></i>",
+                    buttonLabel : "Create Project",
                     successHandler : function() {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";

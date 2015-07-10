@@ -76,7 +76,7 @@
             // if the definition isn't project, add the projectId
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
             if (! data.id[modelDefinitionId]) {
-                if (squid_api.model.project.get("id")) {
+                if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
                     var projectId = squid_api.model.project.get("id").projectId;
                     data.id.projectId = projectId;
                     if (data.id[modelDefinitionId]) {
@@ -206,8 +206,8 @@
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
                 content: new this.formView(),
-                animate: true,
-                title: modalTitle
+                title: modalTitle,
+                animate: true
             }).open();
 
             // modal wrapper class

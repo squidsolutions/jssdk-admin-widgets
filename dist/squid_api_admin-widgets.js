@@ -18,7 +18,7 @@ function program3(depth0,data) {
   buffer += "\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(19, program19, data),fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </div>\n        ";
+  buffer += "\n        </div>\n    </div>\n        ";
   return buffer;
   }
 function program4(depth0,data) {
@@ -131,11 +131,15 @@ function program21(depth0,data) {
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </button>\n    <div class=\"squid-api-";
+    + "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup\">\n        ";
+    + "-model-widget-popup-container\">\n    <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.create), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
@@ -184,7 +188,7 @@ function program7(depth0,data) {
   buffer += "\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(23, program23, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </div>\n        ";
+  buffer += "\n        </div>\n    </div>\n        ";
   return buffer;
   }
 function program8(depth0,data) {
@@ -296,11 +300,15 @@ function program25(depth0,data) {
     + "\">\n    <button class=\"form-control selected-model squid-api-action\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.renderEl), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </button>\n    <div class=\"squid-api-";
+  buffer += "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup\">\n        ";
+    + "-model-widget-popup-container\">\n    <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.create), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
@@ -391,7 +399,7 @@ function program7(depth0,data) {
   buffer += "\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(23, program23, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </div>\n        ";
+  buffer += "\n        </div>\n    </div>\n        ";
   return buffer;
   }
 function program8(depth0,data) {
@@ -503,11 +511,15 @@ function program25(depth0,data) {
     + "\">\n    <button class=\"form-control selected-model squid-api-action\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.renderEl), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </button>\n    <div class=\"squid-api-";
+  buffer += "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup\">\n        ";
+    + "-model-widget-popup-container\">\n    <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.create), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
@@ -598,6 +610,7 @@ function program1(depth0,data) {
         template : null,
         collection : null,
         config : null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
@@ -676,7 +689,12 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                $(".squid-api-" + this.type + "-model-widget-popup").dialog("open");
+                var me = this;
+                this.collectionModal.open();
+                setTimeout(function() {
+                    var roles = me.userRoles();
+                    me.actionEvents(roles);
+                }, 200);
             }
         },
 
@@ -732,7 +750,6 @@ function program1(depth0,data) {
                     suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
-                    buttonLabel : "<i class='fa fa-plus'></i>",
                     successHandler : function() {
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
@@ -841,9 +858,6 @@ function program1(depth0,data) {
                 jsonData.options.unshift(sel[0]);
             }
 
-            // remove old dialog's
-            $(".squid-api-" + this.type + "-model-widget-popup").remove();
-
             // print template
             var html = this.template(jsonData);
             this.$el.html(html);
@@ -851,19 +865,24 @@ function program1(depth0,data) {
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
 
-            // set dialog
-            var dialog = this.$el.find(".squid-api-" + this.type + "-model-widget-popup").dialog({
-                dialogClass: "squid-api-model-widget-popup",
-                clickOutside: true, // clicking outside the dialog will close it
-                clickOutsideTrigger: this.$el.find("button"), // Element (id or class) that triggers the dialog opening
-                autoOpen: false,
-                position: {
-                    my: "left top", at: "left bottom", of: this.$el.find("button")
-                }
+            // close existing modal if one is already open
+            if (this.collectionModal) {
+                this.collectionModal.close();
+            }
+
+            // instantiate a new modal view
+            this.collectionModal = new Backbone.BootstrapModal({
+                content: this.$el.find("#squid-api-" + this.type + "-model-widget-popup-container").html(),
+                title: this.type + "s",
+                animate: true,
             });
 
-            // select, edit, delete events
-            this.actionEvents(roles);
+            // modal wrapper class
+            $(this.collectionModal.el).addClass(this.modalElementClassName);
+            $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+
+            // remove popup information from the view
+            this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();
 
             return this;
         }
@@ -975,19 +994,16 @@ function program1(depth0,data) {
                 me.model.set(model);
             });
 
-            if (roles.create) {
-                 // create base model for create
-                var baseModel = new squid_api.model[ this.type + "Model"]();
-
+             if (roles.create) {
                 // create
                 new api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
-                    model : baseModel,
+                    model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
                     suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
-                    buttonLabel : "<i class='fa fa-plus'></i>",
+                    buttonLabel : "Create Domain",
                     successHandler : function() {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
@@ -1270,7 +1286,7 @@ function program1(depth0,data) {
             // if the definition isn't project, add the projectId
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
             if (! data.id[modelDefinitionId]) {
-                if (squid_api.model.project.get("id")) {
+                if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
                     var projectId = squid_api.model.project.get("id").projectId;
                     data.id.projectId = projectId;
                     if (data.id[modelDefinitionId]) {
@@ -1400,8 +1416,8 @@ function program1(depth0,data) {
             // instantiate a new modal view, set the content & automatically open
             this.formModal = new Backbone.BootstrapModal({
                 content: new this.formView(),
-                animate: true,
-                title: modalTitle
+                title: modalTitle,
+                animate: true
             }).open();
 
             // modal wrapper class
@@ -1700,18 +1716,15 @@ function program1(depth0,data) {
             });
 
             if (roles.create) {
-                 // create base model for create
-                var baseModel = new squid_api.model[ this.type + "Model"]();
-
                 // create
                 new api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
-                    model : baseModel,
+                    model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
                     suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
-                    buttonLabel : "<i class='fa fa-plus'></i>",
+                    buttonLabel : "Create Project",
                     successHandler : function() {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
