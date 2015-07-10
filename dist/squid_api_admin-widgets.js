@@ -1278,24 +1278,26 @@ function program1(depth0,data) {
         },
 
         manipulateData : function(data) {
-            // if the definition isn't project, add the projectId
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
-            if (! data.id[modelDefinitionId]) {
-                if (squid_api.model.project.get("id")) {
-                    var projectId = squid_api.model.project.get("id").projectId;
-                    data.id.projectId = projectId;
-                    if (data.id[modelDefinitionId]) {
-                        data.id[modelDefinitionId] = data.id[modelDefinitionId];
-                    } else {
-                        data.id[modelDefinitionId] = null;
-                    }
-                } else {
+
+            // replace id values with null if empty
+            if (data.id.projectId.length === 0) {
+                data.id.projectId = null;
+            }
+            if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
+                if (data.id[modelDefinitionId].length === 0) {
                     data.id[modelDefinitionId] = null;
                 }
             }
 
+            // if the definition isn't project, add the projectId
+            if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
+                var projectId = squid_api.model.project.get("id").projectId;
+                data.id.projectId = projectId;
+            }
+
             // password exception
-            if (data.dbPassword) {
+            if (typeof data.dbPassword !== "undefined") {
                 if (data.dbPassword.length === 0) {
                     data.dbPassword = null;
                 }
@@ -1333,6 +1335,10 @@ function program1(depth0,data) {
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
+                        // set project ID
+
+                        me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
+
                         // project exception
                         if (me.model.definition == "Project") {
                             me.schema.id.type = "Hidden";
