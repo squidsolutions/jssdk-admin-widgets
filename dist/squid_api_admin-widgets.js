@@ -689,8 +689,20 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                this.collectionModal.open();
-                this.actionEvents(this.userRoles());
+                // instantiate a new modal view
+                this.collectionModal = new Backbone.BootstrapModal({
+                    content: this.html,
+                    title: this.type + "s"
+                }).open();
+
+                // remove button
+                $(this.collectionModal.el).find("button.selected-model").remove();
+
+                // modal wrapper class
+                $(this.collectionModal.el).addClass(this.modalElementClassName);
+                $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+
+                this.actionEvents(this.roles);
             }
         },
 
@@ -813,9 +825,9 @@ function program1(depth0,data) {
 
         render: function() {
             var me = this;
-            var roles = this.userRoles();
+            this.roles = this.userRoles();
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : this.roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
             var models = this.collection.models;
 
             // selected obj
@@ -833,7 +845,7 @@ function program1(depth0,data) {
                         selected = true;
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : roles.edit, "delete" : roles.delete};
+                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
                 if (selected) {
                     jsonData.valueSelected = true;
                     sel.push(option);
@@ -854,27 +866,16 @@ function program1(depth0,data) {
                 jsonData.options.unshift(sel[0]);
             }
 
-            // print template
-            var html = this.template(jsonData);
-            this.$el.html(html);
-
-            // set button value
-            this.$el.find("button.selected-model").text(jsonData.selectedName);
-
-            // close existing modal if one is already open
             if (this.collectionModal) {
                 this.collectionModal.close();
             }
 
-            // instantiate a new modal view
-            this.collectionModal = new Backbone.BootstrapModal({
-                content: this.$el.find("#squid-api-" + this.type + "-model-widget-popup-container").html(),
-                title: this.type + "s"
-            });
+            // print template
+            this.html = this.template(jsonData);
+            this.$el.html(this.html);
 
-            // modal wrapper class
-            $(this.collectionModal.el).addClass(this.modalElementClassName);
-            $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+            // set button value
+            this.$el.find("button.selected-model").text(jsonData.selectedName);
 
             // remove popup information from the view
             this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();

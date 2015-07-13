@@ -47,6 +47,7 @@
 
 .squid-api-admin-widgets-modal-form .modal-body {
 	padding-top: 0px;
+    min-height: 150px;
 }
 
 .squid-api-admin-widgets-modal-form .modal-body label {
