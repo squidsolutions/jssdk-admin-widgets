@@ -1,7 +1,3 @@
-.squid-api-model-widget-popup {
-
-}
-
 .squid-api-model-widget-popup table {
 	color: #666;
 	-moz-border-radius: 3px;
@@ -138,4 +134,43 @@
 
 .squid-api-Project-model-widget-popup-container .modal-footer .ok, .squid-api-Domain-model-widget-popup-container .modal-footer .ok {
 	display: none;
+}
+
+.squid-api-model-widget .squid-api-action:disabled {
+	pointer-events: none;
+}
+
+.squid-api-admin-widgets-tooltip {
+    background: #777;
+	color: #fff;
+	border-radius: 3px;
+	width: 200px;
+    opacity: 0.8;
+}
+
+.squid-api-admin-widgets-tooltip .ui-tooltip-content {
+    position: relative;
+    padding: 10px;
+}
+
+.squid-api-admin-widgets-tooltip:after, .squid-api-admin-widgets-tooltip:before {
+	bottom: 97%;
+	left: 10%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.squid-api-admin-widgets-tooltip:after {
+	border-bottom-color: #777;
+	border-width: 6px;
+	margin-left: -6px;
+}
+.squid-api-admin-widgets-tooltipx:before {
+	border-bottom-color: #777;
+	border-width: 7px;
+	margin-left: -7px;
 }

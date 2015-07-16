@@ -223,8 +223,9 @@
         render: function() {
             var me = this;
             this.roles = this.userRoles();
+            var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : this.roles.create, "collectionAvailable" : this.collectionAvailable, "renderEl" : this.renderEl};
+            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : this.roles.create, "collectionAvailable" : this.collectionAvailable, "collectionNotAvailableReason" : collectionNotAvailableReason, "renderEl" : this.renderEl};
             var models = this.collection.models;
 
             // selected obj
@@ -270,6 +271,13 @@
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (! this.collectionAvailable) {
+                this.$el.find(".squid-api-model-widget-" + this.type).tooltip({
+                    tooltipClass: "squid-api-admin-widgets-tooltip",
+                    position: { my: "left top", at: "left bottom+2", of: me.$el.find(".squid-api-model-widget-" + me.type) },
+                });
+            }
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);

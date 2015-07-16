@@ -1,5 +1,5 @@
-<div class="squid-api-model-widget squid-api-model-widget-{{type}}">
-    <button class="form-control selected-model squid-api-action" {{#unless collectionAvailable}}disabled="true"{{/unless}}>
+<div class="squid-api-model-widget squid-api-model-widget-{{type}}" {{#unless collectionAvailable}} data-toggle="tooltip" data-placement="bottom" title="{{collectionNotAvailableReason}}" {{/unless}}>
+    <button class="form-control selected-model squid-api-action" {{#unless collectionAvailable}} disabled="true" {{/unless}}>
         {{#if renderEl}}
             {{{renderEl}}}
         {{else}}
