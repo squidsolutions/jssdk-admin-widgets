@@ -3,6 +3,7 @@
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
+	float: left;
 }
 
 .squid-api-model-widget-popup table tbody {
@@ -22,10 +23,10 @@
   	font-size: 12px;
 }
 
-.squid-api-model-widget-popup .create button {
+.squid-api-model-widget-popup .create {
+	display: inline-block;
 	float: right;
-	margin-bottom: 20px;
-	margin-top: 20px;
+	margin-bottom: 15px;
 }
 
 .squid-api-model-widget-popup .create button, .squid-api-model-widget-popup .create button:active:focus {
@@ -223,8 +224,8 @@
 }
 
 .squid-api-admin-widgets-modal-form .modal-body {
-	padding-top: 0px;
-    min-height: 150px;
+    width: 100%;
+    display: inline-block;
 }
 
 .squid-api-admin-widgets-modal-form .modal-body label {

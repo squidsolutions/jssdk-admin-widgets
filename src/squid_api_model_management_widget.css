@@ -46,8 +46,8 @@
 }
 
 .squid-api-admin-widgets-modal-form .modal-body {
-	padding-top: 0px;
-    min-height: 150px;
+    width: 100%;
+    display: inline-block;
 }
 
 .squid-api-admin-widgets-modal-form .modal-body label {

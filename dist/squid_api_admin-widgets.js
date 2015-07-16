@@ -1689,7 +1689,7 @@ function program1(depth0,data) {
                         } else if (! properties[property].$ref) {
                             // domain exception
                             if (schema[property].type !== "Checkboxes") {
-                                if (property.includes("Password")) {
+                                if (property.indexOf("Password")  > -1) {
                                     schema[property].type = "Password";
                                 } else {
                                     type = me.getPropertyType(properties[property].type);
