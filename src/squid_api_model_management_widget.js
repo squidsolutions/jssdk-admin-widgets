@@ -75,9 +75,13 @@
         manipulateData : function(data) {
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
-            // replace id values with null if empty
-            if (data.id.projectId.length === 0) {
-                data.id.projectId = null;
+            if (data.id) {
+                if (data.id.projectId.length === 0) {
+                    data.id.projectId = null;
+                }
+                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = config.get("domain");
+                }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
                 if (data.id[modelDefinitionId].length === 0) {
@@ -318,7 +322,7 @@
                         }
 
                         if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression") {
+                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression") {
                                 refValue = properties[property].$ref;
                                 ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
                                 subProp = data.definitions[ref].properties;

@@ -59,7 +59,7 @@
 
             return this;
         },
-        suggestionHandler: function() {
+        domainSuggestionHandler: function() {
             var me = this;
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({

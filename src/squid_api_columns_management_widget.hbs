@@ -1,0 +1,21 @@
+<div class="squid-api-admin-widget-columns-management">
+    <select multiple="multiple">
+        {{#each nonDynamic}}
+            <option value="{{id}}">{{name}}</option>
+        {{/each}}
+        {{#each dynamic}}
+            <option value="{{id}}" selected="selected">{{name}}</option>
+        {{/each}}
+    </select>
+    <div class="management">
+        <button type="button" class="btn btn-default add">
+            Create
+		</button>
+        <button type="button" class="btn btn-default edit" disabled="true">
+            Edit
+		</button>
+        <button type="button" class="btn btn-default delete" disabled="true">
+            Delete
+		</button>
+    </div>
+</div>
