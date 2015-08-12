@@ -2360,7 +2360,7 @@ function program1(depth0,data) {
                 // Change add button to save and change attr-value
                 $(item.currentTarget).attr('data-value', 'save');
                 $(item.currentTarget).text('save');
-            
+
                 // Show input fields
                 $(toShow).show();
                 $(item.currentTarget).parents('tr').find('td span.send-email-label').show();
@@ -2399,7 +2399,17 @@ function program1(depth0,data) {
                     success: function(model, response){
                         var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
-                            var linkUrl = encodeURIComponent("https://api.squidsolutions.com/release/admin/console/index.html?access_token={access_token}#!user");
+                            var linkUrl;
+                            var linkUrlConfig = config.get("sendEmailLinkUrl");
+                            // construct sendEmail link
+                            if (linkUrlConfig) {
+                                linkUrl = linkUrlConfig;
+                            } else {
+                                linkUrl = squid_api.apiURL.substring(0, squid_api.apiURL.indexOf('/v'), 1) + "/admin/console/index.html";
+                            }
+                            // add access token
+                            linkUrl = encodeURIComponent(linkUrl + "?access_token={access_token}#!user");
+
                             var sendMailUrl = squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl;
 
                             $.get(sendMailUrl).done(function() {
@@ -2437,7 +2447,7 @@ function program1(depth0,data) {
             var modelId = $(item.currentTarget).parents('tr').attr('data-id');
 
             if (confirm('Are you sure you want to remove this group?')) {
-                
+
                 var groups = [];
                 for (i=0; i<groupItems.length; i++) {
                     groups.push($(groupItems[i]).attr('attr-value'));
@@ -2494,7 +2504,7 @@ function program1(depth0,data) {
             // Show text inputs
             $(".editing").removeClass("editing");
             var currentTarget = $(item.currentTarget);
-            
+
             currentTarget.addClass("editing");
 
             // Focus on input fields
@@ -2575,9 +2585,9 @@ function program1(depth0,data) {
                             groupArray.push(value);
                             data[modelAttr] = groupArray;
                         } else {
-                            data[modelAttr] = value;  
+                            data[modelAttr] = value;
                         }
-                    
+
                         // Update model (which also updates collection)
                         model.set(data);
 
@@ -2603,7 +2613,7 @@ function program1(depth0,data) {
                 success : function(model, response) {
                     me.model.fetch({
                     success : function(model, response) {
-                            
+
                         }
                     });
                 }
@@ -2626,7 +2636,7 @@ function program1(depth0,data) {
             if (role !== "WRITE" && role !== "OWNER") {
                 addUser = false;
             }
-            
+
             // Render Template
             this.$el.html(this.template({
                 addUser : addUser
@@ -2650,7 +2660,7 @@ function program1(depth0,data) {
                 var tableRows = d3.select(globalID + " tbody").selectAll("tbody")
                     .data(users)
                     .enter()
-                    .append("tr") 
+                    .append("tr")
                     .attr("data-id", function(d) {
                         return d.id.userId; //So backbone recognises the model on update
                     });
@@ -2708,7 +2718,7 @@ function program1(depth0,data) {
                                     } else {
                                         data += "<div class='" + canEdit + "' attr-id='groupId' attr-value='" + g[i] + "'></div>";
                                     }
-                                }    
+                                }
                             }
                         }
                         data += "<i class='field-icon fa fa-plus-square'></i> <select class='edit form-control input-sm' data-attribute='groups'></select>";
@@ -2719,7 +2729,7 @@ function program1(depth0,data) {
                             return ['user-value' + ' group-section'];
                         }
                     });
-                
+
                 // Print group names instead of their Id's
                 this.assignGroupNames();
 
