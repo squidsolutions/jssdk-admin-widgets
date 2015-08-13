@@ -112,15 +112,7 @@
                     success: function(model, response){
                         var message = 'You have successfully saved user with login: ' + data.login;
                         if (sendEmail) {
-                            var linkUrl;
-                            var linkConfig = config.get("sendEmailLinkUrl");
-                            if (linkConfig) {
-                                linkUrl = linkConfig;
-                            } else {
-                                linkUrl = squid_api.apiURL.substring(0, squid_api.apiURL.indexOf('/v'), 1) + "/admin/console/index.html";
-                            }
-                            // add access token
-                            linkUrl = encodeURIComponent(linkUrl + "?access_token={access_token}#!user");
+                            var linkUrl = encodeURIComponent(squid_api.apiURL.substring(0, squid_api.apiURL.indexOf('/v'), 1) + "/admin/console/index.html?access_token={access_token}#!user");
                             var sendMailUrl = squid_api.apiURL + '/set-user-pwd?' + 'clientId=' + squid_api.clientId + '&email=' + data.email + '&customerId=' + squid_api.customerId + '&link_url=' + linkUrl;
 
                             $.get(sendMailUrl).done(function() {
