@@ -28,7 +28,7 @@
     "data_tables_js": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js",
     "d3": "3",
     "backbone-forms": "https://github.com/powmedia/backbone-forms.git#24f4e18fcd",
-    "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#7efaa3722f"
+    "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#master"
   },
   "_release": "1.2.1",
   "_resolution": {
