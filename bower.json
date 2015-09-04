@@ -27,7 +27,7 @@
     "data_tables_css": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css",
     "data_tables_js": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js",
     "d3": "3",
-    "backbone-forms": "https://github.com/powmedia/backbone-forms.git#master",
-    "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#master"
+    "backbone-forms": "https://github.com/powmedia/backbone-forms.git#24f4e18fcd",
+    "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#7efaa3722f"
   }
 }
