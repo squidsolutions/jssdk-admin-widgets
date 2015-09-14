@@ -15,7 +15,7 @@
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
+            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.domainSuggestionHandler};
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function(value) {
