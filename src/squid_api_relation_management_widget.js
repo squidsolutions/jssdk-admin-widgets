@@ -87,6 +87,24 @@
                 obj.oid = models[i].get("oid");
                 obj.leftName = models[i].get("leftName");
                 obj.rightName = models[i].get("rightName");
+
+                // set cardinality booleans for handlebar display
+                var leftCardinality = models[i].get("leftCardinality");
+                var rightCardinality = models[i].get("rightCardinality");
+                if (leftCardinality == "MANY") {
+                    obj.leftMany = true;
+                } else if (leftCardinality == "ZERO_OR_ONE") {
+                    obj.leftZeroOrOne = true;
+                } else if (leftCardinality == "ONE") {
+                    obj.leftOne = true;
+                }
+                if (rightCardinality == "MANY") {
+                    obj.rightMany = true;
+                } else if (rightCardinality == "ZERO_OR_ONE") {
+                    obj.rightZeroOrOne = true;
+                } else if (rightCardinality == "ONE") {
+                    obj.rightOne = true;
+                }
                 arr.push(obj);
             }
 

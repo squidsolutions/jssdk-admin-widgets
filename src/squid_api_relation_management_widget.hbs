@@ -10,18 +10,62 @@
 		<div class="col-md-12">
 			{{#if models}}
 				<table style="width:100%">
-					<thead>
-						<tr>
-							<th>left name</th>
-							<th>right name</th>
-							<th>edit</th>
-							<th>delete</th>
-						</tr>
-					</thead>
 					{{#each models}}
 						<tr data-value={{oid}}>
-							<td>{{leftName}}</td>
-							<td>{{rightName}}</td>
+							<td class="domain">{{leftName}}</td>
+							<td class="leftIcon">
+							{{#if leftMany}}
+									<svg width="110" height="20" xmlns="http://www.w3.org/2000/svg">
+  										<ellipse stroke="#666" ry="0.15625" rx="42.53032" id="svg_8" cy="10.62595" cx="65.93316" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+  										<ellipse stroke="#666" transform="rotate(23.859294891357422 14.261151313781737,6.493025302886963) " ry="0.15625" rx="9.98315" id="svg_10" cy="6.49303" cx="14.26115" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+  										<ellipse stroke="#666" transform="rotate(0.7375706434249878 14.573644638061372,10.555437088012791) " ry="0.15625" rx="9.98315" id="svg_11" cy="10.55544" cx="14.57365" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+  										<ellipse stroke="#666" transform="rotate(-20.462926864624023 14.4486494064331,14.430353164672844) " ry="0.15625" rx="9.98315" id="svg_13" cy="14.43035" cx="14.44865" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+									</svg>
+								{{else}}
+								{{#if leftZeroOrOne}}
+								<svg width="110" height="20" xmlns="http://www.w3.org/2000/svg">
+										<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="51.62104" cy="10.37595" id="svg_8" rx="46.84273" ry="0.15625" stroke="#666"/>
+										<ellipse fill="none" stroke-width="12" stroke-opacity="null" fill-opacity="null" cx="22.24682" cy="10.28729" id="svg_15" rx="1.71832" ry="1.53145" transform="rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) " stroke="#666"/>
+										<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="60.32387" cy="54.48737" id="svg_16" rx="29.16739" ry="0.15625" transform="rotate(90.55730438232422 60.323867797851555,54.48736953735351) " stroke="#666"/>
+										<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="10.70595" cy="10.10935" id="svg_17" rx="6.82828" ry="0.15625" transform="rotate(89.25360107421875 10.705955505371094,10.109351158142088) " stroke="#666"/>
+								</svg>
+									{{else}}
+									{{#if leftOne}}
+									<svg width="110" height="20" xmlns="http://www.w3.org/2000/svg">
+										<ellipse stroke="#000" ry="0.15625" rx="46.84273" id="svg_8" cy="10.18846" cx="55.99588" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+										<ellipse stroke="#000" transform="rotate(90.55730438232422 60.323867797851555,54.48736953735351) " ry="0.15625" rx="29.16739" id="svg_16" cy="54.48737" cx="60.32387" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+									</svg>
+									{{/if}}
+							 	{{/if}}
+							{{/if}}
+							</td>
+							<td>
+							{{#if rightMany}}
+							<svg width="110.00000000000001" height="20" xmlns="http://www.w3.org/2000/svg">
+								<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="65.93316" cy="10.62595" id="svg_8" rx="42.53032" ry="0.15625" stroke="#666"/>
+								<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="98.59446" cy="6.49303" id="svg_10" rx="9.98315" ry="0.15625" transform="rotate(-20.98859405517578 98.59446716308595,6.493030071258536) " stroke="#666"/>
+								<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="14.57365" cy="10.55544" id="svg_11" rx="9.98315" ry="0.15625" transform="rotate(0.7375706434249878 14.573644638061372,10.555437088012791) " stroke="#666"/>
+								<ellipse fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" cx="98.28197" cy="14.76368" id="svg_13" rx="9.98315" ry="0.15625" transform="rotate(19.652103424072266 98.28196716308591,14.763684272766087) " stroke="#666"/>
+							</svg>
+								{{else}}
+								{{#if rightZeroOrOne}}
+									<svg width="110" height="20" xmlns="http://www.w3.org/2000/svg">
+										<ellipse stroke="#666" ry="0.15625" rx="46.84273" id="svg_8" cy="10.37595" cx="60.37079" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+										<ellipse stroke="#666" transform="rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) " ry="1.53145" rx="1.71832" id="svg_15" cy="10.28729" cx="88.36992" fill-opacity="null" stroke-opacity="null" stroke-width="12" fill="none"/>
+										<ellipse stroke="#666" transform="rotate(90.55730438232422 60.323867797851555,54.48736953735351) " ry="0.15625" rx="29.16739" id="svg_16" cy="54.48737" cx="60.32387" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+										<ellipse stroke="#666" transform="rotate(89.25360107421875 100.32839202880858,10.109345436096195) " ry="0.15625" rx="6.82828" id="svg_17" cy="10.10935" cx="100.32839" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+									</svg>
+									{{else}}
+									{{#if rightOne}}
+									<svg width="110" height="20" xmlns="http://www.w3.org/2000/svg">
+										<ellipse stroke="#000" ry="0.15625" rx="46.84273" id="svg_8" cy="10.18846" cx="55.99588" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+										<ellipse stroke="#000" transform="rotate(90.55730438232422 60.323867797851555,54.48736953735351) " ry="0.15625" rx="29.16739" id="svg_16" cy="54.48737" cx="60.32387" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="none"/>
+									</svg>
+									{{/if}}
+							 	{{/if}}
+							{{/if}}
+							</td>
+							<td class="domain">{{rightName}}</td>
 							<td class="edit"><i class="fa fa-pencil-square-o"></i></td>
 							<td class="delete"><i class="fa fa-trash-o"></i></td>
 						</tr>
