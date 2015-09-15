@@ -2117,6 +2117,8 @@ function program1(depth0,data) {
                         if (properties[property].position) {
                             schema[property].position = properties[property].position;
                         }
+
+                        schema[property].fieldClass = property;
                     }
                 }
 

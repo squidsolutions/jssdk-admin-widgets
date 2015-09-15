@@ -433,6 +433,8 @@
                         if (properties[property].position) {
                             schema[property].position = properties[property].position;
                         }
+
+                        schema[property].fieldClass = property;
                     }
                 }
 
