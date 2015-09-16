@@ -222,6 +222,7 @@
 
         render: function() {
             var me = this;
+
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 

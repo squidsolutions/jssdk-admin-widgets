@@ -1011,6 +1011,7 @@ function program1(depth0,data) {
 
         render: function() {
             var me = this;
+
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
@@ -1255,7 +1256,8 @@ function program1(depth0,data) {
                         showFilterInputs: false,
                         filterTextClear : " ",
                         selectedListLabel: "Available",
-                        nonSelectedListLabel: "Selected"
+                        nonSelectedListLabel: "Selected",
+                        selectorMinimalHeight: 250
                     });
                 },
                 events: {

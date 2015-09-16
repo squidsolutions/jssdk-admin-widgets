@@ -171,7 +171,8 @@
                         showFilterInputs: false,
                         filterTextClear : " ",
                         selectedListLabel: "Available",
-                        nonSelectedListLabel: "Selected"
+                        nonSelectedListLabel: "Selected",
+                        selectorMinimalHeight: 250
                     });
                 },
                 events: {
