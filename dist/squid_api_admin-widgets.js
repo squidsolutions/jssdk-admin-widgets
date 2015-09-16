@@ -875,11 +875,15 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                this.collectionModal = new Backbone.BootstrapModal({
-                    content: this.html,
-                    title: this.type + "s"
-                }).open();
-
+                if (this.collectionModal) {
+                    this.collectionModal.$el.find(".modal-body").html(this.html);
+                    this.collectionModal.open();
+                } else {
+                    this.collectionModal = new Backbone.BootstrapModal({
+                        content: this.html,
+                        title: this.type + "s"
+                    }).open();
+                }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
 
@@ -887,7 +891,7 @@ function program1(depth0,data) {
                 $(this.collectionModal.el).addClass(this.modalElementClassName);
                 $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
 
-                // add events with
+                // add events
                 this.actionEvents(this.roles);
 
                 /* bootstrap doesn't remove modal from dom when clicking outside of it.
