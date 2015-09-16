@@ -877,6 +877,7 @@ function program1(depth0,data) {
             "click button": function() {
                 if (this.collectionModal) {
                     this.collectionModal.$el.find(".modal-body").html(this.html);
+                    this.collectionModal.delegateEvents();
                     this.collectionModal.open();
                 } else {
                     this.collectionModal = new Backbone.BootstrapModal({

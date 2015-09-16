@@ -88,6 +88,8 @@
             "click button": function() {
                 if (this.collectionModal) {
                     this.collectionModal.$el.find(".modal-body").html(this.html);
+                    // redelegate events after updating template
+                    this.collectionModal.delegateEvents();
                     this.collectionModal.open();
                 } else {
                     this.collectionModal = new Backbone.BootstrapModal({
