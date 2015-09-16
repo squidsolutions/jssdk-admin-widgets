@@ -875,32 +875,27 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                if (this.collectionModal) {
-                    this.collectionModal.open();
-                } else {
-                    this.collectionModal = new Backbone.BootstrapModal({
-                        content: this.html,
-                        title: this.type + "s"
-                    }).open();
+                this.collectionModal = new Backbone.BootstrapModal({
+                    content: this.html,
+                    title: this.type + "s"
+                }).open();
 
-                    // remove button
-                    $(this.collectionModal.el).find("button.selected-model").remove();
+                // remove button
+                $(this.collectionModal.el).find("button.selected-model").remove();
 
-                    // modal wrapper class
-                    $(this.collectionModal.el).addClass(this.modalElementClassName);
-                    $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+                // modal wrapper class
+                $(this.collectionModal.el).addClass(this.modalElementClassName);
+                $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
 
-                    // add events with
-                    this.actionEvents(this.roles);
+                // add events with
+                this.actionEvents(this.roles);
 
-                    /* bootstrap doesn't remove modal from dom when clicking outside of it.
-                       Check to make sure it has been removed whenever it isn't displayed.
-                    */
-
-                    $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                        this.remove();
-                    });
-                }
+                /* bootstrap doesn't remove modal from dom when clicking outside of it.
+                   Check to make sure it has been removed whenever it isn't displayed.
+                */
+                $(this.collectionModal.el).on('hidden.bs.modal', function () {
+                    this.remove();
+                });
             }
         },
 
@@ -1389,6 +1384,13 @@ function program1(depth0,data) {
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
+            });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
             });
         }
     });
@@ -2007,6 +2009,13 @@ function program1(depth0,data) {
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
                 me.resetStatusMessage();
+            });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
             });
         },
 
@@ -2713,6 +2722,13 @@ function program1(depth0,data) {
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
+            });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
             });
         }
     });
