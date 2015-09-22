@@ -86,12 +86,17 @@
 
         events: {
             "click button": function() {
-                // instantiate a new modal view
-                this.collectionModal = new Backbone.BootstrapModal({
-                    content: this.html,
-                    title: this.type + "s"
-                }).open();
-
+                if (this.collectionModal) {
+                    this.collectionModal.$el.find(".modal-body").html(this.html);
+                    // redelegate events after updating template
+                    this.collectionModal.delegateEvents();
+                    this.collectionModal.open();
+                } else {
+                    this.collectionModal = new Backbone.BootstrapModal({
+                        content: this.html,
+                        title: this.type + "s"
+                    }).open();
+                }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
 
@@ -99,7 +104,15 @@
                 $(this.collectionModal.el).addClass(this.modalElementClassName);
                 $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
 
+                // add events
                 this.actionEvents(this.roles);
+
+                /* bootstrap doesn't remove modal from dom when clicking outside of it.
+                   Check to make sure it has been removed whenever it isn't displayed.
+                */
+                $(this.collectionModal.el).on('hidden.bs.modal', function () {
+                    this.remove();
+                });
             }
         },
 
@@ -222,6 +235,7 @@
 
         render: function() {
             var me = this;
+
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
@@ -244,6 +258,15 @@
                     }
                 }
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+
+                // support dynamic collections
+                if (models[i].get("dynamic")) {
+                    option.dynamic = true;
+                    option.label = "~" + models[i].get("name");
+                } else {
+                    option.dynamic = false;
+                }
+
                 if (selected) {
                     jsonData.valueSelected = true;
                     sel.push(option);
@@ -252,11 +275,9 @@
                 }
             }
 
-            // order data alphabetically
+            // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                var textA = a.label.toUpperCase();
-                var textB = b.label.toUpperCase();
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
             });
 
             // place selected obj at start of array

@@ -87,11 +87,11 @@ function program14(depth0,data) {
 function program16(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select selected\">";
+  buffer += "\n                                    <td class=\"select selected\">\n                                        ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                                    ";
+    + "\n                                    </td>\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                    ";
@@ -169,6 +169,51 @@ function program25(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(25, program25, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n            <option value=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</option>\n        ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n            <option value=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" selected=\"selected\">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</option>\n        ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-admin-widget-columns-management\">\n    <select multiple=\"multiple\">\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n    </div>\n</div>\n";
   return buffer;
   });
 
@@ -287,7 +332,7 @@ function program20(depth0,data) {
     + "</td>\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    ";
+  buffer += "\n                                    <td class=\"relation\"><i class=\"fa fa-arrows-h\"></i></td>\n                                    <td class=\"dimension\"><i class=\"fa fa-sort-alpha-asc\"></i></td>\n                                    <td class=\"metric\"><i class=\"fa fa-sort-numeric-asc\"></i></td>\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                ";
@@ -296,7 +341,7 @@ function program20(depth0,data) {
 function program21(depth0,data) {
   
   
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        <td class=\"relation\"><i class=\"fa fa-arrows-h\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
   }
 
 function program23(depth0,data) {
@@ -601,12 +646,12 @@ function program29(depth0,data) {
 this["squid_api"]["template"]["squid_api_relation_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n				<table style=\"width:100%\">\n					<thead>\n						<tr>\n							<th>left name</th>\n							<th>right name</th>\n							<th>edit</th>\n							<th>delete</th>\n						</tr>\n					</thead>\n					";
+  buffer += "\n				<table style=\"width:100%\">\n					";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n				</table>\n				";
@@ -619,26 +664,98 @@ function program2(depth0,data) {
   if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + ">\n							<td>";
+    + ">\n							<td class=\"domain\">";
   if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n							<td>";
+    + "</td>\n							<td class=\"leftIcon\">\n							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							</td>\n							<td>\n							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							</td>\n							<td class=\"domain\">";
   if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</td>\n							<td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n							<td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n						</tr>\n					";
   return buffer;
   }
+function program3(depth0,data) {
+  
+  
+  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n  										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n								";
+  }
 
-function program4(depth0,data) {
+function program5(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							";
+  return buffer;
+  }
+function program6(depth0,data) {
+  
+  
+  return "\n								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n								</svg>\n									";
+  }
+
+function program8(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							 	";
+  return buffer;
+  }
+function program9(depth0,data) {
+  
+  
+  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n									";
+  }
+
+function program11(depth0,data) {
+  
+  
+  return "\n							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n							</svg>\n								";
+  }
+
+function program13(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(16, program16, data),fn:self.program(14, program14, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							";
+  return buffer;
+  }
+function program14(depth0,data) {
+  
+  
+  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n									";
+  }
+
+function program16(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n							 	";
+  return buffer;
+  }
+
+function program18(depth0,data) {
   
   
   return "\n				<div class=\"no-relations-available\">\n					no relations available\n				</div>\n			";
   }
 
   buffer += "<div id=\"squid-api-relations-widget-data-table\">\n	<div class=\"row\">\n		<div class=\"col-md-10\">\n		</div>\n		<div class=\"col-md-2\">\n			<button class=\"form-control add\">add</button>\n		</div>\n	</div>\n	<div class=\"row\">\n		<div class=\"col-md-12\">\n			";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(18, program18, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n		</div>\n	</div>\n</div>\n";
   return buffer;
@@ -758,12 +875,17 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
-                // instantiate a new modal view
-                this.collectionModal = new Backbone.BootstrapModal({
-                    content: this.html,
-                    title: this.type + "s"
-                }).open();
-
+                if (this.collectionModal) {
+                    this.collectionModal.$el.find(".modal-body").html(this.html);
+                    // redelegate events after updating template
+                    this.collectionModal.delegateEvents();
+                    this.collectionModal.open();
+                } else {
+                    this.collectionModal = new Backbone.BootstrapModal({
+                        content: this.html,
+                        title: this.type + "s"
+                    }).open();
+                }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
 
@@ -771,7 +893,15 @@ function program1(depth0,data) {
                 $(this.collectionModal.el).addClass(this.modalElementClassName);
                 $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
 
+                // add events
                 this.actionEvents(this.roles);
+
+                /* bootstrap doesn't remove modal from dom when clicking outside of it.
+                   Check to make sure it has been removed whenever it isn't displayed.
+                */
+                $(this.collectionModal.el).on('hidden.bs.modal', function () {
+                    this.remove();
+                });
             }
         },
 
@@ -894,6 +1024,7 @@ function program1(depth0,data) {
 
         render: function() {
             var me = this;
+
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
@@ -916,6 +1047,15 @@ function program1(depth0,data) {
                     }
                 }
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+
+                // support dynamic collections
+                if (models[i].get("dynamic")) {
+                    option.dynamic = true;
+                    option.label = "~" + models[i].get("name");
+                } else {
+                    option.dynamic = false;
+                }
+
                 if (selected) {
                     jsonData.valueSelected = true;
                     sel.push(option);
@@ -924,11 +1064,9 @@ function program1(depth0,data) {
                 }
             }
 
-            // order data alphabetically
+            // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                var textA = a.label.toUpperCase();
-                var textB = b.label.toUpperCase();
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
             });
 
             // place selected obj at start of array
@@ -960,6 +1098,316 @@ function program1(depth0,data) {
             return this;
         }
 
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        successHandler: null,
+        errorHandler: null,
+        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        buttonLabel : null,
+        autoOpen: null,
+        parent: null,
+        schemasCallback : null,
+        beforeRenderHandler : null,
+        modalTitle : null,
+        collection : null,
+
+        initialize: function(options) {
+            var me = this;
+
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            if (options.successHandler) {
+                this.successHandler = options.successHandler;
+            }
+            if (options.errorHandler) {
+                this.errorHandler = options.errorHandler;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
+            }
+            if (options.autoOpen) {
+                this.autoOpen = options.autoOpen;
+            }
+            if (options.parent) {
+                this.parent = options.parent;
+            }
+            if (options.schemasCallback) {
+                this.schemasCallback = options.schemasCallback;
+            }
+            if (options.beforeRenderHandler) {
+                this.beforeRenderHandler = options.beforeRenderHandler;
+            }
+            if (options.modalTitle) {
+                this.modalTitle = options.modalTitle;
+            }
+            if (options.createOnlyView) {
+                this.createOnlyView = options.createOnlyView;
+            }
+            if (options.type) {
+                this.type = options.type;
+            }
+
+            if (this.collection) {
+                this.collection.on("reset change remove sync", this.updateForm, this);
+            }
+            if (this.parent) {
+                this.listenTo(this.parent, "change:id", this.render);
+            }
+            if (this.autoOpen) {
+                this.render();
+            }
+        },
+
+        updateForm : function() {
+            var jsonData = this.viewData();
+        },
+
+        viewData: function() {
+            var models = this.collection.models;
+            var viewData = {"dynamic" : [], "nonDynamic" : []};
+            for (i=0; i<models.length; i++) {
+                var obj = {};
+                obj.name = models[i].get("name");
+                obj.id = models[i].get("oid");
+                if (models[i].get("dynamic")) {
+                    viewData.dynamic.push(obj);
+                } else {
+                    viewData.nonDynamic.push(obj);
+                }
+            }
+            return viewData;
+        },
+
+        columnSuggestionHandler: function() {
+            var me = this;
+            var relationEl = this.formContent.$el.find(".suggestion-box");
+
+            var request = $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
+                dataType: 'json',
+                data: {
+                    "expression" : relationEl.val(),
+                    "offset" : relationEl.prop("selectionStart") + 1,
+                    "access_token" : squid_api.model.login.get("accessToken")
+                },
+                success:function(response) {
+                    // detemine if there is an error or not
+                    if (response.validateMessage.length === 0) {
+                        relationEl.removeClass("invalid-expression").addClass("valid-expression");
+                    } else {
+                        relationEl.removeClass("valid-expression").addClass("invalid-expression");
+                    }
+
+                    // append box if definitions exist
+                    if (response.definitions && response.definitions.length > 0) {
+
+                        var definitions = response.definitions;
+
+                        // store offset
+                        var offset = response.filterIndex;
+
+                        // remove existing dialog's
+                        $(".squid-api-pre-domain-suggestions").remove();
+                        $(".squid-api-domain-suggestion-dialog").remove();
+
+                        // append div
+                        relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
+                        for (i=0; i<definitions.length; i++) {
+                            relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
+                        }
+
+                        relationEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
+                            var item = $(event.target).html();
+                            var str = relationEl.val().substring(0, offset) + item.substring(0);
+                            relationEl.val(str);
+                            me.suggestionHandler.call(me);
+                        });
+
+                        // show dialog
+                        relationEl.siblings(".squid-api-pre-domain-suggestions").dialog({
+                            open: function(e, ui) {
+                                e.preventDefault();
+                            },
+                            dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
+                            position: { my: "center top", at: "center bottom+4", of: relationEl },
+                            closeText: "x"
+                        });
+                    } else {
+                        // set message
+                        squid_api.model.status.set("message", response.validateMessage);
+                    }
+
+                    // place the focus back onto the domain suggestionElement
+                    relationEl.focus();
+                },
+                error: function(response) {
+                    squid_api.model.status.set({'message' : response.responseJSON.error});
+                }
+            });
+        },
+
+        render : function() {
+            var me = this;
+            var collection = this.collection;
+
+            this.columnsView = Backbone.View.extend({
+                initialize: function() {
+                    this.collection = collection;
+                    this.collection.on("reset change remove sync", this.render, this);
+                },
+                activatePlugin: function() {
+                    this.$el.find("select").bootstrapDualListbox({
+                        moveOnSelect: false,
+                        showFilterInputs: false,
+                        filterTextClear : " ",
+                        selectedListLabel: "Available",
+                        nonSelectedListLabel: "Selected",
+                        selectorMinimalHeight: 250
+                    });
+                },
+                events: {
+                    "click .add" : function() {
+                        new api.view.ModelManagementView({
+                            model : new squid_api.model[me.model.definition + "Model"](),
+                            collection : me.collection,
+                            parent : me.parent,
+                            autoOpen : true,
+                            suggestionHandler : me.columnSuggestionHandler,
+                            buttonLabel : "add",
+                            successHandler : function() {
+                                squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
+                                me.collection.create(this);
+                            }
+                        });
+                    },
+                    "click .edit" : function(event) {
+                        var id = $(event.target).attr("data-value");
+                        var model = me.collection.get(id);
+                        new api.view.ModelManagementView({
+                            model : model,
+                            parent : me.parent,
+                            collection : me.collection,
+                            autoOpen : true,
+                            suggestionHandler : me.columnSuggestionHandler,
+                            buttonLabel : "add",
+                            successHandler : function() {
+                                squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
+                                me.collection.create(this);
+                            }
+                        });
+                    },
+                    "click .delete" : function(event) {
+                        var id = $(event.target).attr("data-value");
+                        var model = me.collection.get(id);
+                        if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                            if (true) {
+                                model.destroy({
+                                    success:function(collection) {
+                                        var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
+                                        squid_api.model.status.set({'message' : message});
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    "change select" : function(event) {
+                        var dynamic = [];
+                        var nonDynamic = [];
+
+                        // update edit element
+                        var name = $(event.target).find("option:selected:last").html();
+                        var value = $(event.target).find("option:selected:last").val();
+
+                        // update edit / delete buttons
+                        if (name !== undefined) {
+                            this.$el.find(".edit").removeAttr("disabled");
+                            this.$el.find(".edit").html("edit " + name);
+                            this.$el.find(".edit").attr("data-value", value);
+
+                            this.$el.find(".delete").removeAttr("disabled");
+                            this.$el.find(".delete").html("delete " + name);
+                            this.$el.find(".delete").attr("data-value", value);
+                        }
+
+                        // selected values in the second select box
+                        var options1 = $(this.$el.find("select")[0]).find("option");
+                        var options2 = $(this.$el.find("select")[1]).find("option");
+
+                        // store visually updated attributes
+                        for (i=0; i<options1.length; i++) {
+                            nonDynamic.push(options1[i]);
+                        }
+                        for (i=0; i<options2.length; i++) {
+                            dynamic.push(options2[i]);
+                        }
+                        // check nonDynamic Data
+                        var model;
+                        for (i=0; i<nonDynamic.length; i++) {
+                            model = this.collection.get($(nonDynamic[i]).val());
+                            console.log(model.get("name") + " = non Dynamic");
+                            if (model.get("dynamic") === true) {
+                                model.set("dynamic", false);
+                                model.save();
+                            }
+                        }
+                        // check dynamic Data
+                        for (i=0; i<dynamic.length; i++) {
+                            model = this.collection.get($(dynamic[i]).val());
+                            console.log(model.get("name") + " = dynamic");
+                            if (model.get("dynamic") === false) {
+                                model.set("dynamic", true);
+                                model.save();
+                            }
+                        }
+                    }
+                },
+                render: function() {
+                    this.$el.html(template(me.viewData()));
+                    this.activatePlugin();
+                    return this;
+                }
+            });
+
+            // instantiate a new modal view, set the content & automatically open
+            this.formModal = new Backbone.BootstrapModal({
+                content: new this.columnsView(),
+                cancelText: "close",
+                title: me.type
+            }).open();
+
+            // modal wrapper class
+            $(this.formModal.el).addClass(this.modalElementClassName);
+
+            // modal definition class
+            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition + "-primary");
+
+            // on cancel
+            this.formModal.on('cancel', function() {
+                $(".squid-api-dialog").remove();
+            });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
+            });
+        }
     });
 
     return View;
@@ -1029,13 +1477,31 @@ function program1(depth0,data) {
             });
 
             this.relations = new squid_api.model.RelationCollection();
+            this.dimensions = new squid_api.model.DimensionCollection();
+            this.metrics = new squid_api.model.MetricCollection();
 
-            // fetch relations
             config.on("change:project", function(parent) {
+                // relations
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
                 me.relations.parentId.projectId = parent.get("project");
                 me.relations.fetch();
+            });
+
+            config.on("change:domain", function(parent) {
+                // dimensions
+                me.dimensions.collectionAvailable = true;
+                me.dimensions.parentId = {};
+                me.dimensions.parentId.projectId = parent.get("project");
+                me.dimensions.parentId.domainId = config.get("domain");
+                me.dimensions.fetch();
+
+                // metrics
+                me.metrics.collectionAvailable = true;
+                me.metrics.parentId = {};
+                me.metrics.parentId.projectId = parent.get("project");
+                me.metrics.parentId.domainId = config.get("domain");
+                me.metrics.fetch();
             });
 
             this.render();
@@ -1127,6 +1593,40 @@ function program1(depth0,data) {
                 });
             });
 
+            // dimension
+            $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
+                var dimensionSelect = new api.view.ColumnsManagementWidget({
+                    el : this.el,
+                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                    type : "Dimension",
+                    collection : me.dimensions,
+                    model : new squid_api.model.DimensionModel(),
+                    parent : me.collection,
+                    autoOpen : true,
+                    successHandler : function() {
+                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            });
+
+            // metrics
+            $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
+                var metricSelect = new api.view.ColumnsManagementWidget({
+                    el : this.el,
+                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                    type : "Metric",
+                    collection : me.metrics,
+                    model : new squid_api.model.MetricModel(),
+                    parent : me.collection,
+                    autoOpen : true,
+                    successHandler : function() {
+                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.status.set({'message' : message});
+                    }
+                });
+            });
+
             // delete
             $(".squid-api-" + this.type + "-model-widget-popup .delete").on("click", function() {
                 var id = this.parentElement.dataset.attr;
@@ -1167,7 +1667,7 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.suggestionHandler};
+            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.domainSuggestionHandler};
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function(value) {
@@ -1211,7 +1711,7 @@ function program1(depth0,data) {
 
             return this;
         },
-        suggestionHandler: function() {
+        domainSuggestionHandler: function() {
             var me = this;
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
@@ -1343,6 +1843,9 @@ function program1(depth0,data) {
             if (options.createOnlyView) {
                 this.createOnlyView = options.createOnlyView;
             }
+            if (options.collection) {
+                this.collection = options.collection;
+            }
 
             // Set Form Schema
             this.setSchema();
@@ -1362,9 +1865,13 @@ function program1(depth0,data) {
         manipulateData : function(data) {
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
-            // replace id values with null if empty
-            if (data.id.projectId.length === 0) {
-                data.id.projectId = null;
+            if (data.id) {
+                if (data.id.projectId.length === 0) {
+                    data.id.projectId = null;
+                }
+                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = config.get("domain");
+                }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
                 if (data.id[modelDefinitionId].length === 0) {
@@ -1376,6 +1883,11 @@ function program1(depth0,data) {
             if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
                 var projectId = squid_api.model.project.get("id").projectId;
                 data.id.projectId = projectId;
+
+                if (data.parentId) {
+                    data.parentId.domainId = config.get("domain");
+                    data.parentId.projectId = projectId;
+                }
             }
 
             // password exception
@@ -1383,6 +1895,11 @@ function program1(depth0,data) {
                 if (data.dbPassword.length === 0) {
                     data.dbPassword = null;
                 }
+            }
+
+            // dimensions exception
+            if (data.type === undefined) {
+                data.type = "INDEX";
             }
 
             return data;
@@ -1521,6 +2038,13 @@ function program1(depth0,data) {
                 $(".squid-api-dialog").remove();
                 me.resetStatusMessage();
             });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
+            });
         },
 
         prepareForm: function() {
@@ -1605,7 +2129,7 @@ function program1(depth0,data) {
                         }
 
                         if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression") {
+                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
                                 refValue = properties[property].$ref;
                                 ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
                                 subProp = data.definitions[ref].properties;
@@ -1711,11 +2235,50 @@ function program1(depth0,data) {
                                     schema[property].options = [];
                                 }
                             }
+                            // dimensions type exception
+                            if (me.model.definition == "Dimension" && property == "type") {
+                                schema[property].type = "Radio";
+                                var objExc = [];
+                                for (i=0; i<schema[property].options.length; i++) {
+                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
+                                        var dExc = {};
+                                        if (schema[property].options[i] == "CONTINUOUS") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label =  "Period";
+                                        } else if (schema[property].options[i] == "CATEGORICAL") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label = "Indexed";
+                                        }
+                                        objExc.push(dExc);
+                                    }
+                                }
+                                schema[property].editorClass = " ";
+                                schema[property].options = objExc;
+                            }
+                        }
+                        // parent id exception
+                        if (property == "parentId") {
+                            schema[property].subSchema.domainId.fieldClass = "hidden";
+                            schema[property].subSchema.projectId.fieldClass = "hidden";
+                            if (me.model.definition == "Dimension") {
+                                schema[property].subSchema.dimensionId.type = "Select";
+                                schema[property].subSchema.dimensionId.options = [];
+                                for (i=0; i<me.collection.models.length; i++) {
+                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                                        var objD = {};
+                                        objD.val = me.collection.models[i].get("oid");
+                                        objD.label = me.collection.models[i].get("name");
+                                        schema[property].subSchema.dimensionId.options.push(objD);
+                                    }
+                                }
+                            }
                         }
                         // positions
                         if (properties[property].position) {
                             schema[property].position = properties[property].position;
                         }
+
+                        schema[property].fieldClass = property;
                     }
                 }
 
@@ -2049,6 +2612,24 @@ function program1(depth0,data) {
                 obj.oid = models[i].get("oid");
                 obj.leftName = models[i].get("leftName");
                 obj.rightName = models[i].get("rightName");
+
+                // set cardinality booleans for handlebar display
+                var leftCardinality = models[i].get("leftCardinality");
+                var rightCardinality = models[i].get("rightCardinality");
+                if (leftCardinality == "MANY") {
+                    obj.leftMany = true;
+                } else if (leftCardinality == "ZERO_OR_ONE") {
+                    obj.leftZeroOrOne = true;
+                } else if (leftCardinality == "ONE") {
+                    obj.leftOne = true;
+                }
+                if (rightCardinality == "MANY") {
+                    obj.rightMany = true;
+                } else if (rightCardinality == "ZERO_OR_ONE") {
+                    obj.rightZeroOrOne = true;
+                } else if (rightCardinality == "ONE") {
+                    obj.rightOne = true;
+                }
                 arr.push(obj);
             }
 
@@ -2206,6 +2787,13 @@ function program1(depth0,data) {
             // on cancel
             this.formModal.on('cancel', function() {
                 $(".squid-api-dialog").remove();
+            });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
             });
         }
     });

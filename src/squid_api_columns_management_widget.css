@@ -1,0 +1,39 @@
+.squid-api-admin-widgets-modal-form .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
+    display: none;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container .info-container {
+    display: none;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container label {
+    font-size: 17px;
+    width: 100%;
+    display: inline-block;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container .buttons {
+    margin: 15px 0px;
+}
+
+.squid-api-admin-widgets-modal-form .Metric-primary .modal-body, .squid-api-admin-widgets-modal-form .Dimension-primary .modal-body {
+    background: #f9f9f9;
+}
+
+.squid-api-admin-widgets-modal-form .Metric-primary .modal-footer, .squid-api-admin-widgets-modal-form .Dimension-primary .modal-footer {
+    display: none;
+}
+
+.squid-api-admin-widget-columns-management .management {
+    display: inline-block;
+    width: 100%;
+}
+
+.squid-api-admin-widget-columns-management .management button.add, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
+    float: left;
+    margin: 15px 10px 0px 0px;
+}
+
+.squid-api-admin-widget-columns-management .management button.edit {
+    margin-right: 10px;
+}

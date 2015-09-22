@@ -176,6 +176,46 @@
 	margin-left: -7px;
 }
 
+.squid-api-admin-widgets-modal-form .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
+    display: none;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container .info-container {
+    display: none;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container label {
+    font-size: 17px;
+    width: 100%;
+    display: inline-block;
+}
+
+.squid-api-admin-widgets-modal-form .bootstrap-duallistbox-container .buttons {
+    margin: 15px 0px;
+}
+
+.squid-api-admin-widgets-modal-form .Metric-primary .modal-body, .squid-api-admin-widgets-modal-form .Dimension-primary .modal-body {
+    background: #f9f9f9;
+}
+
+.squid-api-admin-widgets-modal-form .Metric-primary .modal-footer, .squid-api-admin-widgets-modal-form .Dimension-primary .modal-footer {
+    display: none;
+}
+
+.squid-api-admin-widget-columns-management .management {
+    display: inline-block;
+    width: 100%;
+}
+
+.squid-api-admin-widget-columns-management .management button.add, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
+    float: left;
+    margin: 15px 10px 0px 0px;
+}
+
+.squid-api-admin-widget-columns-management .management button.edit {
+    margin-right: 10px;
+}
+
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
 }
@@ -297,9 +337,6 @@
 
 #squid-api-relations-widget-data-table table {
 	color: #666;
-  	-moz-border-radius: 3px;
-  	-webkit-border-radius: 3px;
-  	border-radius: 3px;
   	-moz-box-shadow: 0 1px 2px #d1d1d1;
   	-webkit-box-shadow: 0 1px 2px #d1d1d1;
   	box-shadow: 0 1px 2px #d1d1d1;
@@ -309,10 +346,6 @@
 }
 
 #squid-api-relations-widget-data-table table td {
-	border-top: 1px solid #ffffff;
-  	border-bottom: 1px solid #e0e0e0;
-  	border-left: 1px solid #e0e0e0;
-  	padding: 2px 3px;
   	font-size: 12px;
   	text-align: center;
 }
@@ -322,30 +355,58 @@
 }
 
 #squid-api-relations-widget-data-table table thead th {
-	border-left: 1px solid #e0e0e0;
-	padding: 0px 20px 0px 10px;
-	border-top: 1px solid #e0e0e0;
-  	border-bottom: 1px solid #e0e0e0;
-  	text-align: center;
-	font-weight: normal;
-	position: relative;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    font-weight: normal;
+    position: relative;
 }
 
-#squid-api-relations-widget-data-table table tr:nth-child(even) {
-	  background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+#squid-api-relations-widget-data-table td.domain {
+    background-color: #f3f3f3;
+}
+
+#squid-api-relations-widget-data-table td.edit, #squid-api-relations-widget-data-table td.delete {
+    font-size: 14px;
+    width: 40px;
 }
 
 #squid-api-relations-widget-data-table a.ok {
 	display: none;
 }
 
-#squid-api-relations-widget-data-table .edit, #squid-api-relations-widget-data-table .delete {
+#squid-api-relations-widget-data-table td.edit, #squid-api-relations-widget-data-table td.delete {
 	cursor: pointer;
+}
+
+#squid-api-relations-widget-data-table td.edit {
+    border-right: 1px solid #f3f3f3;
 }
 
 #squid-api-relations-widget-data-table .no-relations-available {
     padding: 15px;
     text-align: center;
+}
+
+#squid-api-relations-widget-data-table td.leftIcon {
+    width: 60px;
+}
+
+.squid-api-admin-widgets-modal-form .Relation form .leftId, .squid-api-admin-widgets-modal-form .Relation form .rightId, .squid-api-admin-widgets-modal-form .Relation form .leftCardinality, .squid-api-admin-widgets-modal-form .Relation form .rightCardinality {
+    float: left;
+    width: 25%;
+}
+
+.squid-api-admin-widgets-modal-form .Relation form .leftName, .squid-api-admin-widgets-modal-form .Relation form .rightName {
+    width: 50%;
+    float: left;
+}
+
+.squid-api-admin-widgets-modal-form .Relation fieldset > div {
+    padding-right: 10px;
+}
+
+.squid-api-admin-widgets-modal-form .Relation form .leftId form fieldset > div:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .rightId form fieldset > div:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .leftId > label:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .rightId > label:first-of-type {
+    display: none;
 }
 
 #squid-api-admin-widgets-user-table td .group-value {

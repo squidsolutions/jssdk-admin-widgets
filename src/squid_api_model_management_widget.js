@@ -56,6 +56,9 @@
             if (options.createOnlyView) {
                 this.createOnlyView = options.createOnlyView;
             }
+            if (options.collection) {
+                this.collection = options.collection;
+            }
 
             // Set Form Schema
             this.setSchema();
@@ -75,9 +78,13 @@
         manipulateData : function(data) {
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
-            // replace id values with null if empty
-            if (data.id.projectId.length === 0) {
-                data.id.projectId = null;
+            if (data.id) {
+                if (data.id.projectId.length === 0) {
+                    data.id.projectId = null;
+                }
+                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = config.get("domain");
+                }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
                 if (data.id[modelDefinitionId].length === 0) {
@@ -89,6 +96,11 @@
             if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
                 var projectId = squid_api.model.project.get("id").projectId;
                 data.id.projectId = projectId;
+
+                if (data.parentId) {
+                    data.parentId.domainId = config.get("domain");
+                    data.parentId.projectId = projectId;
+                }
             }
 
             // password exception
@@ -96,6 +108,11 @@
                 if (data.dbPassword.length === 0) {
                     data.dbPassword = null;
                 }
+            }
+
+            // dimensions exception
+            if (data.type === undefined) {
+                data.type = "INDEX";
             }
 
             return data;
@@ -234,6 +251,13 @@
                 $(".squid-api-dialog").remove();
                 me.resetStatusMessage();
             });
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).on('hidden.bs.modal', function () {
+                this.remove();
+            });
         },
 
         prepareForm: function() {
@@ -318,7 +342,7 @@
                         }
 
                         if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression") {
+                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
                                 refValue = properties[property].$ref;
                                 ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
                                 subProp = data.definitions[ref].properties;
@@ -424,11 +448,50 @@
                                     schema[property].options = [];
                                 }
                             }
+                            // dimensions type exception
+                            if (me.model.definition == "Dimension" && property == "type") {
+                                schema[property].type = "Radio";
+                                var objExc = [];
+                                for (i=0; i<schema[property].options.length; i++) {
+                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
+                                        var dExc = {};
+                                        if (schema[property].options[i] == "CONTINUOUS") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label =  "Period";
+                                        } else if (schema[property].options[i] == "CATEGORICAL") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label = "Indexed";
+                                        }
+                                        objExc.push(dExc);
+                                    }
+                                }
+                                schema[property].editorClass = " ";
+                                schema[property].options = objExc;
+                            }
+                        }
+                        // parent id exception
+                        if (property == "parentId") {
+                            schema[property].subSchema.domainId.fieldClass = "hidden";
+                            schema[property].subSchema.projectId.fieldClass = "hidden";
+                            if (me.model.definition == "Dimension") {
+                                schema[property].subSchema.dimensionId.type = "Select";
+                                schema[property].subSchema.dimensionId.options = [];
+                                for (i=0; i<me.collection.models.length; i++) {
+                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                                        var objD = {};
+                                        objD.val = me.collection.models[i].get("oid");
+                                        objD.label = me.collection.models[i].get("name");
+                                        schema[property].subSchema.dimensionId.options.push(objD);
+                                    }
+                                }
+                            }
                         }
                         // positions
                         if (properties[property].position) {
                             schema[property].position = properties[property].position;
                         }
+
+                        schema[property].fieldClass = property;
                     }
                 }
 
