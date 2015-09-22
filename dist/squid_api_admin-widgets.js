@@ -175,12 +175,15 @@ function program25(depth0,data) {
 this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <option value=\"";
+  buffer += "\n            <option ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " value=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -191,15 +194,23 @@ function program1(depth0,data) {
     + "</option>\n        ";
   return buffer;
   }
+function program2(depth0,data) {
+  
+  
+  return " class=\"child\" ";
+  }
 
-function program3(depth0,data) {
+function program4(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n            <option value=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" selected=\"selected\">";
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " selected=\"selected\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -211,7 +222,7 @@ function program3(depth0,data) {
   stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n    </div>\n</div>\n";
   return buffer;
@@ -1168,6 +1179,25 @@ function program1(depth0,data) {
             var jsonData = this.viewData();
         },
 
+        sortData : function(data) {
+            /*
+                sort data into a hierarchy based on parentId
+            */
+            var updatedArray = [];
+            for (var ix=0; ix<data.length; ix++)  {
+                if (! data[ix].parentId) {
+                    updatedArray.push(data[ix]);
+                    for (ix1=0; ix1<data.length; ix1++) {
+                        if (data[ix1].parentId == data[ix].id) {
+                            updatedArray.push(data[ix1]);
+                        }
+                    }
+                }
+            }
+
+            return updatedArray;
+        },
+
         viewData: function() {
             var models = this.collection.models;
             var viewData = {"dynamic" : [], "nonDynamic" : []};
@@ -1175,12 +1205,22 @@ function program1(depth0,data) {
                 var obj = {};
                 obj.name = models[i].get("name");
                 obj.id = models[i].get("oid");
+
+                if (models[i].get("parentId")) {
+                    obj.parentId = models[i].get("parentId")[this.model.definition.toLowerCase() + "Id"];
+                }
+
                 if (models[i].get("dynamic")) {
                     viewData.dynamic.push(obj);
                 } else {
                     viewData.nonDynamic.push(obj);
                 }
             }
+
+            // sort data
+            viewData.dynamic = this.sortData(viewData.dynamic);
+            viewData.nonDynamic = this.sortData(viewData.nonDynamic);
+
             return viewData;
         },
 

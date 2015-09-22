@@ -71,6 +71,25 @@
             var jsonData = this.viewData();
         },
 
+        sortData : function(data) {
+            /*
+                sort data into a hierarchy based on parentId
+            */
+            var updatedArray = [];
+            for (var ix=0; ix<data.length; ix++)  {
+                if (! data[ix].parentId) {
+                    updatedArray.push(data[ix]);
+                    for (ix1=0; ix1<data.length; ix1++) {
+                        if (data[ix1].parentId == data[ix].id) {
+                            updatedArray.push(data[ix1]);
+                        }
+                    }
+                }
+            }
+
+            return updatedArray;
+        },
+
         viewData: function() {
             var models = this.collection.models;
             var viewData = {"dynamic" : [], "nonDynamic" : []};
@@ -78,12 +97,22 @@
                 var obj = {};
                 obj.name = models[i].get("name");
                 obj.id = models[i].get("oid");
+
+                if (models[i].get("parentId")) {
+                    obj.parentId = models[i].get("parentId")[this.model.definition.toLowerCase() + "Id"];
+                }
+
                 if (models[i].get("dynamic")) {
                     viewData.dynamic.push(obj);
                 } else {
                     viewData.nonDynamic.push(obj);
                 }
             }
+
+            // sort data
+            viewData.dynamic = this.sortData(viewData.dynamic);
+            viewData.nonDynamic = this.sortData(viewData.nonDynamic);
+
             return viewData;
         },
 

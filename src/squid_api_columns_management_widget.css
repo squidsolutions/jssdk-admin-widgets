@@ -37,3 +37,7 @@
 .squid-api-admin-widget-columns-management .management button.edit {
     margin-right: 10px;
 }
+
+.squid-api-admin-widget-columns-management select .child {
+    padding-left: 20px;
+}
