@@ -258,6 +258,15 @@
                     }
                 }
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+
+                // support dynamic collections
+                if (models[i].get("dynamic")) {
+                    option.dynamic = true;
+                    option.label = "~" + models[i].get("name");
+                } else {
+                    option.dynamic = false;
+                }
+
                 if (selected) {
                     jsonData.valueSelected = true;
                     sel.push(option);
@@ -266,11 +275,9 @@
                 }
             }
 
-            // order data alphabetically
+            // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                var textA = a.label.toUpperCase();
-                var textB = b.label.toUpperCase();
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
             });
 
             // place selected obj at start of array

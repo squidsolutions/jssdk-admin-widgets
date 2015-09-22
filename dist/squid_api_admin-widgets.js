@@ -87,11 +87,11 @@ function program14(depth0,data) {
 function program16(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select selected\">";
+  buffer += "\n                                    <td class=\"select selected\">\n                                        ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                                    ";
+    + "\n                                    </td>\n                                    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                    ";
@@ -1047,6 +1047,15 @@ function program1(depth0,data) {
                     }
                 }
                 var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+
+                // support dynamic collections
+                if (models[i].get("dynamic")) {
+                    option.dynamic = true;
+                    option.label = "~" + models[i].get("name");
+                } else {
+                    option.dynamic = false;
+                }
+
                 if (selected) {
                     jsonData.valueSelected = true;
                     sel.push(option);
@@ -1055,11 +1064,9 @@ function program1(depth0,data) {
                 }
             }
 
-            // order data alphabetically
+            // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                var textA = a.label.toUpperCase();
-                var textB = b.label.toUpperCase();
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
             });
 
             // place selected obj at start of array

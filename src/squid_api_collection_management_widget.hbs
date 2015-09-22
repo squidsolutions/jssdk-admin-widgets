@@ -14,7 +14,9 @@
                         {{#each options}}
                             <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
                                 {{#if selected}}
-                                    <td class="select selected">{{label}}</td>
+                                    <td class="select selected">
+                                        {{label}}
+                                    </td>
                                     {{#if edit}}
                                         <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
                                     {{/if}}
