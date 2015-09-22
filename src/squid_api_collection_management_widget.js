@@ -298,6 +298,7 @@
                     tooltipClass: "squid-api-admin-widgets-tooltip",
                     position: { my: "left top", at: "left bottom+2", of: me.$el.find(".squid-api-model-widget-" + me.type) },
                 });
+                this.$el.find(".selected-model").addClass("hide");
             }
 
             // set button value
