@@ -87,13 +87,13 @@
             return viewData;
         },
 
-        metricSuggestionHandler: function() {
+        columnSuggestionHandler: function() {
             var me = this;
             var relationEl = this.formContent.$el.find(".suggestion-box");
 
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/metrics-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : relationEl.val(),
@@ -179,9 +179,10 @@
                     "click .add" : function() {
                         new api.view.ModelManagementView({
                             model : new squid_api.model[me.model.definition + "Model"](),
+                            collection : me.collection,
                             parent : me.parent,
                             autoOpen : true,
-                            suggestionHandler : me.metricSuggestionHandler,
+                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
@@ -195,8 +196,9 @@
                         new api.view.ModelManagementView({
                             model : model,
                             parent : me.parent,
+                            collection : me.collection,
                             autoOpen : true,
-                            suggestionHandler : me.metricSuggestionHandler,
+                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});

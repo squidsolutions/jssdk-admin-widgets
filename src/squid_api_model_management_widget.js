@@ -56,6 +56,9 @@
             if (options.createOnlyView) {
                 this.createOnlyView = options.createOnlyView;
             }
+            if (options.collection) {
+                this.collection = options.collection;
+            }
 
             // Set Form Schema
             this.setSchema();
@@ -93,6 +96,11 @@
             if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
                 var projectId = squid_api.model.project.get("id").projectId;
                 data.id.projectId = projectId;
+
+                if (data.parentId) {
+                    data.parentId.domainId = config.get("domain");
+                    data.parentId.projectId = projectId;
+                }
             }
 
             // password exception
@@ -100,6 +108,11 @@
                 if (data.dbPassword.length === 0) {
                     data.dbPassword = null;
                 }
+            }
+
+            // dimensions exception
+            if (data.type === undefined) {
+                data.type = "INDEX";
             }
 
             return data;
@@ -329,7 +342,7 @@
                         }
 
                         if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression") {
+                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
                                 refValue = properties[property].$ref;
                                 ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
                                 subProp = data.definitions[ref].properties;
@@ -433,6 +446,43 @@
                                     schema[property].options = me.model.get(property);
                                 } else {
                                     schema[property].options = [];
+                                }
+                            }
+                            // dimensions type exception
+                            if (me.model.definition == "Dimension" && property == "type") {
+                                schema[property].type = "Radio";
+                                var objExc = [];
+                                for (i=0; i<schema[property].options.length; i++) {
+                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
+                                        var dExc = {};
+                                        if (schema[property].options[i] == "CONTINUOUS") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label =  "Period";
+                                        } else if (schema[property].options[i] == "CATEGORICAL") {
+                                            dExc.val =  schema[property].options[i];
+                                            dExc.label = "Indexed";
+                                        }
+                                        objExc.push(dExc);
+                                    }
+                                }
+                                schema[property].editorClass = " ";
+                                schema[property].options = objExc;
+                            }
+                        }
+                        // parent id exception
+                        if (property == "parentId") {
+                            schema[property].subSchema.domainId.fieldClass = "hidden";
+                            schema[property].subSchema.projectId.fieldClass = "hidden";
+                            if (me.model.definition == "Dimension") {
+                                schema[property].subSchema.dimensionId.type = "Select";
+                                schema[property].subSchema.dimensionId.options = [];
+                                for (i=0; i<me.collection.models.length; i++) {
+                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                                        var objD = {};
+                                        objD.val = me.collection.models[i].get("oid");
+                                        objD.label = me.collection.models[i].get("name");
+                                        schema[property].subSchema.dimensionId.options.push(objD);
+                                    }
                                 }
                             }
                         }
