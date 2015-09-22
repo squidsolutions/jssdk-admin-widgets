@@ -216,6 +216,10 @@
     margin-right: 10px;
 }
 
+#squid-api-Domain-model-widget-popup-container .squid-api-Domain-model-widget-popup {
+    margin-top: 20px;
+}
+
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
 }
