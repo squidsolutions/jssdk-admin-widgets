@@ -230,7 +230,7 @@
                             suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
-                                squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
+                                squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
                                 me.collection.create(this);
                             }
                         });
