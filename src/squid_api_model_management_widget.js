@@ -475,7 +475,7 @@
                             schema[property].subSchema.projectId.fieldClass = "hidden";
                             if (me.model.definition == "Dimension") {
                                 schema[property].subSchema.dimensionId.type = "Select";
-                                schema[property].subSchema.dimensionId.options = [];
+                                schema[property].subSchema.dimensionId.options = [{val : null, label : " "}];
                                 for (i=0; i<me.collection.models.length; i++) {
                                     if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
                                         var objD = {};
