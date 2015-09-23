@@ -80,7 +80,7 @@
         },
 
         viewData: function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var models = squid_api.utils.getDomainRelations(this.collection.models, squid_api.model.config.get("domain"));
             var arr = [];
             for (i=0; i<models.length; i++) {
                 var obj = {};
@@ -121,7 +121,7 @@
                     "click .edit" : function(event) {
                         var oid = $(event.target).parents("tr").attr("data-value");
                         var model = me.collection.get(oid);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : model,
                             parent : me.parent,
@@ -150,7 +150,7 @@
                         }
                     },
                     "click .add" : function(event) {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : me.model,
                             parent : me.parent,

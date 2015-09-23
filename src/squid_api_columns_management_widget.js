@@ -122,7 +122,7 @@
 
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : relationEl.val(),
@@ -206,7 +206,7 @@
                 },
                 events: {
                     "click .add" : function() {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : new squid_api.model[me.model.definition + "Model"](),
                             collection : me.collection,
                             parent : me.parent,
@@ -222,7 +222,7 @@
                     "click .edit" : function(event) {
                         var id = $(event.target).attr("data-value");
                         var model = me.collection.get(id);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : model,
                             parent : me.parent,
                             collection : me.collection,

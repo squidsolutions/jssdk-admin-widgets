@@ -855,14 +855,14 @@ function program1(depth0,data) {
                 me.collection.fetch();
             });
 
-            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
+            this.listenTo(this.config, "change:" + this.model.definition.toLowerCase() , function(parent) {
                 me.collectionAvailable = true;
                 me.collection.parentId = {};
                 me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
 
                 // set model
-                var modelDef = config.get(me.model.definition.toLowerCase());
+                var modelDef = squid_api.model.config.get(me.model.definition.toLowerCase());
                 var modelItem = me.collection.get(modelDef);
                 if (modelItem) {
                     me.model.set(modelItem.toJSON());
@@ -952,7 +952,7 @@ function program1(depth0,data) {
                 var baseModel = new squid_api.model[ this.type + "Model"]();
 
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
@@ -973,7 +973,7 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,
@@ -1230,7 +1230,7 @@ function program1(depth0,data) {
 
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : relationEl.val(),
@@ -1314,7 +1314,7 @@ function program1(depth0,data) {
                 },
                 events: {
                     "click .add" : function() {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : new squid_api.model[me.model.definition + "Model"](),
                             collection : me.collection,
                             parent : me.parent,
@@ -1330,7 +1330,7 @@ function program1(depth0,data) {
                     "click .edit" : function(event) {
                         var id = $(event.target).attr("data-value");
                         var model = me.collection.get(id);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : model,
                             parent : me.parent,
                             collection : me.collection,
@@ -1512,7 +1512,7 @@ function program1(depth0,data) {
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            config.on("change:project", function(parent) {
+            this.config.on("change:project", function(parent) {
                 // relations
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
@@ -1520,19 +1520,19 @@ function program1(depth0,data) {
                 me.relations.fetch();
             });
 
-            config.on("change:domain", function(parent) {
+            this.config.on("change:domain", function(parent) {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
                 me.dimensions.parentId = {};
                 me.dimensions.parentId.projectId = parent.get("project");
-                me.dimensions.parentId.domainId = config.get("domain");
+                me.dimensions.parentId.domainId = me.config.get("domain");
                 me.dimensions.fetch();
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
                 me.metrics.parentId.projectId = parent.get("project");
-                me.metrics.parentId.domainId = config.get("domain");
+                me.metrics.parentId.domainId = me.config.get("domain");
                 me.metrics.fetch();
             });
 
@@ -1567,7 +1567,7 @@ function program1(depth0,data) {
 
              if (roles.create) {
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
@@ -1591,7 +1591,7 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,
@@ -1609,7 +1609,7 @@ function program1(depth0,data) {
 
             // relations
             $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relationSelect = new api.view.RelationModelManagementView({
+                var relationSelect = new squid_api.view.RelationModelManagementView({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Relation",
@@ -1627,7 +1627,7 @@ function program1(depth0,data) {
 
             // dimension
             $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
-                var dimensionSelect = new api.view.ColumnsManagementWidget({
+                var dimensionSelect = new squid_api.view.ColumnsManagementWidget({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Dimension",
@@ -1644,7 +1644,7 @@ function program1(depth0,data) {
 
             // metrics
             $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
-                var metricSelect = new api.view.ColumnsManagementWidget({
+                var metricSelect = new squid_api.view.ColumnsManagementWidget({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Metric",
@@ -1690,16 +1690,48 @@ function program1(depth0,data) {
     var View = Backbone.View.extend({
 
         createOnlyView : null,
+        config : null,
+        domain : new squid_api.model.DomainModel(),
+        project : new squid_api.model.ProjectModel(),
 
         initialize: function(options) {
-            if (options.createOnlyView) {
-                this.createOnlyView = true;
+            this.config = squid_api.model.config;
+            if (options) {
+                if (options.createOnlyView) {
+                    this.createOnlyView = true;
+                }
+                if (options.options) {
+                    this.config = options.config;
+                }
             }
+            this.listenTo(this.config, "change:domain", this.setDomain);
+            this.listenTo(this.config, "change:project", this.setProject);
             this.render();
+        },
+        
+        setProject : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            this.project.set({"id" : {"projectId" : projectId}});
+            this.project.fetch();
+        },
+        
+        setDomain : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            var domainId = this.config.get("domain");
+            this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
+            this.domain.fetch();
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.domainSuggestionHandler};
+            var viewOptions = {
+                    "el" : this.$el,
+                    type : "Domain",
+                    "model" : this.domain,
+                    "parent" : this.project,
+                    suggestionHandler : this.domainSuggestionHandler
+            };
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function(value) {
@@ -1711,7 +1743,7 @@ function program1(depth0,data) {
                     if (! value) {
                         value = this.get("id").domainId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "domain" : value,
                         "selection" : null,
                         "chosenDimensions" : null,
@@ -1722,13 +1754,13 @@ function program1(depth0,data) {
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
-                var modelView = new api.view.ModelManagementView(viewOptions);
+                var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
                     if (! value) {
                         value = this.get("id").domainId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "domain" : value,
                         "selection" : null,
                         "chosenDimensions" : null,
@@ -1738,7 +1770,7 @@ function program1(depth0,data) {
                     });
                 };
                 // DomainCollectionManagementWidget
-                var collectionView = new api.view.DomainCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.DomainCollectionManagementWidget(viewOptions);
             }
 
             return this;
@@ -1748,7 +1780,7 @@ function program1(depth0,data) {
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/domains-suggestion",
+                url: squid_api.apiURL + "/projects/" + me.project.get("id").projectId + "/domains-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : domainEl.val(),
@@ -1901,8 +1933,8 @@ function program1(depth0,data) {
                 if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
-                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
-                    data.id.domainId = config.get("domain");
+                if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = squid_api.model.config.get("domain");
                 }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
@@ -1917,7 +1949,7 @@ function program1(depth0,data) {
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
-                    data.parentId.domainId = config.get("domain");
+                    data.parentId.domainId = squid_api.model.config.get("domain");
                     data.parentId.projectId = projectId;
                 }
             }
@@ -2394,7 +2426,7 @@ function program1(depth0,data) {
 
             if (roles.create) {
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
@@ -2417,7 +2449,7 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,
@@ -2515,7 +2547,7 @@ function program1(depth0,data) {
                     if (! value) {
                         value = this.get("id").projectId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "project" : value,
                         "domain" : null,
                         "selection" : null,
@@ -2527,13 +2559,13 @@ function program1(depth0,data) {
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
-                var modelView = new api.view.ModelManagementView(viewOptions);
+                var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
                     if (! value) {
                         value = this.get("id").projectId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "project" : value,
                         "domain" : null,
                         "selection" : null,
@@ -2544,7 +2576,7 @@ function program1(depth0,data) {
                     });
                 };
                 viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
-                var collectionView = new api.view.ProjectCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.ProjectCollectionManagementWidget(viewOptions);
             }
 
             return this;
@@ -2637,7 +2669,7 @@ function program1(depth0,data) {
         },
 
         viewData: function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var models = squid_api.utils.getDomainRelations(this.collection.models, squid_api.model.config.get("domain"));
             var arr = [];
             for (i=0; i<models.length; i++) {
                 var obj = {};
@@ -2678,7 +2710,7 @@ function program1(depth0,data) {
                     "click .edit" : function(event) {
                         var oid = $(event.target).parents("tr").attr("data-value");
                         var model = me.collection.get(oid);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : model,
                             parent : me.parent,
@@ -2707,7 +2739,7 @@ function program1(depth0,data) {
                         }
                     },
                     "click .add" : function(event) {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : me.model,
                             parent : me.parent,

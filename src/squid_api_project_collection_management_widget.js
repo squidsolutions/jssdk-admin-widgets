@@ -33,7 +33,7 @@
 
             if (roles.create) {
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
@@ -56,7 +56,7 @@
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,

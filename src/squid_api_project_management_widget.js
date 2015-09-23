@@ -50,7 +50,7 @@
                     if (! value) {
                         value = this.get("id").projectId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "project" : value,
                         "domain" : null,
                         "selection" : null,
@@ -62,13 +62,13 @@
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
-                var modelView = new api.view.ModelManagementView(viewOptions);
+                var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
                     if (! value) {
                         value = this.get("id").projectId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "project" : value,
                         "domain" : null,
                         "selection" : null,
@@ -79,7 +79,7 @@
                     });
                 };
                 viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
-                var collectionView = new api.view.ProjectCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.ProjectCollectionManagementWidget(viewOptions);
             }
 
             return this;

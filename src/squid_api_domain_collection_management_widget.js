@@ -65,7 +65,7 @@
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            config.on("change:project", function(parent) {
+            this.config.on("change:project", function(parent) {
                 // relations
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
@@ -73,19 +73,19 @@
                 me.relations.fetch();
             });
 
-            config.on("change:domain", function(parent) {
+            this.config.on("change:domain", function(parent) {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
                 me.dimensions.parentId = {};
                 me.dimensions.parentId.projectId = parent.get("project");
-                me.dimensions.parentId.domainId = config.get("domain");
+                me.dimensions.parentId.domainId = me.config.get("domain");
                 me.dimensions.fetch();
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
                 me.metrics.parentId.projectId = parent.get("project");
-                me.metrics.parentId.domainId = config.get("domain");
+                me.metrics.parentId.domainId = me.config.get("domain");
                 me.metrics.fetch();
             });
 
@@ -120,7 +120,7 @@
 
              if (roles.create) {
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : new squid_api.model[ this.type + "Model"](),
                     parent : me.parent,
@@ -144,7 +144,7 @@
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,
@@ -162,7 +162,7 @@
 
             // relations
             $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relationSelect = new api.view.RelationModelManagementView({
+                var relationSelect = new squid_api.view.RelationModelManagementView({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Relation",
@@ -180,7 +180,7 @@
 
             // dimension
             $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
-                var dimensionSelect = new api.view.ColumnsManagementWidget({
+                var dimensionSelect = new squid_api.view.ColumnsManagementWidget({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Dimension",
@@ -197,7 +197,7 @@
 
             // metrics
             $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
-                var metricSelect = new api.view.ColumnsManagementWidget({
+                var metricSelect = new squid_api.view.ColumnsManagementWidget({
                     el : this.el,
                     buttonLabel : "<i class='fa fa-arrows-h'></i>",
                     type : "Metric",

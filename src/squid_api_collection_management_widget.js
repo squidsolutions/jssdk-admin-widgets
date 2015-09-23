@@ -64,14 +64,14 @@
                 me.collection.fetch();
             });
 
-            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
+            this.listenTo(this.config, "change:" + this.model.definition.toLowerCase() , function(parent) {
                 me.collectionAvailable = true;
                 me.collection.parentId = {};
                 me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
 
                 // set model
-                var modelDef = config.get(me.model.definition.toLowerCase());
+                var modelDef = squid_api.model.config.get(me.model.definition.toLowerCase());
                 var modelItem = me.collection.get(modelDef);
                 if (modelItem) {
                     me.model.set(modelItem.toJSON());
@@ -161,7 +161,7 @@
                 var baseModel = new squid_api.model[ this.type + "Model"]();
 
                 // create
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
                     model : baseModel,
                     parent : me.parent,
@@ -182,7 +182,7 @@
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,

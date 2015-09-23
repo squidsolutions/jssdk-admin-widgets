@@ -82,8 +82,8 @@
                 if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
-                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
-                    data.id.domainId = config.get("domain");
+                if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = squid_api.model.config.get("domain");
                 }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
@@ -98,7 +98,7 @@
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
-                    data.parentId.domainId = config.get("domain");
+                    data.parentId.domainId = squid_api.model.config.get("domain");
                     data.parentId.projectId = projectId;
                 }
             }

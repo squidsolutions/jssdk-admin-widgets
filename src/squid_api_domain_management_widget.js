@@ -6,16 +6,48 @@
     var View = Backbone.View.extend({
 
         createOnlyView : null,
+        config : null,
+        domain : new squid_api.model.DomainModel(),
+        project : new squid_api.model.ProjectModel(),
 
         initialize: function(options) {
-            if (options.createOnlyView) {
-                this.createOnlyView = true;
+            this.config = squid_api.model.config;
+            if (options) {
+                if (options.createOnlyView) {
+                    this.createOnlyView = true;
+                }
+                if (options.options) {
+                    this.config = options.config;
+                }
             }
+            this.listenTo(this.config, "change:domain", this.setDomain);
+            this.listenTo(this.config, "change:project", this.setProject);
             this.render();
+        },
+        
+        setProject : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            this.project.set({"id" : {"projectId" : projectId}});
+            this.project.fetch();
+        },
+        
+        setDomain : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            var domainId = this.config.get("domain");
+            this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
+            this.domain.fetch();
         },
 
         render: function() {
-            var viewOptions = {"el" : this.$el, type : "Domain", "model" : squid_api.model.domain, "parent" : squid_api.model.project, suggestionHandler : this.domainSuggestionHandler};
+            var viewOptions = {
+                    "el" : this.$el,
+                    type : "Domain",
+                    "model" : this.domain,
+                    "parent" : this.project,
+                    suggestionHandler : this.domainSuggestionHandler
+            };
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = function(value) {
@@ -27,7 +59,7 @@
                     if (! value) {
                         value = this.get("id").domainId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "domain" : value,
                         "selection" : null,
                         "chosenDimensions" : null,
@@ -38,13 +70,13 @@
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
-                var modelView = new api.view.ModelManagementView(viewOptions);
+                var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
                     if (! value) {
                         value = this.get("id").domainId;
                     }
-                    config.set({
+                    squid_api.model.config.set({
                         "domain" : value,
                         "selection" : null,
                         "chosenDimensions" : null,
@@ -54,7 +86,7 @@
                     });
                 };
                 // DomainCollectionManagementWidget
-                var collectionView = new api.view.DomainCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.DomainCollectionManagementWidget(viewOptions);
             }
 
             return this;
@@ -64,7 +96,7 @@
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + me.parent.get("id").projectId + "/domains-suggestion",
+                url: squid_api.apiURL + "/projects/" + me.project.get("id").projectId + "/domains-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : domainEl.val(),
