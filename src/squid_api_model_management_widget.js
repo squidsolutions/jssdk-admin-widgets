@@ -98,8 +98,12 @@
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
-                    data.parentId.domainId = squid_api.model.config.get("domain");
-                    data.parentId.projectId = projectId;
+                    if (data.parentId[this.model.definition.toLowerCase() + "Id"].length === 0) {
+                        data.parentId = null;
+                    } else {
+                        data.parentId.domainId = squid_api.model.config.get("domain");
+                        data.parentId.projectId = projectId;
+                    }
                 }
             }
 
