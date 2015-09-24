@@ -55,9 +55,9 @@
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 
@@ -65,27 +65,27 @@
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:project", function(parent) {
+            this.config.on("change:project", function() {
                 // relations
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
-                me.relations.parentId.projectId = parent.get("project");
+                me.relations.parentId.projectId = this.get("project");
                 me.relations.fetch();
             });
 
-            this.config.on("change:domain", function(parent) {
+            this.config.on("change:domain", function() {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
                 me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = parent.get("project");
-                me.dimensions.parentId.domainId = me.config.get("domain");
+                me.dimensions.parentId.projectId = this.get("project");
+                me.dimensions.parentId.domainId = this.get("domain");
                 me.dimensions.fetch();
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
-                me.metrics.parentId.projectId = parent.get("project");
-                me.metrics.parentId.domainId = me.config.get("domain");
+                me.metrics.parentId.projectId = this.get("project");
+                me.metrics.parentId.domainId = this.get("domain");
                 me.metrics.fetch();
             });
 

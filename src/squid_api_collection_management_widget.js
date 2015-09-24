@@ -58,9 +58,9 @@
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 

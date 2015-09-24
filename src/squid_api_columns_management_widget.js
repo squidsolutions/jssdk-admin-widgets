@@ -57,7 +57,9 @@
             }
 
             if (this.collection) {
-                this.collection.on("reset change remove sync", this.updateForm, this);
+                this.collection.on("change remove", function() {
+                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
+                }, this);
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
