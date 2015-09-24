@@ -2333,10 +2333,12 @@ function program1(depth0,data) {
                                 schema[property].subSchema.dimensionId.options = [{val : null, label : " "}];
                                 for (i=0; i<me.collection.models.length; i++) {
                                     if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                                        var objD = {};
-                                        objD.val = me.collection.models[i].get("oid");
-                                        objD.label = me.collection.models[i].get("name");
-                                        schema[property].subSchema.dimensionId.options.push(objD);
+                                        if (me.collection.models[i].get("dynamic") === false) {
+                                            var objD = {};
+                                            objD.val = me.collection.models[i].get("oid");
+                                            objD.label = me.collection.models[i].get("name");
+                                            schema[property].subSchema.dimensionId.options.push(objD);
+                                        }
                                     }
                                 }
                             }
