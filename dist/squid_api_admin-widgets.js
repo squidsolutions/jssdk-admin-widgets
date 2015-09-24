@@ -2187,216 +2187,42 @@ function program1(depth0,data) {
                 this.formContent.model = me.model;
             }
 
-            squid_api.getSchema().done(function(data) {
+            for (var x in me.model.schema) {
+                if (me.model.definition == "Relation" && (x == "leftId") || x == "rightId") {
+                    var domains = me.parent.models;
+                    var domainArray = [];
 
-                // base variables
-                var definition = data.definitions[me.model.definition];
-                var properties = definition.properties;
-                schema = modelData = {};
+                    for (i=0; i<domains.length; i++) {
+                        domainObj = {};
+                        domainObj.val = domains[i].get("oid");
+                        domainObj.label = domains[i].get("name");
+                        domainArray.push(domainObj);
+                    }
 
-                // delete ignored properties from schema
-                if (me.model.ignoredAttributes) {
-                    var obj = {};
-                    for (var ix in properties) {
-                        for (i=0; i<me.model.ignoredAttributes.length; i++) {
-                            if (me.model.ignoredAttributes[i] == ix) {
-                                delete properties[ix];
+                    me.model.schema[x].subSchema.domainId.options = domainArray;
+                    me.model.schema[x].subSchema.domainId.options = domainArray;
+                }
+                if (me.model.definition == "Dimension" && x == "parentId") {
+                    me.model.schema[x].subSchema.dimensionId.type = "Select";
+                    me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
+                    for (i=0; i<me.collection.models.length; i++) {
+                        if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                            if (me.collection.models[i].get("dynamic") === false) {
+                                var objD = {};
+                                objD.val = me.collection.models[i].get("oid");
+                                objD.label = me.collection.models[i].get("name");
+                                me.model.schema[x].subSchema.dimensionId.options.push(objD);
                             }
                         }
                     }
                 }
+            }
 
-                // create schema
-                for (var property in properties) {
-                    if (! properties[property].readOnly) {
-                        // base field object
-                        schema[property] = {};
-                        var refValue, ref, subProp, nm;
-                        var modelDefinition = me.model.definition;
+            // set schema
+            me.schema = me.model.schema;
 
-                        // obtain reference property values
-                        if (properties[property].items) {
-                            if (properties[property].items.$ref) {
-                                subProp = data.definitions[properties[property].items.$ref.substr(properties[property].items.$ref.lastIndexOf("/") + 1)].properties;
-                            }
-                        }
-
-                        if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
-                                refValue = properties[property].$ref;
-                                ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
-                                subProp = data.definitions[ref].properties;
-
-                                schema[property].type = "Object";
-                                schema[property].subSchema = subProp;
-                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
-                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control suggestion-box";
-                            }
-                            else {
-                                // base nested model
-                                nm = {};
-                                subProp = data.definitions[properties[property].$ref.substr(properties[property].$ref.lastIndexOf("/") + 1)].properties;
-                                for (var subProperty1 in subProp) {
-                                    nm[subProperty1] = {};
-                                    if (subProp[subProperty1].enum) {
-                                        nm[subProperty1].type = "Text";
-                                        nm[subProperty1].options = subProp[subProperty].enum;
-                                    } else {
-                                        nm[subProperty1].options = [];
-                                        nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "projectId") {
-                                        nm[subProperty1].title = " ";
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "domainId") {
-                                        var domains = me.parent.models;
-                                        var domainArray = [];
-
-                                        for (i=0; i<domains.length; i++) {
-                                            domainObj = {};
-                                            domainObj.val = domains[i].get("oid");
-                                            domainObj.label = domains[i].get("name");
-                                            domainArray.push(domainObj);
-                                        }
-                                        nm[subProperty1].type = "Select";
-                                        nm[subProperty1].options = domainArray;
-                                    }
-                                    if (subProperty1 == "projectId") {
-                                        nm[subProperty1].editorClass = "hidden";
-                                    } else {
-                                        nm[subProperty1].editorClass = "form-control";
-                                    }
-                                }
-                                if (modelDefinition == "Relation" && property == "leftId") {
-                                    nm[subProperty1].title = "Left Domain";
-                                } else if (modelDefinition == "Relation" && property == "rightId") {
-                                    nm[subProperty1].title = "Right Domain";
-                                }
-                                schema[property].title = " ";
-                                schema[property].type = "Object";
-                                schema[property].subSchema = nm;
-
-                                if (property == "id") {
-                                    schema[property].editorClass = "hidden";
-                                }
-                            }
-                        }
-
-                        if (properties[property].items && properties[property].items.$ref) {
-                            // base nested model
-                            nm = {};
-
-                            // apply sub-properties (if exist)
-                            for (var subProperty in subProp) {
-                                nm[subProperty] = {};
-                                if (subProp[subProperty].enum) {
-                                    nm[subProperty].type = "Text";
-                                    nm[subProperty].options = subProp[subProperty].enum;
-                                } else {
-                                    nm[subProperty].options = [];
-                                    nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
-                                }
-                                nm[subProperty].editorClass = "form-control";
-                                nm[subProperty].disabled = true;
-                            }
-
-                            schema[property].type = "List";
-                            schema[property].itemType = "Object";
-                            schema[property].subSchema = nm;
-                        } else if (! properties[property].$ref) {
-                            // domain exception
-                            if (schema[property].type !== "Checkboxes") {
-                                if (property.indexOf("Password")  > -1) {
-                                    schema[property].type = "Password";
-                                } else {
-                                    type = me.getPropertyType(properties[property].type);
-                                    schema[property].type = type;
-                                }
-                                schema[property].editorClass = "form-control";
-                            }
-                            // dropdown boxes
-                            if (properties[property].enum && properties[property].type == "string") {
-                                schema[property].type = "Select";
-                                schema[property].options = properties[property].enum;
-                                schema[property].editorClass = "form-control";
-                            }
-                            if (schema[property].type == "Checkboxes") {
-                                schema[property].editorClass = " ";
-                                if (me.model.get(property)) {
-                                    schema[property].options = me.model.get(property);
-                                } else {
-                                    schema[property].options = [];
-                                }
-                            }
-                            // dimensions type exception
-                            if (me.model.definition == "Dimension" && property == "type") {
-                                schema[property].type = "Checkboxes";
-                                var objExc = [];
-                                for (i=0; i<schema[property].options.length; i++) {
-                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
-                                        var dExc = {};
-                                        if (schema[property].options[i] == "CONTINUOUS") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label =  "Period";
-                                        } else if (schema[property].options[i] == "CATEGORICAL") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label = "Indexed";
-                                        }
-                                        objExc.push(dExc);
-                                    }
-                                }
-                                schema[property].editorClass = " ";
-                                schema[property].options = objExc;
-                            }
-                        }
-                        // parent id exception
-                        if (property == "parentId") {
-                            schema[property].subSchema.domainId.fieldClass = "hidden";
-                            schema[property].subSchema.projectId.fieldClass = "hidden";
-                            if (me.model.definition == "Dimension") {
-                                schema[property].subSchema.dimensionId.type = "Select";
-                                schema[property].subSchema.dimensionId.options = [{val : null, label : " "}];
-                                for (i=0; i<me.collection.models.length; i++) {
-                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                                        if (me.collection.models[i].get("dynamic") === false) {
-                                            var objD = {};
-                                            objD.val = me.collection.models[i].get("oid");
-                                            objD.label = me.collection.models[i].get("name");
-                                            schema[property].subSchema.dimensionId.options.push(objD);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (me.model.definition == "Relation" && me.model) {
-
-                        }
-                        // positions
-                        if (properties[property].position) {
-                            schema[property].position = properties[property].position;
-                        }
-
-                        schema[property].fieldClass = property;
-                    }
-                }
-
-                // validation
-                var required;
-                if (data.definitions[me.model.definition]) {
-                    required = data.definitions[me.model.definition].required;
-                }
-                if (required) {
-                    for (i=0; i<required.length; i++) {
-                        schema[required[i]].validators = ['required'];
-                    }
-                }
-
-                // set schema
-                me.schema = schema;
-
-                // Render View
-                me.render();
-            });
+            // Render View
+            me.render();
         },
 
         render: function(currentView) {
