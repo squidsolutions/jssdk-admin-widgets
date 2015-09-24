@@ -125,6 +125,9 @@
                         } else {
                             me.status.set('message', message);
                         }
+                    },
+                    error: function(model) {
+                        me.status.set('message', model.responseJSON.error);
                     }
                 });
             }
