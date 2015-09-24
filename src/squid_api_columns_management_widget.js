@@ -122,7 +122,7 @@
 
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : relationEl.val(),

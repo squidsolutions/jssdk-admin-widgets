@@ -115,8 +115,12 @@
             }
 
             // dimensions exception
-            if (data.type === undefined) {
-                data.type = "INDEX";
+            if (data.type) {
+                if (data.type.length === 0) {
+                    data.type = "INDEX";
+                } else {
+                    data.type = data.type[0];
+                }
             }
 
             return data;
@@ -454,7 +458,7 @@
                             }
                             // dimensions type exception
                             if (me.model.definition == "Dimension" && property == "type") {
-                                schema[property].type = "Radio";
+                                schema[property].type = "Checkboxes";
                                 var objExc = [];
                                 for (i=0; i<schema[property].options.length; i++) {
                                     if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {

@@ -1230,7 +1230,7 @@ function program1(depth0,data) {
 
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : relationEl.val(),
@@ -1966,8 +1966,12 @@ function program1(depth0,data) {
             }
 
             // dimensions exception
-            if (data.type === undefined) {
-                data.type = "INDEX";
+            if (data.type) {
+                if (data.type.length === 0) {
+                    data.type = "INDEX";
+                } else {
+                    data.type = data.type[0];
+                }
             }
 
             return data;
@@ -2305,7 +2309,7 @@ function program1(depth0,data) {
                             }
                             // dimensions type exception
                             if (me.model.definition == "Dimension" && property == "type") {
-                                schema[property].type = "Radio";
+                                schema[property].type = "Checkboxes";
                                 var objExc = [];
                                 for (i=0; i<schema[property].options.length; i++) {
                                     if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
