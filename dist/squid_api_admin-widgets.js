@@ -1974,6 +1974,22 @@ function program1(depth0,data) {
                 }
             }
 
+            for (var x in data) {
+                if (x !== "id" && typeof data[x]=="object" && data[x] !== null) {
+                    if (data[x].projectId !== undefined) {
+                        if (data[x].projectId.length === 0) {
+                            data[x].projectId = squid_api.model.config.get("project");
+                        }
+                    } else {
+                        if (data[x].domainid !== undefined) {
+                            if (data[x].domainid.length === 0) {
+                                data[x].domainid = squid_api.model.config.get("domain");
+                            }
+                        }
+                    }
+                }
+            }
+
             return data;
         },
 
@@ -2086,10 +2102,14 @@ function program1(depth0,data) {
             }
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.formView(),
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.formView(),
+                    title: modalTitle
+                }).open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -2134,7 +2154,6 @@ function program1(depth0,data) {
             "click button" : function() {
                 // reset model defaults
                 this.model.clear().set(this.model.defaults);
-
                 this.prepareForm();
             }
         },
@@ -2346,6 +2365,9 @@ function program1(depth0,data) {
                                     }
                                 }
                             }
+                        }
+                        if (me.model.definition == "Relation" && me.model) {
+
                         }
                         // positions
                         if (properties[property].position) {
