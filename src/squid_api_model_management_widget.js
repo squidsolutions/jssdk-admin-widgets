@@ -257,7 +257,8 @@
                 this.formModal = new Backbone.BootstrapModal({
                     content: new this.formView(),
                     title: modalTitle
-                }).open();
+                });
+                this.formModal.open();
             }
 
             // modal wrapper class

@@ -886,7 +886,8 @@ function program1(depth0,data) {
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
                         title: this.type + "s"
-                    }).open();
+                    });
+                    this.collectionModal.open();
                 }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
@@ -1418,11 +1419,16 @@ function program1(depth0,data) {
             });
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.columnsView(),
-                cancelText: "close",
-                title: me.type
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.columnsView(),
+                    cancelText: "close",
+                    title: me.type
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -2110,7 +2116,8 @@ function program1(depth0,data) {
                 this.formModal = new Backbone.BootstrapModal({
                     content: new this.formView(),
                     title: modalTitle
-                }).open();
+                });
+                this.formModal.open();
             }
 
             // modal wrapper class
@@ -2696,11 +2703,16 @@ function program1(depth0,data) {
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: this.relationView,
-                cancelText: "close",
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: this.relationView,
+                    cancelText: "close",
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);

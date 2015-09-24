@@ -310,11 +310,16 @@
             });
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.columnsView(),
-                cancelText: "close",
-                title: me.type
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.columnsView(),
+                    cancelText: "close",
+                    title: me.type
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);

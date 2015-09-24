@@ -247,11 +247,16 @@
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: this.relationView,
-                cancelText: "close",
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: this.relationView,
+                    cancelText: "close",
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);

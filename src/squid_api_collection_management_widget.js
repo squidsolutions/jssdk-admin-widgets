@@ -95,7 +95,8 @@
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
                         title: this.type + "s"
-                    }).open();
+                    });
+                    this.collectionModal.open();
                 }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
