@@ -58,9 +58,9 @@
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 
@@ -95,7 +95,8 @@
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
                         title: this.type + "s"
-                    }).open();
+                    });
+                    this.collectionModal.open();
                 }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
@@ -193,6 +194,7 @@
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });

@@ -224,7 +224,7 @@ function program4(depth0,data) {
   buffer += "\n        ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n    </div>\n</div>\n";
+  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n        <button type=\"button\" class=\"btn btn-default relations\">\n            Manage Relations\n		</button>\n    </div>\n</div>\n";
   return buffer;
   });
 
@@ -346,7 +346,7 @@ function program18(depth0,data) {
 function program19(depth0,data) {
   
   
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        <td class=\"relation\"><i class=\"fa fa-arrows-h\"></i></td>\n                                        <td class=\"dimension\"><i class=\"fa fa-sort-alpha-asc\"></i></td>\n                                        <td class=\"metric\"><i class=\"fa fa-sort-numeric-asc\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
   }
 
 function program21(depth0,data) {
@@ -406,6 +406,48 @@ function program27(depth0,data) {
   buffer += escapeExpression(stack1)
     + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(27, program27, data),fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_model_management_form_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", self=this, escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n        <button type=\"button\"  class=\"btn btn-default\">\n            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </button>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                ";
+  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            ";
+  return buffer;
+  }
+
+function program4(depth0,data) {
+  
+  
+  return "\n                <i class=\"fa fa-plus\"></i>\n            ";
+  }
+
+  buffer += "<script id=\"formTemplate\" type=\"text/html\">\n    <form>\n        <h1>New User</h1>\n\n        <h2>Main Info</h2>\n        <div data-fields=\"title,name,birthday\"></div>\n\n        <h2>Account Info</h2>\n        <h3>Email</h3>\n        <div data-fields=\"email\"></div>\n\n        <h3>Password</h3>\n        <p>Must be at least 8 characters long</p>\n        <div data-editors=\"password\"></div>\n    </form>\n</script>\n\n<div class=\"";
+  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n    <form>\n        <h1>New User</h1>\n\n        <h2>Main Info</h2>\n        <div data-fields=\"title,name,birthday\"></div>\n\n        <h2>Account Info</h2>\n        <h3>Email</h3>\n        <div data-fields=\"email\"></div>\n\n        <h3>Password</h3>\n        <p>Must be at least 8 characters long</p>\n        <div data-editors=\"password\"></div>\n    </form>\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.accessible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
   return buffer;
@@ -849,9 +891,9 @@ function program1(depth0,data) {
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 
@@ -886,7 +928,8 @@ function program1(depth0,data) {
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
                         title: this.type + "s"
-                    }).open();
+                    });
+                    this.collectionModal.open();
                 }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
@@ -984,6 +1027,7 @@ function program1(depth0,data) {
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });
@@ -1164,8 +1208,35 @@ function program1(depth0,data) {
                 this.type = options.type;
             }
 
+            // relations
+            me.relations = new squid_api.model.RelationCollection();
+            me.relations.collectionAvailable = true;
+            me.relations.parentId = {};
+            me.relations.parentId.projectId = squid_api.model.config.get("project");
+            me.relations.fetch({
+                success: function() {
+                    me.relations.fetched = true;
+                }
+            });
+            // domains
+            me.domains = new squid_api.model.DomainCollection();
+            me.domains.collectionAvailable = true;
+            me.domains.parentId = {};
+            me.domains.parentId.projectId =  squid_api.model.config.get("project");
+            me.domains.fetch({
+                success: function() {
+                    me.domains.fetched = true;
+                }
+            });
+
             if (this.collection) {
-                this.collection.on("reset change remove sync", this.updateForm, this);
+                this.collection.on("change remove", function() {
+                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
+                }, this);
+                if (! this.collection.fetched) {
+                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
+                    this.collection.fetch();
+                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -1357,6 +1428,22 @@ function program1(depth0,data) {
                             }
                         }
                     },
+                    "click .relations" : function() {
+                        new squid_api.view.RelationModelManagementView({
+                            el : this.el,
+                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                            type : "Relation",
+                            modalTitle : "Relation for domain: " + this.domainName,
+                            collection : me.relations,
+                            model : new squid_api.model.RelationModel(),
+                            parent : me.domains,
+                            autoOpen : true,
+                            successHandler : function() {
+                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
+                    },
                     "change select" : function(event) {
                         var dynamic = [];
                         var nonDynamic = [];
@@ -1416,11 +1503,16 @@ function program1(depth0,data) {
             });
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.columnsView(),
-                cancelText: "close",
-                title: me.type
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.columnsView(),
+                    cancelText: "close",
+                    title: me.type
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -1502,9 +1594,9 @@ function program1(depth0,data) {
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 
@@ -1512,28 +1604,28 @@ function program1(depth0,data) {
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:project", function(parent) {
-                // relations
-                me.relations.collectionAvailable = true;
-                me.relations.parentId = {};
-                me.relations.parentId.projectId = parent.get("project");
-                me.relations.fetch();
-            });
-
-            this.config.on("change:domain", function(parent) {
+            this.config.on("change:domain", function() {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
                 me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = parent.get("project");
-                me.dimensions.parentId.domainId = me.config.get("domain");
-                me.dimensions.fetch();
+                me.dimensions.parentId.projectId = this.get("project");
+                me.dimensions.parentId.domainId = this.get("domain");
+                me.dimensions.fetch({
+                    success: function() {
+                        me.dimensions.fetched = true;
+                    }
+                });
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
-                me.metrics.parentId.projectId = parent.get("project");
-                me.metrics.parentId.domainId = me.config.get("domain");
-                me.metrics.fetch();
+                me.metrics.parentId.projectId = this.get("project");
+                me.metrics.parentId.domainId = this.get("domain");
+                me.metrics.fetch({
+                    success: function() {
+                        me.metrics.fetched = true;
+                    }
+                });
             });
 
             this.render();
@@ -1602,58 +1694,7 @@ function program1(depth0,data) {
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // relations
-            $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relationSelect = new squid_api.view.RelationModelManagementView({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Relation",
-                    modalTitle : "Relation for domain: " + this.domainName,
-                    collection : me.relations,
-                    model : new squid_api.model.RelationModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // dimension
-            $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
-                var dimensionSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Dimension",
-                    collection : me.dimensions,
-                    model : new squid_api.model.DimensionModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // metrics
-            $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
-                var metricSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Metric",
-                    collection : me.metrics,
-                    model : new squid_api.model.MetricModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });
@@ -1708,14 +1749,14 @@ function program1(depth0,data) {
             this.listenTo(this.config, "change:project", this.setProject);
             this.render();
         },
-        
+
         setProject : function() {
             var me = this;
             var projectId = this.config.get("project");
             this.project.set({"id" : {"projectId" : projectId}});
             this.project.fetch();
         },
-        
+
         setDomain : function() {
             var me = this;
             var projectId = this.config.get("project");
@@ -1780,7 +1821,7 @@ function program1(depth0,data) {
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + me.project.get("id").projectId + "/domains-suggestion",
+                url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/domains-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : domainEl.val(),
@@ -1974,6 +2015,22 @@ function program1(depth0,data) {
                 }
             }
 
+            for (var x in data) {
+                if (x !== "id" && typeof data[x]=="object" && data[x] !== null) {
+                    if (data[x].projectId !== undefined) {
+                        if (data[x].projectId.length === 0) {
+                            data[x].projectId = squid_api.model.config.get("project");
+                        }
+                    } else {
+                        if (data[x].domainid !== undefined) {
+                            if (data[x].domainid.length === 0) {
+                                data[x].domainid = squid_api.model.config.get("domain");
+                            }
+                        }
+                    }
+                }
+            }
+
             return data;
         },
 
@@ -2045,11 +2102,60 @@ function program1(depth0,data) {
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
 
+            /*var modelWithValidation = (me.model).extend({
+                validation: {
+                    dbUrl: {
+                        fn: function(value, attr, computedState) {
+                            if(value !== 'something') {
+                                return 'Name is invalid';
+                            }
+                        }
+                    }
+                }
+            });*/
+
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
+                /*jshint multistr: true */
+                /*template: _.template('\
+                    <form>\
+                     <div data-fieldsets></div>\
+                     <button type="button">Check</button>\
+                      <% if (submitButton) { %>\
+                        <button type="submit"><%= submitButton %></button>\
+                      <% } %>\
+                    </form>\
+                  ', null, this.templateSettings),
+
+                templateSettings: {
+                    evaluate: /<%([\s\S]+?)%>/g,
+                    interpolate: /<%=([\s\S]+?)%>/g,
+                    escape: /<%-([\s\S]+?)%>/g
+                },*/
                 schema: me.schema,
                 model: me.model
             }).render();
+
+            this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
+                console.log(dbUrlEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+            });
+
+            this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
+                console.log(dbPasswordEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+
+            });
+
+            this.formContent.on('dbUser:change', function(form, dbUserEditor) {
+                console.log(dbUserEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+            });
+
+
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
@@ -2062,10 +2168,37 @@ function program1(depth0,data) {
                     },
                     "click .suggestion-box" : function(e) {
                         me.suggestionHandler.call(me);
+                    },
+                    "click #btn-check" : function(e) {
+                        console.log("Validating DB password");
+
+                        // ACHTUNG password inside !!!!!!!!!
+                        var dburl = $('.modal-body').find('.dbUrl').find('.form-control').val();
+                        var dbPassword = $('.modal-body').find('.dbPassword').find('.form-control').val();
+                        var dbUser = $('.modal-body').find('.dbUser').find('.form-control').val();
+                        var projectId = squid_api.model.project.get("id").projectId;
+                        $.when(squid_api.validateDB(projectId, dburl,dbUser,dbPassword))
+                            .then(function() {
+                                if (squid_api.model.status.get("error") == "error") {
+                                    $('#btn-check').addClass("btn-danger");
+                                    console.log("Validation failed");
+                                    $('.dbSchemas').css("visibility", "hidden");
+                                    $('.modal-footer').find('.ok').addClass("btn-warning");
+                                    $('.modal-footer').find('.ok').removeClass("ok");
+
+                                } else {
+                                    $('#btn-check').addClass("btn-success");
+                                    $('.dbSchemas').removeAttr('style');
+                                    $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                                }
+                            }
+                        );
                     }
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
+                    //this.$el.html(this.template(jsonData));
+                    //this.$el.html(squid_api.template.squid_api_model_management_form_widget(me.formContent.el));
                     return this;
                 }
             });
@@ -2086,10 +2219,15 @@ function program1(depth0,data) {
             }
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.formView(),
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.formView(),
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -2099,7 +2237,13 @@ function program1(depth0,data) {
 
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
-                me.saveForm();
+                if(checked === false){
+                    // Show warning.
+
+                } else{
+                    //Connection is checked and the button OK is disabled if checked and error.
+                    me.saveForm();
+                }
             });
 
             // hide first div (id)
@@ -2134,7 +2278,6 @@ function program1(depth0,data) {
             "click button" : function() {
                 // reset model defaults
                 this.model.clear().set(this.model.defaults);
-
                 this.prepareForm();
             }
         },
@@ -2166,213 +2309,46 @@ function program1(depth0,data) {
                 this.formContent.model = me.model;
             }
 
-            squid_api.getSchema().done(function(data) {
+            for (var x in me.model.schema) {
+                if (me.model.definition == "Relation" && (x == "leftId") || x == "rightId") {
+                    var domains = me.parent.models;
+                    var domainArray = [];
 
-                // base variables
-                var definition = data.definitions[me.model.definition];
-                var properties = definition.properties;
-                schema = modelData = {};
-
-                // delete ignored properties from schema
-                if (me.model.ignoredAttributes) {
-                    var obj = {};
-                    for (var ix in properties) {
-                        for (i=0; i<me.model.ignoredAttributes.length; i++) {
-                            if (me.model.ignoredAttributes[i] == ix) {
-                                delete properties[ix];
-                            }
-                        }
+                    for (i = 0; i < domains.length; i++) {
+                        domainObj = {};
+                        domainObj.val = domains[i].get("oid");
+                        domainObj.label = domains[i].get("name");
+                        domainArray.push(domainObj);
                     }
                 }
-
-                // create schema
-                for (var property in properties) {
-                    if (! properties[property].readOnly) {
-                        // base field object
-                        schema[property] = {};
-                        var refValue, ref, subProp, nm;
-                        var modelDefinition = me.model.definition;
-
-                        // obtain reference property values
-                        if (properties[property].items) {
-                            if (properties[property].items.$ref) {
-                                subProp = data.definitions[properties[property].items.$ref.substr(properties[property].items.$ref.lastIndexOf("/") + 1)].properties;
-                            }
-                        }
-
-                        if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
-                                refValue = properties[property].$ref;
-                                ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
-                                subProp = data.definitions[ref].properties;
-
-                                schema[property].type = "Object";
-                                schema[property].subSchema = subProp;
-                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
-                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control suggestion-box";
-                            }
-                            else {
-                                // base nested model
-                                nm = {};
-                                subProp = data.definitions[properties[property].$ref.substr(properties[property].$ref.lastIndexOf("/") + 1)].properties;
-                                for (var subProperty1 in subProp) {
-                                    nm[subProperty1] = {};
-                                    if (subProp[subProperty1].enum) {
-                                        nm[subProperty1].type = "Text";
-                                        nm[subProperty1].options = subProp[subProperty].enum;
-                                    } else {
-                                        nm[subProperty1].options = [];
-                                        nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "projectId") {
-                                        nm[subProperty1].title = " ";
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "domainId") {
-                                        var domains = me.parent.models;
-                                        var domainArray = [];
-
-                                        for (i=0; i<domains.length; i++) {
-                                            domainObj = {};
-                                            domainObj.val = domains[i].get("oid");
-                                            domainObj.label = domains[i].get("name");
-                                            domainArray.push(domainObj);
-                                        }
-                                        nm[subProperty1].type = "Select";
-                                        nm[subProperty1].options = domainArray;
-                                    }
-                                    if (subProperty1 == "projectId") {
-                                        nm[subProperty1].editorClass = "hidden";
-                                    } else {
-                                        nm[subProperty1].editorClass = "form-control";
-                                    }
-                                }
-                                if (modelDefinition == "Relation" && property == "leftId") {
-                                    nm[subProperty1].title = "Left Domain";
-                                } else if (modelDefinition == "Relation" && property == "rightId") {
-                                    nm[subProperty1].title = "Right Domain";
-                                }
-                                schema[property].title = " ";
-                                schema[property].type = "Object";
-                                schema[property].subSchema = nm;
-
-                                if (property == "id") {
-                                    schema[property].editorClass = "hidden";
-                                }
-                            }
-                        }
-
-                        if (properties[property].items && properties[property].items.$ref) {
-                            // base nested model
-                            nm = {};
-
-                            // apply sub-properties (if exist)
-                            for (var subProperty in subProp) {
-                                nm[subProperty] = {};
-                                if (subProp[subProperty].enum) {
-                                    nm[subProperty].type = "Text";
-                                    nm[subProperty].options = subProp[subProperty].enum;
-                                } else {
-                                    nm[subProperty].options = [];
-                                    nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
-                                }
-                                nm[subProperty].editorClass = "form-control";
-                                nm[subProperty].disabled = true;
-                            }
-
-                            schema[property].type = "List";
-                            schema[property].itemType = "Object";
-                            schema[property].subSchema = nm;
-                        } else if (! properties[property].$ref) {
-                            // domain exception
-                            if (schema[property].type !== "Checkboxes") {
-                                if (property.indexOf("Password")  > -1) {
-                                    schema[property].type = "Password";
-                                } else {
-                                    type = me.getPropertyType(properties[property].type);
-                                    schema[property].type = type;
-                                }
-                                schema[property].editorClass = "form-control";
-                            }
-                            // dropdown boxes
-                            if (properties[property].enum && properties[property].type == "string") {
-                                schema[property].type = "Select";
-                                schema[property].options = properties[property].enum;
-                                schema[property].editorClass = "form-control";
-                            }
-                            if (schema[property].type == "Checkboxes") {
-                                schema[property].editorClass = " ";
-                                if (me.model.get(property)) {
-                                    schema[property].options = me.model.get(property);
-                                } else {
-                                    schema[property].options = [];
-                                }
-                            }
-                            // dimensions type exception
-                            if (me.model.definition == "Dimension" && property == "type") {
-                                schema[property].type = "Checkboxes";
-                                var objExc = [];
-                                for (i=0; i<schema[property].options.length; i++) {
-                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
-                                        var dExc = {};
-                                        if (schema[property].options[i] == "CONTINUOUS") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label =  "Period";
-                                        } else if (schema[property].options[i] == "CATEGORICAL") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label = "Indexed";
-                                        }
-                                        objExc.push(dExc);
-                                    }
-                                }
-                                schema[property].editorClass = " ";
-                                schema[property].options = objExc;
-                            }
-                        }
-                        // parent id exception
-                        if (property == "parentId") {
-                            schema[property].subSchema.domainId.fieldClass = "hidden";
-                            schema[property].subSchema.projectId.fieldClass = "hidden";
-                            if (me.model.definition == "Dimension") {
-                                schema[property].subSchema.dimensionId.type = "Select";
-                                schema[property].subSchema.dimensionId.options = [{val : null, label : " "}];
-                                for (i=0; i<me.collection.models.length; i++) {
-                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                                        if (me.collection.models[i].get("dynamic") === false) {
-                                            var objD = {};
-                                            objD.val = me.collection.models[i].get("oid");
-                                            objD.label = me.collection.models[i].get("name");
-                                            schema[property].subSchema.dimensionId.options.push(objD);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        // positions
-                        if (properties[property].position) {
-                            schema[property].position = properties[property].position;
-                        }
-
-                        schema[property].fieldClass = property;
+                    if (me.model.definition === "Project" && x === "dbUrl") {
+                        /*jshint multistr: true */
+                        me.model.schema[x].template = _.template('\
+                                        <div>\
+                                          <label for="<%= editorId %>">\
+                                            <% if (titleHTML){ %><%= titleHTML %>\
+                                            <% } else { %><%- title %><% } %>\
+                                          </label>\
+                                          <div>\
+                                            <span data-editor></span>\
+                                            <div class="error-text" data-error></div>\
+                                            <div class="error-help"><%= help %></div>\
+                                          </div>\
+                                          <div>\
+                                              <button class="btn btn-default" id="btn-check" type="button">Check</button>\
+                                          </div>\
+                                        </div>\
+                                      ', null, null);
                     }
-                }
+            }
 
-                // validation
-                var required;
-                if (data.definitions[me.model.definition]) {
-                    required = data.definitions[me.model.definition].required;
-                }
-                if (required) {
-                    for (i=0; i<required.length; i++) {
-                        schema[required[i]].validators = ['required'];
-                    }
-                }
 
-                // set schema
-                me.schema = schema;
 
-                // Render View
-                me.render();
-            });
+            // set schema
+            me.schema = me.model.schema;
+
+            // Render View
+            me.render();
         },
 
         render: function(currentView) {
@@ -2470,6 +2446,7 @@ function program1(depth0,data) {
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });
@@ -2836,6 +2813,12 @@ function program1(depth0,data) {
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
+                },
+                remove : function() {
+                    this.undelegateEvents();
+                    this.$el.empty();
+                    this.stopListening();
+                    return this;
                 }
             });
 
@@ -2846,11 +2829,16 @@ function program1(depth0,data) {
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: this.relationView,
-                cancelText: "close",
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: this.relationView,
+                    cancelText: "close",
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -2860,14 +2848,14 @@ function program1(depth0,data) {
 
             // on cancel
             this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
+                me.relationView.remove();
             });
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
             $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+                me.relationView.remove();
             });
         }
     });

@@ -24,14 +24,14 @@
             this.listenTo(this.config, "change:project", this.setProject);
             this.render();
         },
-        
+
         setProject : function() {
             var me = this;
             var projectId = this.config.get("project");
             this.project.set({"id" : {"projectId" : projectId}});
             this.project.fetch();
         },
-        
+
         setDomain : function() {
             var me = this;
             var projectId = this.config.get("project");
@@ -96,7 +96,7 @@
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + me.project.get("id").projectId + "/domains-suggestion",
+                url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/domains-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : domainEl.val(),

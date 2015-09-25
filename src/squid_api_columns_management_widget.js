@@ -56,8 +56,35 @@
                 this.type = options.type;
             }
 
+            // relations
+            me.relations = new squid_api.model.RelationCollection();
+            me.relations.collectionAvailable = true;
+            me.relations.parentId = {};
+            me.relations.parentId.projectId = squid_api.model.config.get("project");
+            me.relations.fetch({
+                success: function() {
+                    me.relations.fetched = true;
+                }
+            });
+            // domains
+            me.domains = new squid_api.model.DomainCollection();
+            me.domains.collectionAvailable = true;
+            me.domains.parentId = {};
+            me.domains.parentId.projectId =  squid_api.model.config.get("project");
+            me.domains.fetch({
+                success: function() {
+                    me.domains.fetched = true;
+                }
+            });
+
             if (this.collection) {
-                this.collection.on("reset change remove sync", this.updateForm, this);
+                this.collection.on("change remove", function() {
+                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
+                }, this);
+                if (! this.collection.fetched) {
+                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
+                    this.collection.fetch();
+                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -249,6 +276,22 @@
                             }
                         }
                     },
+                    "click .relations" : function() {
+                        new squid_api.view.RelationModelManagementView({
+                            el : this.el,
+                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                            type : "Relation",
+                            modalTitle : "Relation for domain: " + this.domainName,
+                            collection : me.relations,
+                            model : new squid_api.model.RelationModel(),
+                            parent : me.domains,
+                            autoOpen : true,
+                            successHandler : function() {
+                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
+                    },
                     "change select" : function(event) {
                         var dynamic = [];
                         var nonDynamic = [];
@@ -308,11 +351,16 @@
             });
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.columnsView(),
-                cancelText: "close",
-                title: me.type
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.columnsView(),
+                    cancelText: "close",
+                    title: me.type
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);

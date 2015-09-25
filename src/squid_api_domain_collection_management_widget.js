@@ -55,9 +55,9 @@
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
+            this.listenTo(this.parent, "change:id", function() {
                 me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
+                me.collection.parentId = me.parent.get("id");
                 me.collection.fetch();
             });
 
@@ -65,28 +65,28 @@
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:project", function(parent) {
-                // relations
-                me.relations.collectionAvailable = true;
-                me.relations.parentId = {};
-                me.relations.parentId.projectId = parent.get("project");
-                me.relations.fetch();
-            });
-
-            this.config.on("change:domain", function(parent) {
+            this.config.on("change:domain", function() {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
                 me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = parent.get("project");
-                me.dimensions.parentId.domainId = me.config.get("domain");
-                me.dimensions.fetch();
+                me.dimensions.parentId.projectId = this.get("project");
+                me.dimensions.parentId.domainId = this.get("domain");
+                me.dimensions.fetch({
+                    success: function() {
+                        me.dimensions.fetched = true;
+                    }
+                });
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
-                me.metrics.parentId.projectId = parent.get("project");
-                me.metrics.parentId.domainId = me.config.get("domain");
-                me.metrics.fetch();
+                me.metrics.parentId.projectId = this.get("project");
+                me.metrics.parentId.domainId = this.get("domain");
+                me.metrics.fetch({
+                    success: function() {
+                        me.metrics.fetched = true;
+                    }
+                });
             });
 
             this.render();
@@ -155,58 +155,7 @@
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // relations
-            $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relationSelect = new squid_api.view.RelationModelManagementView({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Relation",
-                    modalTitle : "Relation for domain: " + this.domainName,
-                    collection : me.relations,
-                    model : new squid_api.model.RelationModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // dimension
-            $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
-                var dimensionSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Dimension",
-                    collection : me.dimensions,
-                    model : new squid_api.model.DimensionModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // metrics
-            $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
-                var metricSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Metric",
-                    collection : me.metrics,
-                    model : new squid_api.model.MetricModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });

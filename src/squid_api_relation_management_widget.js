@@ -237,6 +237,12 @@
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
+                },
+                remove : function() {
+                    this.undelegateEvents();
+                    this.$el.empty();
+                    this.stopListening();
+                    return this;
                 }
             });
 
@@ -247,11 +253,16 @@
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: this.relationView,
-                cancelText: "close",
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: this.relationView,
+                    cancelText: "close",
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -261,14 +272,14 @@
 
             // on cancel
             this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
+                me.relationView.remove();
             });
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
             $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+                me.relationView.remove();
             });
         }
     });
