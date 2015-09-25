@@ -1971,7 +1971,7 @@ function program1(depth0,data) {
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
             if (data.id) {
-                if (data.id.projectId === undefined || data.id.projectId.length === 0) {
+                if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
                 if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {

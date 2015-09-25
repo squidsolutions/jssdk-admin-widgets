@@ -79,7 +79,7 @@
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
             if (data.id) {
-                if (data.id.projectId === undefined || data.id.projectId.length === 0) {
+                if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
                 if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
@@ -372,7 +372,7 @@
                     // Show warning.
                     var PopupView = Backbone.View.extend({
                         render: function () {
-                            this.$el.html('The connection are incorrect. Are you sure you want to continue?');
+                            this.$el.html('The connection settings are incorrect. Are you sure you want to continue?');
                             return this;
                         }
                     });
