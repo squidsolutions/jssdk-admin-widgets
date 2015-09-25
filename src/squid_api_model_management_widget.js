@@ -194,11 +194,60 @@
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
 
+            /*var modelWithValidation = (me.model).extend({
+                validation: {
+                    dbUrl: {
+                        fn: function(value, attr, computedState) {
+                            if(value !== 'something') {
+                                return 'Name is invalid';
+                            }
+                        }
+                    }
+                }
+            });*/
+
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
+                /*jshint multistr: true */
+                /*template: _.template('\
+                    <form>\
+                     <div data-fieldsets></div>\
+                     <button type="button">Check</button>\
+                      <% if (submitButton) { %>\
+                        <button type="submit"><%= submitButton %></button>\
+                      <% } %>\
+                    </form>\
+                  ', null, this.templateSettings),
+
+                templateSettings: {
+                    evaluate: /<%([\s\S]+?)%>/g,
+                    interpolate: /<%=([\s\S]+?)%>/g,
+                    escape: /<%-([\s\S]+?)%>/g
+                },*/
                 schema: me.schema,
                 model: me.model
             }).render();
+
+            this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
+                console.log(dbUrlEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+            });
+
+            this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
+                console.log(dbPasswordEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+
+            });
+
+            this.formContent.on('dbUser:change', function(form, dbUserEditor) {
+                console.log(dbUserEditor.getValue());
+                $('.btn-check').removeAttr('style');
+                $('.dbSchemas').css("visibility", "hidden");
+            });
+
+
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
@@ -211,10 +260,37 @@
                     },
                     "click .suggestion-box" : function(e) {
                         me.suggestionHandler.call(me);
+                    },
+                    "click #btn-check" : function(e) {
+                        console.log("Validating DB password");
+
+                        // ACHTUNG password inside !!!!!!!!!
+                        var dburl = $('.modal-body').find('.dbUrl').find('.form-control').val();
+                        var dbPassword = $('.modal-body').find('.dbPassword').find('.form-control').val();
+                        var dbUser = $('.modal-body').find('.dbUser').find('.form-control').val();
+                        var projectId = squid_api.model.project.get("id").projectId;
+                        $.when(squid_api.validateDB(projectId, dburl,dbUser,dbPassword))
+                            .then(function() {
+                                if (squid_api.model.status.get("error") == "error") {
+                                    $('#btn-check').addClass("btn-danger");
+                                    console.log("Validation failed");
+                                    $('.dbSchemas').css("visibility", "hidden");
+                                    $('.modal-footer').find('.ok').addClass("btn-warning");
+                                    $('.modal-footer').find('.ok').removeClass("ok");
+
+                                } else {
+                                    $('#btn-check').addClass("btn-success");
+                                    $('.dbSchemas').removeAttr('style');
+                                    $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                                }
+                            }
+                        );
                     }
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
+                    //this.$el.html(this.template(jsonData));
+                    //this.$el.html(squid_api.template.squid_api_model_management_form_widget(me.formContent.el));
                     return this;
                 }
             });
@@ -248,7 +324,13 @@
 
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
-                me.saveForm();
+                if(checked === false){
+                    // Show warning.
+
+                } else{
+                    //Connection is checked and the button OK is disabled if checked and error.
+                    me.saveForm();
+                }
             });
 
             // hide first div (id)
@@ -439,6 +521,25 @@
                                 } else {
                                     type = me.getPropertyType(properties[property].type);
                                     schema[property].type = type;
+                                }
+                                if(property === "dbUrl"){
+                                    /*jshint multistr: true */
+                                    schema[property].template =_.template('\
+                                        <div>\
+                                          <label for="<%= editorId %>">\
+                                            <% if (titleHTML){ %><%= titleHTML %>\
+                                            <% } else { %><%- title %><% } %>\
+                                          </label>\
+                                          <div>\
+                                            <span data-editor></span>\
+                                            <div class="error-text" data-error></div>\
+                                            <div class="error-help"><%= help %></div>\
+                                          </div>\
+                                          <div>\
+                                              <button class="btn btn-default" id="btn-check" type="button">Check</button>\
+                                          </div>\
+                                        </div>\
+                                      ', null, null);
                                 }
                                 schema[property].editorClass = "form-control";
                             }
