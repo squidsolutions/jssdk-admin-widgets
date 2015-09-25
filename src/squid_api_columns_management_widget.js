@@ -60,6 +60,10 @@
                 this.collection.on("change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
+                if (! this.collection.fetched) {
+                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
+                    this.collection.fetch();
+                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);

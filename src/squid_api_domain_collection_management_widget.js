@@ -70,7 +70,11 @@
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
                 me.relations.parentId.projectId = this.get("project");
-                me.relations.fetch();
+                me.relations.fetch({
+                    success: function() {
+                        me.relations.fetched = true;
+                    }
+                });
             });
 
             this.config.on("change:domain", function() {
@@ -79,14 +83,22 @@
                 me.dimensions.parentId = {};
                 me.dimensions.parentId.projectId = this.get("project");
                 me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch();
+                me.dimensions.fetch({
+                    success: function() {
+                        me.dimensions.fetched = true;
+                    }
+                });
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
                 me.metrics.parentId.projectId = this.get("project");
                 me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch();
+                me.metrics.fetch({
+                    success: function() {
+                        me.metrics.fetched = true;
+                    }
+                });
             });
 
             this.render();

@@ -1170,6 +1170,10 @@ function program1(depth0,data) {
                 this.collection.on("change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
+                if (! this.collection.fetched) {
+                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
+                    this.collection.fetch();
+                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -1526,7 +1530,11 @@ function program1(depth0,data) {
                 me.relations.collectionAvailable = true;
                 me.relations.parentId = {};
                 me.relations.parentId.projectId = this.get("project");
-                me.relations.fetch();
+                me.relations.fetch({
+                    success: function() {
+                        me.relations.fetched = true;
+                    }
+                });
             });
 
             this.config.on("change:domain", function() {
@@ -1535,14 +1543,22 @@ function program1(depth0,data) {
                 me.dimensions.parentId = {};
                 me.dimensions.parentId.projectId = this.get("project");
                 me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch();
+                me.dimensions.fetch({
+                    success: function() {
+                        me.dimensions.fetched = true;
+                    }
+                });
 
                 // metrics
                 me.metrics.collectionAvailable = true;
                 me.metrics.parentId = {};
                 me.metrics.parentId.projectId = this.get("project");
                 me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch();
+                me.metrics.fetch({
+                    success: function() {
+                        me.metrics.fetched = true;
+                    }
+                });
             });
 
             this.render();
