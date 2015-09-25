@@ -224,7 +224,7 @@ function program4(depth0,data) {
   buffer += "\n        ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n    </div>\n</div>\n";
+  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n        <button type=\"button\" class=\"btn btn-default relations\">\n            Manage Relations\n		</button>\n    </div>\n</div>\n";
   return buffer;
   });
 
@@ -346,7 +346,7 @@ function program18(depth0,data) {
 function program19(depth0,data) {
   
   
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        <td class=\"relation\"><i class=\"fa fa-arrows-h\"></i></td>\n                                        <td class=\"dimension\"><i class=\"fa fa-sort-alpha-asc\"></i></td>\n                                        <td class=\"metric\"><i class=\"fa fa-sort-numeric-asc\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
   }
 
 function program21(depth0,data) {
@@ -1166,6 +1166,27 @@ function program1(depth0,data) {
                 this.type = options.type;
             }
 
+            // relations
+            me.relations = new squid_api.model.RelationCollection();
+            me.relations.collectionAvailable = true;
+            me.relations.parentId = {};
+            me.relations.parentId.projectId = squid_api.model.config.get("project");
+            me.relations.fetch({
+                success: function() {
+                    me.relations.fetched = true;
+                }
+            });
+            // domains
+            me.domains = new squid_api.model.DomainCollection();
+            me.domains.collectionAvailable = true;
+            me.domains.parentId = {};
+            me.domains.parentId.projectId =  squid_api.model.config.get("project");
+            me.domains.fetch({
+                success: function() {
+                    me.domains.fetched = true;
+                }
+            });
+
             if (this.collection) {
                 this.collection.on("change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
@@ -1365,6 +1386,22 @@ function program1(depth0,data) {
                             }
                         }
                     },
+                    "click .relations" : function() {
+                        new squid_api.view.RelationModelManagementView({
+                            el : this.el,
+                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                            type : "Relation",
+                            modalTitle : "Relation for domain: " + this.domainName,
+                            collection : me.relations,
+                            model : new squid_api.model.RelationModel(),
+                            parent : me.domains,
+                            autoOpen : true,
+                            successHandler : function() {
+                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
+                    },
                     "change select" : function(event) {
                         var dynamic = [];
                         var nonDynamic = [];
@@ -1525,18 +1562,6 @@ function program1(depth0,data) {
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:project", function() {
-                // relations
-                me.relations.collectionAvailable = true;
-                me.relations.parentId = {};
-                me.relations.parentId.projectId = this.get("project");
-                me.relations.fetch({
-                    success: function() {
-                        me.relations.fetched = true;
-                    }
-                });
-            });
-
             this.config.on("change:domain", function() {
                 // dimensions
                 me.dimensions.collectionAvailable = true;
@@ -1628,58 +1653,6 @@ function program1(depth0,data) {
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // relations
-            $(".squid-api-" + this.type + "-model-widget-popup .relation").on("click", function() {
-                var relationSelect = new squid_api.view.RelationModelManagementView({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Relation",
-                    modalTitle : "Relation for domain: " + this.domainName,
-                    collection : me.relations,
-                    model : new squid_api.model.RelationModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // dimension
-            $(".squid-api-" + this.type + "-model-widget-popup .dimension").on("click", function() {
-                var dimensionSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Dimension",
-                    collection : me.dimensions,
-                    model : new squid_api.model.DimensionModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                        squid_api.model.status.set({'message' : message});
-                    }
-                });
-            });
-
-            // metrics
-            $(".squid-api-" + this.type + "-model-widget-popup .metric").on("click", function() {
-                var metricSelect = new squid_api.view.ColumnsManagementWidget({
-                    el : this.el,
-                    buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                    type : "Metric",
-                    collection : me.metrics,
-                    model : new squid_api.model.MetricModel(),
-                    parent : me.collection,
-                    autoOpen : true,
-                    successHandler : function() {
-                        var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.status.set({'message' : message});
                     }
                 });
@@ -2712,6 +2685,12 @@ function program1(depth0,data) {
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
+                },
+                remove : function() {
+                    this.undelegateEvents();
+                    this.$el.empty();
+                    this.stopListening();
+                    return this;
                 }
             });
 
@@ -2741,14 +2720,14 @@ function program1(depth0,data) {
 
             // on cancel
             this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
+                me.relationView.remove();
             });
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
             $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+                me.relationView.remove();
             });
         }
     });

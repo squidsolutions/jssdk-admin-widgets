@@ -56,6 +56,27 @@
                 this.type = options.type;
             }
 
+            // relations
+            me.relations = new squid_api.model.RelationCollection();
+            me.relations.collectionAvailable = true;
+            me.relations.parentId = {};
+            me.relations.parentId.projectId = squid_api.model.config.get("project");
+            me.relations.fetch({
+                success: function() {
+                    me.relations.fetched = true;
+                }
+            });
+            // domains
+            me.domains = new squid_api.model.DomainCollection();
+            me.domains.collectionAvailable = true;
+            me.domains.parentId = {};
+            me.domains.parentId.projectId =  squid_api.model.config.get("project");
+            me.domains.fetch({
+                success: function() {
+                    me.domains.fetched = true;
+                }
+            });
+
             if (this.collection) {
                 this.collection.on("change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
@@ -254,6 +275,22 @@
                                 });
                             }
                         }
+                    },
+                    "click .relations" : function() {
+                        new squid_api.view.RelationModelManagementView({
+                            el : this.el,
+                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                            type : "Relation",
+                            modalTitle : "Relation for domain: " + this.domainName,
+                            collection : me.relations,
+                            model : new squid_api.model.RelationModel(),
+                            parent : me.domains,
+                            autoOpen : true,
+                            successHandler : function() {
+                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
                     },
                     "change select" : function(event) {
                         var dynamic = [];

@@ -237,6 +237,12 @@
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
+                },
+                remove : function() {
+                    this.undelegateEvents();
+                    this.$el.empty();
+                    this.stopListening();
+                    return this;
                 }
             });
 
@@ -266,14 +272,14 @@
 
             // on cancel
             this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
+                me.relationView.remove();
             });
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
             $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+                me.relationView.remove();
             });
         }
     });

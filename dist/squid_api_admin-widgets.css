@@ -212,6 +212,11 @@
     margin: 15px 10px 0px 0px;
 }
 
+.squid-api-admin-widget-columns-management .management button.relations {
+    float: right;
+    margin: 15px 10px 0px 0px;
+}
+
 .squid-api-admin-widget-columns-management .management button.edit {
     margin-right: 10px;
 }
