@@ -79,7 +79,7 @@
             var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
 
             if (data.id) {
-                if (data.id.projectId.length === 0) {
+                if (data.id.projectId === undefined || data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
                 if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
@@ -246,30 +246,43 @@
 
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
                 console.log(dbUrlEditor.getValue());
-                $('.btn-check').removeAttr('style');
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
                 console.log(dbPasswordEditor.getValue());
-                $('.btn-check').removeAttr('style');
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
 
             });
 
             this.formContent.on('dbUser:change', function(form, dbUserEditor) {
                 console.log(dbUserEditor.getValue());
-                $('.btn-check').removeAttr('style');
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+
+
             });
 
+            var incorrectCredentials = false;
 
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
                 model: me.model,
                 parent: me.parent,
-                // domain subject exception
+
+            // domain subject exception
                 events: {
                     "keyup .suggestion-box" : function(e) {
                         me.suggestionHandler.call(me);
@@ -280,33 +293,42 @@
                     "click #btn-check" : function(e) {
                         console.log("Validating DB password");
 
-                        // ACHTUNG password inside !!!!!!!!!
                         var dburl = $('.modal-body').find('.dbUrl').find('.form-control').val();
                         var dbPassword = $('.modal-body').find('.dbPassword').find('.form-control').val();
                         var dbUser = $('.modal-body').find('.dbUser').find('.form-control').val();
                         var projectId = squid_api.model.project.get("id").projectId;
-                        $.when(squid_api.validateDB(projectId, dburl,dbUser,dbPassword))
-                            .then(function() {
-                                if (squid_api.model.status.get("error") == "error") {
-                                    $('#btn-check').addClass("btn-danger");
-                                    console.log("Validation failed");
-                                    $('.dbSchemas').css("visibility", "hidden");
-                                    $('.modal-footer').find('.ok').addClass("btn-warning");
-                                    $('.modal-footer').find('.ok').removeClass("ok");
-
-                                } else {
-                                    $('#btn-check').addClass("btn-success");
-                                    $('.dbSchemas').removeAttr('style');
-                                    $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
-                                }
+                        //$.when(squid_api.validateDB(projectId, dburl,dbUser,dbPassword))
+                        $.ajax({
+                            type: "GET",
+                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (response) {
+                                $('#btn-check').removeClass("btn-danger");
+                                $('#btn-check').addClass("btn-success");
+                                $('.dbSchemas').removeAttr('style');
+                                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                                incorrectCredentials = false;
+                            },
+                            error: function(xhr, textStatus, error){
+                                squid_api.model.status.set({"message":"Invalid Login/password for JDBC access"}, {silent:true});
+                                squid_api.model.status.set("error",true);
+                                $('#btn-check').removeClass("btn-success");
+                                $('#btn-check').addClass("btn-danger");
+                                console.log("Validation failed");
+                                $('.dbSchemas').css("visibility", "hidden");
+                                $('.modal-footer').find('.ok').addClass("btn-warning");
+                                //$('.modal-footer').find('.ok').removeClass("ok");
+                                incorrectCredentials = true;
                             }
-                        );
+
+                        });
+
                     }
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
-                    //this.$el.html(this.template(jsonData));
-                    //this.$el.html(squid_api.template.squid_api_model_management_form_widget(me.formContent.el));
                     return this;
                 }
             });
@@ -345,13 +367,39 @@
 
             // saveForm on 'ok' click
             this.formModal.on('ok', function() {
-                if(checked === false){
+                if(incorrectCredentials === true) {
+                    console.log("Warning popup");
                     // Show warning.
+                    var PopupView = Backbone.View.extend({
+                        render: function () {
+                            this.$el.html('The connection are incorrect. Are you sure you want to continue?');
+                            return this;
+                        }
+                    });
 
-                } else{
-                    //Connection is checked and the button OK is disabled if checked and error.
+                    var confirmationModal = new Backbone.BootstrapModal({
+                        content: new PopupView(),
+                        title: "Confirmation"
+                    });
+                    confirmationModal.on('ok', function () {
+                        me.saveForm();
+                        me.formModal.close();
+                        confirmationModal.close();
+
+                    });
+
+                    confirmationModal.on('cancel', function () {
+                        me.formModal.preventClose();
+                        confirmationModal.close();
+                    });
+
+                    //confirmationModal.render();
+                    me.formModal.preventClose();
+                    confirmationModal.open();
+                }else{
                     me.saveForm();
                 }
+
             });
 
             // hide first div (id)
@@ -443,7 +491,7 @@
                                             <div class="error-help"><%= help %></div>\
                                           </div>\
                                           <div>\
-                                              <button class="btn btn-default" id="btn-check" type="button">Check</button>\
+                                              <button class="btn btn-default" id="btn-check" type="button">Check Connection</button>\
                                           </div>\
                                         </div>\
                                       ', null, null);
