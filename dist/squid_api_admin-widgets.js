@@ -2141,35 +2141,34 @@ function program1(depth0,data) {
                         me.suggestionHandler.call(me);
                     },
                     "click #btn-check" : function(e) {
-                        console.log("Validating DB password");
+                        var me = this;
 
-                        var dburl = $('.modal-body').find('.dbUrl').find('.form-control').val();
-                        var dbPassword = $('.modal-body').find('.dbPassword').find('.form-control').val();
-                        var dbUser = $('.modal-body').find('.dbUser').find('.form-control').val();
-                        var projectId = squid_api.model.project.get("id").projectId;
-                        //$.when(squid_api.validateDB(projectId, dburl,dbUser,dbPassword))
+                        console.log("Validating DB password");
+                        var dburl = this.$el.find('.dbUrl').find('.form-control').val();
+                        var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
+                        var dbUser = this.$el.find('.dbUser').find('.form-control').val();
+                        var projectId = squid_api.model.config.get("project");
+
                         $.ajax({
                             type: "GET",
                             url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
-                                $('#btn-check').removeClass("btn-danger");
-                                $('#btn-check').addClass("btn-success");
-                                $('.dbSchemas').removeAttr('style');
-                                //$('.modal-footer').find('.btn-warning').addClass("ok");
-                                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                                me.$el.find('#btn-check').removeClass("btn-danger");
+                                me.$el.find('#btn-check').addClass("btn-success");
+                                me.$el.find('.dbSchemas').removeAttr('style');
+                                me.$el.find('.modal-footer .btn-warning').removeClass("btn-warning");
                                 incorrectCredentials = false;
                             },
                             error: function(xhr, textStatus, error){
                                 squid_api.model.status.set({"message":"Invalid Login/password for JDBC access"}, {silent:true});
                                 squid_api.model.status.set("error",true);
-                                $('#btn-check').removeClass("btn-success");
-                                $('#btn-check').addClass("btn-danger");
+                                me.$el.find('#btn-check').removeClass("btn-success");
+                                me.$el.find('#btn-check').addClass("btn-danger");
                                 console.log("Validation failed");
-                                $('.dbSchemas').css("visibility", "hidden");
-                                $('.modal-footer').find('.ok').addClass("btn-warning");
-                                //$('.modal-footer').find('.ok').removeClass("ok");
+                                me.$el.find('.dbSchemas').css("visibility", "hidden");
+                                me.$el.find('.modal-footer').find('.ok').addClass("btn-warning");
                                 incorrectCredentials = true;
                             }
 
