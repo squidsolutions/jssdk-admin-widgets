@@ -476,29 +476,42 @@
                         domainObj.label = domains[i].get("name");
                         domainArray.push(domainObj);
                     }
+                    me.model.schema[x].subSchema.domainId.options = domainArray;
                 }
-                    if (me.model.definition === "Project" && x === "dbUrl") {
-                        /*jshint multistr: true */
-                        me.model.schema[x].template = _.template('\
-                                        <div>\
-                                          <label for="<%= editorId %>">\
-                                            <% if (titleHTML){ %><%= titleHTML %>\
-                                            <% } else { %><%- title %><% } %>\
-                                          </label>\
-                                          <div>\
-                                            <span data-editor></span>\
-                                            <div class="error-text" data-error></div>\
-                                            <div class="error-help"><%= help %></div>\
-                                          </div>\
-                                          <div>\
-                                              <button class="btn btn-default" id="btn-check" type="button">Check Connection</button>\
-                                          </div>\
-                                        </div>\
-                                      ', null, null);
+                if (me.model.definition === "Project" && x === "dbUrl") {
+                    /*jshint multistr: true */
+                    me.model.schema[x].template = _.template('\
+                                    <div>\
+                                      <label for="<%= editorId %>">\
+                                        <% if (titleHTML){ %><%= titleHTML %>\
+                                        <% } else { %><%- title %><% } %>\
+                                      </label>\
+                                      <div>\
+                                        <span data-editor></span>\
+                                        <div class="error-text" data-error></div>\
+                                        <div class="error-help"><%= help %></div>\
+                                      </div>\
+                                      <div>\
+                                          <button class="btn btn-default" id="btn-check" type="button">Check Connection</button>\
+                                      </div>\
+                                    </div>\
+                                  ', null, null);
+                }
+                if (me.model.definition == "Dimension" && x == "parentId") {
+                    me.model.schema[x].subSchema.dimensionId.type = "Select";
+                    me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
+                    for (i=0; i<me.collection.models.length; i++) {
+                        if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                            if (me.collection.models[i].get("dynamic") === false) {
+                                var objD = {};
+                                objD.val = me.collection.models[i].get("oid");
+                                objD.label = me.collection.models[i].get("name");
+                                me.model.schema[x].subSchema.dimensionId.options.push(objD);
+                            }
+                        }
                     }
+                }
             }
-
-
 
             // set schema
             me.schema = me.model.schema;
