@@ -328,6 +328,15 @@
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
+
+                    // detect and add dbPassword placeholder
+                    if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
+                        var placeholder = "";
+                        for (i=0; i<me.model.get("dbPasswordLength"); i++) {
+                            placeholder = placeholder + "*";
+                        }
+                        this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
+                    }
                     return this;
                 }
             });

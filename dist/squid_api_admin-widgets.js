@@ -411,48 +411,6 @@ function program27(depth0,data) {
   return buffer;
   });
 
-this["squid_api"]["template"]["squid_api_model_management_form_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", self=this, escapeExpression=this.escapeExpression;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <button type=\"button\"  class=\"btn btn-default\">\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </button>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                ";
-  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            ";
-  return buffer;
-  }
-
-function program4(depth0,data) {
-  
-  
-  return "\n                <i class=\"fa fa-plus\"></i>\n            ";
-  }
-
-  buffer += "<script id=\"formTemplate\" type=\"text/html\">\n    <form>\n        <h1>New User</h1>\n\n        <h2>Main Info</h2>\n        <div data-fields=\"title,name,birthday\"></div>\n\n        <h2>Account Info</h2>\n        <h3>Email</h3>\n        <div data-fields=\"email\"></div>\n\n        <h3>Password</h3>\n        <p>Must be at least 8 characters long</p>\n        <div data-editors=\"password\"></div>\n    </form>\n</script>\n\n<div class=\"";
-  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n    <form>\n        <h1>New User</h1>\n\n        <h2>Main Info</h2>\n        <div data-fields=\"title,name,birthday\"></div>\n\n        <h2>Account Info</h2>\n        <h3>Email</h3>\n        <div data-fields=\"email\"></div>\n\n        <h3>Password</h3>\n        <p>Must be at least 8 characters long</p>\n        <div data-editors=\"password\"></div>\n    </form>\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.accessible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
-  return buffer;
-  });
-
 this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -1985,8 +1943,8 @@ function program1(depth0,data) {
             }
 
             // if the definition isn't project, add the projectId
-            if (squid_api.model.config.get("project").get("id") && this.model.definition !== "Project") {
-                var projectId =  squid_api.model.config.get("project").get("id").projectId;
+            if (squid_api.model.config.get("project") && this.model.definition !== "Project") {
+                var projectId =  squid_api.model.config.get("project");
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
@@ -2220,6 +2178,15 @@ function program1(depth0,data) {
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
+
+                    // detect and add dbPassword placeholder
+                    if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
+                        var placeholder = "";
+                        for (i=0; i<me.model.get("dbPasswordLength"); i++) {
+                            placeholder = placeholder + "*";
+                        }
+                        this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
+                    }
                     return this;
                 }
             });
