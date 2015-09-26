@@ -93,8 +93,8 @@
             }
 
             // if the definition isn't project, add the projectId
-            if (squid_api.model.config.get("project").get("id") && this.model.definition !== "Project") {
-                var projectId =  squid_api.model.config.get("project").get("id").projectId;
+            if (squid_api.model.config.get("project") && this.model.definition !== "Project") {
+                var projectId =  squid_api.model.config.get("project");
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
