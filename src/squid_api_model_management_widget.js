@@ -93,8 +93,8 @@
             }
 
             // if the definition isn't project, add the projectId
-            if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
-                var projectId = squid_api.model.project.get("id").projectId;
+            if (squid_api.model.config.get("project").get("id") && this.model.definition !== "Project") {
+                var projectId =  squid_api.model.config.get("project").get("id").projectId;
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
@@ -312,7 +312,7 @@
                                 incorrectCredentials = false;
                             },
                             error: function(xhr, textStatus, error){
-                                squid_api.model.status.set({"message":"Invalid Login/password for JDBC access"}, {silent:true});
+                                squid_api.model.status.set({"message":JSON.parse(xhr.responseText).error}, {silent:true});
                                 squid_api.model.status.set("error",true);
                                 me.$el.find('#btn-check').removeClass("btn-success");
                                 me.$el.find('#btn-check').addClass("btn-danger");
