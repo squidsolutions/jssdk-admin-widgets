@@ -51,42 +51,16 @@
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
-            this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
-            this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function() {
-                me.collectionAvailable = true;
-                me.collection.parentId = me.parent.get("id");
-                me.collection.fetch();
-            });
-
-            this.relations = new squid_api.model.RelationCollection();
-            this.dimensions = new squid_api.model.DimensionCollection();
-            this.metrics = new squid_api.model.MetricCollection();
-
-            this.config.on("change:domain", function() {
-                // dimensions
-                me.dimensions.collectionAvailable = true;
-                me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = this.get("project");
-                me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch({
-                    success: function() {
-                        me.dimensions.fetched = true;
-                    }
-                });
-
-                // metrics
-                me.metrics.collectionAvailable = true;
-                me.metrics.parentId = {};
-                me.metrics.parentId.projectId = this.get("project");
-                me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch({
-                    success: function() {
-                        me.metrics.fetched = true;
-                    }
-                });
+            this.listenTo(this.parent, "change", function() {
+                // project has changed
+                this.collectionAvailable = false;
+                this.render();
+                this.collection.parentId = me.parent.get("id");
+                this.collection.fetch({ success : function() {
+                    me.collectionAvailable = true;
+                }});
             });
 
             this.render();

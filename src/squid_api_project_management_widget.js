@@ -39,45 +39,32 @@
             var viewOptions = {
                     "el" : this.$el,
                     "type" : "Project",
-                    "schemasCallback" : this.getDbSchemas,
                     "model" : squid_api.model.project,
                     "parent" : squid_api.model.customer
             };
-
+            viewOptions.schemasCallback = this.getDbSchemas;
+            
+            var successHandler = function(value) {
+                if (!value) {
+                    value = this.get("id").projectId;
+                }
+                if (value === squid_api.model.config.get("project")) {
+                    // trigger a project update
+                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                } else {
+                    // update the config
+                    squid_api.model.config.set({"project" : value});
+                }
+            };
+            
+            
             if (this.createOnlyView) {
-                viewOptions.successHandler = function(value) {
-                    // logic to update collection
-                    if (! value) {
-                        value = this.get("id").projectId;
-                    }
-                    squid_api.model.config.set({
-                        "project" : value,
-                        "domain" : null,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
-                    });
-                };
+                viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
-                viewOptions.changeEventHandler = function(value){
-                    if (! value) {
-                        value = this.get("id").projectId;
-                    }
-                    squid_api.model.config.set({
-                        "project" : value,
-                        "domain" : null,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
-                    });
-                };
+                viewOptions.changeEventHandler  = successHandler;
                 viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
                 var collectionView = new squid_api.view.ProjectCollectionManagementWidget(viewOptions);
             }

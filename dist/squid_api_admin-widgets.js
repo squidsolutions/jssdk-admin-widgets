@@ -130,14 +130,14 @@ function program23(depth0,data) {
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "'s Available</div>\n            ";
+    + " Available</div>\n            ";
   return buffer;
   }
 
 function program25(depth0,data) {
   
   
-  return "\n            <div class=\"parent-missing\">\n\n            </div>\n        ";
+  return "\n            <div class=\"parent-missing\">\n			Computing in progress...\n            </div>\n        ";
   }
 
   buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
@@ -236,23 +236,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += " data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"";
-  if (helper = helpers.collectionNotAvailableReason) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.collectionNotAvailableReason); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  
-  return " disabled=\"true\" ";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
   buffer += "\n            ";
   if (helper = helpers.renderEl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.renderEl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -261,7 +244,7 @@ function program5(depth0,data) {
   return buffer;
   }
 
-function program7(depth0,data) {
+function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n            Select ";
@@ -272,142 +255,140 @@ function program7(depth0,data) {
   return buffer;
   }
 
-function program9(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(25, program25, data),fn:self.program(10, program10, data),data:data});
+  buffer += "\n	            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(21, program21, data),fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </div>\n    </div>\n        ";
+  buffer += "\n	        ";
   return buffer;
   }
-function program10(depth0,data) {
+function program6(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n                <table style=\"width:100%\">\n                    <tbody ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
+  buffer += "\n	                <table style=\"width:100%\">\n	                    <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(9, program9, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  buffer += ">\n	                        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    </tbody>\n                </table>\n            ";
+  buffer += "\n	                    </tbody>\n	                </table>\n	            ";
   return buffer;
   }
-function program11(depth0,data) {
+function program7(depth0,data) {
   
   
   return " ";
   }
 
-function program13(depth0,data) {
+function program9(depth0,data) {
   
   
   return " class=\"no-values\" ";
   }
 
-function program15(depth0,data) {
+function program11(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                            <tr ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
+  buffer += "\n	                            <tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "data-attr=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.program(23, program23, data),fn:self.program(18, program18, data),data:data});
+    + "\">\n	                                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.program(19, program19, data),fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                            </tr>\n                        ";
+  buffer += "\n	                            </tr>\n	                        ";
   return buffer;
   }
-function program16(depth0,data) {
+function program12(depth0,data) {
   
   
   return " class=\"selected\" ";
   }
 
-function program18(depth0,data) {
+function program14(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select selected\">";
+  buffer += "\n	                                    <td class=\"select selected\">";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+    + "</td>\n	                                    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
+  buffer += "\n	                                    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                ";
+  buffer += "\n	                                ";
   return buffer;
   }
+function program15(depth0,data) {
+  
+  
+  return "\n	                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                    ";
+  }
+
+function program17(depth0,data) {
+  
+  
+  return "\n	                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n	                                    ";
+  }
+
 function program19(depth0,data) {
   
-  
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
+  var buffer = "", stack1, helper;
+  buffer += "\n	                                    <td class=\"select\" colspan=\"3\">";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n	                                ";
+  return buffer;
   }
 
 function program21(depth0,data) {
   
-  
-  return "\n                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n                                    ";
+  var buffer = "", stack1, helper;
+  buffer += "\n	                <div class=\"no-data\">No ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " Available</div>\n	            ";
+  return buffer;
   }
 
 function program23(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select\" colspan=\"3\">";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                                ";
-  return buffer;
-  }
-
-function program25(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n                <div class=\"no-data\">No ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "'s Available</div>\n            ";
-  return buffer;
-  }
-
-function program27(depth0,data) {
-  
-  
-  return "\n            <div class=\"parent-missing\">\n\n            </div>\n        ";
+  return "\n            Computing in progress...\n        	";
   }
 
   buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n    <button class=\"form-control selected-model squid-api-action\" ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.renderEl), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
+    + "\" \n	data-toggle=\"tooltip\" \n	data-placement=\"bottom\" \n	title=\"";
+  if (helper = helpers.collectionNotAvailableReason) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.collectionNotAvailableReason); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" \n>\n    <button class=\"form-control selected-model squid-api-action\" >\n        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.renderEl), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup-container\">\n    <div class=\"squid-api-";
+    + "-model-widget-popup-container\">\n	    <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(27, program27, data),fn:self.program(9, program9, data),data:data});
+    + "-model-widget-popup squid-api-model-widget-popup\">\n	        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(23, program23, data),fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
+  buffer += "\n	    </div>\n    </div>\n\n</div>\n";
   return buffer;
   });
 
@@ -1032,7 +1013,16 @@ function program1(depth0,data) {
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : this.roles.create, "collectionAvailable" : this.collectionAvailable, "collectionNotAvailableReason" : collectionNotAvailableReason, "renderEl" : this.renderEl};
+            var jsonData = {
+                    "selAvailable" : false, 
+                    "type" : this.type, 
+                    "options" : [], 
+                    "valueSelected" : false, 
+                    "create" : this.roles.create, 
+                    "collectionAvailable" : this.collectionAvailable, 
+                    "collectionNotAvailableReason" : collectionNotAvailableReason, 
+                    "renderEl" : this.renderEl
+            };
             var models = this.collection.models;
 
             // selected obj
@@ -1050,7 +1040,13 @@ function program1(depth0,data) {
                         selected = true;
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+                var option = {
+                        "label" : models[i].get("name"), 
+                        "value" : oid, 
+                        "selected" : selected, 
+                        "edit" : this.roles.edit, 
+                        "delete" : this.roles.delete
+                };
 
                 // support dynamic collections
                 if (models[i].get("dynamic")) {
@@ -1085,14 +1081,6 @@ function program1(depth0,data) {
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
-
-            if (! this.collectionAvailable) {
-                this.$el.find(".squid-api-model-widget-" + this.type).tooltip({
-                    tooltipClass: "squid-api-admin-widgets-tooltip",
-                    position: { my: "left top", at: "left bottom+2", of: me.$el.find(".squid-api-model-widget-" + me.type) },
-                });
-                this.$el.find(".selected-model").addClass("hide");
-            }
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
@@ -1192,8 +1180,13 @@ function program1(depth0,data) {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
                 if (! this.collection.fetched) {
-                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
-                    this.collection.fetch();
+                    if (squid_api.model.config.get("domain")) {
+                        this.collection.parentId = {
+                                projectId : squid_api.model.config.get("project"),
+                                domainId : squid_api.model.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
                 }
             }
             if (this.parent) {
@@ -1548,42 +1541,16 @@ function program1(depth0,data) {
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
-            this.config.on("change", this.render, this);
             this.collection.on("reset change remove sync", this.render, this);
 
-            this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function() {
-                me.collectionAvailable = true;
-                me.collection.parentId = me.parent.get("id");
-                me.collection.fetch();
-            });
-
-            this.relations = new squid_api.model.RelationCollection();
-            this.dimensions = new squid_api.model.DimensionCollection();
-            this.metrics = new squid_api.model.MetricCollection();
-
-            this.config.on("change:domain", function() {
-                // dimensions
-                me.dimensions.collectionAvailable = true;
-                me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = this.get("project");
-                me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch({
-                    success: function() {
-                        me.dimensions.fetched = true;
-                    }
-                });
-
-                // metrics
-                me.metrics.collectionAvailable = true;
-                me.metrics.parentId = {};
-                me.metrics.parentId.projectId = this.get("project");
-                me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch({
-                    success: function() {
-                        me.metrics.fetched = true;
-                    }
-                });
+            this.listenTo(this.parent, "change", function() {
+                // project has changed
+                this.collectionAvailable = false;
+                this.render();
+                this.collection.parentId = me.parent.get("id");
+                this.collection.fetch({ success : function() {
+                    me.collectionAvailable = true;
+                }});
             });
 
             this.render();
@@ -1739,16 +1706,11 @@ function program1(depth0,data) {
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
                     squid_api.model.status.set({'message' : message});
 
-                    if (! value) {
+                    if (!value) {
                         value = this.get("id").domainId;
                     }
                     squid_api.model.config.set({
-                        "domain" : value,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
+                        "domain" : value
                     });
                 };
                 viewOptions.buttonLabel = "Create a new one";
@@ -1756,16 +1718,11 @@ function program1(depth0,data) {
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    if (! value) {
+                    if (!value) {
                         value = this.get("id").domainId;
                     }
                     squid_api.model.config.set({
-                        "domain" : value,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
+                        "domain" : value
                     });
                 };
                 // DomainCollectionManagementWidget
@@ -2571,45 +2528,32 @@ function program1(depth0,data) {
             var viewOptions = {
                     "el" : this.$el,
                     "type" : "Project",
-                    "schemasCallback" : this.getDbSchemas,
                     "model" : squid_api.model.project,
                     "parent" : squid_api.model.customer
             };
-
+            viewOptions.schemasCallback = this.getDbSchemas;
+            
+            var successHandler = function(value) {
+                if (!value) {
+                    value = this.get("id").projectId;
+                }
+                if (value === squid_api.model.config.get("project")) {
+                    // trigger a project update
+                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                } else {
+                    // update the config
+                    squid_api.model.config.set({"project" : value});
+                }
+            };
+            
+            
             if (this.createOnlyView) {
-                viewOptions.successHandler = function(value) {
-                    // logic to update collection
-                    if (! value) {
-                        value = this.get("id").projectId;
-                    }
-                    squid_api.model.config.set({
-                        "project" : value,
-                        "domain" : null,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
-                    });
-                };
+                viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
-                viewOptions.changeEventHandler = function(value){
-                    if (! value) {
-                        value = this.get("id").projectId;
-                    }
-                    squid_api.model.config.set({
-                        "project" : value,
-                        "domain" : null,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
-                    });
-                };
+                viewOptions.changeEventHandler  = successHandler;
                 viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
                 var collectionView = new squid_api.view.ProjectCollectionManagementWidget(viewOptions);
             }

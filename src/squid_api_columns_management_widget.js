@@ -82,8 +82,13 @@
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
                 if (! this.collection.fetched) {
-                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
-                    this.collection.fetch();
+                    if (squid_api.model.config.get("domain")) {
+                        this.collection.parentId = {
+                                projectId : squid_api.model.config.get("project"),
+                                domainId : squid_api.model.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
                 }
             }
             if (this.parent) {
