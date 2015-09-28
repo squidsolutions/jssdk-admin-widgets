@@ -272,10 +272,6 @@
                 $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
             });
 
-            this.formContent.on('leftId:change', function(form, dbUserEditor) {
-                alert("WAA");
-            });
-
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
                 form.$el.find(".leftName input").val(rightText);
@@ -349,11 +345,16 @@
                         }
                         this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
                     }
-                    if (this.$el.find(".leftName") && this.$el.find(".rightName")) {
-                        var leftName = this.$el.find(".leftId select option:selected").text();
-                        this.$el.find(".leftName input").val(leftName);
-                        var rightName = this.$el.find(".rightId select option:selected").text();
-                        this.$el.find(".rightName input").val(rightName);
+                    if (this.model.definition == "Relation") {
+                        if (this.model.isNew()) {
+                            // by default set the current domain as the leftId
+                            this.$el.find(".leftId select").val(squid_api.model.config.get("domain"));
+                            
+                            var leftName = this.$el.find(".leftId select option:selected").text();
+                            this.$el.find(".leftName input").val(leftName);
+                            var rightName = this.$el.find(".rightId select option:selected").text();
+                            this.$el.find(".rightName input").val(rightName);
+                        }
                     }
                     return this;
                 }
