@@ -248,9 +248,13 @@
                     "valueSelected" : false, 
                     "create" : this.roles.create, 
                     "collectionAvailable" : this.collectionAvailable, 
-                    "collectionNotAvailableReason" : collectionNotAvailableReason, 
-                    "renderEl" : this.renderEl
+                    "collectionNotAvailableReason" : collectionNotAvailableReason
             };
+            if (this.model) {
+                jsonData.selectedLabel = this.model.get("name");
+            }
+            
+            
             var models = this.collection.models;
 
             // selected obj

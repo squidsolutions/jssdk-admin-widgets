@@ -237,8 +237,8 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n            ";
-  if (helper = helpers.renderEl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.renderEl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.selectedLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.selectedLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
   return buffer;
@@ -375,7 +375,7 @@ function program23(depth0,data) {
   else { helper = (depth0 && depth0.collectionNotAvailableReason); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" \n>\n    <button class=\"form-control selected-model squid-api-action\" >\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.renderEl), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedLabel), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -1020,9 +1020,13 @@ function program1(depth0,data) {
                     "valueSelected" : false, 
                     "create" : this.roles.create, 
                     "collectionAvailable" : this.collectionAvailable, 
-                    "collectionNotAvailableReason" : collectionNotAvailableReason, 
-                    "renderEl" : this.renderEl
+                    "collectionNotAvailableReason" : collectionNotAvailableReason
             };
+            if (this.model) {
+                jsonData.selectedLabel = this.model.get("name");
+            }
+            
+            
             var models = this.collection.models;
 
             // selected obj
@@ -1543,6 +1547,7 @@ function program1(depth0,data) {
 
             this.collection.on("reset change remove sync", this.render, this);
 
+            this.listenTo(this.model, "change", this.render);
             this.listenTo(this.parent, "change", function() {
                 // project has changed
                 this.collectionAvailable = false;
