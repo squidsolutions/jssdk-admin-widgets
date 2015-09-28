@@ -457,6 +457,16 @@
             this.renderForm();
         },
 
+        events: {
+            "click button" : function() {
+                if (! this.autoOpen) {
+                    // reset model defaults
+                    this.model.clear().set(this.model.defaults);
+                    this.prepareForm();
+                }
+            }
+        },
+
         getPropertyType: function(type) {
             switch(type) {
                 case "string":
