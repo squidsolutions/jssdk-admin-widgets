@@ -2199,7 +2199,7 @@ function program1(depth0,data) {
                         if (this.model.isNew()) {
                             // by default set the current domain as the leftId
                             this.$el.find(".leftId select").val(squid_api.model.config.get("domain"));
-                            
+
                             var leftName = this.$el.find(".leftId select option:selected").text();
                             this.$el.find(".leftName input").val(leftName);
                             var rightName = this.$el.find(".rightId select option:selected").text();
@@ -2305,14 +2305,6 @@ function program1(depth0,data) {
                 this.beforeRenderHandler.call(this);
             }
             this.renderForm();
-        },
-
-        events: {
-            "click button" : function() {
-                // reset model defaults
-                this.model.clear().set(this.model.defaults);
-                this.prepareForm();
-            }
         },
 
         getPropertyType: function(type) {
@@ -2859,12 +2851,6 @@ function program1(depth0,data) {
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
-                },
-                remove : function() {
-                    this.undelegateEvents();
-                    this.$el.empty();
-                    this.stopListening();
-                    return this;
                 }
             });
 
@@ -2875,34 +2861,17 @@ function program1(depth0,data) {
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            if (this.formModal) {
-                this.formModal.open();
-            } else {
-                this.formModal = new Backbone.BootstrapModal({
-                    content: this.relationView,
-                    cancelText: "close",
-                    title: modalTitle
-                });
-                this.formModal.open();
-            }
+            this.formModal = new Backbone.BootstrapModal({
+                content: this.relationView,
+                cancelText: "close",
+                title: modalTitle
+            }).open();
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            // on cancel
-            this.formModal.on('cancel', function() {
-                me.relationView.remove();
-            });
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                me.relationView.remove();
-            });
         }
     });
 

@@ -349,7 +349,7 @@
                         if (this.model.isNew()) {
                             // by default set the current domain as the leftId
                             this.$el.find(".leftId select").val(squid_api.model.config.get("domain"));
-                            
+
                             var leftName = this.$el.find(".leftId select option:selected").text();
                             this.$el.find(".leftName input").val(leftName);
                             var rightName = this.$el.find(".rightId select option:selected").text();
@@ -455,14 +455,6 @@
                 this.beforeRenderHandler.call(this);
             }
             this.renderForm();
-        },
-
-        events: {
-            "click button" : function() {
-                // reset model defaults
-                this.model.clear().set(this.model.defaults);
-                this.prepareForm();
-            }
         },
 
         getPropertyType: function(type) {

@@ -237,12 +237,6 @@
                 render: function() {
                     this.$el.html(template(jsonData));
                     return this;
-                },
-                remove : function() {
-                    this.undelegateEvents();
-                    this.$el.empty();
-                    this.stopListening();
-                    return this;
                 }
             });
 
@@ -253,34 +247,17 @@
             modalTitle = "Domain Relations";
 
             // instantiate a new modal view, set the content & automatically open
-            if (this.formModal) {
-                this.formModal.open();
-            } else {
-                this.formModal = new Backbone.BootstrapModal({
-                    content: this.relationView,
-                    cancelText: "close",
-                    title: modalTitle
-                });
-                this.formModal.open();
-            }
+            this.formModal = new Backbone.BootstrapModal({
+                content: this.relationView,
+                cancelText: "close",
+                title: modalTitle
+            }).open();
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            // on cancel
-            this.formModal.on('cancel', function() {
-                me.relationView.remove();
-            });
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                me.relationView.remove();
-            });
         }
     });
 
