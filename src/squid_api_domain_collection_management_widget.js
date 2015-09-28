@@ -65,28 +65,30 @@
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:domain", function() {
-                // dimensions
-                me.dimensions.collectionAvailable = true;
-                me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = this.get("project");
-                me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch({
-                    success: function() {
-                        me.dimensions.fetched = true;
-                    }
-                });
-
-                // metrics
-                me.metrics.collectionAvailable = true;
-                me.metrics.parentId = {};
-                me.metrics.parentId.projectId = this.get("project");
-                me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch({
-                    success: function() {
-                        me.metrics.fetched = true;
-                    }
-                });
+            this.listenTo(this.config, "change:domain", function() {
+                if (this.config.get("domain")) {     
+                    // dimensions
+                    me.dimensions.collectionAvailable = true;
+                    me.dimensions.parentId = {};
+                    me.dimensions.parentId.projectId = this.config.get("project");
+                    me.dimensions.parentId.domainId = this.config.get("domain");
+                    me.dimensions.fetch({
+                        success: function() {
+                            me.dimensions.fetched = true;
+                        }
+                    });
+    
+                    // metrics
+                    me.metrics.collectionAvailable = true;
+                    me.metrics.parentId = {};
+                    me.metrics.parentId.projectId = this.config.get("project");
+                    me.metrics.parentId.domainId = this.config.get("domain");
+                    me.metrics.fetch({
+                        success: function() {
+                            me.metrics.fetched = true;
+                        }
+                    });
+                }
             });
 
             this.render();

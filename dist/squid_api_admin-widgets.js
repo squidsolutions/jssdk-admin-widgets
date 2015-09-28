@@ -1192,8 +1192,13 @@ function program1(depth0,data) {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
                 if (! this.collection.fetched) {
-                    this.collection.parentId = {projectId : squid_api.model.config.get("project"), domainId : squid_api.model.config.get("domain")};
-                    this.collection.fetch();
+                    if (squid_api.model.config.get("domain")) {
+                        this.collection.parentId = {
+                                projectId : squid_api.model.config.get("project"),
+                                domainId : squid_api.model.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
                 }
             }
             if (this.parent) {
@@ -1562,28 +1567,30 @@ function program1(depth0,data) {
             this.dimensions = new squid_api.model.DimensionCollection();
             this.metrics = new squid_api.model.MetricCollection();
 
-            this.config.on("change:domain", function() {
-                // dimensions
-                me.dimensions.collectionAvailable = true;
-                me.dimensions.parentId = {};
-                me.dimensions.parentId.projectId = this.get("project");
-                me.dimensions.parentId.domainId = this.get("domain");
-                me.dimensions.fetch({
-                    success: function() {
-                        me.dimensions.fetched = true;
-                    }
-                });
-
-                // metrics
-                me.metrics.collectionAvailable = true;
-                me.metrics.parentId = {};
-                me.metrics.parentId.projectId = this.get("project");
-                me.metrics.parentId.domainId = this.get("domain");
-                me.metrics.fetch({
-                    success: function() {
-                        me.metrics.fetched = true;
-                    }
-                });
+            this.listenTo(this.config, "change:domain", function() {
+                if (this.config.get("domain")) {     
+                    // dimensions
+                    me.dimensions.collectionAvailable = true;
+                    me.dimensions.parentId = {};
+                    me.dimensions.parentId.projectId = this.config.get("project");
+                    me.dimensions.parentId.domainId = this.config.get("domain");
+                    me.dimensions.fetch({
+                        success: function() {
+                            me.dimensions.fetched = true;
+                        }
+                    });
+    
+                    // metrics
+                    me.metrics.collectionAvailable = true;
+                    me.metrics.parentId = {};
+                    me.metrics.parentId.projectId = this.config.get("project");
+                    me.metrics.parentId.domainId = this.config.get("domain");
+                    me.metrics.fetch({
+                        success: function() {
+                            me.metrics.fetched = true;
+                        }
+                    });
+                }
             });
 
             this.render();
