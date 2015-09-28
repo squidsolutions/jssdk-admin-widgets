@@ -53,7 +53,7 @@
                     squid_api.model.config.trigger("change:project", squid_api.model.config);
                 } else {
                     // update the config
-                    squid_api.model.config.set({"project" : value});
+                    squid_api.model.config.set({"project" : value, "domain" : null});
                 }
             };
             
