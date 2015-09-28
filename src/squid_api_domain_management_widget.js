@@ -56,16 +56,11 @@
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
                     squid_api.model.status.set({'message' : message});
 
-                    if (! value) {
+                    if (!value) {
                         value = this.get("id").domainId;
                     }
                     squid_api.model.config.set({
-                        "domain" : value,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
+                        "domain" : value
                     });
                 };
                 viewOptions.buttonLabel = "Create a new one";
@@ -73,16 +68,11 @@
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler = function(value){
-                    if (! value) {
+                    if (!value) {
                         value = this.get("id").domainId;
                     }
                     squid_api.model.config.set({
-                        "domain" : value,
-                        "selection" : null,
-                        "chosenDimensions" : null,
-                        "selectedDimension" : null,
-                        "chosenMetrics" : null,
-                        "selectedMetric" : null
+                        "domain" : value
                     });
                 };
                 // DomainCollectionManagementWidget

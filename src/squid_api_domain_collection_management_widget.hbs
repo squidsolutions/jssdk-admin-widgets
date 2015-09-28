@@ -1,5 +1,9 @@
-<div class="squid-api-model-widget squid-api-model-widget-{{type}}" {{#unless collectionAvailable}} data-toggle="tooltip" data-placement="bottom" title="{{collectionNotAvailableReason}}" {{/unless}}>
-    <button class="form-control selected-model squid-api-action" {{#unless collectionAvailable}} disabled="true" {{/unless}}>
+<div class="squid-api-model-widget squid-api-model-widget-{{type}}" 
+	data-toggle="tooltip" 
+	data-placement="bottom" 
+	title="{{collectionNotAvailableReason}}" 
+>
+    <button class="form-control selected-model squid-api-action" >
         {{#if renderEl}}
             {{{renderEl}}}
         {{else}}
@@ -7,36 +11,35 @@
         {{/if}}
     </button>
     <div id="squid-api-{{type}}-model-widget-popup-container">
-    <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
-        {{#if collectionAvailable}}
-            {{#if selAvailable}}
-                <table style="width:100%">
-                    <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
-                        {{#each options}}
-                            <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
-                                {{#if selected}}
-                                    <td class="select selected">{{label}}</td>
-                                    {{#if edit}}
-                                        <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-                                    {{/if}}
-                                    {{#if delete}}
-                                        <td class="delete"><i class="fa fa-trash-o"></i></td>
-                                    {{/if}}
-                                {{else}}
-                                    <td class="select" colspan="3">{{label}}</td>
-                                {{/if}}
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            {{else}}
-                <div class="no-data">No {{type}}'s Available</div>
-            {{/if}}
-        </div>
+	    <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
+	        {{#if collectionAvailable}}
+	            {{#if selAvailable}}
+	                <table style="width:100%">
+	                    <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
+	                        {{#each options}}
+	                            <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
+	                                {{#if selected}}
+	                                    <td class="select selected">{{label}}</td>
+	                                    {{#if edit}}
+	                                        <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
+	                                    {{/if}}
+	                                    {{#if delete}}
+	                                        <td class="delete"><i class="fa fa-trash-o"></i></td>
+	                                    {{/if}}
+	                                {{else}}
+	                                    <td class="select" colspan="3">{{label}}</td>
+	                                {{/if}}
+	                            </tr>
+	                        {{/each}}
+	                    </tbody>
+	                </table>
+	            {{else}}
+	                <div class="no-data">No {{type}} Available</div>
+	            {{/if}}
+	        {{else}}
+            Computing in progress...
+        	{{/if}}
+	    </div>
     </div>
-        {{else}}
-            <div class="parent-missing">
 
-            </div>
-        {{/if}}
 </div>
