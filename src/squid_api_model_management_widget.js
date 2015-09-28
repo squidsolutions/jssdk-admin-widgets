@@ -270,8 +270,20 @@
                 $('.dbSchemas').css("visibility", "hidden");
                 //$('.modal-footer').find('.btn-warning').addClass("ok");
                 $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+            });
 
+            this.formContent.on('leftId:change', function(form, dbUserEditor) {
+                alert("WAA");
+            });
 
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
+            });
+
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
             });
 
             var incorrectCredentials = false;
@@ -336,6 +348,12 @@
                             placeholder = placeholder + "*";
                         }
                         this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
+                    }
+                    if (this.$el.find(".leftName") && this.$el.find(".rightName")) {
+                        var leftName = this.$el.find(".leftId select option:selected").text();
+                        this.$el.find(".leftName input").val(leftName);
+                        var rightName = this.$el.find(".rightId select option:selected").text();
+                        this.$el.find(".rightName input").val(rightName);
                     }
                     return this;
                 }
