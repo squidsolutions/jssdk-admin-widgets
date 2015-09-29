@@ -913,6 +913,10 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
 
+                if (me.collectionModal) {
+                    me.collectionModal.close();
+                }
+
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
@@ -1079,10 +1083,6 @@ function program1(depth0,data) {
             // place selected obj at start of array
             if (sel[0]) {
                 jsonData.options.unshift(sel[0]);
-            }
-
-            if (this.collectionModal) {
-                this.collectionModal.close();
             }
 
             // print template
@@ -1585,6 +1585,10 @@ function program1(depth0,data) {
             // select
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
+
+                if (me.collectionModal) {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                }
 
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
