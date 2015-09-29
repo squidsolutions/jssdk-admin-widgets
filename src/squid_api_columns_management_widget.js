@@ -381,8 +381,9 @@
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.formModal.close();
+                me.formModal.remove();
             });
         }
     });

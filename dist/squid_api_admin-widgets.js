@@ -858,6 +858,8 @@ function program1(depth0,data) {
 
         events: {
             "click button": function() {
+                var me = this;
+
                 if (this.collectionModal) {
                     this.collectionModal.$el.find(".modal-body").html(this.html);
                     // redelegate events after updating template
@@ -883,8 +885,9 @@ function program1(depth0,data) {
                 /* bootstrap doesn't remove modal from dom when clicking outside of it.
                    Check to make sure it has been removed whenever it isn't displayed.
                 */
-                $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                    this.remove();
+                $(this.collectionModal.el).one('hidden.bs.modal', function () {
+                    me.collectionModal.close();
+                    me.collectionModal.remove();
                 });
             }
         },
@@ -1014,19 +1017,19 @@ function program1(depth0,data) {
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
             var jsonData = {
-                    "selAvailable" : false, 
-                    "type" : this.type, 
-                    "options" : [], 
-                    "valueSelected" : false, 
-                    "create" : this.roles.create, 
-                    "collectionAvailable" : this.collectionAvailable, 
+                    "selAvailable" : false,
+                    "type" : this.type,
+                    "options" : [],
+                    "valueSelected" : false,
+                    "create" : this.roles.create,
+                    "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
             if (this.model) {
                 jsonData.selectedLabel = this.model.get("name");
             }
-            
-            
+
+
             var models = this.collection.models;
 
             // selected obj
@@ -1045,10 +1048,10 @@ function program1(depth0,data) {
                     }
                 }
                 var option = {
-                        "label" : models[i].get("name"), 
-                        "value" : oid, 
-                        "selected" : selected, 
-                        "edit" : this.roles.edit, 
+                        "label" : models[i].get("name"),
+                        "value" : oid,
+                        "selected" : selected,
+                        "edit" : this.roles.edit,
                         "delete" : this.roles.delete
                 };
 
@@ -1483,8 +1486,9 @@ function program1(depth0,data) {
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.formModal.close();
+                me.formModal.remove();
             });
         }
     });
@@ -2256,8 +2260,9 @@ function program1(depth0,data) {
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.formModal.close();
+                me.formModal.remove();
             });
         },
 
@@ -2834,6 +2839,14 @@ function program1(depth0,data) {
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+               Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.formModal.close();
+                me.formModal.remove();
+            });
         }
     });
 
@@ -2873,7 +2886,7 @@ function program1(depth0,data) {
             var me = this;
             this.$el.html(this.template());
         },
-        
+
         saveShortcut : function(event) {
             event.preventDefault();
             var me = this;

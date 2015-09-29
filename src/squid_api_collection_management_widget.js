@@ -86,6 +86,8 @@
 
         events: {
             "click button": function() {
+                var me = this;
+
                 if (this.collectionModal) {
                     this.collectionModal.$el.find(".modal-body").html(this.html);
                     // redelegate events after updating template
@@ -111,8 +113,9 @@
                 /* bootstrap doesn't remove modal from dom when clicking outside of it.
                    Check to make sure it has been removed whenever it isn't displayed.
                 */
-                $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                    this.remove();
+                $(this.collectionModal.el).one('hidden.bs.modal', function () {
+                    me.collectionModal.close();
+                    me.collectionModal.remove();
                 });
             }
         },
@@ -242,19 +245,19 @@
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
             var jsonData = {
-                    "selAvailable" : false, 
-                    "type" : this.type, 
-                    "options" : [], 
-                    "valueSelected" : false, 
-                    "create" : this.roles.create, 
-                    "collectionAvailable" : this.collectionAvailable, 
+                    "selAvailable" : false,
+                    "type" : this.type,
+                    "options" : [],
+                    "valueSelected" : false,
+                    "create" : this.roles.create,
+                    "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
             if (this.model) {
                 jsonData.selectedLabel = this.model.get("name");
             }
-            
-            
+
+
             var models = this.collection.models;
 
             // selected obj
@@ -273,10 +276,10 @@
                     }
                 }
                 var option = {
-                        "label" : models[i].get("name"), 
-                        "value" : oid, 
-                        "selected" : selected, 
-                        "edit" : this.roles.edit, 
+                        "label" : models[i].get("name"),
+                        "value" : oid,
+                        "selected" : selected,
+                        "edit" : this.roles.edit,
                         "delete" : this.roles.delete
                 };
 
