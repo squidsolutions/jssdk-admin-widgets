@@ -58,10 +58,17 @@
                 // project has changed
                 this.collectionAvailable = false;
                 this.render();
-                this.collection.parentId = me.parent.get("id");
-                this.collection.fetch({ success : function() {
-                    me.collectionAvailable = true;
-                }});
+                this.collection.parentId = this.parent.get("id");
+                this.collection
+                .fetch({
+                    success : function() {
+                        me.collectionAvailable = true;
+                    },
+                    error : function(collection, response, options) {
+                        squid_api.model.status.set({"error":response});
+                        me.collectionAvailable = true;
+                    }
+                });
             });
 
             this.render();

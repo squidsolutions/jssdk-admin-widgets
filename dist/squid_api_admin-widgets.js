@@ -585,7 +585,7 @@ function program27(depth0,data) {
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "'s Available</div>\n            ";
+    + " Available</div>\n            ";
   return buffer;
   }
 
@@ -1091,6 +1091,13 @@ function program1(depth0,data) {
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
+            
+            // hide main button if parent is not set
+            if (!this.parent.get("id")) {
+                this.$el.find("button.selected-model").addClass("hidden");
+            } else {
+                this.$el.find("button.selected-model").removeClass("hidden");
+            }
 
             // remove popup information from the view
             this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();
@@ -1556,10 +1563,17 @@ function program1(depth0,data) {
                 // project has changed
                 this.collectionAvailable = false;
                 this.render();
-                this.collection.parentId = me.parent.get("id");
-                this.collection.fetch({ success : function() {
-                    me.collectionAvailable = true;
-                }});
+                this.collection.parentId = this.parent.get("id");
+                this.collection
+                .fetch({
+                    success : function() {
+                        me.collectionAvailable = true;
+                    },
+                    error : function(collection, response, options) {
+                        squid_api.model.status.set({"error":response});
+                        me.collectionAvailable = true;
+                    }
+                });
             });
 
             this.render();
