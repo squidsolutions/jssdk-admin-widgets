@@ -320,8 +320,7 @@
                                 incorrectCredentials = false;
                             },
                             error: function(xhr, textStatus, error){
-                                squid_api.model.status.set({"message":JSON.parse(xhr.responseText).error}, {silent:true});
-                                squid_api.model.status.set("error",true);
+                                squid_api.model.status.set({"error":xhr});
                                 me.$el.find('#btn-check').removeClass("btn-success");
                                 me.$el.find('#btn-check').addClass("btn-danger");
                                 console.log("Validation failed");
