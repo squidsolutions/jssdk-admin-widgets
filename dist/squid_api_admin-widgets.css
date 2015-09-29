@@ -344,6 +344,10 @@
     border-radius: 5px;
 }
 
+.squid-api-admin-widgets-modal-form #btn-check {
+    margin: 15px 0px 0px 0px;
+}
+
 #squid-api-relations-widget-data-table .row {
  	margin: 10px 0px;
  }

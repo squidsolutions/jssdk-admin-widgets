@@ -112,3 +112,7 @@
     margin-left: 510px;
     border-radius: 5px;
 }
+
+.squid-api-admin-widgets-modal-form #btn-check {
+    margin: 15px 0px 0px 0px;
+}

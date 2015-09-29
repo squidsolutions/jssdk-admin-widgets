@@ -2370,7 +2370,7 @@ function program1(depth0,data) {
                     }
                     me.model.schema[x].subSchema.domainId.options = domainArray;
                 }
-                if (me.model.definition === "Project" && x === "dbUrl") {
+                if (me.model.definition === "Project" && x === "dbPassword") {
                     /*jshint multistr: true */
                     me.model.schema[x].template = _.template('\
                                     <div>\
