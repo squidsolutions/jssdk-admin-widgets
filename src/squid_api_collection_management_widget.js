@@ -263,8 +263,10 @@
                     "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
-            if (this.model) {
+            if (this.model && this.model.get("id")) {
                 jsonData.selectedLabel = this.model.get("name");
+            } else {
+                jsonData.selectedLabel = null;
             }
 
 
