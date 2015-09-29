@@ -249,7 +249,6 @@
             }).render();
 
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
-                console.log(dbUrlEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
@@ -258,7 +257,6 @@
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
-                console.log(dbPasswordEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
@@ -268,7 +266,6 @@
             });
 
             this.formContent.on('dbUser:change', function(form, dbUserEditor) {
-                console.log(dbUserEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
                 $('.dbSchemas').css("visibility", "hidden");
@@ -309,8 +306,8 @@
                         var dburl = this.$el.find('.dbUrl').find('.form-control').val();
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
-                        var projectId = squid_api.model.config.get("project");
-
+                        var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
+                        
                         $.ajax({
                             type: "GET",
                             url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
