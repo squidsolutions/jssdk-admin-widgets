@@ -316,6 +316,13 @@
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
+            
+            // hide main button if parent is not set
+            if (!this.parent.get("id")) {
+                this.$el.find("button.selected-model").addClass("hidden");
+            } else {
+                this.$el.find("button.selected-model").removeClass("hidden");
+            }
 
             // remove popup information from the view
             this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();
