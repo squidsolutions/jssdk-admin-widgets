@@ -1036,8 +1036,10 @@ function program1(depth0,data) {
                     "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
-            if (this.model) {
+            if (this.model && this.model.get("id")) {
                 jsonData.selectedLabel = this.model.get("name");
+            } else {
+                jsonData.selectedLabel = null;
             }
 
 
@@ -1731,12 +1733,16 @@ function program1(depth0,data) {
             var me = this;
             var projectId = this.config.get("project");
             var domainId = this.config.get("domain");
-            this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
-            this.domain.fetch({
-                error: function(xhr) {
-                    squid_api.model.status.set({"error":xhr});
-                }
-            });
+            if (domainId) {
+                this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
+                this.domain.fetch({
+                    error: function(xhr) {
+                        squid_api.model.status.set({"error":xhr});
+                    }
+                });
+            } else {
+                this.domain.set({"id" : null});
+            }
         },
 
         render: function() {

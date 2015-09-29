@@ -36,12 +36,16 @@
             var me = this;
             var projectId = this.config.get("project");
             var domainId = this.config.get("domain");
-            this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
-            this.domain.fetch({
-                error: function(xhr) {
-                    squid_api.model.status.set({"error":xhr});
-                }
-            });
+            if (domainId) {
+                this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
+                this.domain.fetch({
+                    error: function(xhr) {
+                        squid_api.model.status.set({"error":xhr});
+                    }
+                });
+            } else {
+                this.domain.set({"id" : null});
+            }
         },
 
         render: function() {
