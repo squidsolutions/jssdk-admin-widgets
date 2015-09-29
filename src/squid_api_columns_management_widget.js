@@ -231,8 +231,8 @@
                         moveOnSelect: false,
                         showFilterInputs: false,
                         filterTextClear : " ",
-                        selectedListLabel: "Available",
-                        nonSelectedListLabel: "Selected",
+                        selectedListLabel: "Selected " + me.model.definition.toLowerCase() +"s",
+                        nonSelectedListLabel: "Available " + me.model.definition.toLowerCase() +"s",
                         selectorMinimalHeight: 250
                     });
                 },
@@ -317,8 +317,8 @@
                         }
 
                         // selected values in the second select box
-                        var options1 = $(this.$el.find("select")[0]).find("option");
-                        var options2 = $(this.$el.find("select")[1]).find("option");
+                        var options1 = $(this.$el.find("select")[1]).find("option");
+                        var options2 = $(this.$el.find("select")[0]).find("option");
 
                         // store visually updated attributes
                         for (i=0; i<options1.length; i++) {

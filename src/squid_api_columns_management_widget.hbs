@@ -1,9 +1,9 @@
 <div class="squid-api-admin-widget-columns-management">
     <select multiple="multiple">
-        {{#each nonDynamic}}
+        {{#each dynamic}}
             <option {{#if parentId}} class="child" {{/if}} value="{{id}}">{{name}}</option>
         {{/each}}
-        {{#each dynamic}}
+        {{#each nonDynamic}}
             <option value="{{id}}" {{#if parentId}} class="child" {{/if}} selected="selected">{{name}}</option>
         {{/each}}
     </select>

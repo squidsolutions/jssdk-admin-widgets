@@ -219,10 +219,10 @@ function program4(depth0,data) {
   }
 
   buffer += "<div class=\"squid-api-admin-widget-columns-management\">\n    <select multiple=\"multiple\">\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n        <button type=\"button\" class=\"btn btn-default relations\">\n            Manage Relations\n		</button>\n    </div>\n</div>\n";
   return buffer;
@@ -1349,8 +1349,8 @@ function program1(depth0,data) {
                         moveOnSelect: false,
                         showFilterInputs: false,
                         filterTextClear : " ",
-                        selectedListLabel: "Available",
-                        nonSelectedListLabel: "Selected",
+                        selectedListLabel: "Selected " + me.model.definition.toLowerCase() +"s",
+                        nonSelectedListLabel: "Available " + me.model.definition.toLowerCase() +"s",
                         selectorMinimalHeight: 250
                     });
                 },
@@ -1435,8 +1435,8 @@ function program1(depth0,data) {
                         }
 
                         // selected values in the second select box
-                        var options1 = $(this.$el.find("select")[0]).find("option");
-                        var options2 = $(this.$el.find("select")[1]).find("option");
+                        var options1 = $(this.$el.find("select")[1]).find("option");
+                        var options2 = $(this.$el.find("select")[0]).find("option");
 
                         // store visually updated attributes
                         for (i=0; i<options1.length; i++) {
