@@ -1099,6 +1099,22 @@ function program1(depth0,data) {
             this.html = this.template(jsonData);
             this.$el.html(this.html);
 
+            if (this.collectionModal) {
+                this.collectionModal.$el.find(".modal-body").html(this.html);
+                // redelegate events after updating template
+                this.collectionModal.delegateEvents();
+
+                // remove button
+                $(this.collectionModal.el).find("button.selected-model").remove();
+
+                // modal wrapper class
+                $(this.collectionModal.el).addClass(this.modalElementClassName);
+                $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+
+                // add events
+                this.actionEvents(this.roles);
+            }
+
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
 
