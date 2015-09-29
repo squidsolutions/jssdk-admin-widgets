@@ -15,7 +15,7 @@
                 if (me.collectionModal) {
                     $(me.collectionModal.el).trigger("hidden.bs.modal");
                 }
-                
+
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
@@ -93,6 +93,7 @@
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }

@@ -222,6 +222,7 @@
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }

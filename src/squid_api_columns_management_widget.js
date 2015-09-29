@@ -274,6 +274,7 @@
                             if (true) {
                                 model.destroy({
                                     success:function(collection) {
+                                        $(me.formModal.el).trigger("hidden.bs.modal");
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                     }

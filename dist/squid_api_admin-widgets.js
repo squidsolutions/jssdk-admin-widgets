@@ -994,6 +994,7 @@ function program1(depth0,data) {
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
@@ -1392,6 +1393,7 @@ function program1(depth0,data) {
                             if (true) {
                                 model.destroy({
                                     success:function(collection) {
+                                        $(me.formModal.el).trigger("hidden.bs.modal");
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                     }
@@ -1676,6 +1678,7 @@ function program1(depth0,data) {
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
@@ -2017,16 +2020,20 @@ function program1(depth0,data) {
                 // remove all dialog's
                 $(".squid-api-dialog").remove();
 
-                if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                    me.formModal.preventClose();
-                }
-
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
                         // set project ID
 
                         me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
+
+                        if (me.model.definition == "Project") {
+                            if (me.schema.dbSchemas.options.length !== 0) {
+                                $(me.formModal.el).trigger("hidden.bs.modal");
+                            }
+                        } else {
+                            $(me.formModal.el).trigger("hidden.bs.modal");
+                        }
 
                         // project exception
                         if (me.model.definition == "Project") {
@@ -2262,14 +2269,14 @@ function program1(depth0,data) {
                     });
                     confirmationModal.on('ok', function () {
                         me.saveForm();
-                        me.formModal.close();
-                        confirmationModal.close();
-
+                        $(me.formModal.el).trigger("hidden.bs.modal");
+                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
                     });
 
                     confirmationModal.on('cancel', function () {
                         me.formModal.preventClose();
-                        confirmationModal.close();
+                        $(me.formModal.el).trigger("hidden.bs.modal");
+                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
                     });
 
                     //confirmationModal.render();
@@ -2455,7 +2462,7 @@ function program1(depth0,data) {
                 if (me.collectionModal) {
                     $(me.collectionModal.el).trigger("hidden.bs.modal");
                 }
-                
+
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
@@ -2533,6 +2540,7 @@ function program1(depth0,data) {
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
@@ -2770,6 +2778,7 @@ function program1(depth0,data) {
                             if (true) {
                                 model.destroy({
                                     success:function() {
+                                        $(me.formModal.el).trigger("hidden.bs.modal");
                                         squid_api.model.status.set({'message' : "relation successfully deleted"});
                                         me.collection.trigger("change");
                                     }

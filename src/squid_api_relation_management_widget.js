@@ -142,6 +142,7 @@
                             if (true) {
                                 model.destroy({
                                     success:function() {
+                                        $(me.formModal.el).trigger("hidden.bs.modal");
                                         squid_api.model.status.set({'message' : "relation successfully deleted"});
                                         me.collection.trigger("change");
                                     }

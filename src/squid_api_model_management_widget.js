@@ -164,16 +164,20 @@
                 // remove all dialog's
                 $(".squid-api-dialog").remove();
 
-                if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                    me.formModal.preventClose();
-                }
-
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
                         // set project ID
 
                         me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
+
+                        if (me.model.definition == "Project") {
+                            if (me.schema.dbSchemas.options.length !== 0) {
+                                $(me.formModal.el).trigger("hidden.bs.modal");
+                            }
+                        } else {
+                            $(me.formModal.el).trigger("hidden.bs.modal");
+                        }
 
                         // project exception
                         if (me.model.definition == "Project") {
@@ -409,14 +413,14 @@
                     });
                     confirmationModal.on('ok', function () {
                         me.saveForm();
-                        me.formModal.close();
-                        confirmationModal.close();
-
+                        $(me.formModal.el).trigger("hidden.bs.modal");
+                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
                     });
 
                     confirmationModal.on('cancel', function () {
                         me.formModal.preventClose();
-                        confirmationModal.close();
+                        $(me.formModal.el).trigger("hidden.bs.modal");
+                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
                     });
 
                     //confirmationModal.render();
