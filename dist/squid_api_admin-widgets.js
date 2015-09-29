@@ -2427,6 +2427,10 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
 
+                if (me.collectionModal) {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                }
+                
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
