@@ -958,6 +958,7 @@ function program1(depth0,data) {
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
                         }
+                        $(me.collectionModal.el).trigger("hidden.bs.modal");
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
                     }
@@ -1642,7 +1643,7 @@ function program1(depth0,data) {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
-
+                        $(me.collectionModal.el).trigger("hidden.bs.modal");
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
                         }
@@ -2502,6 +2503,7 @@ function program1(depth0,data) {
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
+                        $(me.collectionModal.el).trigger("hidden.bs.modal");
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
                         }

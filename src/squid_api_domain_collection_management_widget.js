@@ -118,7 +118,7 @@
                         me.collection.create(this);
                         var message = me.type + " with name " + this.get("name") + " has been successfully created";
                         squid_api.model.status.set({'message' : message});
-
+                        $(me.collectionModal.el).trigger("hidden.bs.modal");
                         if (me.changeEventHandler) {
                             me.changeEventHandler.call(this);
                         }
