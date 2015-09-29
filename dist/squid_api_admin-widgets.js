@@ -1692,7 +1692,11 @@ function program1(depth0,data) {
             var projectId = this.config.get("project");
             var domainId = this.config.get("domain");
             this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
-            this.domain.fetch();
+            this.domain.fetch({
+                error: function(xhr) {
+                    squid_api.model.status.set({"error":xhr});
+                }
+            });
         },
 
         render: function() {
