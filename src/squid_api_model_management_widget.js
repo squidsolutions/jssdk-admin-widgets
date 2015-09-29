@@ -441,9 +441,19 @@
                Check to make sure it has been removed whenever it isn't displayed.
             */
             $(this.formModal.el).one('hidden.bs.modal', function () {
-                me.formModal.close();
-                me.formModal.remove();
+                me.closeModal();
             });
+            $(this.formModal.el).find(".close").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+            $(this.formModal.el).find(".cancel").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+        },
+
+        closeModal : function() {
+            this.formModal.close();
+            this.formModal.remove();
         },
 
         prepareForm: function() {

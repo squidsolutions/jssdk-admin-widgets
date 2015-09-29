@@ -114,8 +114,13 @@
                    Check to make sure it has been removed whenever it isn't displayed.
                 */
                 $(this.collectionModal.el).one('hidden.bs.modal', function () {
-                    me.collectionModal.close();
-                    me.collectionModal.remove();
+                    me.closeModal();
+                });
+                $(this.collectionModal.el).find(".close").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                });
+                $(this.collectionModal.el).find(".cancel").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
                 });
             }
         },
@@ -134,16 +139,17 @@
             }
         },
 
+        closeModal : function() {
+            this.collectionModal.close();
+            this.collectionModal.remove();
+        },
+
         actionEvents: function(roles) {
             var me = this;
 
             // select
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
-
-                if (me.collectionModal) {
-                    me.collectionModal.close();
-                }
 
                 if (me.changeEventHandler) {
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
@@ -319,7 +325,7 @@
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
-            
+
             // hide main button if parent is not set
             if (!this.parent.get("id")) {
                 this.$el.find("button.selected-model").addClass("hidden");
