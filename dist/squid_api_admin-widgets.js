@@ -1287,6 +1287,10 @@ function program1(depth0,data) {
                         relationEl.removeClass("valid-expression").addClass("invalid-expression");
                     }
 
+                    // remove existing dialog's
+                    $(".squid-api-pre-domain-suggestions").remove();
+                    $(".squid-api-domain-suggestion-dialog").remove();
+
                     // append box if definitions exist
                     if (response.definitions && response.definitions.length > 0) {
 
@@ -1294,10 +1298,6 @@ function program1(depth0,data) {
 
                         // store offset
                         var offset = response.filterIndex;
-
-                        // remove existing dialog's
-                        $(".squid-api-pre-domain-suggestions").remove();
-                        $(".squid-api-domain-suggestion-dialog").remove();
 
                         // append div
                         relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
