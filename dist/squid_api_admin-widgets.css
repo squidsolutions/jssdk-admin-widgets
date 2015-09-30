@@ -348,6 +348,17 @@
     margin: 15px 0px 0px 0px;
 }
 
+.squid-api-admin-widgets-modal-form #btn-check .glyphicon {
+    position: relative;
+    top: 2px;
+    left: -5px;
+}
+
+.squid-api-admin-widgets-modal-form #btn-check.in-progress .glyphicon {
+    -moz-animation: spin .7s infinite linear;
+    -webkit-animation: spin .7s infinite linear;
+}
+
 #squid-api-relations-widget-data-table .row {
  	margin: 10px 0px;
  }

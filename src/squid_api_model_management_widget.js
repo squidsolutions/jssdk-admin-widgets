@@ -301,7 +301,7 @@
                     },
                     "click #btn-check" : function(e) {
                         var me = this;
-
+                        me.$el.find('#btn-check').addClass("in-progress");
                         console.log("Validating DB password");
                         var dburl = this.$el.find('.dbUrl').find('.form-control').val();
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
@@ -314,6 +314,7 @@
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
+                                me.$el.find('#btn-check').removeClass("in-progress");
                                 me.$el.find('#btn-check').removeClass("btn-danger");
                                 me.$el.find('#btn-check').addClass("btn-success");
                                 me.$el.find('.dbSchemas').removeAttr('style');
@@ -322,6 +323,7 @@
                             },
                             error: function(xhr, textStatus, error){
                                 squid_api.model.status.set({"error":xhr});
+                                me.$el.find('#btn-check').removeClass("in-progress");
                                 me.$el.find('#btn-check').removeClass("btn-success");
                                 me.$el.find('#btn-check').addClass("btn-danger");
                                 console.log("Validation failed");
@@ -532,7 +534,7 @@
                                         <div class="error-help"><%= help %></div>\
                                       </div>\
                                       <div>\
-                                          <button class="btn btn-default" id="btn-check" type="button">Check Connection</button>\
+                                          <button class="btn btn-default" id="btn-check" type="button"><span class="glyphicon glyphicon-refresh"></span>Check Connection</button>\
                                       </div>\
                                     </div>\
                                   ', null, null);
