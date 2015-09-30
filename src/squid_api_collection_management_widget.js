@@ -315,7 +315,9 @@
 
             // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
+                var labelA = a.label.toUpperCase();
+                var labelB = b.label.toUpperCase();
+                return (labelA < labelB) ? -1 : (labelA > labelB) ? 1 : 0;
             });
 
             // place selected obj at start of array
