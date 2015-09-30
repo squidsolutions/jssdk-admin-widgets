@@ -32,6 +32,23 @@
                         me.setStatusMessage(data.responseJSON.error);
                     }
                 });
+            } else if (this.formContent) {
+                var formData = this.formContent.getValue();
+                if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + formData.dbPassword,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (collection) {
+                            me.schema.dbSchemas.options = collection.definitions;
+                            me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
+                        },
+                        error: function(xhr, textStatus, error){
+
+                        }
+                    });
+                }
             }
         },
 
@@ -43,7 +60,7 @@
                     "parent" : squid_api.model.customer
             };
             viewOptions.schemasCallback = this.getDbSchemas;
-            
+
             var successHandler = function(value) {
                 if (!value) {
                     value = this.get("id").projectId;
@@ -56,8 +73,8 @@
                     squid_api.model.config.set({"project" : value, "domain" : null});
                 }
             };
-            
-            
+
+
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";

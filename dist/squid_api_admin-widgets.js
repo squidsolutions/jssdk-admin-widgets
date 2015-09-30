@@ -2128,29 +2128,26 @@ function program1(depth0,data) {
             }).render();
 
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
-                console.log(dbUrlEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').css("visibility", "hidden");
+                $('.dbSchemas').hide();
                 //$('.modal-footer').find('.btn-warning').addClass("ok");
                 $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
-                console.log(dbPasswordEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').css("visibility", "hidden");
+                $('.dbSchemas').hide();
                 //$('.modal-footer').find('.btn-warning').addClass("ok");
                 $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
 
             });
 
             this.formContent.on('dbUser:change', function(form, dbUserEditor) {
-                console.log(dbUserEditor.getValue());
                 $('#btn-check').removeClass("btn-danger");
                 $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').css("visibility", "hidden");
+                $('.dbSchemas').hide();
                 //$('.modal-footer').find('.btn-warning').addClass("ok");
                 $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
             });
@@ -2182,13 +2179,13 @@ function program1(depth0,data) {
                         me.suggestionHandler.call(me);
                     },
                     "click #btn-check" : function(e) {
-                        var me = this;
-                        me.$el.find('#btn-check').addClass("in-progress");
+                        var me1 = this;
+                        me1.$el.find('#btn-check').addClass("in-progress");
                         console.log("Validating DB password");
                         var dburl = this.$el.find('.dbUrl').find('.form-control').val();
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
-                        var projectId = squid_api.model.config.get("project");
+                        var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
 
                         $.ajax({
                             type: "GET",
@@ -2196,21 +2193,25 @@ function program1(depth0,data) {
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
-                                me.$el.find('#btn-check').removeClass("in-progress");
-                                me.$el.find('#btn-check').removeClass("btn-danger");
-                                me.$el.find('#btn-check').addClass("btn-success");
-                                me.$el.find('.dbSchemas').removeAttr('style');
-                                me.$el.find('.modal-footer .btn-warning').removeClass("btn-warning");
+                                squid_api.model.status.set({"error":null});
+                                if (me.schemasCallback) {
+                                    me.schemasCallback.call(me);
+                                }
+                                me1.$el.find('#btn-check').removeClass("in-progress");
+                                me1.$el.find('#btn-check').removeClass("btn-danger");
+                                me1.$el.find('#btn-check').addClass("btn-success");
+                                me1.$el.find('.dbSchemas').show();
+                                me1.$el.find('.modal-footer .btn-warning').removeClass("btn-warning");
                                 incorrectCredentials = false;
                             },
                             error: function(xhr, textStatus, error){
                                 squid_api.model.status.set({"error":xhr});
-                                me.$el.find('#btn-check').removeClass("in-progress");
-                                me.$el.find('#btn-check').removeClass("btn-success");
-                                me.$el.find('#btn-check').addClass("btn-danger");
+                                me1.$el.find('#btn-check').removeClass("in-progress");
+                                me1.$el.find('#btn-check').removeClass("btn-success");
+                                me1.$el.find('#btn-check').addClass("btn-danger");
                                 console.log("Validation failed");
-                                me.$el.find('.dbSchemas').css("visibility", "hidden");
-                                me.$el.find('.modal-footer').find('.ok').addClass("btn-warning");
+                                me1.$el.find('.dbSchemas').hide();
+                                me1.$el.find('.modal-footer').find('.ok').addClass("btn-warning");
                                 incorrectCredentials = true;
                             }
 
@@ -2615,6 +2616,23 @@ function program1(depth0,data) {
                         me.setStatusMessage(data.responseJSON.error);
                     }
                 });
+            } else if (this.formContent) {
+                var formData = this.formContent.getValue();
+                if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + formData.dbPassword,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (collection) {
+                            me.schema.dbSchemas.options = collection.definitions;
+                            me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
+                        },
+                        error: function(xhr, textStatus, error){
+
+                        }
+                    });
+                }
             }
         },
 
@@ -2626,7 +2644,7 @@ function program1(depth0,data) {
                     "parent" : squid_api.model.customer
             };
             viewOptions.schemasCallback = this.getDbSchemas;
-            
+
             var successHandler = function(value) {
                 if (!value) {
                     value = this.get("id").projectId;
@@ -2639,8 +2657,8 @@ function program1(depth0,data) {
                     squid_api.model.config.set({"project" : value, "domain" : null});
                 }
             };
-            
-            
+
+
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
