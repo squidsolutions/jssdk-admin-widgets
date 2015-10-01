@@ -476,6 +476,11 @@ function program1(depth0,data) {
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
+            this.collection.on("remove", function(model) {
+                if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
+                    squid_api.model.config.set(me.model.definition.toLowerCase(), null);
+                }
+            });
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
