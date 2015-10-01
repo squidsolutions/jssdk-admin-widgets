@@ -27,6 +27,7 @@
 	display: inline-block;
 	float: right;
 	margin-bottom: 15px;
+	color: #666;
 }
 
 .squid-api-model-widget-popup .create button, .squid-api-model-widget-popup .create button:active:focus {
@@ -176,6 +177,10 @@
 	margin-left: -7px;
 }
 
+.squid-api-model-widget-Domain .create {
+	display: none;
+}
+
 .squid-api-admin-widgets-modal-form .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
     display: none;
 }
@@ -223,10 +228,6 @@
 
 .squid-api-admin-widget-columns-management select .child {
     padding-left: 20px;
-}
-
-#squid-api-Domain-model-widget-popup-container .squid-api-Domain-model-widget-popup {
-    margin-top: 20px;
 }
 
 .squid-api-admin-widgets-modal-form .modal-body form .error input {

@@ -181,7 +181,6 @@
 
                         // project exception
                         if (me.model.definition == "Project") {
-                            me.schema.id.type = "Hidden";
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
                             }

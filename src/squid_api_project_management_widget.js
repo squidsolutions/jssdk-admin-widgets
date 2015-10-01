@@ -83,7 +83,7 @@
             } else {
                 viewOptions.changeEventHandler  = successHandler;
                 viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
-                var collectionView = new squid_api.view.ProjectCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             }
 
             return this;

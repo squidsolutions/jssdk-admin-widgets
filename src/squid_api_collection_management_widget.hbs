@@ -5,7 +5,9 @@
     <div id="squid-api-{{type}}-model-widget-popup-container">
     <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
         {{#if create}}
-            <div class="create"></div>
+            <button type="button"  class="create btn btn-default">
+                Create {{type}}
+            </button>
         {{/if}}
         {{#if collectionAvailable}}
             {{#if selAvailable}}

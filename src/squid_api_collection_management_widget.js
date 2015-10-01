@@ -58,25 +58,24 @@
             this.collection.on("reset change remove sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function() {
-                me.collectionAvailable = true;
-                me.collection.parentId = me.parent.get("id");
-                me.collection.fetch();
+            this.listenTo(this.parent, "change", function() {
+                // project has changed
+                this.collectionAvailable = false;
+                this.render();
+                this.collection.parentId = this.parent.get("id");
+                this.collection
+                .fetch({
+                    success : function() {
+                        me.collectionAvailable = true;
+                    },
+                    error : function(collection, response, options) {
+                        squid_api.model.status.set({"error":response});
+                        me.collectionAvailable = true;
+                    }
+                });
             });
 
-            this.listenTo(this.config, "change:" + this.model.definition.toLowerCase() , function(parent) {
-                me.collectionAvailable = true;
-                me.collection.parentId = {};
-                me.collection.parentId = me.parent.get("id");
-                me.collection.fetch();
-
-                // set model
-                var modelDef = squid_api.model.config.get(me.model.definition.toLowerCase());
-                var modelItem = me.collection.get(modelDef);
-                if (modelItem) {
-                    me.model.set(modelItem.toJSON());
-                }
-            });
+            this.render();
         },
 
         setModel : function(model) {
@@ -150,46 +149,35 @@
             // select
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
-
                 if (me.changeEventHandler) {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
                 } else {
                     console.log('no change handler defined');
                 }
-
-                // set the selected model
-                var models = me.collection.models;
-                var model;
-                for (i=0; i<models.length; i++) {
-                    if (models[i].get("oid") == value) {
-                        model = models[i];
-                        break;
-                    }
-                }
-                me.model.set(model);
             });
 
             if (roles.create) {
-                 // create base model for create
-                var baseModel = new squid_api.model[ this.type + "Model"]();
-
                 // create
-                new squid_api.view.ModelManagementView({
-                    el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
-                    model : baseModel,
-                    parent : me.parent,
-                    suggestionHandler : me.suggestionHandler,
-                    schemasCallback : me.schemasCallback,
-                    beforeRenderHandler : me.beforeRenderHandler,
-                    successHandler : function() {
-                        if (me.changeEventHandler) {
-                            me.changeEventHandler.call(this);
+                $(".squid-api-" + this.type + "-model-widget-popup .create").on("click", function() {
+                    new squid_api.view.ModelManagementView({
+                        el : $(this).find(".create"),
+                        model : new squid_api.model[ me.model.definition + "Model"](),
+                        parent : me.parent,
+                        autoOpen : true,
+                        suggestionHandler : me.suggestionHandler,
+                        schemasCallback : me.schemasCallback,
+                        beforeRenderHandler : me.beforeRenderHandler,
+                        successHandler : function() {
+                            if (me.changeEventHandler) {
+                                me.changeEventHandler.call(this);
+                            }
+                            $(me.collectionModal.el).trigger("hidden.bs.modal");
+                            var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                            squid_api.model.status.set({'message' : message});
                         }
-                        $(me.collectionModal.el).trigger("hidden.bs.modal");
-                        var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                        squid_api.model.status.set({'message' : message});
-                    }
+                    });
                 });
             }
 
@@ -270,7 +258,6 @@
             } else {
                 jsonData.selectedLabel = null;
             }
-
 
             var models = this.collection.models;
 

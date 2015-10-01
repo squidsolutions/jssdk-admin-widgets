@@ -84,7 +84,7 @@
                     });
                 };
                 // DomainCollectionManagementWidget
-                var collectionView = new squid_api.view.DomainCollectionManagementWidget(viewOptions);
+                var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             }
 
             return this;
@@ -94,7 +94,7 @@
             var domainEl = this.formContent.$el.find(".suggestion-box");
             var request = $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/domains-suggestion",
+                url: squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion",
                 dataType: 'json',
                 data: {
                     "expression" : domainEl.val(),
