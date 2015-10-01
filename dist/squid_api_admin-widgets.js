@@ -2007,16 +2007,14 @@ function program1(depth0,data) {
             };
 
             var successHandler = function(value) {
-                if (me.createOnlyView) {
-                    if (!value) {
-                        value = this.get("id").projectId;
-                    }
-                    if (value === squid_api.model.config.get("project")) {
-                        squid_api.model.config.trigger("change:project", squid_api.model.config);
-                    } else {
-                        // update the config
-                        squid_api.model.config.set({"project" : value, "domain" : null});
-                    }
+                if (!value) {
+                    value = this.get("id").projectId;
+                }
+                if (value === squid_api.model.config.get("project")) {
+                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                } else {
+                    // update the config
+                    squid_api.model.config.set({"project" : value, "domain" : null});
                 }
                 // trigger a customer change
                 squid_api.model.customer.trigger("change");
