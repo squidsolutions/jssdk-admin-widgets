@@ -236,12 +236,32 @@ function program4(depth0,data) {
 this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", self=this, escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n		<button type=\"button\"  class=\"btn btn-default\">\n			";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</button>\n	";
+  return buffer;
+  }
+function program2(depth0,data) {
   
-  return "\n		\n	";
+  var buffer = "", stack1, helper;
+  buffer += "\n				";
+  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n			";
+  return buffer;
+  }
+
+function program4(depth0,data) {
+  
+  
+  return "\n				<i class=\"fa fa-plus\"></i>\n			";
   }
 
   buffer += "<div class=\"";
@@ -1384,9 +1404,6 @@ function program1(depth0,data) {
                 this.collection = options.collection;
             }
 
-            // Set Form Schema
-            this.setSchema();
-
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
@@ -1394,6 +1411,9 @@ function program1(depth0,data) {
                 this.listenTo(this.parent, "change:id", this.render);
             }
 
+            // Set Form Schema
+            this.setSchema();
+            
             if (this.autoOpen) {
                 this.prepareForm();
             }
@@ -1923,10 +1943,14 @@ function program1(depth0,data) {
     var View = Backbone.View.extend({
 
         createOnlyView : null,
+        autoOpen : null,
 
         initialize: function(options) {
             if (options.createOnlyView) {
                 this.createOnlyView = true;
+            }
+            if (options.autoOpen) {
+                this.autoOpen = true;
             }
             this.render();
         },
@@ -1970,32 +1994,37 @@ function program1(depth0,data) {
         },
 
         render: function() {
+            var me = this;
+
             var viewOptions = {
-                    "el" : this.$el,
-                    "type" : "Project",
-                    "model" : squid_api.model.project,
-                    "parent" : squid_api.model.customer
+                "el" : this.$el,
+                "type" : "Project",
+                "model" : squid_api.model.project,
+                "parent" : squid_api.model.customer,
+                "schemasCallback" : this.getDbSchemas,
+                "createOnlyView" : this.createOnlyView,
+                "autoOpen" : this.autoOpen,
             };
-            viewOptions.schemasCallback = this.getDbSchemas;
 
             var successHandler = function(value) {
-                if (!value) {
-                    value = this.get("id").projectId;
+                if (me.createOnlyView) {
+                    if (!value) {
+                        value = this.get("id").projectId;
+                    }
+                    if (value === squid_api.model.config.get("project")) {
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
+                    } else {
+                        // update the config
+                        squid_api.model.config.set({"project" : value, "domain" : null});
+                    }
                 }
-                if (value === squid_api.model.config.get("project")) {
-                    // trigger a project update
-                    squid_api.model.config.trigger("change:project", squid_api.model.config);
-                } else {
-                    // update the config
-                    squid_api.model.config.set({"project" : value, "domain" : null});
-                }
+                // trigger a customer change
+                squid_api.model.customer.trigger("change");
             };
-
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
-                viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler  = successHandler;

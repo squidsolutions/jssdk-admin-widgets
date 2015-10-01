@@ -60,9 +60,6 @@
                 this.collection = options.collection;
             }
 
-            // Set Form Schema
-            this.setSchema();
-
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
@@ -70,6 +67,9 @@
                 this.listenTo(this.parent, "change:id", this.render);
             }
 
+            // Set Form Schema
+            this.setSchema();
+            
             if (this.autoOpen) {
                 this.prepareForm();
             }

@@ -6,10 +6,14 @@
     var View = Backbone.View.extend({
 
         createOnlyView : null,
+        autoOpen : null,
 
         initialize: function(options) {
             if (options.createOnlyView) {
                 this.createOnlyView = true;
+            }
+            if (options.autoOpen) {
+                this.autoOpen = true;
             }
             this.render();
         },
@@ -53,32 +57,37 @@
         },
 
         render: function() {
+            var me = this;
+
             var viewOptions = {
-                    "el" : this.$el,
-                    "type" : "Project",
-                    "model" : squid_api.model.project,
-                    "parent" : squid_api.model.customer
+                "el" : this.$el,
+                "type" : "Project",
+                "model" : squid_api.model.project,
+                "parent" : squid_api.model.customer,
+                "schemasCallback" : this.getDbSchemas,
+                "createOnlyView" : this.createOnlyView,
+                "autoOpen" : this.autoOpen,
             };
-            viewOptions.schemasCallback = this.getDbSchemas;
 
             var successHandler = function(value) {
-                if (!value) {
-                    value = this.get("id").projectId;
+                if (me.createOnlyView) {
+                    if (!value) {
+                        value = this.get("id").projectId;
+                    }
+                    if (value === squid_api.model.config.get("project")) {
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
+                    } else {
+                        // update the config
+                        squid_api.model.config.set({"project" : value, "domain" : null});
+                    }
                 }
-                if (value === squid_api.model.config.get("project")) {
-                    // trigger a project update
-                    squid_api.model.config.trigger("change:project", squid_api.model.config);
-                } else {
-                    // update the config
-                    squid_api.model.config.set({"project" : value, "domain" : null});
-                }
+                // trigger a customer change
+                squid_api.model.customer.trigger("change");
             };
-
 
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
-                viewOptions.createOnlyView = this.createOnlyView;
                 var modelView = new squid_api.view.ModelManagementView(viewOptions);
             } else {
                 viewOptions.changeEventHandler  = successHandler;
