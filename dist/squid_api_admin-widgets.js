@@ -1087,7 +1087,7 @@ function program1(depth0,data) {
                         var name = $(event.target).find("option:selected:last").html();
                         var value = $(event.target).find("option:selected:last").val();
 
-                        // update edit / delete buttons
+                        //update edit / delete buttons
                         if (name !== undefined) {
                             this.$el.find(".edit").removeAttr("disabled");
                             this.$el.find(".edit").html("edit " + name);
@@ -1115,8 +1115,7 @@ function program1(depth0,data) {
                             model = this.collection.get($(nonDynamic[i]).val());
                             console.log(model.get("name") + " = non Dynamic");
                             if (model.get("dynamic") === true) {
-                                model.set("dynamic", false);
-                                model.save();
+                                model.set({"dynamic":false},{silent: true});
                             }
                         }
                         // check dynamic Data
@@ -1124,9 +1123,19 @@ function program1(depth0,data) {
                             model = this.collection.get($(dynamic[i]).val());
                             console.log(model.get("name") + " = dynamic");
                             if (model.get("dynamic") === false) {
-                                model.set("dynamic", true);
-                                model.save();
+                                model.set({"dynamic":true},{silent: true});
                             }
+                        }
+                        // save changed models to the server
+                        var changedModels = 0;
+                        for (i=0; i<this.collection.models.length; i++) {
+                            if (this.collection.models[i].hasChanged()) {
+                                changedModels++;
+                                this.collection.models[i].save();
+                            }
+                        }
+                        if (changedModels > 0) {
+                            this.collection.trigger("change");
                         }
                     }
                 },
