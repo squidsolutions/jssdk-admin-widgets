@@ -134,7 +134,7 @@
 	margin: 70px 0px 0px 35%;
 }
 
-.squid-api-Project-model-widget-popup-container .modal-footer .ok, .squid-api-Domain-model-widget-popup-container .modal-footer .ok {
+.squid-api-admin-widgets-modal-form-collection .ok {
 	display: none;
 }
 

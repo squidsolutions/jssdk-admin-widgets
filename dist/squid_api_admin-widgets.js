@@ -428,7 +428,7 @@ function program1(depth0,data) {
         template : null,
         collection : null,
         config : null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
@@ -2065,7 +2065,7 @@ function program1(depth0,data) {
 
         successHandler: null,
         errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         buttonLabel : null,
         autoOpen: null,
         parent: null,

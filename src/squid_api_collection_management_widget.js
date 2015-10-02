@@ -7,7 +7,7 @@
         template : null,
         collection : null,
         config : null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,

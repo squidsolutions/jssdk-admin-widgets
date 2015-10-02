@@ -7,7 +7,7 @@
 
         successHandler: null,
         errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         buttonLabel : null,
         autoOpen: null,
         parent: null,
