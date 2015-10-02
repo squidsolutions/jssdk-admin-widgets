@@ -1874,6 +1874,10 @@ function program1(depth0,data) {
                 }
                 if (me.model.definition === "Project" && x === "dbPassword") {
                     /*jshint multistr: true */
+                    var checkConnectionText = "Connect To Database";
+                    if (! me.model.isNew()) {
+                        checkConnectionText = "Refresh Schemas";
+                    }
                     me.model.schema[x].template = _.template('\
                                     <div>\
                                       <label for="<%= editorId %>">\
@@ -1886,7 +1890,7 @@ function program1(depth0,data) {
                                         <div class="error-help"><%= help %></div>\
                                       </div>\
                                       <div>\
-                                          <button class="btn btn-default" id="btn-check" type="button"><span class="glyphicon glyphicon-refresh"></span>Check Connection</button>\
+                                          <button class="btn btn-default" id="btn-check" type="button"><span class="glyphicon glyphicon-refresh"></span>' + checkConnectionText + '</button>\
                                       </div>\
                                     </div>\
                                   ', null, null);
