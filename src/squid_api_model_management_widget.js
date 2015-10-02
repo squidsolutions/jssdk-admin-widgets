@@ -483,19 +483,6 @@
             }
         },
 
-        getPropertyType: function(type) {
-            switch(type) {
-                case "string":
-                    return "Text";
-                case "int32":
-                    return "Number";
-                case "array":
-                    return "Checkboxes";
-                default:
-                    return "Text";
-            }
-        },
-
         remove: function() {
             this.undelegateEvents();
             this.$el.empty();
@@ -511,17 +498,25 @@
             }
 
             for (var x in me.model.schema) {
-                if (me.model.definition == "Relation" && (x == "leftId") || x == "rightId") {
-                    var domains = me.parent.models;
-                    var domainArray = [];
+                if (me.model.definition == "Relation") {
+                    if ((x == "leftId" || x == "rightId")) {
+                        //reset left & rightId
+                        me.model.schema[x].subSchema.domainId.options = [];
+                        if (me.model.isNew()) {
+                            var domains = me.parent.models;
+                            var domainArray = [];
 
-                    for (i = 0; i < domains.length; i++) {
-                        domainObj = {};
-                        domainObj.val = domains[i].get("oid");
-                        domainObj.label = domains[i].get("name");
-                        domainArray.push(domainObj);
+                            for (i = 0; i < domains.length; i++) {
+                                domainObj = {};
+                                domainObj.val = domains[i].get("oid");
+                                domainObj.label = domains[i].get("name");
+                                domainArray.push(domainObj);
+                            }
+                            me.model.schema[x].subSchema.domainId.options = domainArray;
+                        } else {
+                            me.model.schema[x].subSchema.domainId.options = [me.model.get(x).domainId];
+                        }
                     }
-                    me.model.schema[x].subSchema.domainId.options = domainArray;
                 }
                 if (me.model.definition === "Project" && x === "dbPassword") {
                     /*jshint multistr: true */
