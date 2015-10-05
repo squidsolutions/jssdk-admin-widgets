@@ -148,75 +148,6 @@
             return viewData;
         },
 
-        columnSuggestionHandler: function() {
-            var me = this;
-            var relationEl = this.formContent.$el.find(".suggestion-box");
-
-            var request = $.ajax({
-                type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
-                dataType: 'json',
-                data: {
-                    "expression" : relationEl.val(),
-                    "offset" : relationEl.prop("selectionStart") + 1,
-                    "access_token" : squid_api.model.login.get("accessToken")
-                },
-                success:function(response) {
-                    // detemine if there is an error or not
-                    if (response.validateMessage.length === 0) {
-                        relationEl.removeClass("invalid-expression").addClass("valid-expression");
-                    } else {
-                        relationEl.removeClass("valid-expression").addClass("invalid-expression");
-                    }
-
-                    // remove existing dialog's
-                    $(".squid-api-pre-domain-suggestions").remove();
-                    $(".squid-api-domain-suggestion-dialog").remove();
-
-                    // append box if definitions exist
-                    if (response.definitions && response.definitions.length > 0) {
-
-                        var definitions = response.definitions;
-
-                        // store offset
-                        var offset = response.filterIndex;
-
-                        // append div
-                        relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                        for (i=0; i<definitions.length; i++) {
-                            relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
-                        }
-
-                        relationEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
-                            var item = $(event.target).html();
-                            var str = relationEl.val().substring(0, offset) + item.substring(0);
-                            relationEl.val(str);
-                            me.suggestionHandler.call(me);
-                        });
-
-                        // show dialog
-                        relationEl.siblings(".squid-api-pre-domain-suggestions").dialog({
-                            open: function(e, ui) {
-                                e.preventDefault();
-                            },
-                            dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom+4", of: relationEl },
-                            closeText: "x"
-                        });
-                    } else {
-                        // set message
-                        squid_api.model.status.set("message", response.validateMessage);
-                    }
-
-                    // place the focus back onto the domain suggestionElement
-                    relationEl.focus();
-                },
-                error: function(response) {
-                    squid_api.model.status.set({'message' : response.responseJSON.error});
-                }
-            });
-        },
-
         render : function() {
             var me = this;
             var collection = this.collection;
@@ -243,7 +174,6 @@
                             collection : me.collection,
                             parent : me.parent,
                             autoOpen : true,
-                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
@@ -259,7 +189,6 @@
                             parent : me.parent,
                             collection : me.collection,
                             autoOpen : true,
-                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});

@@ -41,9 +41,6 @@
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.suggestionHandler) {
-                this.suggestionHandler = options.suggestionHandler;
-            }
             if (options.schemasCallback) {
                 this.schemasCallback = options.schemasCallback;
             }
@@ -171,7 +168,6 @@
                         model : new squid_api.model[ me.model.definition + "Model"](),
                         parent : me.parent,
                         autoOpen : true,
-                        suggestionHandler : me.suggestionHandler,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
                         successHandler : function() {
@@ -195,7 +191,6 @@
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",

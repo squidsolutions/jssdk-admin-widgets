@@ -299,7 +299,7 @@
 	box-shadow: 0px 0px 6px 0px #27ae60;
 }
 
-.squid-api-domain-suggestion-dialog {
+.squid-api-suggestion-dialog {
 	position: absolute;
 	overflow-y: scroll;
 	background-color: #f9f9f9;
@@ -314,31 +314,31 @@
 	z-index: 5000;
 }
 
-.squid-api-domain-suggestion-dialog ul {
+.squid-api-suggestion-dialog ul {
 	padding-left: 0px;
 }
 
-.squid-api-domain-suggestion-dialog ul li {
+.squid-api-suggestion-dialog ul li {
 	list-style-type: none;
 	padding: 0px 10px;
 	width: 90%;
 	border-radius: 8px;
 }
 
-.squid-api-domain-suggestion-dialog ul li:hover {
+.squid-api-suggestion-dialog ul li:hover {
 	background: #777;
 	color: #fff;
 }
 
-.squid-api-domain-suggestion-dialog:focus {
+.squid-api-suggestion-dialog:focus {
 	outline: 0;
 }
 
-.squid-api-domain-suggestion-dialog .ui-dialog-titlebar {
+.squid-api-suggestion-dialog .ui-dialog-titlebar {
 	float: left;
 }
 
-.squid-api-domain-suggestion-dialog .ui-dialog-titlebar-close {
+.squid-api-suggestion-dialog .ui-dialog-titlebar-close {
     position: fixed;
     border: none;
     margin-left: 510px;
@@ -360,6 +360,30 @@
     -webkit-animation: spin .7s infinite linear;
 }
 
+.squid-api-pre-suggestions li:before {
+	font-family: FontAwesome;
+	margin-right: 15px;
+}
+
+.squid-api-pre-suggestions .TABLE:before {
+	content: "\f0ce";
+}
+
+.squid-api-pre-suggestions .COLUMN:before {
+	content: "\f0db";
+}
+
+.squid-api-pre-suggestions .DOMAIN:before {
+	content: "\f1c0";
+}
+
+.squid-api-pre-suggestions .METRIC:before {
+	/*content: "\f1c0";*/
+}
+
+.squid-api-pre-suggestions .FORMULA:before {
+	content: "\f1ec";
+}
 #squid-api-relations-widget-data-table .row {
  	margin: 10px 0px;
  }
