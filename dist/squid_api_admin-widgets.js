@@ -1765,7 +1765,11 @@ function program1(depth0,data) {
                     suggestionEl.focus();
                 },
                 error: function(response) {
-                    squid_api.model.status.set({'message' : response.responseJSON.error});
+                    if (response.responseJSON.error) {
+                        squid_api.model.status.set({'message' : response.responseJSON.error});
+                    } else {
+                        squid_api.model.status.set({'error' : response});
+                    }
                 }
             });
         },
