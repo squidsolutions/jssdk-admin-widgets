@@ -1743,12 +1743,7 @@ function program1(depth0,data) {
                         }
 
                         suggestionEl.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
-                            var item;
-                            if ($(event.target).hasClass("suggestion")) {
-                                item = $(event.target).html();
-                            } else {
-                                item = $(event.target).find(".suggestion").html();
-                            }
+                            var item = $(event.target).parent().find(".suggestion").html();
                             var str = suggestionEl.val().substring(0, offset) + item.substring(0);
                             suggestionEl.val(str);
                             me.suggestionBox(me);
@@ -1760,8 +1755,7 @@ function program1(depth0,data) {
                                 e.preventDefault();
                             },
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom+4", of: suggestionEl },
-                            closeText: "x"
+                            position: { my: "center top", at: "center bottom+4", of: suggestionEl }
                         });
                     } else {
                         // set message
