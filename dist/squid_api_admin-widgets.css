@@ -331,6 +331,7 @@
 	list-style-type: none;
 	padding: 0px 10px;
 	cursor: pointer;
+	margin: 2px;
 }
 
 .squid-api-suggestion-dialog ul li:hover {
@@ -379,6 +380,9 @@
 .squid-api-pre-suggestions li:before {
 	font-family: FontAwesome;
 	margin-right: 15px;
+	padding: 3px;
+	color: #fff;
+	border-radius: 8px;
 }
 
 .squid-api-pre-suggestions .TABLE:before {
@@ -394,32 +398,32 @@
 }
 
 .squid-api-pre-suggestions .valueType {
-	font-size: 12px;
+	font-size: 11px;
 	padding-left: 5px;
 }
 
 .squid-api-pre-suggestions .date:before {
-	color: hotpink;
+	background: hotpink;
 }
 
 .squid-api-pre-suggestions .string:before {
-	color: rgb(255,46,95);
+	background: rgb(255,46,95);
 }
 
 .squid-api-pre-suggestions .other:before {
-	color: deepskyblue;
+	background: deepskyblue;
 }
 
 .squid-api-pre-suggestions .numeric:before {
-	color: black;
+	background: black;
 }
 
 .squid-api-pre-suggestions .object:before {
-	color: blue;
+	background: blue;
 }
 
 .squid-api-pre-suggestions .condition:before {
-	color: darkgoldenrod;
+	background: darkgoldenrod;
 }
 
 .squid-api-pre-suggestions .DOMAIN:before {
