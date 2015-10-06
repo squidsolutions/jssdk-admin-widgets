@@ -1606,7 +1606,7 @@ function program1(depth0,data) {
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
 
             // saveForm on 'ok' click
-            this.formModal.on('ok', function() {
+            $(this.formModal.el).find(".ok").on("click", function() {
                 if(incorrectCredentials === true) {
                     console.log("Warning popup");
                     // Show warning.
@@ -1620,26 +1620,25 @@ function program1(depth0,data) {
                     var confirmationModal = new Backbone.BootstrapModal({
                         content: new PopupView(),
                         title: "Confirmation"
+                    }).open();
+
+                    $(confirmationModal.el).one('hidden.bs.modal', function () {
+                        confirmationModal.close();
+                        confirmationModal.remove();
                     });
-                    confirmationModal.on('ok', function () {
+                    $(confirmationModal.el).find(".close").one("click", function() {
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
+                    });
+                    $(confirmationModal.el).find(".cancel").one("click", function() {
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
+                    });
+                    $(confirmationModal.el).find(".ok").one("click", function() {
                         me.saveForm();
-                        $(me.formModal.el).trigger("hidden.bs.modal");
-                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
                     });
-
-                    confirmationModal.on('cancel', function () {
-                        me.formModal.preventClose();
-                        $(me.formModal.el).trigger("hidden.bs.modal");
-                        $(me.confirmationModal.el).trigger("hidden.bs.modal");
-                    });
-
-                    //confirmationModal.render();
-                    me.formModal.preventClose();
-                    confirmationModal.open();
-                }else{
+                } else {
                     me.saveForm();
                 }
-
             });
 
             // hide first div (id)
