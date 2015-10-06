@@ -1739,11 +1739,16 @@ function program1(depth0,data) {
                         // append div
                         suggestionEl.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
                         for (i=0; i<response.suggestions.length; i++) {
-                            suggestionEl.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=" + response.suggestions[i].objectType + ">" + response.suggestions[i].suggestion + "</li>");
+                            suggestionEl.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=" + response.suggestions[i].objectType + "><span class='suggestion'>" +  response.suggestions[i].suggestion + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
                         }
 
                         suggestionEl.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
-                            var item = $(event.target).html();
+                            var item;
+                            if ($(event.target).hasClass("suggestion")) {
+                                item = $(event.target).html();
+                            } else {
+                                item = $(event.target).find(".suggestion").html();
+                            }
                             var str = suggestionEl.val().substring(0, offset) + item.substring(0);
                             suggestionEl.val(str);
                             me.suggestionBox(me);

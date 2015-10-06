@@ -312,6 +312,8 @@
 	width: 568px !important;
 	opacity: 0.9;
 	z-index: 5000;
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .squid-api-suggestion-dialog ul {
@@ -321,8 +323,6 @@
 .squid-api-suggestion-dialog ul li {
 	list-style-type: none;
 	padding: 0px 10px;
-	width: 90%;
-	border-radius: 8px;
 }
 
 .squid-api-suggestion-dialog ul li:hover {
@@ -336,6 +336,7 @@
 
 .squid-api-suggestion-dialog .ui-dialog-titlebar {
 	float: left;
+	position: relative;
 }
 
 .squid-api-suggestion-dialog .ui-dialog-titlebar-close {
@@ -358,6 +359,14 @@
 .squid-api-admin-widgets-modal-form #btn-check.in-progress .glyphicon {
     -moz-animation: spin .7s infinite linear;
     -webkit-animation: spin .7s infinite linear;
+}
+
+.squid-api-pre-suggestions li {
+	cursor: pointer;
+}
+
+.squid-api-suggestion-dialog ul li .valueType {
+	padding-left: 20px;
 }
 
 .squid-api-pre-suggestions li:before {
