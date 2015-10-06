@@ -604,6 +604,13 @@
                         }
                     }
                 }
+                if (me.model.definition == "Project") {
+                    if (me.model.isNew()) {
+                        if (x == "dbSchemas") {
+                            me.model.schema[x].options = [];
+                        }
+                    }
+                }
                 if (me.model.definition === "Project" && x === "dbPassword") {
                     /*jshint multistr: true */
                     var checkConnectionText = "Connect To Database";
