@@ -1707,6 +1707,8 @@ function program1(depth0,data) {
                 url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
             } else if (me.model.definition == "Metric") {
                 url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            } else if (me.model.definition == "Dimension") {
+                url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
             }
 
             var request = $.ajax({
