@@ -222,6 +222,13 @@
     margin: 15px 10px 0px 0px;
 }
 
+.squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .squid-api-admin-widget-columns-management .management button.edit {
     margin-right: 10px;
 }
@@ -363,10 +370,6 @@
 
 .squid-api-pre-suggestions li {
 	cursor: pointer;
-}
-
-.squid-api-suggestion-dialog ul li .valueType {
-	padding-left: 20px;
 }
 
 .squid-api-pre-suggestions li:before {
