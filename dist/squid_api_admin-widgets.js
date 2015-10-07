@@ -854,7 +854,7 @@ function program1(depth0,data) {
             });
 
             if (this.collection) {
-                this.collection.on("change remove", function() {
+                this.collection.on("add change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                 }, this);
                 if (! this.collection.fetched) {
