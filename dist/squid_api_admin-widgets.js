@@ -856,6 +856,7 @@ function program1(depth0,data) {
             if (this.collection) {
                 this.collection.on("add change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
+                    this.collection.fetch();
                 }, this);
                 if (! this.collection.fetched) {
                     if (squid_api.model.config.get("domain")) {
