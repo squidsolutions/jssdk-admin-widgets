@@ -54,27 +54,39 @@
 
             this.collection.on("remove", function(model) {
                 if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
-                    squid_api.model.config.set(me.model.definition.toLowerCase(), null);
+                    squid_api.model.config.unset(me.model.definition.toLowerCase());
                 }
             });
-            this.collection.on("reset change remove sync", this.render, this);
+            this.collection.on("reset change sync", this.render, this);
 
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.parent, "change", function() {
+                var parentActive = true;
+
                 // project has changed
                 this.collectionAvailable = false;
                 this.render();
+
                 this.collection.parentId = this.parent.get("id");
-                this.collection
-                .fetch({
-                    success : function() {
-                        me.collectionAvailable = true;
-                    },
-                    error : function(collection, response, options) {
-                        squid_api.model.status.set({"error":response});
-                        me.collectionAvailable = true;
+
+                if (this.parent.definition == "Project") {
+                    if (! this.collection.parentId.projectId) {
+                        parentActive = false;
                     }
-                });
+                }
+
+                if (parentActive) {
+                    this.collection
+                        .fetch({
+                            success : function() {
+                                me.collectionAvailable = true;
+                            },
+                            error : function(collection, response, options) {
+                                squid_api.model.status.set({"error":response});
+                                me.collectionAvailable = true;
+                            }
+                        });
+                }
             });
 
             this.render();
