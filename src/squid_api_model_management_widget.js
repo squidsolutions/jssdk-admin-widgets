@@ -168,7 +168,7 @@
                         me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
 
                         if (me.model.definition == "Project") {
-                            if (me.schema.dbSchemas.options.length !== 0) {
+                            if (data.dbSchemas.length !== 0) {
                                 $(me.formModal.el).trigger("hidden.bs.modal");
                             }
                         } else {
