@@ -38,7 +38,7 @@ function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(23, program23, data),fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(25, program25, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </div>\n    </div>\n        ";
   return buffer;
@@ -78,7 +78,7 @@ function program13(depth0,data) {
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">\n                                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.program(21, program21, data),fn:self.program(16, program16, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.program(23, program23, data),fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                            </tr>\n                        ";
   return buffer;
@@ -100,7 +100,10 @@ function program16(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.refresh), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                ";
   return buffer;
@@ -114,10 +117,16 @@ function program17(depth0,data) {
 function program19(depth0,data) {
   
   
-  return "\n                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n                                    ";
+  return "\n                                        <td class=\"refresh\"><i class=\"fa fa-refresh\"></i></td>\n                                    ";
   }
 
 function program21(depth0,data) {
+  
+  
+  return "\n                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n                                    ";
+  }
+
+function program23(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                                    <td class=\"select\" colspan=\"3\">";
@@ -128,7 +137,7 @@ function program21(depth0,data) {
   return buffer;
   }
 
-function program23(depth0,data) {
+function program25(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                <div class=\"no-data\">No ";
@@ -139,7 +148,7 @@ function program23(depth0,data) {
   return buffer;
   }
 
-function program25(depth0,data) {
+function program27(depth0,data) {
   
   
   return "\n            <div class=\"parent-missing\">\n			Computing in progress...\n            </div>\n        ";
@@ -171,7 +180,7 @@ function program25(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.create), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(25, program25, data),fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(27, program27, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
   return buffer;
@@ -475,9 +484,6 @@ function program1(depth0,data) {
 
             this.collection.on("remove", function(model) {
                 if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
-                    if (me.parent.definition == "Project") {
-                        squid_api.model.config.unset("domain");
-                    }
                     squid_api.model.config.unset(me.model.definition.toLowerCase());
                 }
             });
@@ -638,6 +644,15 @@ function program1(depth0,data) {
                 });
             });
 
+            // refresh
+            $(".squid-api-" + this.type + "-model-widget-popup .refresh").on("click", function() {
+                var id = this.parentElement.dataset.attr;
+                var model = me.collection.get(id);
+                if (me.model.definition == "Project") {
+                    squid_api.refreshDb(model);
+                }
+            });
+
             // delete
             $(".squid-api-" + this.type + "-model-widget-popup .delete").on("click", function() {
                 var id = this.parentElement.dataset.attr;
@@ -671,6 +686,11 @@ function program1(depth0,data) {
                 roles.delete = true;
             }
 
+            // decide which models can be refreshed
+            if (this.model.definition == "Project") {
+                roles.refresh = true;
+            }
+
             return roles;
         },
 
@@ -686,6 +706,7 @@ function program1(depth0,data) {
                     "options" : [],
                     "valueSelected" : false,
                     "create" : this.roles.create,
+                    "refresh" : this.roles.refresh,
                     "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
@@ -717,6 +738,7 @@ function program1(depth0,data) {
                         "value" : oid,
                         "selected" : selected,
                         "edit" : this.roles.edit,
+                        "refresh" : this.roles.refresh,
                         "delete" : this.roles.delete
                 };
 

@@ -214,6 +214,15 @@
                 });
             });
 
+            // refresh
+            $(".squid-api-" + this.type + "-model-widget-popup .refresh").on("click", function() {
+                var id = this.parentElement.dataset.attr;
+                var model = me.collection.get(id);
+                if (me.model.definition == "Project") {
+                    squid_api.refreshDb(model);
+                }
+            });
+
             // delete
             $(".squid-api-" + this.type + "-model-widget-popup .delete").on("click", function() {
                 var id = this.parentElement.dataset.attr;
@@ -247,6 +256,11 @@
                 roles.delete = true;
             }
 
+            // decide which models can be refreshed
+            if (this.model.definition == "Project") {
+                roles.refresh = true;
+            }
+
             return roles;
         },
 
@@ -262,6 +276,7 @@
                     "options" : [],
                     "valueSelected" : false,
                     "create" : this.roles.create,
+                    "refresh" : this.roles.refresh,
                     "collectionAvailable" : this.collectionAvailable,
                     "collectionNotAvailableReason" : collectionNotAvailableReason
             };
@@ -293,6 +308,7 @@
                         "value" : oid,
                         "selected" : selected,
                         "edit" : this.roles.edit,
+                        "refresh" : this.roles.refresh,
                         "delete" : this.roles.delete
                 };
 
