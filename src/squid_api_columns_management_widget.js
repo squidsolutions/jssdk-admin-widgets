@@ -56,8 +56,41 @@
                 this.type = options.type;
             }
 
+            // relations
+            me.relations = new squid_api.model.RelationCollection();
+            me.relations.collectionAvailable = true;
+            me.relations.parentId = {};
+            me.relations.parentId.projectId = squid_api.model.config.get("project");
+            me.relations.fetch({
+                success: function() {
+                    me.relations.fetched = true;
+                }
+            });
+            // domains
+            me.domains = new squid_api.model.DomainCollection();
+            me.domains.collectionAvailable = true;
+            me.domains.parentId = {};
+            me.domains.parentId.projectId =  squid_api.model.config.get("project");
+            me.domains.fetch({
+                success: function() {
+                    me.domains.fetched = true;
+                }
+            });
+
             if (this.collection) {
-                this.collection.on("reset change remove sync", this.updateForm, this);
+                this.collection.on("add change remove", function() {
+                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
+                    this.collection.fetch();
+                }, this);
+                if (! this.collection.fetched) {
+                    if (squid_api.model.config.get("domain")) {
+                        this.collection.parentId = {
+                                projectId : squid_api.model.config.get("project"),
+                                domainId : squid_api.model.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
+                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -116,75 +149,6 @@
             return viewData;
         },
 
-        columnSuggestionHandler: function() {
-            var me = this;
-            var relationEl = this.formContent.$el.find(".suggestion-box");
-
-            var request = $.ajax({
-                type: "GET",
-                url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/domains/" + config.get("domain") + "/" + me.model.definition.toLowerCase() + "s-suggestion",
-                dataType: 'json',
-                data: {
-                    "expression" : relationEl.val(),
-                    "offset" : relationEl.prop("selectionStart") + 1,
-                    "access_token" : squid_api.model.login.get("accessToken")
-                },
-                success:function(response) {
-                    // detemine if there is an error or not
-                    if (response.validateMessage.length === 0) {
-                        relationEl.removeClass("invalid-expression").addClass("valid-expression");
-                    } else {
-                        relationEl.removeClass("valid-expression").addClass("invalid-expression");
-                    }
-
-                    // append box if definitions exist
-                    if (response.definitions && response.definitions.length > 0) {
-
-                        var definitions = response.definitions;
-
-                        // store offset
-                        var offset = response.filterIndex;
-
-                        // remove existing dialog's
-                        $(".squid-api-pre-domain-suggestions").remove();
-                        $(".squid-api-domain-suggestion-dialog").remove();
-
-                        // append div
-                        relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                        for (i=0; i<definitions.length; i++) {
-                            relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
-                        }
-
-                        relationEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
-                            var item = $(event.target).html();
-                            var str = relationEl.val().substring(0, offset) + item.substring(0);
-                            relationEl.val(str);
-                            me.suggestionHandler.call(me);
-                        });
-
-                        // show dialog
-                        relationEl.siblings(".squid-api-pre-domain-suggestions").dialog({
-                            open: function(e, ui) {
-                                e.preventDefault();
-                            },
-                            dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom+4", of: relationEl },
-                            closeText: "x"
-                        });
-                    } else {
-                        // set message
-                        squid_api.model.status.set("message", response.validateMessage);
-                    }
-
-                    // place the focus back onto the domain suggestionElement
-                    relationEl.focus();
-                },
-                error: function(response) {
-                    squid_api.model.status.set({'message' : response.responseJSON.error});
-                }
-            });
-        },
-
         render : function() {
             var me = this;
             var collection = this.collection;
@@ -199,19 +163,18 @@
                         moveOnSelect: false,
                         showFilterInputs: false,
                         filterTextClear : " ",
-                        selectedListLabel: "Available",
-                        nonSelectedListLabel: "Selected",
+                        selectedListLabel: "Selected " + me.model.definition.toLowerCase() +"s",
+                        nonSelectedListLabel: "Available " + me.model.definition.toLowerCase() +"s",
                         selectorMinimalHeight: 250
                     });
                 },
                 events: {
                     "click .add" : function() {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : new squid_api.model[me.model.definition + "Model"](),
                             collection : me.collection,
                             parent : me.parent,
                             autoOpen : true,
-                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
@@ -222,12 +185,11 @@
                     "click .edit" : function(event) {
                         var id = $(event.target).attr("data-value");
                         var model = me.collection.get(id);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             model : model,
                             parent : me.parent,
                             collection : me.collection,
                             autoOpen : true,
-                            suggestionHandler : me.columnSuggestionHandler,
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
@@ -249,6 +211,22 @@
                             }
                         }
                     },
+                    "click .relations" : function() {
+                        new squid_api.view.RelationModelManagementView({
+                            el : this.el,
+                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
+                            type : "Relation",
+                            modalTitle : "Relation for domain: " + this.domainName,
+                            collection : me.relations,
+                            model : new squid_api.model.RelationModel(),
+                            parent : me.domains,
+                            autoOpen : true,
+                            successHandler : function() {
+                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                                squid_api.model.status.set({'message' : message});
+                            }
+                        });
+                    },
                     "change select" : function(event) {
                         var dynamic = [];
                         var nonDynamic = [];
@@ -257,7 +235,7 @@
                         var name = $(event.target).find("option:selected:last").html();
                         var value = $(event.target).find("option:selected:last").val();
 
-                        // update edit / delete buttons
+                        //update edit / delete buttons
                         if (name !== undefined) {
                             this.$el.find(".edit").removeAttr("disabled");
                             this.$el.find(".edit").html("edit " + name);
@@ -269,8 +247,8 @@
                         }
 
                         // selected values in the second select box
-                        var options1 = $(this.$el.find("select")[0]).find("option");
-                        var options2 = $(this.$el.find("select")[1]).find("option");
+                        var options1 = $(this.$el.find("select")[1]).find("option");
+                        var options2 = $(this.$el.find("select")[0]).find("option");
 
                         // store visually updated attributes
                         for (i=0; i<options1.length; i++) {
@@ -285,8 +263,7 @@
                             model = this.collection.get($(nonDynamic[i]).val());
                             console.log(model.get("name") + " = non Dynamic");
                             if (model.get("dynamic") === true) {
-                                model.set("dynamic", false);
-                                model.save();
+                                model.set({"dynamic":false},{silent: true});
                             }
                         }
                         // check dynamic Data
@@ -294,9 +271,19 @@
                             model = this.collection.get($(dynamic[i]).val());
                             console.log(model.get("name") + " = dynamic");
                             if (model.get("dynamic") === false) {
-                                model.set("dynamic", true);
-                                model.save();
+                                model.set({"dynamic":true},{silent: true});
                             }
+                        }
+                        // save changed models to the server
+                        var changedModels = 0;
+                        for (i=0; i<this.collection.models.length; i++) {
+                            if (this.collection.models[i].hasChanged()) {
+                                changedModels++;
+                                this.collection.models[i].save();
+                            }
+                        }
+                        if (changedModels > 0) {
+                            this.collection.trigger("change");
                         }
                     }
                 },
@@ -308,11 +295,16 @@
             });
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.columnsView(),
-                cancelText: "close",
-                title: me.type
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.columnsView(),
+                    cancelText: "close",
+                    title: me.type
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -328,9 +320,19 @@
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.closeModal();
             });
+            $(this.formModal.el).find(".close").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+            $(this.formModal.el).find(".cancel").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+        },
+        closeModal : function() {
+            this.formModal.close();
+            this.formModal.remove();
         }
     });
 

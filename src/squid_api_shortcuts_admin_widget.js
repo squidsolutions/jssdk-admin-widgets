@@ -31,7 +31,7 @@
             var me = this;
             this.$el.html(this.template());
         },
-        
+
         saveShortcut : function(event) {
             event.preventDefault();
             var me = this;

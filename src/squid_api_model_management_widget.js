@@ -11,7 +11,6 @@
         buttonLabel : null,
         autoOpen: null,
         parent: null,
-        suggestionHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
         modalTitle : null,
@@ -41,9 +40,6 @@
             if (options.parent) {
                 this.parent = options.parent;
             }
-            if (options.suggestionHandler) {
-                this.suggestionHandler = options.suggestionHandler;
-            }
             if (options.schemasCallback) {
                 this.schemasCallback = options.schemasCallback;
             }
@@ -60,9 +56,6 @@
                 this.collection = options.collection;
             }
 
-            // Set Form Schema
-            this.setSchema();
-
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
@@ -70,6 +63,9 @@
                 this.listenTo(this.parent, "change:id", this.render);
             }
 
+            // Set Form Schema
+            this.setSchema();
+            
             if (this.autoOpen) {
                 this.prepareForm();
             }
@@ -82,8 +78,8 @@
                 if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
-                if (config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
-                    data.id.domainId = config.get("domain");
+                if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = squid_api.model.config.get("domain");
                 }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
@@ -93,13 +89,17 @@
             }
 
             // if the definition isn't project, add the projectId
-            if (squid_api.model.project.get("id") && this.model.definition !== "Project") {
-                var projectId = squid_api.model.project.get("id").projectId;
+            if (squid_api.model.config.get("project") && this.model.definition !== "Project") {
+                var projectId =  squid_api.model.config.get("project");
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
-                    data.parentId.domainId = config.get("domain");
-                    data.parentId.projectId = projectId;
+                    if (data.parentId[this.model.definition.toLowerCase() + "Id"].length === 0) {
+                        data.parentId = null;
+                    } else {
+                        data.parentId.domainId = squid_api.model.config.get("domain");
+                        data.parentId.projectId = projectId;
+                    }
                 }
             }
 
@@ -111,8 +111,28 @@
             }
 
             // dimensions exception
-            if (data.type === undefined) {
-                data.type = "INDEX";
+            if (data.type) {
+                if (data.type.length === 0) {
+                    data.type = "INDEX";
+                } else {
+                    data.type = data.type[0];
+                }
+            }
+
+            for (var x in data) {
+                if (x !== "id" && typeof data[x]=="object" && data[x] !== null) {
+                    if (data[x].projectId !== undefined) {
+                        if (data[x].projectId.length === 0) {
+                            data[x].projectId = squid_api.model.config.get("project");
+                        }
+                    } else {
+                        if (data[x].domainid !== undefined) {
+                            if (data[x].domainid.length === 0) {
+                                data[x].domainid = squid_api.model.config.get("domain");
+                            }
+                        }
+                    }
+                }
             }
 
             return data;
@@ -140,10 +160,6 @@
                 // remove all dialog's
                 $(".squid-api-dialog").remove();
 
-                if (this.model.definition == "Project" && me.schema.dbSchemas.options.length === 0) {
-                    me.formModal.preventClose();
-                }
-
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
@@ -151,9 +167,16 @@
 
                         me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
 
+                        if (me.model.definition == "Project") {
+                            if (data.dbSchemas.length !== 0) {
+                                $(me.formModal.el).trigger("hidden.bs.modal");
+                            }
+                        } else {
+                            $(me.formModal.el).trigger("hidden.bs.modal");
+                        }
+
                         // project exception
                         if (me.model.definition == "Project") {
-                            me.schema.id.type = "Hidden";
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
                             }
@@ -186,27 +209,154 @@
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
 
+            /*var modelWithValidation = (me.model).extend({
+                validation: {
+                    dbUrl: {
+                        fn: function(value, attr, computedState) {
+                            if(value !== 'something') {
+                                return 'Name is invalid';
+                            }
+                        }
+                    }
+                }
+            });*/
+
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
+                /*jshint multistr: true */
+                /*template: _.template('\
+                    <form>\
+                     <div data-fieldsets></div>\
+                     <button type="button">Check</button>\
+                      <% if (submitButton) { %>\
+                        <button type="submit"><%= submitButton %></button>\
+                      <% } %>\
+                    </form>\
+                  ', null, this.templateSettings),
+
+                templateSettings: {
+                    evaluate: /<%([\s\S]+?)%>/g,
+                    interpolate: /<%=([\s\S]+?)%>/g,
+                    escape: /<%-([\s\S]+?)%>/g
+                },*/
                 schema: me.schema,
                 model: me.model
             }).render();
+
+            this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
+                $('.dbSchemas').hide();
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+            });
+
+            this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
+                $('.dbSchemas').hide();
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+
+            });
+
+            this.formContent.on('dbUser:change', function(form, dbUserEditor) {
+                $('#btn-check').removeClass("btn-danger");
+                $('#btn-check').removeClass("btn-success");
+                $('.dbSchemas').hide();
+                //$('.modal-footer').find('.btn-warning').addClass("ok");
+                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+            });
+
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
+            });
+
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
+            });
+
+            var incorrectCredentials = false;
+
 
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
                 model: me.model,
                 parent: me.parent,
-                // domain subject exception
+
+            // domain subject exception
                 events: {
                     "keyup .suggestion-box" : function(e) {
-                        me.suggestionHandler.call(me);
+                        me.suggestionBox(me);
                     },
                     "click .suggestion-box" : function(e) {
-                        me.suggestionHandler.call(me);
+                        me.suggestionBox(me);
+                    },
+                    "click #btn-check" : function(e) {
+                        var me1 = this;
+                        me1.$el.find('#btn-check').addClass("in-progress");
+                        console.log("Validating DB password");
+                        var dburl = this.$el.find('.dbUrl').find('.form-control').val();
+                        var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
+                        var dbUser = this.$el.find('.dbUser').find('.form-control').val();
+                        var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
+
+                        $.ajax({
+                            type: "GET",
+                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (response) {
+                                squid_api.model.status.set({"error":null});
+                                if (me.schemasCallback) {
+                                    me.schemasCallback.call(me);
+                                }
+                                me1.$el.find('#btn-check').removeClass("in-progress");
+                                me1.$el.find('#btn-check').removeClass("btn-danger");
+                                me1.$el.find('#btn-check').addClass("btn-success");
+                                me1.$el.find('.dbSchemas').show();
+                                me1.$el.find('.modal-footer .btn-warning').removeClass("btn-warning");
+                                incorrectCredentials = false;
+                            },
+                            error: function(xhr, textStatus, error){
+                                squid_api.model.status.set({"error":xhr});
+                                me1.$el.find('#btn-check').removeClass("in-progress");
+                                me1.$el.find('#btn-check').removeClass("btn-success");
+                                me1.$el.find('#btn-check').addClass("btn-danger");
+                                console.log("Validation failed");
+                                me1.$el.find('.dbSchemas').hide();
+                                me1.$el.find('.modal-footer').find('.ok').addClass("btn-warning");
+                                incorrectCredentials = true;
+                            }
+
+                        });
+
                     }
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
+
+                    // detect and add dbPassword placeholder
+                    if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
+                        var placeholder = "";
+                        for (i=0; i<me.model.get("dbPasswordLength"); i++) {
+                            placeholder = placeholder + "*";
+                        }
+                        this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
+                    }
+                    if (this.model.definition == "Relation") {
+                        if (this.model.isNew()) {
+                            // by default set the current domain as the leftId
+                            this.$el.find(".leftId select").val(squid_api.model.config.get("domain"));
+
+                            var leftName = this.$el.find(".leftId select option:selected").text();
+                            this.$el.find(".leftName input").val(leftName);
+                            var rightName = this.$el.find(".rightId select option:selected").text();
+                            this.$el.find(".rightName input").val(rightName);
+                        }
+                    }
                     return this;
                 }
             });
@@ -227,10 +377,15 @@
             }
 
             // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: new this.formView(),
-                title: modalTitle
-            }).open();
+            if (this.formModal) {
+                this.formModal.open();
+            } else {
+                this.formModal = new Backbone.BootstrapModal({
+                    content: new this.formView(),
+                    title: modalTitle
+                });
+                this.formModal.open();
+            }
 
             // modal wrapper class
             $(this.formModal.el).addClass(this.modalElementClassName);
@@ -239,8 +394,39 @@
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
 
             // saveForm on 'ok' click
-            this.formModal.on('ok', function() {
-                me.saveForm();
+            $(this.formModal.el).find(".ok").on("click", function() {
+                if(incorrectCredentials === true) {
+                    console.log("Warning popup");
+                    // Show warning.
+                    var PopupView = Backbone.View.extend({
+                        render: function () {
+                            this.$el.html('The connection settings are incorrect. Are you sure you want to continue?');
+                            return this;
+                        }
+                    });
+
+                    var confirmationModal = new Backbone.BootstrapModal({
+                        content: new PopupView(),
+                        title: "Confirmation"
+                    }).open();
+
+                    $(confirmationModal.el).one('hidden.bs.modal', function () {
+                        confirmationModal.close();
+                        confirmationModal.remove();
+                    });
+                    $(confirmationModal.el).find(".close").one("click", function() {
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
+                    });
+                    $(confirmationModal.el).find(".cancel").one("click", function() {
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
+                    });
+                    $(confirmationModal.el).find(".ok").one("click", function() {
+                        me.saveForm();
+                        $(confirmationModal.el).trigger("hidden.bs.modal");
+                    });
+                } else {
+                    me.saveForm();
+                }
             });
 
             // hide first div (id)
@@ -255,9 +441,23 @@
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.closeModal();
+                if ($(".squid-api-pre-suggestions").hasClass('ui-dialog-content')) {
+                    $(".squid-api-pre-suggestions").dialog("destroy").remove();
+                }
             });
+            $(this.formModal.el).find(".close").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+            $(this.formModal.el).find(".cancel").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+        },
+
+        closeModal : function() {
+            this.formModal.close();
+            this.formModal.remove();
         },
 
         prepareForm: function() {
@@ -273,24 +473,93 @@
 
         events: {
             "click button" : function() {
-                // reset model defaults
-                this.model.clear().set(this.model.defaults);
-
-                this.prepareForm();
+                if (! this.autoOpen) {
+                    // reset model defaults
+                    this.model.clear().set(this.model.defaults);
+                    this.prepareForm();
+                }
             }
         },
 
-        getPropertyType: function(type) {
-            switch(type) {
-                case "string":
-                    return "Text";
-                case "int32":
-                    return "Number";
-                case "array":
-                    return "Checkboxes";
-                default:
-                    return "Text";
+        suggestionBox: function() {
+            var me = this;
+            var suggestionEl = this.formContent.$el.find(".suggestion-box");
+            var url = "";
+            var data = {"expression" : suggestionEl.val(), "offset" : suggestionEl.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            if (me.model.definition == "Relation") {
+                url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";
+                data.leftDomainId = this.formContent.getValue().leftId.domainId;
+                data.rightDomainId = this.formContent.getValue().rightId.domainId;
+            } else if (me.model.definition == "Domain") {
+                url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
+            } else if (me.model.definition == "Metric") {
+                url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            } else if (me.model.definition == "Dimension") {
+                url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
             }
+
+            var request = $.ajax({
+                type: "GET",
+                url: url,
+                dataType: 'json',
+                data: data,
+                success:function(response) {
+                    // detemine if there is an error or not
+                    if (response.validateMessage.length === 0) {
+                        suggestionEl.removeClass("invalid-expression").addClass("valid-expression");
+                    } else {
+                        suggestionEl.removeClass("valid-expression").addClass("invalid-expression");
+                    }
+
+                    if ($(".squid-api-pre-suggestions").hasClass('ui-dialog-content')) {
+                        $(".squid-api-pre-suggestions").dialog("destroy").remove();
+                    }
+
+                    $(".squid-api-suggestion-dialog").dialog("destroy").remove();
+
+                    // append box if definitions exist
+                    if (response.suggestions && response.suggestions.length > 0) {
+
+                        // store offset
+                        var offset = response.filterIndex;
+
+                        // append div
+                        suggestionEl.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
+                        for (i=0; i<response.suggestions.length; i++) {
+                            suggestionEl.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  response.suggestions[i].suggestion + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                        }
+
+                        suggestionEl.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
+                            var item = $(event.target).parent().find(".suggestion").html();
+                            var str = suggestionEl.val().substring(0, offset) + item.substring(0);
+                            suggestionEl.val(str);
+                            me.suggestionBox(me);
+                        });
+
+                        // show dialog
+                        suggestionEl.siblings(".squid-api-pre-suggestions").dialog({
+                            open: function(e, ui) {
+                                e.preventDefault();
+                            },
+                            dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
+                            position: { my: "center top", at: "center bottom+4", of: suggestionEl }
+                        });
+                    } else {
+                        // set message
+                        squid_api.model.status.set("message", response.validateMessage);
+                    }
+
+                    // place the focus back onto the suggestionElement
+                    suggestionEl.focus();
+                },
+                error: function(response) {
+                    if (response.responseJSON.error) {
+                        squid_api.model.status.set({'message' : response.responseJSON.error});
+                    } else {
+                        squid_api.model.status.set({'error' : response});
+                    }
+                }
+            });
         },
 
         remove: function() {
@@ -307,211 +576,78 @@
                 this.formContent.model = me.model;
             }
 
-            squid_api.getSchema().done(function(data) {
+            for (var x in me.model.schema) {
+                if (me.model.definition == "Relation") {
+                    if ((x == "leftId" || x == "rightId")) {
+                        //reset left & rightId
+                        me.model.schema[x].subSchema.domainId.options = [];
+                        if (me.model.isNew()) {
+                            var domains = me.parent.models;
+                            var domainArray = [];
 
-                // base variables
-                var definition = data.definitions[me.model.definition];
-                var properties = definition.properties;
-                schema = modelData = {};
-
-                // delete ignored properties from schema
-                if (me.model.ignoredAttributes) {
-                    var obj = {};
-                    for (var ix in properties) {
-                        for (i=0; i<me.model.ignoredAttributes.length; i++) {
-                            if (me.model.ignoredAttributes[i] == ix) {
-                                delete properties[ix];
+                            for (i = 0; i < domains.length; i++) {
+                                domainObj = {};
+                                domainObj.val = domains[i].get("oid");
+                                domainObj.label = domains[i].get("name");
+                                domainArray.push(domainObj);
+                            }
+                            me.model.schema[x].subSchema.domainId.options = domainArray;
+                        } else {
+                            me.model.schema[x].subSchema.domainId.options = [me.model.get(x).domainId];
+                        }
+                    }
+                }
+                if (me.model.definition == "Project") {
+                    if (me.model.isNew()) {
+                        if (x == "dbSchemas") {
+                            me.model.schema[x].options = [];
+                        }
+                    }
+                }
+                if (me.model.definition === "Project" && x === "dbPassword") {
+                    /*jshint multistr: true */
+                    var checkConnectionText = "Connect To Database";
+                    if (! me.model.isNew()) {
+                        checkConnectionText = "Refresh Schemas";
+                    }
+                    me.model.schema[x].template = _.template('\
+                                    <div>\
+                                      <label for="<%= editorId %>">\
+                                        <% if (titleHTML){ %><%= titleHTML %>\
+                                        <% } else { %><%- title %><% } %>\
+                                      </label>\
+                                      <div>\
+                                        <span data-editor></span>\
+                                        <div class="error-text" data-error></div>\
+                                        <div class="error-help"><%= help %></div>\
+                                      </div>\
+                                      <div>\
+                                          <button class="btn btn-default" id="btn-check" type="button"><span class="glyphicon glyphicon-refresh"></span>' + checkConnectionText + '</button>\
+                                      </div>\
+                                    </div>\
+                                  ', null, null);
+                }
+                if (me.model.definition == "Dimension" && x == "parentId") {
+                    me.model.schema[x].subSchema.dimensionId.type = "Select";
+                    me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
+                    for (i=0; i<me.collection.models.length; i++) {
+                        if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                            if (me.collection.models[i].get("dynamic") === false) {
+                                var objD = {};
+                                objD.val = me.collection.models[i].get("oid");
+                                objD.label = me.collection.models[i].get("name");
+                                me.model.schema[x].subSchema.dimensionId.options.push(objD);
                             }
                         }
                     }
                 }
+            }
 
-                // create schema
-                for (var property in properties) {
-                    if (! properties[property].readOnly) {
-                        // base field object
-                        schema[property] = {};
-                        var refValue, ref, subProp, nm;
-                        var modelDefinition = me.model.definition;
+            // set schema
+            me.schema = me.model.schema;
 
-                        // obtain reference property values
-                        if (properties[property].items) {
-                            if (properties[property].items.$ref) {
-                                subProp = data.definitions[properties[property].items.$ref.substr(properties[property].items.$ref.lastIndexOf("/") + 1)].properties;
-                            }
-                        }
-
-                        if (properties[property].$ref) {
-                            if (modelDefinition == "Domain" && property == "subject" || modelDefinition == "Relation" && property == "joinExpression" || modelDefinition == "Metric" && property == "expression" || modelDefinition == "Dimension" && property == "expression") {
-                                refValue = properties[property].$ref;
-                                ref = properties[property].$ref.substr(refValue.lastIndexOf("/") + 1);
-                                subProp = data.definitions[ref].properties;
-
-                                schema[property].type = "Object";
-                                schema[property].subSchema = subProp;
-                                schema[property].subSchema[Object.keys(subProp)[0]].type = "TextArea";
-                                schema[property].subSchema[Object.keys(subProp)[0]].editorClass = "form-control suggestion-box";
-                            }
-                            else {
-                                // base nested model
-                                nm = {};
-                                subProp = data.definitions[properties[property].$ref.substr(properties[property].$ref.lastIndexOf("/") + 1)].properties;
-                                for (var subProperty1 in subProp) {
-                                    nm[subProperty1] = {};
-                                    if (subProp[subProperty1].enum) {
-                                        nm[subProperty1].type = "Text";
-                                        nm[subProperty1].options = subProp[subProperty].enum;
-                                    } else {
-                                        nm[subProperty1].options = [];
-                                        nm[subProperty1].type = me.getPropertyType(subProp[subProperty1].type);
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "projectId") {
-                                        nm[subProperty1].title = " ";
-                                    }
-                                    if (modelDefinition == "Relation" && subProperty1 == "domainId") {
-                                        var domains = me.parent.models;
-                                        var domainArray = [];
-
-                                        for (i=0; i<domains.length; i++) {
-                                            domainObj = {};
-                                            domainObj.val = domains[i].get("oid");
-                                            domainObj.label = domains[i].get("name");
-                                            domainArray.push(domainObj);
-                                        }
-                                        nm[subProperty1].type = "Select";
-                                        nm[subProperty1].options = domainArray;
-                                    }
-                                    if (subProperty1 == "projectId") {
-                                        nm[subProperty1].editorClass = "hidden";
-                                    } else {
-                                        nm[subProperty1].editorClass = "form-control";
-                                    }
-                                }
-                                if (modelDefinition == "Relation" && property == "leftId") {
-                                    nm[subProperty1].title = "Left Domain";
-                                } else if (modelDefinition == "Relation" && property == "rightId") {
-                                    nm[subProperty1].title = "Right Domain";
-                                }
-                                schema[property].title = " ";
-                                schema[property].type = "Object";
-                                schema[property].subSchema = nm;
-
-                                if (property == "id") {
-                                    schema[property].editorClass = "hidden";
-                                }
-                            }
-                        }
-
-                        if (properties[property].items && properties[property].items.$ref) {
-                            // base nested model
-                            nm = {};
-
-                            // apply sub-properties (if exist)
-                            for (var subProperty in subProp) {
-                                nm[subProperty] = {};
-                                if (subProp[subProperty].enum) {
-                                    nm[subProperty].type = "Text";
-                                    nm[subProperty].options = subProp[subProperty].enum;
-                                } else {
-                                    nm[subProperty].options = [];
-                                    nm[subProperty].type = me.getPropertyType(subProp[subProperty].type);
-                                }
-                                nm[subProperty].editorClass = "form-control";
-                                nm[subProperty].disabled = true;
-                            }
-
-                            schema[property].type = "List";
-                            schema[property].itemType = "Object";
-                            schema[property].subSchema = nm;
-                        } else if (! properties[property].$ref) {
-                            // domain exception
-                            if (schema[property].type !== "Checkboxes") {
-                                if (property.indexOf("Password")  > -1) {
-                                    schema[property].type = "Password";
-                                } else {
-                                    type = me.getPropertyType(properties[property].type);
-                                    schema[property].type = type;
-                                }
-                                schema[property].editorClass = "form-control";
-                            }
-                            // dropdown boxes
-                            if (properties[property].enum && properties[property].type == "string") {
-                                schema[property].type = "Select";
-                                schema[property].options = properties[property].enum;
-                                schema[property].editorClass = "form-control";
-                            }
-                            if (schema[property].type == "Checkboxes") {
-                                schema[property].editorClass = " ";
-                                if (me.model.get(property)) {
-                                    schema[property].options = me.model.get(property);
-                                } else {
-                                    schema[property].options = [];
-                                }
-                            }
-                            // dimensions type exception
-                            if (me.model.definition == "Dimension" && property == "type") {
-                                schema[property].type = "Radio";
-                                var objExc = [];
-                                for (i=0; i<schema[property].options.length; i++) {
-                                    if (schema[property].options[i] == "CONTINUOUS" || schema[property].options[i] == "CATEGORICAL") {
-                                        var dExc = {};
-                                        if (schema[property].options[i] == "CONTINUOUS") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label =  "Period";
-                                        } else if (schema[property].options[i] == "CATEGORICAL") {
-                                            dExc.val =  schema[property].options[i];
-                                            dExc.label = "Indexed";
-                                        }
-                                        objExc.push(dExc);
-                                    }
-                                }
-                                schema[property].editorClass = " ";
-                                schema[property].options = objExc;
-                            }
-                        }
-                        // parent id exception
-                        if (property == "parentId") {
-                            schema[property].subSchema.domainId.fieldClass = "hidden";
-                            schema[property].subSchema.projectId.fieldClass = "hidden";
-                            if (me.model.definition == "Dimension") {
-                                schema[property].subSchema.dimensionId.type = "Select";
-                                schema[property].subSchema.dimensionId.options = [];
-                                for (i=0; i<me.collection.models.length; i++) {
-                                    if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                                        var objD = {};
-                                        objD.val = me.collection.models[i].get("oid");
-                                        objD.label = me.collection.models[i].get("name");
-                                        schema[property].subSchema.dimensionId.options.push(objD);
-                                    }
-                                }
-                            }
-                        }
-                        // positions
-                        if (properties[property].position) {
-                            schema[property].position = properties[property].position;
-                        }
-
-                        schema[property].fieldClass = property;
-                    }
-                }
-
-                // validation
-                var required;
-                if (data.definitions[me.model.definition]) {
-                    required = data.definitions[me.model.definition].required;
-                }
-                if (required) {
-                    for (i=0; i<required.length; i++) {
-                        schema[required[i]].validators = ['required'];
-                    }
-                }
-
-                // set schema
-                me.schema = schema;
-
-                // Render View
-                me.render();
-            });
+            // Render View
+            me.render();
         },
 
         render: function(currentView) {

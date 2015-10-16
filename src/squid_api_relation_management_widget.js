@@ -7,11 +7,10 @@
 
         successHandler: null,
         errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         buttonLabel : null,
         autoOpen: null,
         parent: null,
-        suggestionHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
         modalTitle : null,
@@ -40,9 +39,6 @@
             }
             if (options.parent) {
                 this.parent = options.parent;
-            }
-            if (options.suggestionHandler) {
-                this.suggestionHandler = options.suggestionHandler;
             }
             if (options.schemasCallback) {
                 this.schemasCallback = options.schemasCallback;
@@ -80,7 +76,7 @@
         },
 
         viewData: function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, config.get("domain"));
+            var models = squid_api.utils.getDomainRelations(this.collection.models, squid_api.model.config.get("domain"));
             var arr = [];
             for (i=0; i<models.length; i++) {
                 var obj = {};
@@ -121,13 +117,12 @@
                     "click .edit" : function(event) {
                         var oid = $(event.target).parents("tr").attr("data-value");
                         var model = me.collection.get(oid);
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : model,
                             parent : me.parent,
                             autoOpen : true,
                             beforeRenderHandler : me.beforeRenderHandler,
-                            suggestionHandler : this.suggestionHandler,
                             buttonLabel : "edit",
                             successHandler : function() {
                                 var message = "relation successfully modified";
@@ -142,6 +137,7 @@
                             if (true) {
                                 model.destroy({
                                     success:function() {
+                                        $(me.formModal.el).trigger("hidden.bs.modal");
                                         squid_api.model.status.set({'message' : "relation successfully deleted"});
                                         me.collection.trigger("change");
                                     }
@@ -150,13 +146,12 @@
                         }
                     },
                     "click .add" : function(event) {
-                        new api.view.ModelManagementView({
+                        new squid_api.view.ModelManagementView({
                             el : $(this),
                             model : me.model,
                             parent : me.parent,
                             autoOpen : true,
                             beforeRenderHandler : me.beforeRenderHandler,
-                            suggestionHandler : this.suggestionHandler,
                             buttonLabel : "edit",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : "relation successfully created"});
@@ -164,75 +159,6 @@
                             }
                         });
                     }
-                },
-                suggestionHandler: function() {
-                    var me = this;
-                    var relationEl = this.formContent.$el.find(".suggestion-box");
-                    var request = $.ajax({
-                        type: "GET",
-                        url: squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion",
-                        dataType: 'json',
-                        data: {
-                            "expression" : relationEl.val(),
-                            "offset" : relationEl.prop("selectionStart") + 1,
-                            "leftDomainId" : this.formContent.getValue().leftId.domainId,
-                            "rightDomainId" : this.formContent.getValue().rightId.domainId,
-                            "access_token" : squid_api.model.login.get("accessToken")
-                        },
-                        success:function(response) {
-                            // detemine if there is an error or not
-                            if (response.validateMessage.length === 0) {
-                                relationEl.removeClass("invalid-expression").addClass("valid-expression");
-                            } else {
-                                relationEl.removeClass("valid-expression").addClass("invalid-expression");
-                            }
-
-                            // append box if definitions exist
-                            if (response.definitions && response.definitions.length > 0) {
-
-                                var definitions = response.definitions;
-
-                                // store offset
-                                var offset = response.filterIndex;
-
-                                // remove existing dialog's
-                                $(".squid-api-pre-domain-suggestions").remove();
-                                $(".squid-api-domain-suggestion-dialog").remove();
-
-                                // append div
-                                relationEl.after("<div class='squid-api-pre-domain-suggestions squid-api-dialog'><ul></ul></div>");
-                                for (i=0; i<definitions.length; i++) {
-                                    relationEl.siblings(".squid-api-pre-domain-suggestions").find("ul").append("<li>" + definitions[i] + "</li>");
-                                }
-
-                                relationEl.siblings(".squid-api-pre-domain-suggestions").find("li").click(me, function(event) {
-                                    var item = $(event.target).html();
-                                    var str = relationEl.val().substring(0, offset) + item.substring(0);
-                                    relationEl.val(str);
-                                    me.suggestionHandler.call(me);
-                                });
-
-                                // show dialog
-                                relationEl.siblings(".squid-api-pre-domain-suggestions").dialog({
-                                    open: function(e, ui) {
-                                        e.preventDefault();
-                                    },
-                                    dialogClass: "squid-api-domain-suggestion-dialog squid-api-dialog",
-                                    position: { my: "center top", at: "center bottom+4", of: relationEl },
-                                    closeText: "x"
-                                });
-                            } else {
-                                // set message
-                                squid_api.model.status.set("message", response.validateMessage);
-                            }
-
-                            // place the focus back onto the domain suggestionElement
-                            relationEl.focus();
-                        },
-                        error: function(response) {
-                            squid_api.model.status.set({'message' : response.responseJSON.error});
-                        }
-                    });
                 },
                 render: function() {
                     this.$el.html(template(jsonData));
@@ -259,17 +185,22 @@
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
 
-            // on cancel
-            this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
-            });
-
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
                Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.formModal.el).on('hidden.bs.modal', function () {
-                this.remove();
+            $(this.formModal.el).one('hidden.bs.modal', function () {
+                me.closeModal();
             });
+            $(this.formModal.el).find(".close").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+            $(this.formModal.el).find(".cancel").one("click", function() {
+                $(me.formModal.el).trigger("hidden.bs.modal");
+            });
+        },
+        closeModal : function() {
+            this.formModal.close();
+            this.formModal.remove();
         }
     });
 

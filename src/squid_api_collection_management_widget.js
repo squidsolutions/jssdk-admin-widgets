@@ -7,7 +7,7 @@
         template : null,
         collection : null,
         config : null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
+        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
         collectionAvailable : false,
         suggestionHandler : null,
@@ -41,9 +41,6 @@
             if (!this.model) {
                 this.model =  new squid_api.model[this.type + "Model"]();
             }
-            if (options.suggestionHandler) {
-                this.suggestionHandler = options.suggestionHandler;
-            }
             if (options.schemasCallback) {
                 this.schemasCallback = options.schemasCallback;
             }
@@ -55,28 +52,44 @@
             this.collection = new squid_api.model.BaseCollection();
             this.updateCollection();
 
-            this.collection.on("reset change remove sync", this.render, this);
-
-            this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function(parent) {
-                me.collectionAvailable = true;
-                me.collection.parentId = parent.get("id");
-                me.collection.fetch();
-            });
-
-            this.listenTo(config, "change:" + this.model.definition.toLowerCase() , function(parent) {
-                me.collectionAvailable = true;
-                me.collection.parentId = {};
-                me.collection.parentId = me.parent.get("id");
-                me.collection.fetch();
-
-                // set model
-                var modelDef = config.get(me.model.definition.toLowerCase());
-                var modelItem = me.collection.get(modelDef);
-                if (modelItem) {
-                    me.model.set(modelItem.toJSON());
+            this.collection.on("remove", function(model) {
+                if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
+                    squid_api.model.config.unset(me.model.definition.toLowerCase());
                 }
             });
+            this.collection.on("reset change sync", this.render, this);
+
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.parent, "change", function() {
+                var parentActive = true;
+
+                // project has changed
+                this.collectionAvailable = false;
+                this.render();
+
+                this.collection.parentId = this.parent.get("id");
+
+                if (this.parent.definition == "Project") {
+                    if (! this.collection.parentId.projectId) {
+                        parentActive = false;
+                    }
+                }
+
+                if (parentActive) {
+                    this.collection
+                        .fetch({
+                            success : function() {
+                                me.collectionAvailable = true;
+                            },
+                            error : function(collection, response, options) {
+                                squid_api.model.status.set({"error":response});
+                                me.collectionAvailable = true;
+                            }
+                        });
+                }
+            });
+
+            this.render();
         },
 
         setModel : function(model) {
@@ -86,6 +99,8 @@
 
         events: {
             "click button": function() {
+                var me = this;
+
                 if (this.collectionModal) {
                     this.collectionModal.$el.find(".modal-body").html(this.html);
                     // redelegate events after updating template
@@ -95,7 +110,8 @@
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
                         title: this.type + "s"
-                    }).open();
+                    });
+                    this.collectionModal.open();
                 }
                 // remove button
                 $(this.collectionModal.el).find("button.selected-model").remove();
@@ -110,8 +126,14 @@
                 /* bootstrap doesn't remove modal from dom when clicking outside of it.
                    Check to make sure it has been removed whenever it isn't displayed.
                 */
-                $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                    this.remove();
+                $(this.collectionModal.el).one('hidden.bs.modal', function () {
+                    me.closeModal();
+                });
+                $(this.collectionModal.el).find(".close").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                });
+                $(this.collectionModal.el).find(".cancel").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
                 });
             }
         },
@@ -130,51 +152,45 @@
             }
         },
 
+        closeModal : function() {
+            this.collectionModal.close();
+            this.collectionModal.remove();
+        },
+
         actionEvents: function(roles) {
             var me = this;
 
             // select
             $(".squid-api-" + this.type + "-model-widget-popup .select").on("click", function() {
                 var value = $(this).parent('tr').attr('data-attr');
-
                 if (me.changeEventHandler) {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
                     $(".squid-api-" + this.type + "-model-widget-popup").dialog("close");
                     me.changeEventHandler.call(this, value);
                 } else {
                     console.log('no change handler defined');
                 }
-
-                // set the selected model
-                var models = me.collection.models;
-                var model;
-                for (i=0; i<models.length; i++) {
-                    if (models[i].get("oid") == value) {
-                        model = models[i];
-                        break;
-                    }
-                }
-                me.model.set(model);
             });
 
             if (roles.create) {
-                 // create base model for create
-                var baseModel = new squid_api.model[ this.type + "Model"]();
-
                 // create
-                new api.view.ModelManagementView({
-                    el : $(".squid-api-" + this.type + "-model-widget-popup .create"),
-                    model : baseModel,
-                    parent : me.parent,
-                    suggestionHandler : me.suggestionHandler,
-                    schemasCallback : me.schemasCallback,
-                    beforeRenderHandler : me.beforeRenderHandler,
-                    successHandler : function() {
-                        if (me.changeEventHandler) {
-                            me.changeEventHandler.call(this);
+                $(".squid-api-" + this.type + "-model-widget-popup .create").on("click", function() {
+                    new squid_api.view.ModelManagementView({
+                        el : $(this).find(".create"),
+                        model : new squid_api.model[ me.model.definition + "Model"](),
+                        parent : me.parent,
+                        autoOpen : true,
+                        schemasCallback : me.schemasCallback,
+                        beforeRenderHandler : me.beforeRenderHandler,
+                        successHandler : function() {
+                            if (me.changeEventHandler) {
+                                me.changeEventHandler.call(this);
+                            }
+                            $(me.collectionModal.el).trigger("hidden.bs.modal");
+                            var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                            squid_api.model.status.set({'message' : message});
                         }
-                        var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                        squid_api.model.status.set({'message' : message});
-                    }
+                    });
                 });
             }
 
@@ -182,20 +198,29 @@
             $(".squid-api-" + this.type + "-model-widget-popup .edit").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                new api.view.ModelManagementView({
+                new squid_api.view.ModelManagementView({
                     el : $(this),
                     model : model,
                     parent : me.parent,
                     autoOpen : true,
-                    suggestionHandler : me.suggestionHandler,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
+                        squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
                     }
                 });
+            });
+
+            // refresh
+            $(".squid-api-" + this.type + "-model-widget-popup .refresh").on("click", function() {
+                var id = this.parentElement.dataset.attr;
+                var model = me.collection.get(id);
+                if (me.model.definition == "Project") {
+                    squid_api.refreshDb(model);
+                }
             });
 
             // delete
@@ -207,6 +232,7 @@
                     if (true) {
                         model.destroy({
                             success:function(collection) {
+                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
@@ -230,6 +256,11 @@
                 roles.delete = true;
             }
 
+            // decide which models can be refreshed
+            if (this.model.definition == "Project") {
+                roles.refresh = true;
+            }
+
             return roles;
         },
 
@@ -239,7 +270,22 @@
             this.roles = this.userRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
-            var jsonData = {"selAvailable" : false, "type" : this.type, "options" : [], "valueSelected" : false, "create" : this.roles.create, "collectionAvailable" : this.collectionAvailable, "collectionNotAvailableReason" : collectionNotAvailableReason, "renderEl" : this.renderEl};
+            var jsonData = {
+                    "selAvailable" : false,
+                    "type" : this.type,
+                    "options" : [],
+                    "valueSelected" : false,
+                    "create" : this.roles.create,
+                    "refresh" : this.roles.refresh,
+                    "collectionAvailable" : this.collectionAvailable,
+                    "collectionNotAvailableReason" : collectionNotAvailableReason
+            };
+            if (this.model && this.model.get("id")) {
+                jsonData.selectedLabel = this.model.get("name");
+            } else {
+                jsonData.selectedLabel = null;
+            }
+
             var models = this.collection.models;
 
             // selected obj
@@ -257,7 +303,14 @@
                         selected = true;
                     }
                 }
-                var option = {"label" : models[i].get("name"), "value" : oid, "selected" : selected, "edit" : this.roles.edit, "delete" : this.roles.delete};
+                var option = {
+                        "label" : models[i].get("name"),
+                        "value" : oid,
+                        "selected" : selected,
+                        "edit" : this.roles.edit,
+                        "refresh" : this.roles.refresh,
+                        "delete" : this.roles.delete
+                };
 
                 // support dynamic collections
                 if (models[i].get("dynamic")) {
@@ -277,7 +330,9 @@
 
             // sort data by dynamic attribute
             jsonData.options.sort(function(a, b) {
-                return (a.dynamic === b.dynamic) ? 0 : a ? -1 : 1;
+                var labelA = a.label.toUpperCase();
+                var labelB = b.label.toUpperCase();
+                return (labelA < labelB) ? -1 : (labelA > labelB) ? 1 : 0;
             });
 
             // place selected obj at start of array
@@ -285,24 +340,35 @@
                 jsonData.options.unshift(sel[0]);
             }
 
-            if (this.collectionModal) {
-                this.collectionModal.close();
-            }
-
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
 
-            if (! this.collectionAvailable) {
-                this.$el.find(".squid-api-model-widget-" + this.type).tooltip({
-                    tooltipClass: "squid-api-admin-widgets-tooltip",
-                    position: { my: "left top", at: "left bottom+2", of: me.$el.find(".squid-api-model-widget-" + me.type) },
-                });
-                this.$el.find(".selected-model").addClass("hide");
+            if (this.collectionModal) {
+                this.collectionModal.$el.find(".modal-body").html(this.html);
+                // redelegate events after updating template
+                this.collectionModal.delegateEvents();
+
+                // remove button
+                $(this.collectionModal.el).find("button.selected-model").remove();
+
+                // modal wrapper class
+                $(this.collectionModal.el).addClass(this.modalElementClassName);
+                $(this.collectionModal.el).addClass("squid-api-" + this.type + "-model-widget-popup-container");
+
+                // add events
+                this.actionEvents(this.roles);
             }
 
             // set button value
             this.$el.find("button.selected-model").text(jsonData.selectedName);
+
+            // hide main button if parent is not set
+            if (!this.parent.get("id")) {
+                this.$el.find("button.selected-model").addClass("hidden");
+            } else {
+                this.$el.find("button.selected-model").removeClass("hidden");
+            }
 
             // remove popup information from the view
             this.$el.find(".squid-api-" + this.type + "-model-widget-popup").remove();

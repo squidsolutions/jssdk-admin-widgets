@@ -1,9 +1,9 @@
 <div class="squid-api-admin-widget-columns-management">
     <select multiple="multiple">
-        {{#each nonDynamic}}
+        {{#each dynamic}}
             <option {{#if parentId}} class="child" {{/if}} value="{{id}}">{{name}}</option>
         {{/each}}
-        {{#each dynamic}}
+        {{#each nonDynamic}}
             <option value="{{id}}" {{#if parentId}} class="child" {{/if}} selected="selected">{{name}}</option>
         {{/each}}
     </select>
@@ -16,6 +16,9 @@
 		</button>
         <button type="button" class="btn btn-default delete" disabled="true">
             Delete
+		</button>
+        <button type="button" class="btn btn-default relations">
+            Manage Relations
 		</button>
     </div>
 </div>

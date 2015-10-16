@@ -5,7 +5,9 @@
     <div id="squid-api-{{type}}-model-widget-popup-container">
     <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
         {{#if create}}
-            <div class="create"></div>
+            <button type="button"  class="create btn btn-default">
+                Create {{type}}
+            </button>
         {{/if}}
         {{#if collectionAvailable}}
             {{#if selAvailable}}
@@ -20,6 +22,9 @@
                                     {{#if edit}}
                                         <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
                                     {{/if}}
+                                    {{#if refresh}}
+                                        <td class="refresh"><i class="fa fa-refresh"></i></td>
+                                    {{/if}}
                                     {{#if delete}}
                                         <td class="delete"><i class="fa fa-trash-o"></i></td>
                                     {{/if}}
@@ -31,13 +36,13 @@
                     </tbody>
                 </table>
             {{else}}
-                <div class="no-data">No {{type}}'s Available</div>
+                <div class="no-data">No {{type}} Available</div>
             {{/if}}
         </div>
     </div>
         {{else}}
             <div class="parent-missing">
-
+			Computing in progress...
             </div>
         {{/if}}
 </div>
