@@ -868,6 +868,11 @@ function program1(depth0,data) {
             if (options.type) {
                 this.type = options.type;
             }
+            if (options.config) {
+            	this.config = options.config;
+            } else {
+            	this.config = squid_api.model.config;
+            }
 
             // relations
             me.relations = new squid_api.model.RelationCollection();
@@ -894,6 +899,12 @@ function program1(depth0,data) {
                 this.collection.on("add change remove", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
+                }, this);
+                this.collection.on("remove", function(model) {
+                	var period = me.config.get("period");
+                	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
+                		me.config.unset("period");
+                	}
                 }, this);
                 if (! this.collection.fetched) {
                     if (squid_api.model.config.get("domain")) {
