@@ -900,12 +900,20 @@ function program1(depth0,data) {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
                 }, this);
+                this.collection.on("add", function(model) {
+                	var period = me.config.get("period");
+                	if (! period && model.get("valueType") == "DATE") {
+                		var obj = {"name":model.get("name"), "val":"@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'"};
+                        me.config.set("period",obj);
+                	}
+                });
                 this.collection.on("remove", function(model) {
                 	var period = me.config.get("period");
                 	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
                 		me.config.unset("period");
                 	}
                 }, this);
+                
                 if (! this.collection.fetched) {
                     if (squid_api.model.config.get("domain")) {
                         this.collection.parentId = {
