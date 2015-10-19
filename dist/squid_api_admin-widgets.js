@@ -1779,7 +1779,12 @@ function program1(depth0,data) {
                         }
 
                         suggestionEl.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
-                            var item = $(event.target).parent().find(".suggestion").html();
+                        	var item;
+                        	if ($(event.target).is("li")) {
+                        		item = $(event.target).find(".suggestion").html();
+                        	} else {
+                        		item = $(event.target).parent().find(".suggestion").html();
+                        	}
                             var str = suggestionEl.val().substring(0, offset) + item.substring(0);
                             suggestionEl.val(str);
                             me.suggestionBox(me);
