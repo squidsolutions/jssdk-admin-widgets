@@ -648,9 +648,7 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .refresh").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                if (me.model.definition == "Project") {
-                    squid_api.refreshDb(model);
-                }
+                squid_api.refreshObjectType(model);
             });
 
             // delete
@@ -687,7 +685,7 @@ function program1(depth0,data) {
             }
 
             // decide which models can be refreshed
-            if (this.model.definition == "Project") {
+            if (this.model.definition == "Project" || this.model.definition == "Domain") {
                 roles.refresh = true;
             }
 
