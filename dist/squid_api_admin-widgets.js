@@ -648,9 +648,7 @@ function program1(depth0,data) {
             $(".squid-api-" + this.type + "-model-widget-popup .refresh").on("click", function() {
                 var id = this.parentElement.dataset.attr;
                 var model = me.collection.get(id);
-                if (me.model.definition == "Project") {
-                    squid_api.refreshDb(model);
-                }
+                squid_api.refreshObjectType(model);
             });
 
             // delete
@@ -687,7 +685,7 @@ function program1(depth0,data) {
             }
 
             // decide which models can be refreshed
-            if (this.model.definition == "Project") {
+            if (this.model.definition == "Project" || this.model.definition == "Domain") {
                 roles.refresh = true;
             }
 
@@ -868,6 +866,11 @@ function program1(depth0,data) {
             if (options.type) {
                 this.type = options.type;
             }
+            if (options.config) {
+            	this.config = options.config;
+            } else {
+            	this.config = squid_api.model.config;
+            }
 
             // relations
             me.relations = new squid_api.model.RelationCollection();
@@ -895,6 +898,20 @@ function program1(depth0,data) {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
                 }, this);
+                this.collection.on("add", function(model) {
+                	var period = me.config.get("period");
+                	if (! period && model.get("valueType") == "DATE") {
+                		var obj = {"name":model.get("name"), "val":"@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'"};
+                        me.config.set("period",obj);
+                	}
+                });
+                this.collection.on("remove", function(model) {
+                	var period = me.config.get("period");
+                	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
+                		me.config.unset("period");
+                	}
+                }, this);
+                
                 if (! this.collection.fetched) {
                     if (squid_api.model.config.get("domain")) {
                         this.collection.parentId = {
@@ -1779,7 +1796,12 @@ function program1(depth0,data) {
                         }
 
                         suggestionEl.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
-                            var item = $(event.target).parent().find(".suggestion").html();
+                        	var item;
+                        	if ($(event.target).is("li")) {
+                        		item = $(event.target).find(".suggestion").html();
+                        	} else {
+                        		item = $(event.target).parent().find(".suggestion").html();
+                        	}
                             var str = suggestionEl.val().substring(0, offset) + item.substring(0);
                             suggestionEl.val(str);
                             me.suggestionBox(me);
