@@ -674,18 +674,17 @@ function program1(depth0,data) {
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false};
 
-            var modelRole = this.model.get("_role");
             var parentRole = this.parent.get("_role");
 
             // write role
-            if (modelRole == "WRITE" || modelRole == "OWNER" || parentRole == "OWNER" || parentRole == "WRITE") {
+            if (parentRole == "OWNER" || parentRole == "WRITE") {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
             }
 
             // decide which models can be refreshed
-            if (this.model.definition == "Project" || this.model.definition == "Domain") {
+            if ((this.model.definition == "Project" || this.model.definition == "Domain") && (parentRole == "OWNER" || parentRole == "WRITE")) {
                 roles.refresh = true;
             }
 
