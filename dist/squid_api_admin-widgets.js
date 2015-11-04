@@ -893,7 +893,7 @@ function program1(depth0,data) {
             });
 
             if (this.collection) {
-                this.collection.on("add change remove", function() {
+                this.collection.on("change", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
                 }, this);
@@ -985,7 +985,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset change remove sync", this.render, this);
+                    this.collection.on("reset add remove sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -1849,12 +1849,11 @@ function program1(depth0,data) {
             for (var x in me.model.schema) {
                 if (me.model.definition == "Relation") {
                     if ((x == "leftId" || x == "rightId")) {
+                    	var domains = me.parent.models;
+                    	var domainArray = [];
                         //reset left & rightId
                         me.model.schema[x].subSchema.domainId.options = [];
                         if (me.model.isNew()) {
-                            var domains = me.parent.models;
-                            var domainArray = [];
-
                             for (i = 0; i < domains.length; i++) {
                                 domainObj = {};
                                 domainObj.val = domains[i].get("oid");
@@ -1863,7 +1862,16 @@ function program1(depth0,data) {
                             }
                             me.model.schema[x].subSchema.domainId.options = domainArray;
                         } else {
-                            me.model.schema[x].subSchema.domainId.options = [me.model.get(x).domainId];
+                        	for (i = 0; i < domains.length; i++) {
+                        		if (me.model.get(x).domainId == domains[i].get("oid")) {
+                        			domainObj = {};
+                        			domainObj.val = domains[i].get("oid");
+                        			domainObj.label = domains[i].get("name");
+                        			domainArray.push(domainObj);
+                        			break;
+                        		}
+                            }
+                            me.model.schema[x].subSchema.domainId.options = domainArray;
                         }
                     }
                 }

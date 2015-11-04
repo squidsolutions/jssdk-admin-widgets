@@ -83,7 +83,7 @@
             });
 
             if (this.collection) {
-                this.collection.on("add change remove", function() {
+                this.collection.on("change", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
                 }, this);
