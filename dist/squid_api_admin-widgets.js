@@ -488,6 +488,12 @@ function program1(depth0,data) {
                 }
             });
             this.collection.on("reset change sync", this.render, this);
+            
+            this.collection.on("remove change", function() {
+            	if (me.model.definition == "Domain") {
+            		this.fetch();
+            	}
+            });
 
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.parent, "change", function() {
@@ -985,7 +991,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset add remove sync", this.render, this);
+                    this.collection.on("reset change remove sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
