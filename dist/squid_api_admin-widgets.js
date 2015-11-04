@@ -1570,7 +1570,7 @@ function program1(depth0,data) {
 
                         $.ajax({
                             type: "GET",
-                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
+                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
@@ -1989,7 +1989,7 @@ function program1(depth0,data) {
                 if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
                     $.ajax({
                         type: "GET",
-                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + formData.dbPassword,
+                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + encodeURIComponent(formData.dbPassword),
                         dataType: 'json',
                         contentType: 'application/json',
                         success: function (collection) {
