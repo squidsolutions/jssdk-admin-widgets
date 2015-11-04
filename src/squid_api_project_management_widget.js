@@ -41,7 +41,7 @@
                 if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
                     $.ajax({
                         type: "GET",
-                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + formData.dbPassword,
+                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + encodeURIComponent(formData.dbPassword),
                         dataType: 'json',
                         contentType: 'application/json',
                         success: function (collection) {

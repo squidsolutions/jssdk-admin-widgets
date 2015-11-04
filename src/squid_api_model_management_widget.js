@@ -305,7 +305,7 @@
 
                         $.ajax({
                             type: "GET",
-                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + dbPassword,
+                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
