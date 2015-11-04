@@ -893,7 +893,7 @@ function program1(depth0,data) {
             });
 
             if (this.collection) {
-                this.collection.on("add change remove", function() {
+                this.collection.on("change", function() {
                     squid_api.model.config.trigger("change:domain", squid_api.model.config);
                     this.collection.fetch();
                 }, this);
@@ -985,7 +985,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset change remove sync", this.render, this);
+                    this.collection.on("reset add remove sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
