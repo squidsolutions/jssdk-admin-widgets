@@ -1620,7 +1620,7 @@ function program1(depth0,data) {
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
-
+                    
                     // detect and add dbPassword placeholder
                     if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
                         var placeholder = "";
@@ -1675,6 +1675,9 @@ function program1(depth0,data) {
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
+            
+            // auto focus on the first enabled input element
+            $(this.formContent.el).find('input[type=text],textarea,select').filter(':visible:first').focus();
 
             // saveForm on 'ok' click
             $(this.formModal.el).find(".ok").on("click", function() {
