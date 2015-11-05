@@ -222,13 +222,23 @@ function program4(depth0,data) {
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " selected=\"selected\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</option>\n        ";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += " class=\"child";
+  if (helper = helpers.depth) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.depth); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
   return buffer;
   }
 
@@ -940,10 +950,33 @@ function program1(depth0,data) {
         },
 
         sortData : function(data) {
+            
+        	// build the parent index
+        	var lookup = {};
+            for (var ix1=0; ix1<data.length; ix1++)  {
+            	lookup[data[ix1].id]=data[ix1];
+            }
+            // build the sort name
+            for (var ix2=0; ix2<data.length; ix2++)  {
+            	var parentId = data[ix2].parentId;
+            	data[ix2].sortName = data[ix2].name;
+            	data[ix2].depth = 0;
+            	while (parentId) {
+            		var parent = lookup[parentId];
+            		if (parent) {
+	            		data[ix2].sortName = parent.name + "/" + data[ix2].sortName;
+	            		if (data[ix2].depth<5) data[ix2].depth++;
+	            		parentId = parent.parentId;
+            		} else {
+            			break;
+            		}
+            	}
+            }
+
         	// alphabetical sorting         
-        	data.sort(function(a, b){
-				 var nameA = a.name.toLowerCase();
-				 var nameB = b.name.toLowerCase();
+            data.sort(function(a, b){
+				 var nameA = a.sortName.toLowerCase();
+				 var nameB = b.sortName.toLowerCase();
 				 if (nameA < nameB)  {
 					 // sort string ascending        			 
 					 return -1;
@@ -953,21 +986,8 @@ function program1(depth0,data) {
 					 return 0; // no sorting
 				 }
         	});
-            
-        	// sort data into a hierarchy based on parentId
-            var updatedArray = [];
-            for (var ix=0; ix<data.length; ix++)  {
-                if (! data[ix].parentId) {
-                    updatedArray.push(data[ix]);
-                    for (ix1=0; ix1<data.length; ix1++) {
-                        if (data[ix1].parentId == data[ix].id) {
-                            updatedArray.push(data[ix1]);
-                        }
-                    }
-                }
-            }
 
-            return updatedArray;
+            return data;
         },
 
         viewData: function() {
