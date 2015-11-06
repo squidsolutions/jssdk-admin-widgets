@@ -234,7 +234,6 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.collection.create(this);
                             }
                         });
                     },

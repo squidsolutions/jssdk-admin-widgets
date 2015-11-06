@@ -1060,7 +1060,6 @@ function program1(depth0,data) {
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.collection.create(this);
                             }
                         });
                     },
@@ -1605,7 +1604,7 @@ function program1(depth0,data) {
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
                         var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
-
+                        
                         $.ajax({
                             type: "GET",
                             url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
