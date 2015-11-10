@@ -124,22 +124,44 @@
         },
 
         sortData : function(data) {
-            /*
-                sort data into a hierarchy based on parentId
-            */
-            var updatedArray = [];
-            for (var ix=0; ix<data.length; ix++)  {
-                if (! data[ix].parentId) {
-                    updatedArray.push(data[ix]);
-                    for (ix1=0; ix1<data.length; ix1++) {
-                        if (data[ix1].parentId == data[ix].id) {
-                            updatedArray.push(data[ix1]);
-                        }
-                    }
-                }
+            
+        	// build the parent index
+        	var lookup = {};
+            for (var ix1=0; ix1<data.length; ix1++)  {
+            	lookup[data[ix1].id]=data[ix1];
+            }
+            // build the sort name
+            for (var ix2=0; ix2<data.length; ix2++)  {
+            	var parentId = data[ix2].parentId;
+            	data[ix2].sortName = data[ix2].name;
+            	data[ix2].depth = 0;
+            	while (parentId) {
+            		var parent = lookup[parentId];
+            		if (parent) {
+	            		data[ix2].sortName = parent.name + "/" + data[ix2].sortName;
+	            		if (data[ix2].depth<5) data[ix2].depth++;
+	            		parentId = parent.parentId;
+            		} else {
+            			break;
+            		}
+            	}
             }
 
-            return updatedArray;
+        	// alphabetical sorting         
+            data.sort(function(a, b){
+				 var nameA = a.sortName.toLowerCase();
+				 var nameB = b.sortName.toLowerCase();
+				 if (nameA < nameB)  {
+					 // sort string ascending        			 
+					 return -1;
+				 } else if (nameA > nameB) {
+					 return 1;
+				 } else {
+					 return 0; // no sorting
+				 }
+        	});
+
+            return data;
         },
 
         viewData: function() {
@@ -212,7 +234,6 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.collection.create(this);
                             }
                         });
                     },

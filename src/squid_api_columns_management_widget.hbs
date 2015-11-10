@@ -4,7 +4,7 @@
             <option {{#if parentId}} class="child" {{/if}} value="{{id}}">{{name}}</option>
         {{/each}}
         {{#each nonDynamic}}
-            <option value="{{id}}" {{#if parentId}} class="child" {{/if}} selected="selected">{{name}}</option>
+            <option value="{{id}}" {{#if parentId}} class="child{{depth}}" {{/if}} selected="selected">{{name}}</option>
         {{/each}}
     </select>
     <div class="management">

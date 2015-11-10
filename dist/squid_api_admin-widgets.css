@@ -233,9 +233,26 @@
     margin-right: 10px;
 }
 
-.squid-api-admin-widget-columns-management select .child {
+.squid-api-admin-widget-columns-management select .child1 {
     padding-left: 20px;
 }
+
+.squid-api-admin-widget-columns-management select .child2 {
+    padding-left: 40px;
+}
+
+.squid-api-admin-widget-columns-management select .child3 {
+    padding-left: 60px;
+}
+
+.squid-api-admin-widget-columns-management select .child4 {
+    padding-left: 80px;
+}
+
+.squid-api-admin-widget-columns-management select .child5 {
+    padding-left: 100px;
+}
+
 
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;

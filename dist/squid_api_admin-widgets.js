@@ -222,13 +222,23 @@ function program4(depth0,data) {
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " selected=\"selected\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</option>\n        ";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += " class=\"child";
+  if (helper = helpers.depth) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.depth); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
   return buffer;
   }
 
@@ -488,6 +498,12 @@ function program1(depth0,data) {
                 }
             });
             this.collection.on("reset change sync", this.render, this);
+            
+            this.collection.on("remove change", function() {
+            	if (me.model.definition == "Domain") {
+            		this.fetch();
+            	}
+            });
 
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.parent, "change", function() {
@@ -934,22 +950,44 @@ function program1(depth0,data) {
         },
 
         sortData : function(data) {
-            /*
-                sort data into a hierarchy based on parentId
-            */
-            var updatedArray = [];
-            for (var ix=0; ix<data.length; ix++)  {
-                if (! data[ix].parentId) {
-                    updatedArray.push(data[ix]);
-                    for (ix1=0; ix1<data.length; ix1++) {
-                        if (data[ix1].parentId == data[ix].id) {
-                            updatedArray.push(data[ix1]);
-                        }
-                    }
-                }
+            
+        	// build the parent index
+        	var lookup = {};
+            for (var ix1=0; ix1<data.length; ix1++)  {
+            	lookup[data[ix1].id]=data[ix1];
+            }
+            // build the sort name
+            for (var ix2=0; ix2<data.length; ix2++)  {
+            	var parentId = data[ix2].parentId;
+            	data[ix2].sortName = data[ix2].name;
+            	data[ix2].depth = 0;
+            	while (parentId) {
+            		var parent = lookup[parentId];
+            		if (parent) {
+	            		data[ix2].sortName = parent.name + "/" + data[ix2].sortName;
+	            		if (data[ix2].depth<5) data[ix2].depth++;
+	            		parentId = parent.parentId;
+            		} else {
+            			break;
+            		}
+            	}
             }
 
-            return updatedArray;
+        	// alphabetical sorting         
+            data.sort(function(a, b){
+				 var nameA = a.sortName.toLowerCase();
+				 var nameB = b.sortName.toLowerCase();
+				 if (nameA < nameB)  {
+					 // sort string ascending        			 
+					 return -1;
+				 } else if (nameA > nameB) {
+					 return 1;
+				 } else {
+					 return 0; // no sorting
+				 }
+        	});
+
+            return data;
         },
 
         viewData: function() {
@@ -985,7 +1023,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset add remove sync", this.render, this);
+                    this.collection.on("reset change remove sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -1022,7 +1060,6 @@ function program1(depth0,data) {
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.collection.create(this);
                             }
                         });
                     },
@@ -1567,7 +1604,7 @@ function program1(depth0,data) {
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
                         var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
-
+                        
                         $.ajax({
                             type: "GET",
                             url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
@@ -1602,7 +1639,7 @@ function program1(depth0,data) {
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
-
+                    
                     // detect and add dbPassword placeholder
                     if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
                         var placeholder = "";
@@ -1657,6 +1694,9 @@ function program1(depth0,data) {
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
+            
+            // auto focus on the first enabled input element
+            $(this.formContent.el).find('input[type=text],textarea,select').filter(':visible:first').focus();
 
             // saveForm on 'ok' click
             $(this.formModal.el).find(".ok").on("click", function() {

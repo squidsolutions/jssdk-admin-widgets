@@ -302,7 +302,7 @@
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
                         var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
-
+                        
                         $.ajax({
                             type: "GET",
                             url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
@@ -337,7 +337,7 @@
                 },
                 render: function() {
                     this.$el.html(me.formContent.el);
-
+                    
                     // detect and add dbPassword placeholder
                     if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
                         var placeholder = "";
@@ -392,6 +392,9 @@
 
             // modal definition class
             $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
+            
+            // auto focus on the first enabled input element
+            $(this.formContent.el).find('input[type=text],textarea,select').filter(':visible:first').focus();
 
             // saveForm on 'ok' click
             $(this.formModal.el).find(".ok").on("click", function() {

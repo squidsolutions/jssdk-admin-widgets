@@ -58,6 +58,12 @@
                 }
             });
             this.collection.on("reset change sync", this.render, this);
+            
+            this.collection.on("remove change", function() {
+            	if (me.model.definition == "Domain") {
+            		this.fetch();
+            	}
+            });
 
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.parent, "change", function() {
