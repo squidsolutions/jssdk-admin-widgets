@@ -910,8 +910,11 @@ function program1(depth0,data) {
 
             if (this.collection) {
                 this.collection.on("change", function() {
-                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
-                    this.collection.fetch();
+                    this.collection.fetch({
+                    	success: function() {
+                    		me.config.trigger("change:domain", me.config);
+                    	}
+                    });
                 }, this);
                 this.collection.on("add", function(model) {
                 	var period = me.config.get("period");
@@ -922,8 +925,10 @@ function program1(depth0,data) {
                 });
                 this.collection.on("remove", function(model) {
                 	var period = me.config.get("period");
-                	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
-                		me.config.unset("period");
+                	if (period) {
+                		if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
+                    		me.config.unset("period");
+                    	}
                 	}
                 }, this);
                 
@@ -1125,32 +1130,29 @@ function program1(depth0,data) {
                         }
                         // check nonDynamic Data
                         var model;
+                        var forceChange = false;
                         for (i=0; i<nonDynamic.length; i++) {
                             model = this.collection.get($(nonDynamic[i]).val());
-                            console.log(model.get("name") + " = non Dynamic");
                             if (model.get("dynamic") === true) {
+                            	forceChange = true;
                                 model.set({"dynamic":false},{silent: true});
                             }
                         }
                         // check dynamic Data
                         for (i=0; i<dynamic.length; i++) {
                             model = this.collection.get($(dynamic[i]).val());
-                            console.log(model.get("name") + " = dynamic");
                             if (model.get("dynamic") === false) {
+                            	forceChange = true;
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
-                        // save changed models to the server
-                        var changedModels = 0;
-                        for (i=0; i<this.collection.models.length; i++) {
-                            if (this.collection.models[i].hasChanged()) {
-                                changedModels++;
-                                this.collection.models[i].save();
-                            }
-                        }
-                        if (changedModels > 0) {
-                            this.collection.trigger("change");
-                        }
+                        
+                        // update all models at the same time                        
+                        this.collection.saveAll(this.collection.models).then(function() {
+                        	if (forceChange) {
+                        		me.collection.trigger("change");
+                        	}
+                        });
                     }
                 },
                 render: function() {
