@@ -60,6 +60,16 @@
             } else {
             	this.config = squid_api.model.config;
             }
+            if (options.filters) {
+            	this.filters = options.filters;
+            } else {
+            	this.filters = squid_api.model.filters;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
+            }
 
             // relations
             me.relations = new squid_api.model.RelationCollection();
@@ -83,34 +93,47 @@
             });
 
             if (this.collection) {
-                this.collection.on("change", function() {
-                    this.collection.fetch({
-                    	success: function() {
-                    		me.config.trigger("change:domain", me.config);
-                    	}
-                    });
+                this.collection.on("add remove change", function() {
+                	// check dimensions and facet selections                	
+                	if (me.model.definition == "Dimension") {
+            			var selection = me.filters.get("selection");
+            			var period = me.config.get("period");
+            			var domain = me.config.get("domain");
+            			if (selection) {
+            				var facets = selection.facets;
+            				if (facets) {
+            					var updatedFacets = [];
+            					for (var i=0; i<facets.length; i++) {
+                					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
+                						// if currently stored period matches removed dimension, remove it
+                						if (period) {
+                							if (period[domain]) {
+                								if (period[domain].id == facets[i].id) {
+                									delete period[domain];
+                									me.config.set("period", period);
+                								}
+                							}
+                						}
+                						
+                						// update selection                						
+                						selection.facets.splice(i, 1);               						
+                						me.filters.set("userSelection", selection);
+                					}
+                				}
+            				}
+            			}
+            		}
+        			this.collection.fetch({
+        				success: function() {
+        					me.render();
+        				}
+        			});
                 }, this);
-                this.collection.on("add", function(model) {
-                	var period = me.config.get("period");
-                	if (! period && model.get("valueType") == "DATE") {
-                		var obj = {"name":model.get("name"), "val":"@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'"};
-                        me.config.set("period",obj);
-                	}
-                });
-                this.collection.on("remove", function(model) {
-                	var period = me.config.get("period");
-                	if (period) {
-                		if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
-                    		me.config.unset("period");
-                    	}
-                	}
-                }, this);
-                
                 if (! this.collection.fetched) {
-                    if (squid_api.model.config.get("domain")) {
+                    if (me.config.get("domain")) {
                         this.collection.parentId = {
-                                projectId : squid_api.model.config.get("project"),
-                                domainId : squid_api.model.config.get("domain")
+                        	projectId : me.config.get("project"),
+                        	domainId : me.config.get("domain")
                         };
                         this.collection.fetch();
                     }
@@ -248,7 +271,7 @@
                         if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                             if (true) {
                                 model.destroy({
-                                    success:function(collection) {
+                                    success:function() {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                     }
