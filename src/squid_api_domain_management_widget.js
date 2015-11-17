@@ -11,14 +11,21 @@
         project : new squid_api.model.ProjectModel(),
 
         initialize: function(options) {
-            this.config = squid_api.model.config;
-            if (options) {
-                if (options.createOnlyView) {
-                    this.createOnlyView = true;
-                }
-                if (options.options) {
-                    this.config = options.config;
-                }
+        	if (options.config) {
+        		this.config = options.config;
+        	} else {
+        		this.config = squid_api.model.config;
+        	}
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
+            if (options.options) {
+                this.config = options.config;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
             }
             this.listenTo(this.config, "change:domain", this.setDomain);
             this.listenTo(this.config, "change:project", this.setProject);
@@ -40,7 +47,7 @@
                 this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
                 this.domain.fetch({
                     error: function(xhr) {
-                        squid_api.model.status.set({"error":xhr});
+                        me.status.set({"error":xhr});
                     }
                 });
             } else {
@@ -49,6 +56,8 @@
         },
 
         render: function() {
+        	var me = this;
+        	
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -61,7 +70,7 @@
                     var collection = new squid_api.model.DomainCollection();
                     collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
+                    me.status.set({'message' : message});
 
                     if (!value) {
                         value = this.get("id").domainId;
@@ -78,7 +87,7 @@
                     if (!value) {
                         value = this.get("id").domainId;
                     }
-                    squid_api.model.config.set({
+                    me.config.set({
                         "domain" : value
                     });
                 };
