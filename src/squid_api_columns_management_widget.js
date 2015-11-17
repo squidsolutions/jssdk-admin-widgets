@@ -122,12 +122,15 @@
                 				}
             				}
             			}
+            		} else if (me.model.definition == "Metric") {
+            			me.config.trigger("change:domain", me.config);
             		}
-        			this.collection.fetch({
+                	this.collection.fetch({
         				success: function() {
         					me.render();
         				}
         			});
+        			
                 }, this);
                 if (! this.collection.fetched) {
                     if (me.config.get("domain")) {
