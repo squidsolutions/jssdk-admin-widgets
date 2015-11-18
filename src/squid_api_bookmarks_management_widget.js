@@ -9,12 +9,27 @@
         createOnlyView : false,
         autoOpen : null,
         parent : null,
+        changeEventHandler : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
-            if (options.autoOpen) {
-                this.autoOpen = true;
+            if (options) {
+                if (options.autoOpen) {
+                    this.autoOpen = true;
+                }
+                if (options.changeEventHandler) {
+                    this.changeEventHandler = options.changeEventHandler;
+                }
             }
+            
+            if (!this.changeEventHandler) {
+                this.changeEventHandler = function(value) {
+                    if (value) {
+                        squid_api.setBookmarkId(value);
+                    }
+                };
+            }
+            
             this.model = new squid_api.model.BookmarkModel();
             this.parent = new squid_api.model.ProjectModel();
             
@@ -49,6 +64,7 @@
         render: function() {
             var me = this;
 
+            // Build the CollectionManagementWidget
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Bookmark",
@@ -56,17 +72,8 @@
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
+                "changeEventHandler" : this.changeEventHandler
             };
-
-            var successHandler = function(value) {
-                if (value) {
-                    squid_api.model.config.set({
-                        "bookmark" : value
-                    });
-                }
-            };
-            
-            viewOptions.changeEventHandler  = successHandler;
             var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
             return this;

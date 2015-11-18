@@ -449,12 +449,27 @@ function program1(depth0,data) {
         createOnlyView : false,
         autoOpen : null,
         parent : null,
+        changeEventHandler : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
-            if (options.autoOpen) {
-                this.autoOpen = true;
+            if (options) {
+                if (options.autoOpen) {
+                    this.autoOpen = true;
+                }
+                if (options.changeEventHandler) {
+                    this.changeEventHandler = options.changeEventHandler;
+                }
             }
+            
+            if (!this.changeEventHandler) {
+                this.changeEventHandler = function(value) {
+                    if (value) {
+                        squid_api.setBookmarkId(value);
+                    }
+                };
+            }
+            
             this.model = new squid_api.model.BookmarkModel();
             this.parent = new squid_api.model.ProjectModel();
             
@@ -489,6 +504,7 @@ function program1(depth0,data) {
         render: function() {
             var me = this;
 
+            // Build the CollectionManagementWidget
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Bookmark",
@@ -496,17 +512,8 @@ function program1(depth0,data) {
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
+                "changeEventHandler" : this.changeEventHandler
             };
-
-            var successHandler = function(value) {
-                if (value) {
-                    squid_api.model.config.set({
-                        "bookmark" : value
-                    });
-                }
-            };
-            
-            viewOptions.changeEventHandler  = successHandler;
             var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
             return this;
@@ -1705,11 +1712,16 @@ function program1(depth0,data) {
         },
 
         setValue: function(value) {
-            // beautify json string
-            var json = JSON.parse(value);
-            var val = JSON.stringify(json, null, 4);
+            // beautify json value
+            var val = JSON.stringify(value, null, 4);
             this.$el.val(val);
-        }
+        },
+        
+        getValue: function() {
+            // transform text value to json
+            var json = JSON.parse(this.$el.val());
+            return json;
+        },
     });
     
     // Register custom editors

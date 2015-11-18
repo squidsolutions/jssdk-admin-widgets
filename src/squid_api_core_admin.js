@@ -391,11 +391,16 @@
         },
 
         setValue: function(value) {
-            // beautify json string
-            var json = JSON.parse(value);
-            var val = JSON.stringify(json, null, 4);
+            // beautify json value
+            var val = JSON.stringify(value, null, 4);
             this.$el.val(val);
-        }
+        },
+        
+        getValue: function() {
+            // transform text value to json
+            var json = JSON.parse(this.$el.val());
+            return json;
+        },
     });
     
     // Register custom editors
