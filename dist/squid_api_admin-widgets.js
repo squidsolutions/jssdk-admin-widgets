@@ -439,6 +439,85 @@ function program1(depth0,data) {
   return buffer;
   });
 (function (root, factory) {
+    root.squid_api.view.BookmarksManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        config : null,
+        createOnlyView : false,
+        autoOpen : null,
+        parent : null,
+
+        initialize: function(options) {
+            this.config = squid_api.model.config;
+            if (options.autoOpen) {
+                this.autoOpen = true;
+            }
+            this.model = new squid_api.model.BookmarkModel();
+            this.parent = new squid_api.model.ProjectModel();
+            
+            this.listenTo(this.config, "change:bookmark", this.setModel);
+            this.listenTo(this.config, "change:project", this.setParent);
+            this.render();
+        },
+
+        setParent : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            this.parent.set({"id" : {"projectId" : projectId}});
+            this.parent.fetch();
+        },
+           
+        setModel : function() {
+            var me = this;
+            var projectId = this.config.get("project");
+            var bookmarkId = this.config.get("bookmark");
+            if (bookmarkId) {
+                this.model.set({"id" : {"projectId" : projectId, "bookmarkId" : bookmarkId}});
+                this.model.fetch({
+                    error: function(xhr) {
+                        squid_api.model.status.set({"error":xhr});
+                    }
+                });
+            } else {
+                this.model.set({"id" : null});
+            }
+        },
+        
+        render: function() {
+            var me = this;
+
+            var viewOptions = {
+                "el" : this.$el,
+                "type" : "Bookmark",
+                "model" : this.model,
+                "parent" : this.parent,
+                "createOnlyView" : this.createOnlyView,
+                "autoOpen" : this.autoOpen,
+            };
+
+            var successHandler = function(value) {
+                if (value) {
+                    squid_api.model.config.set({
+                        "bookmark" : value
+                    });
+                }
+            };
+            
+            viewOptions.changeEventHandler  = successHandler;
+            var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
+            
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.CollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -493,8 +572,8 @@ function program1(depth0,data) {
             this.updateCollection();
 
             this.collection.on("remove", function(model) {
-                if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
-                    squid_api.model.config.unset(me.model.definition.toLowerCase());
+                if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
+                    me.config.unset(me.model.definition.toLowerCase());
                 }
             });
             this.collection.on("reset change sync", this.render, this);
@@ -886,6 +965,16 @@ function program1(depth0,data) {
             } else {
             	this.config = squid_api.model.config;
             }
+            if (options.filters) {
+            	this.filters = options.filters;
+            } else {
+            	this.filters = squid_api.model.filters;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
+            }
 
             // relations
             me.relations = new squid_api.model.RelationCollection();
@@ -909,33 +998,63 @@ function program1(depth0,data) {
             });
 
             if (this.collection) {
-                this.collection.on("change", function() {
-                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
-                    this.collection.fetch();
-                }, this);
-                this.collection.on("add", function(model) {
-                	var period = me.config.get("period");
-                	if (! period && model.get("valueType") == "DATE") {
-                		var obj = {"name":model.get("name"), "val":"@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'"};
-                        me.config.set("period",obj);
-                	}
-                });
-                this.collection.on("remove", function(model) {
-                	var period = me.config.get("period");
-                	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
-                		me.config.unset("period");
-                	}
-                }, this);
-                
-                if (! this.collection.fetched) {
-                    if (squid_api.model.config.get("domain")) {
+            	if (! this.collection.fetched) {
+                    if (me.config.get("domain")) {
                         this.collection.parentId = {
-                                projectId : squid_api.model.config.get("project"),
-                                domainId : squid_api.model.config.get("domain")
+                        	projectId : me.config.get("project"),
+                        	domainId : me.config.get("domain")
                         };
                         this.collection.fetch();
                     }
                 }
+                this.collection.on("add remove change", function() {
+                	/*
+						for dimensions: 
+							1. remove period config
+							2. set user selection based on what models are found in the collection returned
+						
+						for dimensions & metrics:
+							1. refresh the domain
+							2. re-fetch the collection
+                	 */              	
+                	if (me.model.definition == "Dimension") {
+            			var selection = me.filters.get("selection");
+            			var period = me.config.get("period");
+            			var domain = me.config.get("domain");
+            			if (selection) {
+            				var facets = selection.facets;
+            				if (facets) {
+            					var updatedFacets = [];
+            					for (var i=0; i<facets.length; i++) {
+                					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
+                						// reset period if facet not found  
+                						if (period) {
+                							if (period[domain]) {
+                								if (period[domain].id == facets[i].id) {
+                									delete period[domain];
+                									me.config.set("period", period);
+                								}
+                							}
+                						}
+                						// reset user selection if facet not found             						
+                						selection.facets.splice(i, 1);               						
+                						me.filters.set("userSelection", selection);
+                					}
+                				}
+            				}
+            			}
+            		}
+                	// to update domain collection & update metric list            	
+                	me.config.trigger("change:domain", me.config);
+                	
+                	// triggers a "change" event if the server's state differs from the current attributes
+                	this.collection.fetch({
+        				success: function() {
+        					me.render();
+        				}
+        			});
+        			
+                }, this);
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -1069,7 +1188,7 @@ function program1(depth0,data) {
                         if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                             if (true) {
                                 model.destroy({
-                                    success:function(collection) {
+                                    success:function() {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                     }
@@ -1125,32 +1244,29 @@ function program1(depth0,data) {
                         }
                         // check nonDynamic Data
                         var model;
+                        var forceChange = false;
                         for (i=0; i<nonDynamic.length; i++) {
                             model = this.collection.get($(nonDynamic[i]).val());
-                            console.log(model.get("name") + " = non Dynamic");
                             if (model.get("dynamic") === true) {
+                            	forceChange = true;
                                 model.set({"dynamic":false},{silent: true});
                             }
                         }
                         // check dynamic Data
                         for (i=0; i<dynamic.length; i++) {
                             model = this.collection.get($(dynamic[i]).val());
-                            console.log(model.get("name") + " = dynamic");
                             if (model.get("dynamic") === false) {
+                            	forceChange = true;
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
-                        // save changed models to the server
-                        var changedModels = 0;
-                        for (i=0; i<this.collection.models.length; i++) {
-                            if (this.collection.models[i].hasChanged()) {
-                                changedModels++;
-                                this.collection.models[i].save();
-                            }
-                        }
-                        if (changedModels > 0) {
-                            this.collection.trigger("change");
-                        }
+                        
+                        // update all models at the same time                        
+                        this.collection.saveAll(this.collection.models).then(function() {
+                        	if (forceChange) {
+                        		me.collection.trigger("change");
+                        	}
+                        });
                     }
                 },
                 render: function() {
@@ -1206,6 +1322,410 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    factory(root.Backbone, root.squid_api);
+}(this, function (Backbone, squid_api) {
+
+    squid_api.model.ProjectModel.prototype.definition = "Project";
+    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
+                                                                'accessRights', 'config', 'relations', 'domains' ];
+    squid_api.model.ProjectModel.prototype.schema = {
+            "id" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "hidden"
+                    }
+                },
+                "editorClass" : "hidden",
+                "fieldClass" : "id"
+            },
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "dbUrl" : {
+                "title" : "Database URL",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 1,
+                "fieldClass" : "dbUrl"
+            },
+            "dbUser" : {
+                "title" : "Database User",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 2,
+                "fieldClass" : "dbUser"
+            },
+            "dbPassword" : {
+                "title" : "Database Password",
+                "type" : "Password",
+                "editorClass" : "form-control",
+                "position" : 3,
+                "fieldClass" : "dbPassword"
+            },
+            "dbSchemas" : {
+                "title" : "Database Schemas",
+                "type" : "Checkboxes",
+                "editorClass" : " ",
+                "options" : [],
+                "position" : 4,
+                "fieldClass" : "dbSchemas"
+            }
+    };
+
+
+    squid_api.model.DomainModel.prototype.definition = "Domain";
+    squid_api.model.DomainModel.prototype.ignoredAttributes = [
+                                                               'accessRights', 'dimensions', 'metrics' ];
+    squid_api.model.DomainModel.prototype.schema = {
+            "id" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    }
+                },
+                "editorClass" : "hidden",
+                "fieldClass" : "id"
+            },
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "subject" : {
+                "type" : "Object",
+                "title" : "",
+                "subSchema" : {
+                    "value" : {
+                        "title" : "Subject Value",
+                        "type" : "TextArea",
+                        "editorClass" : "form-control suggestion-box"
+                    }
+                },
+                "position" : 1,
+                "fieldClass" : "subject"
+            }
+    };
+
+    squid_api.model.RelationModel.prototype.definition = "Relation";
+    squid_api.model.RelationModel.prototype.ignoredAttributes = [ 'accessRights' ];
+    squid_api.model.RelationModel.prototype.schema = {
+            "id" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "title" : " ",
+                        "editorClass" : "hidden"
+                    },
+                    "relationId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    }
+                },
+                "editorClass" : "hidden",
+                "fieldClass" : "id"
+            },
+            "leftId" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "title" : " ",
+                        "editorClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Select",
+                        "editorClass" : "form-control",
+                        "title" : "Left Domain"
+                    }
+                },
+                "fieldClass" : "leftId"
+            },
+            "leftCardinality" : {
+                "type" : "Select",
+                "editorClass" : "form-control",
+                "options" : [ "ZERO_OR_ONE", "ONE", "MANY" ],
+                "fieldClass" : "leftCardinality"
+            },
+            "rightCardinality" : {
+                "type" : "Select",
+                "editorClass" : "form-control",
+                "options" : [ "ZERO_OR_ONE", "ONE", "MANY" ],
+                "fieldClass" : "rightCardinality"
+            },
+            "rightId" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "title" : " ",
+                        "editorClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Select",
+                        "editorClass" : "form-control",
+                        "title" : "Right Domain"
+                    }
+                },
+                "fieldClass" : "rightId"
+            },
+            "leftName" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "leftName"
+            },
+            "rightName" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "rightName"
+            },
+            "joinExpression" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "value" : {
+                        "title" : "Join Expression",
+                        "type" : "TextArea",
+                        "editorClass" : "form-control suggestion-box"
+                    }
+                },
+                "fieldClass" : "joinExpression"
+            }
+    };
+
+    squid_api.model.DimensionModel.prototype.definition = "Dimension";
+    squid_api.model.DimensionModel.prototype.ignoredAttributes = [
+                                                                  'options', 'accessRights', 'dynamic', 'attributes',
+                                                                  'valueType' ];
+    squid_api.model.DimensionModel.prototype.schema = {
+            "id" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    },
+                    "dimensionId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    }
+                },
+                "editorClass" : "hidden",
+                "fieldClass" : "id"
+            },
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "type" : {
+                "type" : "Checkboxes",
+                "editorClass" : " ",
+                "options" : [ {
+                    "val" : "CATEGORICAL",
+                    "label" : "Indexed"
+                }, {
+                    "val" : "CONTINUOUS",
+                    "label" : "Period"
+                } ],
+                "position" : 1,
+                "fieldClass" : "type"
+            },
+            "parentId" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "hidden",
+                        "fieldClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control",
+                        "fieldClass" : "hidden"
+                    },
+                    "dimensionId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control",
+                        "title" : "Parent Dimension"
+                    }
+                },
+                "position" : 2,
+                "fieldClass" : "parentId"
+            },
+            "expression" : {
+                "type" : "Object",
+                title : "",
+                "subSchema" : {
+                    "value" : {
+                        "type" : "TextArea",
+                        "editorClass" : "form-control suggestion-box",
+                        "title" : "Expression Value"
+                    }
+                },
+                "position" : 3,
+                "fieldClass" : "expression"
+            }
+    };
+
+    squid_api.model.DimensionModel.prototype.definition = "Metric";
+    squid_api.model.DimensionModel.prototype.schema = {
+            "id" : {
+                "title" : " ",
+                "type" : "Object",
+                "subSchema" : {
+                    "projectId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "hidden"
+                    },
+                    "domainId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    },
+                    "metricId" : {
+                        "options" : [],
+                        "type" : "Text",
+                        "editorClass" : "form-control"
+                    }
+                },
+                "editorClass" : "hidden",
+                "fieldClass" : "id"
+            },
+            "dynamic" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "dynamic hidden"
+            },
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "expression" : {
+                "title" : "",
+                "type" : "Object",
+                "subSchema" : {
+                    "value" : {
+                        "title" : "Expression Value",
+                        "type" : "TextArea",
+                        "editorClass" : "form-control suggestion-box"
+                    }
+                },
+                "position" : 1,
+                "fieldClass" : "expression"
+            }
+    };
+
+    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
+    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
+    squid_api.model.BookmarkModel.prototype.schema = {
+        "id" : {
+            "title" : " ",
+            "type" : "Object",
+            "subSchema" : {
+                "projectId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "hidden"
+                },
+                "bookmarkId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "form-control"
+                }
+            },
+            "editorClass" : "hidden",
+            "fieldClass" : "id"
+        },
+        "name" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "name"
+        },
+        "description" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "description"
+        },
+        "path" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "path"
+        },
+        "config" : {
+            "type" : "JsonTextArea",
+            "title" : "Config",
+            "position" : 1,
+            "fieldClass" : "config",
+            "editorClass" : "form-control"
+        }
+    };
+
+    // Define "jsonTextArea" Custom Editor
+    var jsonTextArea = Backbone.Form.editors.Text.extend({
+
+        tagName: 'textarea',
+
+        /**
+         * Override Text constructor so type property isn't set (issue #261)
+         */
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            this.$el.attr("rows", 3);
+        },
+
+        setValue: function(value) {
+            // beautify json string
+            var json = JSON.parse(value);
+            var val = JSON.stringify(json, null, 4);
+            this.$el.val(val);
+        }
+    });
+    
+    // Register custom editors
+    Backbone.Form.editors.JsonTextArea = jsonTextArea;
+}));
+
+(function (root, factory) {
     root.squid_api.view.DomainManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api, template) {
@@ -1218,14 +1738,21 @@ function program1(depth0,data) {
         project : new squid_api.model.ProjectModel(),
 
         initialize: function(options) {
-            this.config = squid_api.model.config;
-            if (options) {
-                if (options.createOnlyView) {
-                    this.createOnlyView = true;
-                }
-                if (options.options) {
-                    this.config = options.config;
-                }
+        	if (options.config) {
+        		this.config = options.config;
+        	} else {
+        		this.config = squid_api.model.config;
+        	}
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
+            if (options.options) {
+                this.config = options.config;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
             }
             this.listenTo(this.config, "change:domain", this.setDomain);
             this.listenTo(this.config, "change:project", this.setProject);
@@ -1247,7 +1774,7 @@ function program1(depth0,data) {
                 this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
                 this.domain.fetch({
                     error: function(xhr) {
-                        squid_api.model.status.set({"error":xhr});
+                        me.status.set({"error":xhr});
                     }
                 });
             } else {
@@ -1256,6 +1783,8 @@ function program1(depth0,data) {
         },
 
         render: function() {
+        	var me = this;
+        	
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -1268,7 +1797,7 @@ function program1(depth0,data) {
                     var collection = new squid_api.model.DomainCollection();
                     collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
+                    me.status.set({'message' : message});
 
                     if (!value) {
                         value = this.get("id").domainId;
@@ -1285,7 +1814,7 @@ function program1(depth0,data) {
                     if (!value) {
                         value = this.get("id").domainId;
                     }
-                    squid_api.model.config.set({
+                    me.config.set({
                         "domain" : value
                     });
                 };
@@ -2011,6 +2540,21 @@ function program1(depth0,data) {
             if (options.autoOpen) {
                 this.autoOpen = true;
             }
+            if (options.config) {
+            	this.config = options.config;
+            } else {
+            	this.config = squid_api.model.config;
+            }
+            if (options.project) {
+            	this.project = options.project;
+            } else {
+            	this.project = squid_api.model.project;
+            }
+            if (options.customer) {
+            	this.customer = options.customer;
+            } else {
+            	this.customer = squid_api.model.customer;
+            }         	
             this.render();
         },
 
@@ -2058,8 +2602,8 @@ function program1(depth0,data) {
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Project",
-                "model" : squid_api.model.project,
-                "parent" : squid_api.model.customer,
+                "model" : this.project,
+                "parent" : this.customer,
                 "schemasCallback" : this.getDbSchemas,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
@@ -2069,16 +2613,17 @@ function program1(depth0,data) {
                 if (!value) {
                     value = this.get("id").projectId;
                 }
-                if (value === squid_api.model.config.get("project")) {
-                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                if (value === me.config.get("project")) {
+                    me.config.trigger("change:project", me.config);
                 } else {
                     // update the config
-                    squid_api.model.config.set({"project" : value, "domain" : null});
+                    me.config.set({"project" : value, "domain" : null});
                 }
                 // trigger a customer change
-                squid_api.model.customer.trigger("change");
+                me.customer.trigger("change");
             };
-
+            
+            /* Creating a new project or managing a collection */           
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";

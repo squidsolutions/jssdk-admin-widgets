@@ -60,6 +60,16 @@
             } else {
             	this.config = squid_api.model.config;
             }
+            if (options.filters) {
+            	this.filters = options.filters;
+            } else {
+            	this.filters = squid_api.model.filters;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
+            }
 
             // relations
             me.relations = new squid_api.model.RelationCollection();
@@ -83,33 +93,63 @@
             });
 
             if (this.collection) {
-                this.collection.on("change", function() {
-                    squid_api.model.config.trigger("change:domain", squid_api.model.config);
-                    this.collection.fetch();
-                }, this);
-                this.collection.on("add", function(model) {
-                	var period = me.config.get("period");
-                	if (! period && model.get("valueType") == "DATE") {
-                		var obj = {"name":model.get("name"), "val":"@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'"};
-                        me.config.set("period",obj);
-                	}
-                });
-                this.collection.on("remove", function(model) {
-                	var period = me.config.get("period");
-                	if (period.val == "@'" + model.get("id").domainId + "'.@'" + model.get("id").dimensionId + "'") {
-                		me.config.unset("period");
-                	}
-                }, this);
-                
-                if (! this.collection.fetched) {
-                    if (squid_api.model.config.get("domain")) {
+            	if (! this.collection.fetched) {
+                    if (me.config.get("domain")) {
                         this.collection.parentId = {
-                                projectId : squid_api.model.config.get("project"),
-                                domainId : squid_api.model.config.get("domain")
+                        	projectId : me.config.get("project"),
+                        	domainId : me.config.get("domain")
                         };
                         this.collection.fetch();
                     }
                 }
+                this.collection.on("add remove change", function() {
+                	/*
+						for dimensions: 
+							1. remove period config
+							2. set user selection based on what models are found in the collection returned
+						
+						for dimensions & metrics:
+							1. refresh the domain
+							2. re-fetch the collection
+                	 */              	
+                	if (me.model.definition == "Dimension") {
+            			var selection = me.filters.get("selection");
+            			var period = me.config.get("period");
+            			var domain = me.config.get("domain");
+            			if (selection) {
+            				var facets = selection.facets;
+            				if (facets) {
+            					var updatedFacets = [];
+            					for (var i=0; i<facets.length; i++) {
+                					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
+                						// reset period if facet not found  
+                						if (period) {
+                							if (period[domain]) {
+                								if (period[domain].id == facets[i].id) {
+                									delete period[domain];
+                									me.config.set("period", period);
+                								}
+                							}
+                						}
+                						// reset user selection if facet not found             						
+                						selection.facets.splice(i, 1);               						
+                						me.filters.set("userSelection", selection);
+                					}
+                				}
+            				}
+            			}
+            		}
+                	// to update domain collection & update metric list            	
+                	me.config.trigger("change:domain", me.config);
+                	
+                	// triggers a "change" event if the server's state differs from the current attributes
+                	this.collection.fetch({
+        				success: function() {
+        					me.render();
+        				}
+        			});
+        			
+                }, this);
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -243,7 +283,7 @@
                         if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                             if (true) {
                                 model.destroy({
-                                    success:function(collection) {
+                                    success:function() {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                     }
@@ -299,32 +339,29 @@
                         }
                         // check nonDynamic Data
                         var model;
+                        var forceChange = false;
                         for (i=0; i<nonDynamic.length; i++) {
                             model = this.collection.get($(nonDynamic[i]).val());
-                            console.log(model.get("name") + " = non Dynamic");
                             if (model.get("dynamic") === true) {
+                            	forceChange = true;
                                 model.set({"dynamic":false},{silent: true});
                             }
                         }
                         // check dynamic Data
                         for (i=0; i<dynamic.length; i++) {
                             model = this.collection.get($(dynamic[i]).val());
-                            console.log(model.get("name") + " = dynamic");
                             if (model.get("dynamic") === false) {
+                            	forceChange = true;
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
-                        // save changed models to the server
-                        var changedModels = 0;
-                        for (i=0; i<this.collection.models.length; i++) {
-                            if (this.collection.models[i].hasChanged()) {
-                                changedModels++;
-                                this.collection.models[i].save();
-                            }
-                        }
-                        if (changedModels > 0) {
-                            this.collection.trigger("change");
-                        }
+                        
+                        // update all models at the same time                        
+                        this.collection.saveAll(this.collection.models).then(function() {
+                        	if (forceChange) {
+                        		me.collection.trigger("change");
+                        	}
+                        });
                     }
                 },
                 render: function() {

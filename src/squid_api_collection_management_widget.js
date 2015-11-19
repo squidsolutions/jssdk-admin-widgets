@@ -53,8 +53,8 @@
             this.updateCollection();
 
             this.collection.on("remove", function(model) {
-                if (model.get("oid") == squid_api.model.config.get(me.model.definition.toLowerCase())) {
-                    squid_api.model.config.unset(me.model.definition.toLowerCase());
+                if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
+                    me.config.unset(me.model.definition.toLowerCase());
                 }
             });
             this.collection.on("reset change sync", this.render, this);

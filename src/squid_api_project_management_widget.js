@@ -15,6 +15,21 @@
             if (options.autoOpen) {
                 this.autoOpen = true;
             }
+            if (options.config) {
+            	this.config = options.config;
+            } else {
+            	this.config = squid_api.model.config;
+            }
+            if (options.project) {
+            	this.project = options.project;
+            } else {
+            	this.project = squid_api.model.project;
+            }
+            if (options.customer) {
+            	this.customer = options.customer;
+            } else {
+            	this.customer = squid_api.model.customer;
+            }         	
             this.render();
         },
 
@@ -62,8 +77,8 @@
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Project",
-                "model" : squid_api.model.project,
-                "parent" : squid_api.model.customer,
+                "model" : this.project,
+                "parent" : this.customer,
                 "schemasCallback" : this.getDbSchemas,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
@@ -73,16 +88,17 @@
                 if (!value) {
                     value = this.get("id").projectId;
                 }
-                if (value === squid_api.model.config.get("project")) {
-                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                if (value === me.config.get("project")) {
+                    me.config.trigger("change:project", me.config);
                 } else {
                     // update the config
-                    squid_api.model.config.set({"project" : value, "domain" : null});
+                    me.config.set({"project" : value, "domain" : null});
                 }
                 // trigger a customer change
-                squid_api.model.customer.trigger("change");
+                me.customer.trigger("change");
             };
-
+            
+            /* Creating a new project or managing a collection */           
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
