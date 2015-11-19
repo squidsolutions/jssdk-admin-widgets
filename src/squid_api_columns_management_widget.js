@@ -140,14 +140,14 @@
             			}
             		}
                 	// to update domain collection & update metric list            	
-                	me.config.trigger("change:domain", me.config);
+//                	me.config.trigger("change:domain", me.config);
                 	
                 	// triggers a "change" event if the server's state differs from the current attributes
-                	this.collection.fetch({
-        				success: function() {
-        					me.render();
-        				}
-        			});
+//                	this.collection.fetch({
+//        				success: function() {
+//        					me.render();
+//        				}
+//        			});
         			
                 }, this);
             }
@@ -157,6 +157,8 @@
             if (this.autoOpen) {
                 this.render();
             }
+            
+            me.render();
         },
 
         updateForm : function() {
