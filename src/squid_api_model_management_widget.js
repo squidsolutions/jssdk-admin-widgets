@@ -231,17 +231,17 @@
             }).render();
 
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
-                form.$el.find.removeClass("btn-danger");
-                form.$el.find.removeClass("btn-success");
-                form.$el.find.hide();
-                form.$el.find.find('.btn-warning').removeClass("btn-warning");
+                form.$el.find("#btn-check").removeClass("btn-danger");
+                form.$el.find("#btn-check").removeClass("btn-success");
+                form.$el.find("#btn-check").hide();
+                form.$el.find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
-                form.$el.find.removeClass("btn-danger");
-                form.$el.find.removeClass("btn-success");
-                form.$el.find.hide();
-                form.$el.find.find('.btn-warning').removeClass("btn-warning");
+                form.$el.find("#btn-check").removeClass("btn-danger");
+                form.$el.find("#btn-check").removeClass("btn-success");
+                form.$el.find("#btn-check").hide();
+                form.$el.find('.btn-warning').removeClass("btn-warning");
 
             });
 
