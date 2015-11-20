@@ -283,7 +283,7 @@
                 "fieldClass" : "expression"
             }
     };
-    
+
     squid_api.model.MetricModel.prototype.definition = "Metric";
     squid_api.model.MetricModel.prototype.schema = {
             "id" : {
@@ -401,9 +401,9 @@
             this.$el.val(val);
         }
     });
-    
+
     $.ui.dialog.prototype._focusTabbable = $.noop;
-    
+
     // Define "expressionEditor" Custom Editor
     var expressionEditor = Backbone.Form.editors.Base.extend({
 
@@ -429,7 +429,7 @@
         setValue: function(value) {
             this.$el.val(value);
         },
-        
+
         renderDialog: function() {
         	var me = this;
         	var model = this.schema.model;
@@ -452,7 +452,7 @@
             	dataType: 'json',
             	data: data,
             	success:function(response) {
-            		// remove any existing suggestions dialogs            		
+            		// remove any existing suggestions dialogs
             		me.$el.parents().find(".squid-api-pre-suggestions").dialog("destroy").remove();
             		// detemine if there is an error or not
             		if (response.validateMessage.length === 0) {
@@ -502,7 +502,7 @@
           });
         }
     });
-    
+
     // Register custom editors
     Backbone.Form.editors.JsonTextArea = jsonTextArea;
     Backbone.Form.editors.ExpressionEditor = expressionEditor;
