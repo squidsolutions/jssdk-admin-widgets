@@ -233,14 +233,14 @@
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
                 form.$el.find("#btn-check").removeClass("btn-danger");
                 form.$el.find("#btn-check").removeClass("btn-success");
-                form.$el.find("#btn-check").hide();
+                form.$el.find('.dbSchemas').hide();
                 form.$el.find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
                 form.$el.find("#btn-check").removeClass("btn-danger");
                 form.$el.find("#btn-check").removeClass("btn-success");
-                form.$el.find("#btn-check").hide();
+                form.$el.find('.dbSchemas').hide();
                 form.$el.find('.btn-warning').removeClass("btn-warning");
 
             });
