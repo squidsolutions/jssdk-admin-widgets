@@ -1727,8 +1727,6 @@ function program1(depth0,data) {
         }
     });
 
-    $.ui.dialog.prototype._focusTabbable = $.noop;
-
     // Define "expressionEditor" Custom Editor
     var expressionEditor = Backbone.Form.editors.Base.extend({
 
@@ -1753,6 +1751,12 @@ function program1(depth0,data) {
 
         setValue: function(value) {
             this.$el.val(value);
+        },
+
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
         },
 
         renderDialog: function() {
