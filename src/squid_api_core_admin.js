@@ -406,6 +406,7 @@
     var expressionEditor = Backbone.Form.editors.Base.extend({
 
         tagName: 'textarea',
+        modelId: null,
 
         events: {
             'keyup' : 'renderDialog',
@@ -417,6 +418,9 @@
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
             if (!this.schema || !this.schema.model)  {
             	throw new Error("Missing required 'schema.options with defined model'");
+            }
+            if (options.schema.modelId) {
+                this.modelId = options.schema.modelId;
             }
         },
 
@@ -444,6 +448,7 @@
             } else if (model == "Metric") {
             	url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
             } else if (model == "Dimension") {
+                data.dimensionId = this.modelId;
             	url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
             } else if (model == "Relation") {
             	url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";

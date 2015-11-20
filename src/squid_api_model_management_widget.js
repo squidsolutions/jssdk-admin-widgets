@@ -209,63 +209,32 @@
             // called when we want to set the model / schema & render the form via a modal
             var me = this;
 
-            /*var modelWithValidation = (me.model).extend({
-                validation: {
-                    dbUrl: {
-                        fn: function(value, attr, computedState) {
-                            if(value !== 'something') {
-                                return 'Name is invalid';
-                            }
-                        }
-                    }
-                }
-            });*/
-
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
-                /*jshint multistr: true */
-                /*template: _.template('\
-                    <form>\
-                     <div data-fieldsets></div>\
-                     <button type="button">Check</button>\
-                      <% if (submitButton) { %>\
-                        <button type="submit"><%= submitButton %></button>\
-                      <% } %>\
-                    </form>\
-                  ', null, this.templateSettings),
-
-                templateSettings: {
-                    evaluate: /<%([\s\S]+?)%>/g,
-                    interpolate: /<%=([\s\S]+?)%>/g,
-                    escape: /<%-([\s\S]+?)%>/g
-                },*/
                 schema: me.schema,
                 model: me.model
             }).render();
 
             this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
-                $('#btn-check').removeClass("btn-danger");
-                $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').hide();
-                //$('.modal-footer').find('.btn-warning').addClass("ok");
-                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                form.$el.find.removeClass("btn-danger");
+                form.$el.find.removeClass("btn-success");
+                form.$el.find.hide();
+                form.$el.find.find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
-                $('#btn-check').removeClass("btn-danger");
-                $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').hide();
-                //$('.modal-footer').find('.btn-warning').addClass("ok");
-                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                form.$el.find.removeClass("btn-danger");
+                form.$el.find.removeClass("btn-success");
+                form.$el.find.hide();
+                form.$el.find.find('.btn-warning').removeClass("btn-warning");
 
             });
 
             this.formContent.on('dbUser:change', function(form, dbUserEditor) {
-                $('#btn-check').removeClass("btn-danger");
-                $('#btn-check').removeClass("btn-success");
-                $('.dbSchemas').hide();
-                //$('.modal-footer').find('.btn-warning').addClass("ok");
-                $('.modal-footer').find('.btn-warning').removeClass("btn-warning");
+                form.$el.find('#btn-check').removeClass("btn-danger");
+                form.$el.find('#btn-check').removeClass("btn-success");
+                form.$el.find('.dbSchemas').hide();
+                form.$el.find('.modal-footer').find('.btn-warning').removeClass("btn-warning");
             });
 
             this.formContent.on('leftId:change', function(form) {
@@ -280,13 +249,10 @@
 
             var incorrectCredentials = false;
 
-
             // render the form into a backbone view
             this.formView = Backbone.View.extend({
                 model: me.model,
                 parent: me.parent,
-
-            // domain subject exception
                 events: {
                     "click #btn-check" : function(e) {
                         var me1 = this;
@@ -551,16 +517,28 @@
                                     </div>\
                                   ', null, null);
                 }
-                if (me.model.definition == "Dimension" && x == "parentId") {
-                    me.model.schema[x].subSchema.dimensionId.type = "Select";
-                    me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
-                    for (i=0; i<me.collection.models.length; i++) {
-                        if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                            if (me.collection.models[i].get("dynamic") === false) {
-                                var objD = {};
-                                objD.val = me.collection.models[i].get("oid");
-                                objD.label = me.collection.models[i].get("name");
-                                me.model.schema[x].subSchema.dimensionId.options.push(objD);
+                if (me.model.definition == "Dimension") {
+                    if (x == "parentId") {
+                        me.model.schema[x].subSchema.dimensionId.type = "Select";
+                        me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
+                        for (i=0; i<me.collection.models.length; i++) {
+                            if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
+                                if (me.collection.models[i].get("dynamic") === false) {
+                                    var objD = {};
+                                    objD.val = me.collection.models[i].get("oid");
+                                    objD.label = me.collection.models[i].get("name");
+                                    me.model.schema[x].subSchema.dimensionId.options.push(objD);
+                                }
+                            }
+                        }
+                    }
+                }
+                // when editing a model & using the expression editor always pass the current id
+                if (x == "expression") {
+                    if (! this.model.isNew()) {
+                        if (me.model.schema[x].subSchema) {
+                            if (me.model.schema[x].subSchema.value) {
+                                me.model.schema[x].subSchema.value.modelId = this.model.get("id")[this.model.definition.toLowerCase() + "Id"];
                             }
                         }
                     }
