@@ -9,6 +9,8 @@
         config : null,
         modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
+        typeLabel : null,
+        typeLabelPlural : null,
         collectionAvailable : false,
         suggestionHandler : null,
         changeEventHandler : null,
@@ -29,6 +31,16 @@
             }
             if (options.type) {
                 this.type = options.type;
+            }
+            if (options.typeLabel) {
+                this.typeLabel = options.typeLabel;
+            } else {
+                this.typeLabel = this.type;
+            }
+            if (options.typeLabelPlural) {
+                this.typeLabelPlural = options.typeLabelPlural;
+            } else {
+                this.typeLabelPlural = this.typeLabel + "s";
             }
             if (options.config) {
                 this.config = options.config;
@@ -115,7 +127,7 @@
                 } else {
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
-                        title: this.type + "s"
+                        title: this.typeLabelPlural
                     });
                     this.collectionModal.open();
                 }
@@ -193,7 +205,7 @@
                                 me.changeEventHandler.call(this);
                             }
                             $(me.collectionModal.el).trigger("hidden.bs.modal");
-                            var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                            var message = me.typeLabel + " with name " + this.get("name") + " has been successfully created";
                             squid_api.model.status.set({'message' : message});
                         }
                     });
@@ -237,7 +249,7 @@
                         model.destroy({
                             success:function(collection) {
                                 $(me.collectionModal.el).trigger("hidden.bs.modal");
-                                var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
+                                var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
                         });
@@ -275,7 +287,8 @@
 
             var jsonData = {
                     "selAvailable" : false,
-                    "type" : this.type,
+                    "typeLabel" : this.typeLabel,
+                    "typeLabelPlural" : this.typeLabelPlural,
                     "options" : [],
                     "valueSelected" : false,
                     "create" : this.roles.create,

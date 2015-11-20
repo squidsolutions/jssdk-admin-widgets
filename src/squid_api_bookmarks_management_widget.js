@@ -10,6 +10,9 @@
         autoOpen : null,
         parent : null,
         changeEventHandler : null,
+        type : "Bookmark",
+        typeLabel : null,
+        typeLabelPlural : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -19,6 +22,16 @@
                 }
                 if (options.changeEventHandler) {
                     this.changeEventHandler = options.changeEventHandler;
+                }
+                if (options.typeLabel) {
+                    this.typeLabel = options.typeLabel;
+                } else {
+                    this.typeLabel = this.type;
+                }
+                if (options.typeLabelPlural) {
+                    this.typeLabelPlural = options.typeLabelPlural;
+                } else {
+                    this.typeLabelPlural = this.typeLabel + "s";
                 }
             }
             
@@ -68,6 +81,8 @@
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Bookmark",
+                "typeLabel" : this.typeLabel,
+                "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,

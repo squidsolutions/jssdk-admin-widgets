@@ -27,8 +27,8 @@ function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n            <button type=\"button\"  class=\"create btn btn-default\">\n                Create ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\n            </button>\n        ";
   return buffer;
@@ -141,8 +141,8 @@ function program25(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                <div class=\"no-data\">No ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + " Available</div>\n            ";
   return buffer;
@@ -150,8 +150,13 @@ function program25(depth0,data) {
 
 function program27(depth0,data) {
   
-  
-  return "\n            <div class=\"parent-missing\">\n			Computing in progress...\n            </div>\n        ";
+  var buffer = "", stack1, helper;
+  buffer += "\n            <div class=\"parent-missing\">\n			";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " list computing in progress...\n            </div>\n        ";
+  return buffer;
   }
 
   buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
@@ -164,9 +169,9 @@ function program27(depth0,data) {
   buffer += ">\n    <button class=\"form-control selected-model squid-api-action\" ";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n        Select ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += ">\n        ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -450,6 +455,9 @@ function program1(depth0,data) {
         autoOpen : null,
         parent : null,
         changeEventHandler : null,
+        type : "Bookmark",
+        typeLabel : null,
+        typeLabelPlural : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -459,6 +467,16 @@ function program1(depth0,data) {
                 }
                 if (options.changeEventHandler) {
                     this.changeEventHandler = options.changeEventHandler;
+                }
+                if (options.typeLabel) {
+                    this.typeLabel = options.typeLabel;
+                } else {
+                    this.typeLabel = this.type;
+                }
+                if (options.typeLabelPlural) {
+                    this.typeLabelPlural = options.typeLabelPlural;
+                } else {
+                    this.typeLabelPlural = this.typeLabel + "s";
                 }
             }
             
@@ -508,6 +526,8 @@ function program1(depth0,data) {
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Bookmark",
+                "typeLabel" : this.typeLabel,
+                "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,
@@ -535,6 +555,8 @@ function program1(depth0,data) {
         config : null,
         modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
+        typeLabel : null,
+        typeLabelPlural : null,
         collectionAvailable : false,
         suggestionHandler : null,
         changeEventHandler : null,
@@ -555,6 +577,16 @@ function program1(depth0,data) {
             }
             if (options.type) {
                 this.type = options.type;
+            }
+            if (options.typeLabel) {
+                this.typeLabel = options.typeLabel;
+            } else {
+                this.typeLabel = this.type;
+            }
+            if (options.typeLabelPlural) {
+                this.typeLabelPlural = options.typeLabelPlural;
+            } else {
+                this.typeLabelPlural = this.typeLabel + "s";
             }
             if (options.config) {
                 this.config = options.config;
@@ -641,7 +673,7 @@ function program1(depth0,data) {
                 } else {
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
-                        title: this.type + "s"
+                        title: this.typeLabelPlural
                     });
                     this.collectionModal.open();
                 }
@@ -719,7 +751,7 @@ function program1(depth0,data) {
                                 me.changeEventHandler.call(this);
                             }
                             $(me.collectionModal.el).trigger("hidden.bs.modal");
-                            var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                            var message = me.typeLabel + " with name " + this.get("name") + " has been successfully created";
                             squid_api.model.status.set({'message' : message});
                         }
                     });
@@ -763,7 +795,7 @@ function program1(depth0,data) {
                         model.destroy({
                             success:function(collection) {
                                 $(me.collectionModal.el).trigger("hidden.bs.modal");
-                                var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
+                                var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
                         });
@@ -801,7 +833,8 @@ function program1(depth0,data) {
 
             var jsonData = {
                     "selAvailable" : false,
-                    "type" : this.type,
+                    "typeLabel" : this.typeLabel,
+                    "typeLabelPlural" : this.typeLabelPlural,
                     "options" : [],
                     "valueSelected" : false,
                     "create" : this.roles.create,
