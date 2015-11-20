@@ -1009,14 +1009,14 @@ function program1(depth0,data) {
                 }
                 this.collection.on("add remove change", function() {
                 	/*
-						for dimensions: 
+						for dimensions:
 							1. remove period config
 							2. set user selection based on what models are found in the collection returned
-						
+
 						for dimensions & metrics:
 							1. refresh the domain
 							2. re-fetch the collection
-                	 */              	
+                	 */
                 	if (me.model.definition == "Dimension") {
             			var selection = me.filters.get("selection");
             			var period = me.config.get("period");
@@ -1027,7 +1027,7 @@ function program1(depth0,data) {
             					var updatedFacets = [];
             					for (var i=0; i<facets.length; i++) {
                 					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// reset period if facet not found  
+                						// reset period if facet not found
                 						if (period) {
                 							if (period[domain]) {
                 								if (period[domain].id == facets[i].id) {
@@ -1036,24 +1036,17 @@ function program1(depth0,data) {
                 								}
                 							}
                 						}
-                						// reset user selection if facet not found             						
-                						selection.facets.splice(i, 1);               						
+                						// reset user selection if facet not found
+                						selection.facets.splice(i, 1);
                 						me.filters.set("userSelection", selection);
                 					}
                 				}
             				}
             			}
-            		}
-                	// to update domain collection & update metric list            	
-//                	me.config.trigger("change:domain", me.config);
-                	
-                	// triggers a "change" event if the server's state differs from the current attributes
-//                	this.collection.fetch({
-//        				success: function() {
-//        					me.render();
-//        				}
-//        			});
-        			
+            		} else if (me.model.definition == "Metric") {
+                        me.config.trigger("change:domain", me.config);
+                    }
+
                 }, this);
             }
             if (this.parent) {
@@ -1062,7 +1055,7 @@ function program1(depth0,data) {
             if (this.autoOpen) {
                 this.render();
             }
-            
+
             me.render();
         },
 
@@ -1071,7 +1064,7 @@ function program1(depth0,data) {
         },
 
         sortData : function(data) {
-            
+
         	// build the parent index
         	var lookup = {};
             for (var ix1=0; ix1<data.length; ix1++)  {
@@ -1094,12 +1087,12 @@ function program1(depth0,data) {
             	}
             }
 
-        	// alphabetical sorting         
+        	// alphabetical sorting
             data.sort(function(a, b){
 				 var nameA = a.sortName.toLowerCase();
 				 var nameB = b.sortName.toLowerCase();
 				 if (nameA < nameB)  {
-					 // sort string ascending        			 
+					 // sort string ascending
 					 return -1;
 				 } else if (nameA > nameB) {
 					 return 1;
@@ -1262,8 +1255,8 @@ function program1(depth0,data) {
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
-                        
-                        // update all models at the same time                        
+
+                        // update all models at the same time
                         this.collection.saveAll(this.collection.models).then(function() {
                         	if (forceChange) {
                         		me.collection.trigger("change");
