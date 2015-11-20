@@ -93,8 +93,25 @@
             });
 
             if (this.collection) {
+            	if (! this.collection.fetched) {
+                    if (me.config.get("domain")) {
+                        this.collection.parentId = {
+                        	projectId : me.config.get("project"),
+                        	domainId : me.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
+                }
                 this.collection.on("add remove change", function() {
-                	// check dimensions and facet selections                	
+                	/*
+						for dimensions: 
+							1. remove period config
+							2. set user selection based on what models are found in the collection returned
+						
+						for dimensions & metrics:
+							1. refresh the domain
+							2. re-fetch the collection
+                	 */              	
                 	if (me.model.definition == "Dimension") {
             			var selection = me.filters.get("selection");
             			var period = me.config.get("period");
@@ -105,7 +122,7 @@
             					var updatedFacets = [];
             					for (var i=0; i<facets.length; i++) {
                 					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// if currently stored period matches removed dimension, remove it
+                						// reset period if facet not found  
                 						if (period) {
                 							if (period[domain]) {
                 								if (period[domain].id == facets[i].id) {
@@ -114,17 +131,18 @@
                 								}
                 							}
                 						}
-                						
-                						// update selection                						
+                						// reset user selection if facet not found             						
                 						selection.facets.splice(i, 1);               						
                 						me.filters.set("userSelection", selection);
                 					}
                 				}
             				}
             			}
-            		} else if (me.model.definition == "Metric") {
-            			me.config.trigger("change:domain", me.config);
             		}
+                	// to update domain collection & update metric list            	
+                	me.config.trigger("change:domain", me.config);
+                	
+                	// triggers a "change" event if the server's state differs from the current attributes
                 	this.collection.fetch({
         				success: function() {
         					me.render();
@@ -132,15 +150,6 @@
         			});
         			
                 }, this);
-                if (! this.collection.fetched) {
-                    if (me.config.get("domain")) {
-                        this.collection.parentId = {
-                        	projectId : me.config.get("project"),
-                        	domainId : me.config.get("domain")
-                        };
-                        this.collection.fetch();
-                    }
-                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);

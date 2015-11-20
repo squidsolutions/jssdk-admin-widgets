@@ -1038,8 +1038,25 @@ function program1(depth0,data) {
             });
 
             if (this.collection) {
+            	if (! this.collection.fetched) {
+                    if (me.config.get("domain")) {
+                        this.collection.parentId = {
+                        	projectId : me.config.get("project"),
+                        	domainId : me.config.get("domain")
+                        };
+                        this.collection.fetch();
+                    }
+                }
                 this.collection.on("add remove change", function() {
-                	// check dimensions and facet selections                	
+                	/*
+						for dimensions: 
+							1. remove period config
+							2. set user selection based on what models are found in the collection returned
+						
+						for dimensions & metrics:
+							1. refresh the domain
+							2. re-fetch the collection
+                	 */              	
                 	if (me.model.definition == "Dimension") {
             			var selection = me.filters.get("selection");
             			var period = me.config.get("period");
@@ -1050,7 +1067,7 @@ function program1(depth0,data) {
             					var updatedFacets = [];
             					for (var i=0; i<facets.length; i++) {
                 					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// if currently stored period matches removed dimension, remove it
+                						// reset period if facet not found  
                 						if (period) {
                 							if (period[domain]) {
                 								if (period[domain].id == facets[i].id) {
@@ -1059,17 +1076,18 @@ function program1(depth0,data) {
                 								}
                 							}
                 						}
-                						
-                						// update selection                						
+                						// reset user selection if facet not found             						
                 						selection.facets.splice(i, 1);               						
                 						me.filters.set("userSelection", selection);
                 					}
                 				}
             				}
             			}
-            		} else if (me.model.definition == "Metric") {
-            			me.config.trigger("change:domain", me.config);
             		}
+                	// to update domain collection & update metric list            	
+                	me.config.trigger("change:domain", me.config);
+                	
+                	// triggers a "change" event if the server's state differs from the current attributes
                 	this.collection.fetch({
         				success: function() {
         					me.render();
@@ -1077,15 +1095,6 @@ function program1(depth0,data) {
         			});
         			
                 }, this);
-                if (! this.collection.fetched) {
-                    if (me.config.get("domain")) {
-                        this.collection.parentId = {
-                        	projectId : me.config.get("project"),
-                        	domainId : me.config.get("domain")
-                        };
-                        this.collection.fetch();
-                    }
-                }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -1774,14 +1783,21 @@ function program1(depth0,data) {
         project : new squid_api.model.ProjectModel(),
 
         initialize: function(options) {
-            this.config = squid_api.model.config;
-            if (options) {
-                if (options.createOnlyView) {
-                    this.createOnlyView = true;
-                }
-                if (options.options) {
-                    this.config = options.config;
-                }
+        	if (options.config) {
+        		this.config = options.config;
+        	} else {
+        		this.config = squid_api.model.config;
+        	}
+            if (options.createOnlyView) {
+                this.createOnlyView = true;
+            }
+            if (options.options) {
+                this.config = options.config;
+            }
+            if (options.status) {
+            	this.status = options.status;
+            } else {
+            	this.status = squid_api.model.status;
             }
             this.listenTo(this.config, "change:domain", this.setDomain);
             this.listenTo(this.config, "change:project", this.setProject);
@@ -1803,7 +1819,7 @@ function program1(depth0,data) {
                 this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
                 this.domain.fetch({
                     error: function(xhr) {
-                        squid_api.model.status.set({"error":xhr});
+                        me.status.set({"error":xhr});
                     }
                 });
             } else {
@@ -1812,6 +1828,8 @@ function program1(depth0,data) {
         },
 
         render: function() {
+        	var me = this;
+        	
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -1824,7 +1842,7 @@ function program1(depth0,data) {
                     var collection = new squid_api.model.DomainCollection();
                     collection.create(this);
                     var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    squid_api.model.status.set({'message' : message});
+                    me.status.set({'message' : message});
 
                     if (!value) {
                         value = this.get("id").domainId;
@@ -1841,7 +1859,7 @@ function program1(depth0,data) {
                     if (!value) {
                         value = this.get("id").domainId;
                     }
-                    squid_api.model.config.set({
+                    me.config.set({
                         "domain" : value
                     });
                 };
@@ -2567,6 +2585,21 @@ function program1(depth0,data) {
             if (options.autoOpen) {
                 this.autoOpen = true;
             }
+            if (options.config) {
+            	this.config = options.config;
+            } else {
+            	this.config = squid_api.model.config;
+            }
+            if (options.project) {
+            	this.project = options.project;
+            } else {
+            	this.project = squid_api.model.project;
+            }
+            if (options.customer) {
+            	this.customer = options.customer;
+            } else {
+            	this.customer = squid_api.model.customer;
+            }         	
             this.render();
         },
 
@@ -2614,8 +2647,8 @@ function program1(depth0,data) {
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Project",
-                "model" : squid_api.model.project,
-                "parent" : squid_api.model.customer,
+                "model" : this.project,
+                "parent" : this.customer,
                 "schemasCallback" : this.getDbSchemas,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
@@ -2625,16 +2658,17 @@ function program1(depth0,data) {
                 if (!value) {
                     value = this.get("id").projectId;
                 }
-                if (value === squid_api.model.config.get("project")) {
-                    squid_api.model.config.trigger("change:project", squid_api.model.config);
+                if (value === me.config.get("project")) {
+                    me.config.trigger("change:project", me.config);
                 } else {
                     // update the config
-                    squid_api.model.config.set({"project" : value, "domain" : null});
+                    me.config.set({"project" : value, "domain" : null});
                 }
                 // trigger a customer change
-                squid_api.model.customer.trigger("change");
+                me.customer.trigger("change");
             };
-
+            
+            /* Creating a new project or managing a collection */           
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
