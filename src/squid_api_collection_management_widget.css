@@ -23,13 +23,6 @@
   	font-size: 12px;
 }
 
-.squid-api-model-widget-popup .create {
-	display: inline-block;
-	float: right;
-	margin-bottom: 15px;
-	color: #666;
-}
-
 .squid-api-model-widget-popup .create button, .squid-api-model-widget-popup .create button:active:focus {
 	outline: 0 !important;
 }
@@ -127,11 +120,6 @@
 	padding: 10px;
 	top: 0px;
 	position: relative;
-}
-
-.squid-api-model-widget-popup .no-data {
-	float: left;
-	margin: 70px 0px 0px 35%;
 }
 
 .squid-api-admin-widgets-modal-form-collection .ok {
