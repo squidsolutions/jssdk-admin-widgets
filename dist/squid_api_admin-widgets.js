@@ -1996,7 +1996,21 @@ function program1(depth0,data) {
             if (options.collection) {
                 this.collection = options.collection;
             }
-
+            if (options.config) {
+                this.config = this.config;
+            } else {
+                this.config = squid_api.model.config;
+            }
+            if (options.login) {
+                this.login = options.login;
+            } else {
+                this.login = squid_api.model.login;
+            }
+            if (options.status) {
+                this.status = options.status;
+            } else {
+                this.status = squid_api.model.status;
+            }
             if (this.model) {
                 this.listenTo(this.model, 'change', this.setSchema);
             }
@@ -2019,8 +2033,8 @@ function program1(depth0,data) {
                 if (data.id.projectId.length === 0) {
                     data.id.projectId = null;
                 }
-                if (squid_api.model.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
-                    data.id.domainId = squid_api.model.config.get("domain");
+                if (this.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
+                    data.id.domainId = this.config.get("domain");
                 }
             }
             if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
@@ -2030,15 +2044,15 @@ function program1(depth0,data) {
             }
 
             // if the definition isn't project, add the projectId
-            if (squid_api.model.config.get("project") && this.model.definition !== "Project") {
-                var projectId =  squid_api.model.config.get("project");
+            if (this.config.get("project") && this.model.definition !== "Project") {
+                var projectId =  this.config.get("project");
                 data.id.projectId = projectId;
 
                 if (data.parentId) {
                     if (data.parentId[this.model.definition.toLowerCase() + "Id"].length === 0) {
                         data.parentId = null;
                     } else {
-                        data.parentId.domainId = squid_api.model.config.get("domain");
+                        data.parentId.domainId = this.config.get("domain");
                         data.parentId.projectId = projectId;
                     }
                 }
@@ -2064,12 +2078,12 @@ function program1(depth0,data) {
                 if (x !== "id" && typeof data[x]=="object" && data[x] !== null) {
                     if (data[x].projectId !== undefined) {
                         if (data[x].projectId.length === 0) {
-                            data[x].projectId = squid_api.model.config.get("project");
+                            data[x].projectId = this.config.get("project");
                         }
                     } else {
                         if (data[x].domainid !== undefined) {
                             if (data[x].domainid.length === 0) {
-                                data[x].domainid = squid_api.model.config.get("domain");
+                                data[x].domainid = this.config.get("domain");
                             }
                         }
                     }
@@ -2080,8 +2094,9 @@ function program1(depth0,data) {
         },
 
         setStatusMessage: function(message) {
+            var me = this;
             setTimeout(function() {
-                squid_api.model.status.set({'message' : message});
+                me.status.set({'message' : message});
             }, 1000);
         },
 
@@ -2202,15 +2217,15 @@ function program1(depth0,data) {
                         var dburl = this.$el.find('.dbUrl').find('.form-control').val();
                         var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
                         var dbUser = this.$el.find('.dbUser').find('.form-control').val();
-                        var projectId = squid_api.model.config.has("project")?squid_api.model.config.get("project"):"";
+                        var projectId = me.config.has("project")?me.config.get("project"):"";
 
                         $.ajax({
                             type: "GET",
-                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+me.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (response) {
-                                squid_api.model.status.set({"error":null});
+                                me.status.set({"error":null});
                                 if (me.schemasCallback) {
                                     me.schemasCallback.call(me);
                                 }
@@ -2222,7 +2237,7 @@ function program1(depth0,data) {
                                 incorrectCredentials = false;
                             },
                             error: function(xhr, textStatus, error){
-                                squid_api.model.status.set({"error":xhr});
+                                me.status.set({"error":xhr});
                                 me1.$el.find('#btn-check').removeClass("in-progress");
                                 me1.$el.find('#btn-check').removeClass("btn-success");
                                 me1.$el.find('#btn-check').addClass("btn-danger");
@@ -2250,7 +2265,7 @@ function program1(depth0,data) {
                     if (this.model.definition == "Relation") {
                         if (this.model.isNew()) {
                             // by default set the current domain as the leftId
-                            this.$el.find(".leftId select").val(squid_api.model.config.get("domain"));
+                            this.$el.find(".leftId select").val(this.config.get("domain"));
 
                             var leftName = this.$el.find(".leftId select option:selected").text();
                             this.$el.find(".leftName input").val(leftName);
