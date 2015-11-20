@@ -16,6 +16,25 @@
         changeEventHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
+        comparator : null,
+        
+        alphaNameComparator : function(a,b) {
+            var va = a.get("name").toLowerCase();
+            var vb = b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+        
+        dynamicComparator : function(a,b) {
+            var da = a.get("dynamic");
+            var db = b.get("dynamic");
+            return (da === db) ? 0 : da ? 1 : -1;
+        },
 
         initialize: function(options) {
             var me = this;
@@ -59,18 +78,40 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  function(a, b) {
+                    var r = me.dynamicComparator(a,b);
+                    if (r === 0) {
+                        r = me.alphaNameComparator(a,b);
+                    }
+                    return r;
+                };
+            }
 
-            // set base then update
-            this.collection = new squid_api.model.BaseCollection();
-            this.updateCollection();
+            // set Collection
+            
+            // match a base collection
+            for (var collectionItem in squid_api.model) {
+                var str = collectionItem;
+                var res = str.match(this.type + "Collection");
+                if (res) {
+                    this.collection = new squid_api.model[res]();
+                }
+            }
+            if (!this.collection) {
+                squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
+            }
 
+            this.collection.comparator = this.comparator;
             this.collection.on("remove", function(model) {
                 if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
                     me.config.unset(me.model.definition.toLowerCase());
                 }
             });
             this.collection.on("reset change sync", this.render, this);
-            
             this.collection.on("remove change", function() {
             	if (me.model.definition == "Domain") {
             		this.fetch();
@@ -153,20 +194,6 @@
                 $(this.collectionModal.el).find(".cancel").one("click", function() {
                     $(me.collectionModal.el).trigger("hidden.bs.modal");
                 });
-            }
-        },
-
-        updateCollection: function() {
-            var me = this;
-
-            // match a base collection and overwrite base
-            var collection = null;
-            for (var collectionItem in squid_api.model) {
-                var str = collectionItem;
-                var res = str.match(this.type + "Collection");
-                if (res) {
-                    this.collection = new squid_api.model[res]();
-                }
             }
         },
 
@@ -287,6 +314,7 @@
 
             var jsonData = {
                     "selAvailable" : false,
+                    "type" : this.type,
                     "typeLabel" : this.typeLabel,
                     "typeLabelPlural" : this.typeLabelPlural,
                     "options" : [],
@@ -343,13 +371,6 @@
                     jsonData.options.push(option);
                 }
             }
-
-            // sort data by dynamic attribute
-            jsonData.options.sort(function(a, b) {
-                var labelA = a.label.toUpperCase();
-                var labelB = b.label.toUpperCase();
-                return (labelA < labelB) ? -1 : (labelA > labelB) ? 1 : 0;
-            });
 
             // place selected obj at start of array
             if (sel[0]) {

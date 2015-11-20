@@ -13,6 +13,7 @@
         type : "Bookmark",
         typeLabel : null,
         typeLabelPlural : null,
+        comparator : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -32,6 +33,9 @@
                     this.typeLabelPlural = options.typeLabelPlural;
                 } else {
                     this.typeLabelPlural = this.typeLabel + "s";
+                }
+                if (options.comparator) {
+                    this.comparator = options.comparator;
                 }
             }
             
@@ -87,7 +91,8 @@
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
-                "changeEventHandler" : this.changeEventHandler
+                "changeEventHandler" : this.changeEventHandler,
+                "comparator" : this.comparator
             };
             var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
