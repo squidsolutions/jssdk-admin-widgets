@@ -122,7 +122,8 @@
                 "beforeRenderHandler" : this.beforeRenderHandler,
                 "labelHandler" : function(model) {
                     return model.get("path")+model.get("name");
-                }
+                },
+                "displaySelected" : false
             };
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             

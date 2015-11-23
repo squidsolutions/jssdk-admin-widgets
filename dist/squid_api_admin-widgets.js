@@ -169,11 +169,7 @@ function program27(depth0,data) {
   buffer += ">\n    <button class=\"form-control selected-model squid-api-action\" ";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n        ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n    </button>\n    <div id=\"squid-api-";
+  buffer += ">\n    </button>\n    <div id=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -567,7 +563,8 @@ function program1(depth0,data) {
                 "beforeRenderHandler" : this.beforeRenderHandler,
                 "labelHandler" : function(model) {
                     return model.get("path")+model.get("name");
-                }
+                },
+                "displaySelected" : false
             };
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
@@ -598,6 +595,7 @@ function program1(depth0,data) {
         schemasCallback : null,
         beforeRenderHandler : null,
         comparator : null,
+        displaySelected : true,
         
         alphaNameComparator : function(a,b) {
             var va = a.get("name").toLowerCase();
@@ -677,6 +675,9 @@ function program1(depth0,data) {
             }
             if (options.labelHandler) {
                 this.labelHandler = options.labelHandler;
+            }
+            if (options.displaySelected === false) {
+                this.displaySelected = false;
             }
 
             // set Collection
@@ -923,7 +924,7 @@ function program1(depth0,data) {
 
             // selected obj
             var sel = [];
-
+            
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -988,7 +989,13 @@ function program1(depth0,data) {
             }
 
             // set button value
-            this.$el.find("button.selected-model").text(jsonData.selectedName);
+            if ((this.displaySelected !== false) && jsonData.valueSelected) {
+                this.$el.find("button.selected-model").text(jsonData.selectedName);
+                this.$el.find("button.selected-model").addClass("value-selected");
+            } else {
+                this.$el.find("button.selected-model").text(this.typeLabelPlural);
+                this.$el.find("button.selected-model").removeClass("value-selected");
+            }
 
             // hide main button if parent is not set
             if (!this.parent.get("id")) {

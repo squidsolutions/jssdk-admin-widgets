@@ -17,6 +17,7 @@
         schemasCallback : null,
         beforeRenderHandler : null,
         comparator : null,
+        displaySelected : true,
         
         alphaNameComparator : function(a,b) {
             var va = a.get("name").toLowerCase();
@@ -96,6 +97,9 @@
             }
             if (options.labelHandler) {
                 this.labelHandler = options.labelHandler;
+            }
+            if (options.displaySelected === false) {
+                this.displaySelected = false;
             }
 
             // set Collection
@@ -342,7 +346,7 @@
 
             // selected obj
             var sel = [];
-
+            
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
@@ -407,7 +411,13 @@
             }
 
             // set button value
-            this.$el.find("button.selected-model").text(jsonData.selectedName);
+            if ((this.displaySelected !== false) && jsonData.valueSelected) {
+                this.$el.find("button.selected-model").text(jsonData.selectedName);
+                this.$el.find("button.selected-model").addClass("value-selected");
+            } else {
+                this.$el.find("button.selected-model").text(this.typeLabelPlural);
+                this.$el.find("button.selected-model").removeClass("value-selected");
+            }
 
             // hide main button if parent is not set
             if (!this.parent.get("id")) {

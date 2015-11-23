@@ -1,3 +1,7 @@
+.squid-api-model-widget .selected {
+	color: #666;
+}
+
 .squid-api-model-widget-popup table {
 	color: #666;
 	-moz-border-radius: 3px;
