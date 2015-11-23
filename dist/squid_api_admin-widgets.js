@@ -26,7 +26,7 @@ function program3(depth0,data) {
 function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <button type=\"button\"  class=\"create btn btn-default\">\n                Create ";
+  buffer += "\n            <button type=\"button\"  class=\"create btn btn-default\">\n                <i class=\"fa fa-plus\"></i> New ";
   if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -151,11 +151,11 @@ function program25(depth0,data) {
 function program27(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <div class=\"parent-missing\">\n			";
+  buffer += "\n            <div class=\"parent-missing\">\n			<i class=\"glyphicon glyphicon-refresh loading\"></i> ";
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " list computing in progress...\n            </div>\n        ";
+    + " list computing in progress\n            </div>\n        ";
   return buffer;
   }
 
@@ -1761,7 +1761,21 @@ function program1(depth0,data) {
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
-            "editorClass" : "form-control"
+            "editorClass" : "form-control",
+            "validators": [
+                 function checkJSON(value, formValues) {
+                     try {
+                         if (value) {
+                             JSON.parse(value);
+                         }
+                     } catch (e) {
+                         return {
+                             type: 'config',
+                             message: 'Config must be valid JSON'
+                         };
+                     }
+                 }
+             ] 
         }
     };
 
@@ -1781,13 +1795,25 @@ function program1(depth0,data) {
 
         setValue: function(value) {
             // beautify json value
-            var val = JSON.stringify(value, null, 4);
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
             this.$el.val(val);
         },
         
         getValue: function() {
             // transform text value to json
-            var json = JSON.parse(this.$el.val());
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
             return json;
         },
     });
@@ -2050,23 +2076,20 @@ function program1(depth0,data) {
             var me = this;
             var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
-            /*
-                1. validate form (if errors, display them & keep modal open)
-                2. save data
-            */
-
-            var validForm = this.formContent.validate();
-            if (validForm) {
+            // validate form ()
+            var errors = this.formContent.validate();
+            if (errors) {
+                // if errors, display them & keep modal open
                 me.formModal.preventClose();
             } else if (! invalidExpression) {
-                // remove all dialog's
+                // remove all dialogs
                 $(".squid-api-dialog").remove();
 
+                // Save
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
                     success: function (collection, response) {
                         // set project ID
-
                         me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
 
                         if (me.model.definition == "Project") {
@@ -2125,22 +2148,6 @@ function program1(depth0,data) {
 
             // set base schema & modal into form
             this.formContent = new Backbone.Form({
-                /*jshint multistr: true */
-                /*template: _.template('\
-                    <form>\
-                     <div data-fieldsets></div>\
-                     <button type="button">Check</button>\
-                      <% if (submitButton) { %>\
-                        <button type="submit"><%= submitButton %></button>\
-                      <% } %>\
-                    </form>\
-                  ', null, this.templateSettings),
-
-                templateSettings: {
-                    evaluate: /<%([\s\S]+?)%>/g,
-                    interpolate: /<%=([\s\S]+?)%>/g,
-                    escape: /<%-([\s\S]+?)%>/g
-                },*/
                 schema: me.schema,
                 model: me.model
             }).render();

@@ -372,7 +372,21 @@
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
-            "editorClass" : "form-control"
+            "editorClass" : "form-control",
+            "validators": [
+                 function checkJSON(value, formValues) {
+                     try {
+                         if (value) {
+                             JSON.parse(value);
+                         }
+                     } catch (e) {
+                         return {
+                             type: 'config',
+                             message: 'Config must be valid JSON'
+                         };
+                     }
+                 }
+             ] 
         }
     };
 
@@ -392,13 +406,25 @@
 
         setValue: function(value) {
             // beautify json value
-            var val = JSON.stringify(value, null, 4);
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
             this.$el.val(val);
         },
         
         getValue: function() {
             // transform text value to json
-            var json = JSON.parse(this.$el.val());
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
             return json;
         },
     });
