@@ -6,7 +6,7 @@
     <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
         {{#if create}}
             <button type="button"  class="create btn btn-default">
-                Create {{typeLabel}}
+                <i class="fa fa-plus"></i> New {{typeLabel}}
             </button>
         {{/if}}
         {{#if collectionAvailable}}
@@ -42,7 +42,7 @@
     </div>
         {{else}}
             <div class="parent-missing">
-			{{typeLabelPlural}} list computing in progress...
+			<i class="glyphicon glyphicon-refresh loading"></i> {{typeLabelPlural}} list computing in progress
             </div>
         {{/if}}
 </div>
