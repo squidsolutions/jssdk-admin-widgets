@@ -376,7 +376,7 @@
             "validators": [
                  function checkJSON(value, formValues) {
                      try {
-                         if (value) {
+                         if (value && (typeof value === "string")) {
                              JSON.parse(value);
                          }
                      } catch (e) {

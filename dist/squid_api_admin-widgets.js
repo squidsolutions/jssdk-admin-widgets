@@ -458,9 +458,10 @@ function program1(depth0,data) {
         type : "Bookmark",
         typeLabel : null,
         typeLabelPlural : null,
-        comparator : null,
+        collectionView : null,
         
-        pathComparator : function(a,b) {
+        comparator : function(a,b) {
+            // default is : sort by alpha path
             var va = a.get("path").toLowerCase();
             var vb = b.get("path").toLowerCase();
             if (va < vb) {
@@ -470,6 +471,16 @@ function program1(depth0,data) {
                 return 1;
             }
             return 0;
+        },
+        
+        beforeRenderHandler : function(model) {
+            if (model.isNew()) {
+                // set config to current state when creating a new model
+                var config = squid_api.model.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config", config);
+            }
         },
 
         initialize: function(options) {
@@ -497,11 +508,6 @@ function program1(depth0,data) {
             }
             if (!this.typeLabelPlural) {
                 this.typeLabelPlural = this.typeLabel + "s";
-            }
-            
-            if (!this.comparator) {
-                // default is : sort by alpha path
-                this.comparator = this.pathComparator;
             }
             
             if (!this.changeEventHandler) {
@@ -557,9 +563,10 @@ function program1(depth0,data) {
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
-                "comparator" : this.comparator
+                "comparator" : this.comparator,
+                "beforeRenderHandler" : this.beforeRenderHandler
             };
-            var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
+            this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
             return this;
         }
@@ -1785,7 +1792,7 @@ function program1(depth0,data) {
             "validators": [
                  function checkJSON(value, formValues) {
                      try {
-                         if (value) {
+                         if (value && (typeof value === "string")) {
                              JSON.parse(value);
                          }
                      } catch (e) {
@@ -2398,7 +2405,7 @@ function program1(depth0,data) {
                 this.schemasCallback.call(this);
             }
             if (this.beforeRenderHandler) {
-                this.beforeRenderHandler.call(this);
+                this.beforeRenderHandler(this.model);
             }
             this.renderForm();
         },

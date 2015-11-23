@@ -450,7 +450,7 @@
                 this.schemasCallback.call(this);
             }
             if (this.beforeRenderHandler) {
-                this.beforeRenderHandler.call(this);
+                this.beforeRenderHandler(this.model);
             }
             this.renderForm();
         },
