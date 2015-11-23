@@ -35,6 +35,10 @@
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
+        
+        labelHandler : function(model) {
+            return model.get("name");
+        },
 
         initialize: function(options) {
             var me = this;
@@ -89,6 +93,9 @@
                     }
                     return r;
                 };
+            }
+            if (options.labelHandler) {
+                this.labelHandler = options.labelHandler;
             }
 
             // set Collection
@@ -340,16 +347,17 @@
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
                 var selected = false;
+                var model = models[i];
                 // obtain name from model
-                var oid = models[i].get("oid");
+                var oid = model.get("oid");
                 if (oid) {
                     if (this.config.get(this.type.toLowerCase()) === oid) {
-                        jsonData.selectedName = models[i].get("name");
+                        jsonData.selectedName = model.get("name");
                         selected = true;
                     }
                 }
                 var option = {
-                        "label" : models[i].get("name"),
+                        "label" : this.labelHandler(model),
                         "value" : oid,
                         "selected" : selected,
                         "edit" : this.roles.edit,
@@ -358,9 +366,9 @@
                 };
 
                 // support dynamic collections
-                if (models[i].get("dynamic")) {
+                if (model.get("dynamic")) {
                     option.dynamic = true;
-                    option.label = "~" + models[i].get("name");
+                    option.label = "~" + model.get("name");
                 } else {
                     option.dynamic = false;
                 }

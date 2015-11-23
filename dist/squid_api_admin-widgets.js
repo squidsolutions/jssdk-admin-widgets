@@ -461,9 +461,9 @@ function program1(depth0,data) {
         collectionView : null,
         
         comparator : function(a,b) {
-            // default is : sort by alpha path
-            var va = a.get("path").toLowerCase();
-            var vb = b.get("path").toLowerCase();
+            // default is : sort by alpha path + name
+            var va = a.get("path")+a.get("name").toLowerCase();
+            var vb = b.get("path")+b.get("name").toLowerCase();
             if (va < vb) {
                 return -1;
             }
@@ -564,7 +564,10 @@ function program1(depth0,data) {
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
-                "beforeRenderHandler" : this.beforeRenderHandler
+                "beforeRenderHandler" : this.beforeRenderHandler,
+                "labelHandler" : function(model) {
+                    return model.get("path")+model.get("name");
+                }
             };
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
@@ -612,6 +615,10 @@ function program1(depth0,data) {
             var da = a.get("dynamic");
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
+        },
+        
+        labelHandler : function(model) {
+            return model.get("name");
         },
 
         initialize: function(options) {
@@ -667,6 +674,9 @@ function program1(depth0,data) {
                     }
                     return r;
                 };
+            }
+            if (options.labelHandler) {
+                this.labelHandler = options.labelHandler;
             }
 
             // set Collection
@@ -918,16 +928,17 @@ function program1(depth0,data) {
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
                 var selected = false;
+                var model = models[i];
                 // obtain name from model
-                var oid = models[i].get("oid");
+                var oid = model.get("oid");
                 if (oid) {
                     if (this.config.get(this.type.toLowerCase()) === oid) {
-                        jsonData.selectedName = models[i].get("name");
+                        jsonData.selectedName = model.get("name");
                         selected = true;
                     }
                 }
                 var option = {
-                        "label" : models[i].get("name"),
+                        "label" : this.labelHandler(model),
                         "value" : oid,
                         "selected" : selected,
                         "edit" : this.roles.edit,
@@ -936,9 +947,9 @@ function program1(depth0,data) {
                 };
 
                 // support dynamic collections
-                if (models[i].get("dynamic")) {
+                if (model.get("dynamic")) {
                     option.dynamic = true;
-                    option.label = "~" + models[i].get("name");
+                    option.label = "~" + model.get("name");
                 } else {
                     option.dynamic = false;
                 }

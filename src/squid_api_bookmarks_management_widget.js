@@ -16,9 +16,9 @@
         collectionView : null,
         
         comparator : function(a,b) {
-            // default is : sort by alpha path
-            var va = a.get("path").toLowerCase();
-            var vb = b.get("path").toLowerCase();
+            // default is : sort by alpha path + name
+            var va = a.get("path")+a.get("name").toLowerCase();
+            var vb = b.get("path")+b.get("name").toLowerCase();
             if (va < vb) {
                 return -1;
             }
@@ -119,7 +119,10 @@
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
-                "beforeRenderHandler" : this.beforeRenderHandler
+                "beforeRenderHandler" : this.beforeRenderHandler,
+                "labelHandler" : function(model) {
+                    return model.get("path")+model.get("name");
+                }
             };
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
