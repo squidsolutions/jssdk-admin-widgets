@@ -160,11 +160,11 @@
                 // Save
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
-                    success: function (collection, response) {
+                    success: function (model, response) {
                         // set project ID
-                        me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
+                        me.formContent.setValue("id", {"projectId" : model.get("id").projectId});
 
-                        if (me.model.definition == "Project") {
+                        if (me.model.definition === "Project") {
                             if (data.dbSchemas.length !== 0) {
                                 $(me.formModal.el).trigger("hidden.bs.modal");
                             }
@@ -173,25 +173,21 @@
                         }
 
                         // project exception
-                        if (me.model.definition == "Project") {
+                        if (me.model.definition === "Project") {
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
                             }
-                            if (me.successHandler) {
-                                me.successHandler.call(collection);
-                            }
-                        } else {
-                            if (me.successHandler) {
-                                me.successHandler.call(collection);
-                            }
+                        }
+                        if (me.successHandler) {
+                            me.successHandler.call(model);
                         }
                     },
-                    error: function (collection, response) {
+                    error: function (model, response) {
                         var msg = response.objectType + " error saving with name " + response.name;
                         me.setStatusMessage(msg);
 
                         if (me.errorHandler) {
-                            me.errorHandler.call(collection);
+                            me.errorHandler.call(model);
                         }
                     }
                 });
