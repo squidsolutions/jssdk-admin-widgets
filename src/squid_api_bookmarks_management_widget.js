@@ -14,6 +14,18 @@
         typeLabel : null,
         typeLabelPlural : null,
         comparator : null,
+        
+        pathComparator : function(a,b) {
+            var va = a.get("path").toLowerCase();
+            var vb = b.get("path").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -26,17 +38,25 @@
                 }
                 if (options.typeLabel) {
                     this.typeLabel = options.typeLabel;
-                } else {
-                    this.typeLabel = this.type;
                 }
                 if (options.typeLabelPlural) {
                     this.typeLabelPlural = options.typeLabelPlural;
-                } else {
-                    this.typeLabelPlural = this.typeLabel + "s";
                 }
                 if (options.comparator) {
                     this.comparator = options.comparator;
                 }
+            }
+            
+            if (!this.typeLabel) {
+                this.typeLabel = this.type;
+            }
+            if (!this.typeLabelPlural) {
+                this.typeLabelPlural = this.typeLabel + "s";
+            }
+            
+            if (!this.comparator) {
+                // default is : sort by alpha path
+                this.comparator = this.pathComparator;
             }
             
             if (!this.changeEventHandler) {
