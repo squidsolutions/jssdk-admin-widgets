@@ -231,8 +231,9 @@
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
                             }
+                            me.collection.add(this);
                             $(me.collectionModal.el).trigger("hidden.bs.modal");
-                            var message = me.typeLabel + " with name " + this.get("name") + " has been successfully created";
+                            var message = me.typeLabel + " has been successfully created";
                             squid_api.model.status.set({'message' : message});
                         }
                     });
