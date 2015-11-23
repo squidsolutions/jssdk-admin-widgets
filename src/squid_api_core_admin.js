@@ -372,7 +372,21 @@
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
-            "editorClass" : "form-control"
+            "editorClass" : "form-control",
+            "validators": [
+                 function checkJSON(value, formValues) {
+                     try {
+                         if (value && (typeof value === "string")) {
+                             JSON.parse(value);
+                         }
+                     } catch (e) {
+                         return {
+                             type: 'config',
+                             message: 'Config must be valid JSON'
+                         };
+                     }
+                 }
+             ] 
         }
     };
 
@@ -391,11 +405,28 @@
         },
 
         setValue: function(value) {
-            // beautify json string
-            var json = JSON.parse(value);
-            var val = JSON.stringify(json, null, 4);
+            // beautify json value
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
             this.$el.val(val);
-        }
+        },
+        
+        getValue: function() {
+            // transform text value to json
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
+            return json;
+        },
     });
 
     // Define "baseExpressionEditor" Custom Editor

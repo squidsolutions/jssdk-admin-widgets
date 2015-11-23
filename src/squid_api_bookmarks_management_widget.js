@@ -9,12 +9,70 @@
         createOnlyView : false,
         autoOpen : null,
         parent : null,
+        changeEventHandler : null,
+        type : "Bookmark",
+        typeLabel : null,
+        typeLabelPlural : null,
+        collectionView : null,
+        
+        comparator : function(a,b) {
+            // default is : sort by alpha path + name
+            var va = a.get("path")+a.get("name").toLowerCase();
+            var vb = b.get("path")+b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+        
+        beforeRenderHandler : function(model) {
+            if (model.isNew()) {
+                // set config to current state when creating a new model
+                var config = squid_api.model.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config", config);
+            }
+        },
 
         initialize: function(options) {
             this.config = squid_api.model.config;
-            if (options.autoOpen) {
-                this.autoOpen = true;
+            if (options) {
+                if (options.autoOpen) {
+                    this.autoOpen = true;
+                }
+                if (options.changeEventHandler) {
+                    this.changeEventHandler = options.changeEventHandler;
+                }
+                if (options.typeLabel) {
+                    this.typeLabel = options.typeLabel;
+                }
+                if (options.typeLabelPlural) {
+                    this.typeLabelPlural = options.typeLabelPlural;
+                }
+                if (options.comparator) {
+                    this.comparator = options.comparator;
+                }
             }
+            
+            if (!this.typeLabel) {
+                this.typeLabel = this.type;
+            }
+            if (!this.typeLabelPlural) {
+                this.typeLabelPlural = this.typeLabel + "s";
+            }
+            
+            if (!this.changeEventHandler) {
+                this.changeEventHandler = function(value) {
+                    if (value) {
+                        squid_api.setBookmarkId(value);
+                    }
+                };
+            }
+            
             this.model = new squid_api.model.BookmarkModel();
             this.parent = new squid_api.model.ProjectModel();
             
@@ -49,25 +107,25 @@
         render: function() {
             var me = this;
 
+            // Build the CollectionManagementWidget
             var viewOptions = {
                 "el" : this.$el,
                 "type" : "Bookmark",
+                "typeLabel" : this.typeLabel,
+                "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
                 "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
+                "changeEventHandler" : this.changeEventHandler,
+                "comparator" : this.comparator,
+                "beforeRenderHandler" : this.beforeRenderHandler,
+                "labelHandler" : function(model) {
+                    return model.get("path")+model.get("name");
+                },
+                "displaySelected" : false
             };
-
-            var successHandler = function(value) {
-                if (value) {
-                    squid_api.model.config.set({
-                        "bookmark" : value
-                    });
-                }
-            };
-            
-            viewOptions.changeEventHandler  = successHandler;
-            var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
+            this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
             return this;
         }

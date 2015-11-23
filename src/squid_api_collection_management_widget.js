@@ -9,11 +9,37 @@
         config : null,
         modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
         type : null,
+        typeLabel : null,
+        typeLabelPlural : null,
         collectionAvailable : false,
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
         beforeRenderHandler : null,
+        comparator : null,
+        displaySelected : true,
+        
+        alphaNameComparator : function(a,b) {
+            var va = a.get("name").toLowerCase();
+            var vb = b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+        
+        dynamicComparator : function(a,b) {
+            var da = a.get("dynamic");
+            var db = b.get("dynamic");
+            return (da === db) ? 0 : da ? 1 : -1;
+        },
+        
+        labelHandler : function(model) {
+            return model.get("name");
+        },
 
         initialize: function(options) {
             var me = this;
@@ -29,6 +55,16 @@
             }
             if (options.type) {
                 this.type = options.type;
+            }
+            if (options.typeLabel) {
+                this.typeLabel = options.typeLabel;
+            } else {
+                this.typeLabel = this.type;
+            }
+            if (options.typeLabelPlural) {
+                this.typeLabelPlural = options.typeLabelPlural;
+            } else {
+                this.typeLabelPlural = this.typeLabel + "s";
             }
             if (options.config) {
                 this.config = options.config;
@@ -47,18 +83,46 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  function(a, b) {
+                    var r = me.dynamicComparator(a,b);
+                    if (r === 0) {
+                        r = me.alphaNameComparator(a,b);
+                    }
+                    return r;
+                };
+            }
+            if (options.labelHandler) {
+                this.labelHandler = options.labelHandler;
+            }
+            if (options.displaySelected === false) {
+                this.displaySelected = false;
+            }
 
-            // set base then update
-            this.collection = new squid_api.model.BaseCollection();
-            this.updateCollection();
+            // set Collection
+            
+            // match a base collection
+            for (var collectionItem in squid_api.model) {
+                var str = collectionItem;
+                var res = str.match(this.type + "Collection");
+                if (res) {
+                    this.collection = new squid_api.model[res]();
+                }
+            }
+            if (!this.collection) {
+                squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
+            }
 
+            this.collection.comparator = this.comparator;
             this.collection.on("remove", function(model) {
                 if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
                     me.config.unset(me.model.definition.toLowerCase());
                 }
             });
             this.collection.on("reset change sync", this.render, this);
-            
             this.collection.on("remove change", function() {
             	if (me.model.definition == "Domain") {
             		this.fetch();
@@ -115,7 +179,7 @@
                 } else {
                     this.collectionModal = new Backbone.BootstrapModal({
                         content: this.html,
-                        title: this.type + "s"
+                        title: this.typeLabelPlural
                     });
                     this.collectionModal.open();
                 }
@@ -141,20 +205,6 @@
                 $(this.collectionModal.el).find(".cancel").one("click", function() {
                     $(me.collectionModal.el).trigger("hidden.bs.modal");
                 });
-            }
-        },
-
-        updateCollection: function() {
-            var me = this;
-
-            // match a base collection and overwrite base
-            var collection = null;
-            for (var collectionItem in squid_api.model) {
-                var str = collectionItem;
-                var res = str.match(this.type + "Collection");
-                if (res) {
-                    this.collection = new squid_api.model[res]();
-                }
             }
         },
 
@@ -192,8 +242,9 @@
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
                             }
+                            me.collection.add(this);
                             $(me.collectionModal.el).trigger("hidden.bs.modal");
-                            var message = me.type + " with name " + this.get("name") + " has been successfully created";
+                            var message = me.typeLabel + " has been successfully created";
                             squid_api.model.status.set({'message' : message});
                         }
                     });
@@ -237,7 +288,7 @@
                         model.destroy({
                             success:function(collection) {
                                 $(me.collectionModal.el).trigger("hidden.bs.modal");
-                                var message = me.type + " with name " + collection.get("name") + " has been successfully deleted";
+                                var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
                             }
                         });
@@ -276,6 +327,8 @@
             var jsonData = {
                     "selAvailable" : false,
                     "type" : this.type,
+                    "typeLabel" : this.typeLabel,
+                    "typeLabelPlural" : this.typeLabelPlural,
                     "options" : [],
                     "valueSelected" : false,
                     "create" : this.roles.create,
@@ -293,21 +346,22 @@
 
             // selected obj
             var sel = [];
-
+            
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;
                 var selected = false;
+                var model = models[i];
                 // obtain name from model
-                var oid = models[i].get("oid");
+                var oid = model.get("oid");
                 if (oid) {
                     if (this.config.get(this.type.toLowerCase()) === oid) {
-                        jsonData.selectedName = models[i].get("name");
+                        jsonData.selectedName = model.get("name");
                         selected = true;
                     }
                 }
                 var option = {
-                        "label" : models[i].get("name"),
+                        "label" : this.labelHandler(model),
                         "value" : oid,
                         "selected" : selected,
                         "edit" : this.roles.edit,
@@ -316,9 +370,9 @@
                 };
 
                 // support dynamic collections
-                if (models[i].get("dynamic")) {
+                if (model.get("dynamic")) {
                     option.dynamic = true;
-                    option.label = "~" + models[i].get("name");
+                    option.label = "~" + model.get("name");
                 } else {
                     option.dynamic = false;
                 }
@@ -330,13 +384,6 @@
                     jsonData.options.push(option);
                 }
             }
-
-            // sort data by dynamic attribute
-            jsonData.options.sort(function(a, b) {
-                var labelA = a.label.toUpperCase();
-                var labelB = b.label.toUpperCase();
-                return (labelA < labelB) ? -1 : (labelA > labelB) ? 1 : 0;
-            });
 
             // place selected obj at start of array
             if (sel[0]) {
@@ -364,7 +411,13 @@
             }
 
             // set button value
-            this.$el.find("button.selected-model").text(jsonData.selectedName);
+            if ((this.displaySelected !== false) && jsonData.valueSelected) {
+                this.$el.find("button.selected-model").text(jsonData.selectedName);
+                this.$el.find("button.selected-model").addClass("value-selected");
+            } else {
+                this.$el.find("button.selected-model").text(this.typeLabelPlural);
+                this.$el.find("button.selected-model").removeClass("value-selected");
+            }
 
             // hide main button if parent is not set
             if (!this.parent.get("id")) {

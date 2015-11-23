@@ -1,12 +1,11 @@
 <div class="squid-api-model-widget squid-api-model-widget-{{type}}" {{#unless collectionAvailable}} data-toggle="tooltip" data-placement="bottom" title="{{collectionNotAvailableReason}}" {{/unless}}>
     <button class="form-control selected-model squid-api-action" {{#unless collectionAvailable}} disabled="true" {{/unless}}>
-        Select {{type}}
     </button>
     <div id="squid-api-{{type}}-model-widget-popup-container">
     <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
         {{#if create}}
             <button type="button"  class="create btn btn-default">
-                Create {{type}}
+                <i class="fa fa-plus"></i> New {{typeLabel}}
             </button>
         {{/if}}
         {{#if collectionAvailable}}
@@ -36,13 +35,13 @@
                     </tbody>
                 </table>
             {{else}}
-                <div class="no-data">No {{type}} Available</div>
+                <div class="no-data">No {{typeLabel}} Available</div>
             {{/if}}
         </div>
     </div>
         {{else}}
             <div class="parent-missing">
-			Computing in progress...
+			<i class="glyphicon glyphicon-refresh loading"></i> {{typeLabelPlural}} list computing in progress
             </div>
         {{/if}}
 </div>

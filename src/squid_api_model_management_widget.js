@@ -163,26 +163,23 @@
             var me = this;
             var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
-            /*
-                1. validate form (if errors, display them & keep modal open)
-                2. save data
-            */
-
-            var validForm = this.formContent.validate();
-            if (validForm) {
+            // validate form ()
+            var errors = this.formContent.validate();
+            if (errors) {
+                // if errors, display them & keep modal open
                 me.formModal.preventClose();
             } else if (! invalidExpression) {
-                // remove all dialog's
+                // remove all dialogs
                 $(".squid-api-dialog").remove();
 
+                // Save
                 var data = me.manipulateData(this.formContent.getValue());
                 me.model.save(data, {
-                    success: function (collection, response) {
+                    success: function (model, response) {
                         // set project ID
+                        me.formContent.setValue("id", {"projectId" : model.get("id").projectId});
 
-                        me.formContent.setValue("id", {"projectId" : collection.get("id").projectId});
-
-                        if (me.model.definition == "Project") {
+                        if (me.model.definition === "Project") {
                             if (data.dbSchemas.length !== 0) {
                                 $(me.formModal.el).trigger("hidden.bs.modal");
                             }
@@ -191,25 +188,21 @@
                         }
 
                         // project exception
-                        if (me.model.definition == "Project") {
+                        if (me.model.definition === "Project") {
                             if (me.schemasCallback) {
                                 me.schemasCallback.call(me);
                             }
-                            if (me.successHandler) {
-                                me.successHandler.call(collection);
-                            }
-                        } else {
-                            if (me.successHandler) {
-                                me.successHandler.call(collection);
-                            }
+                        }
+                        if (me.successHandler) {
+                            me.successHandler.call(model);
                         }
                     },
-                    error: function (collection, response) {
+                    error: function (model, response) {
                         var msg = response.objectType + " error saving with name " + response.name;
                         me.setStatusMessage(msg);
 
                         if (me.errorHandler) {
-                            me.errorHandler.call(collection);
+                            me.errorHandler.call(model);
                         }
                     }
                 });
@@ -444,7 +437,7 @@
                 this.schemasCallback.call(this);
             }
             if (this.beforeRenderHandler) {
-                this.beforeRenderHandler.call(this);
+                this.beforeRenderHandler(this.model);
             }
             this.renderForm();
         },
