@@ -1007,7 +1007,7 @@ function program1(depth0,data) {
                         this.collection.fetch();
                     }
                 }
-                this.collection.on("add remove change", function() {
+                this.collection.on("add remove sync", function() {
                 	/*
 						for dimensions:
 							1. remove period config
@@ -1137,7 +1137,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset change remove sync", this.render, this);
+                    this.collection.on("sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -1181,6 +1181,7 @@ function program1(depth0,data) {
                         var id = $(event.target).attr("data-value");
                         var model = me.collection.get(id);
                         if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                            console.log("here");
                             if (true) {
                                 model.destroy({
                                     success:function() {
@@ -1257,11 +1258,7 @@ function program1(depth0,data) {
                         }
 
                         // update all models at the same time
-                        this.collection.saveAll(this.collection.models).then(function() {
-                        	if (forceChange) {
-                        		me.collection.trigger("change");
-                        	}
-                        });
+                        this.collection.saveAll(this.collection.models);
                     }
                 },
                 render: function() {
