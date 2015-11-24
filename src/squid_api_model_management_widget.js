@@ -182,12 +182,11 @@
                             me.successHandler.call(model);
                         }
                     },
-                    error: function (model, response) {
-                        var msg = response.objectType + " error saving with name " + response.name;
-                        me.setStatusMessage(msg);
+                    error: function (xhr) {
+                        squid_api.model.status.set({"error":xhr});
 
                         if (me.errorHandler) {
-                            me.errorHandler.call(model);
+                            me.errorHandler.call(xhr);
                         }
                     }
                 });
