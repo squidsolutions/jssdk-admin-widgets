@@ -478,6 +478,22 @@ function program1(depth0,data) {
                 model.set("config", config);
             }
         },
+        
+        getRoles: function() {
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
+
+            var parentRole = this.parent.get("_role");
+
+            // write role
+            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
+            return roles;
+        },
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -545,6 +561,27 @@ function program1(depth0,data) {
             }
         },
         
+        labelHandler : function(model) {
+            var path = model.get("path");
+            var user = path.indexOf("/USER/");
+            if (user === 0) {
+                path = path.substring(6);
+                var userId = path.substring(0,path.indexOf("/"));
+                if (userId === squid_api.model.login.get("oid")) {
+                    // self
+                    path = "My Bookmarks"+path.substring(path.indexOf("/"));
+                } else {
+                    path = "Others Bookmarks"+path.substring(path.indexOf("/"));
+                }
+            } else {
+                var shared = path.indexOf("/SHARED/");
+                if (shared === 0) {
+                    path = "Shared Bookmarks"+path.substring(7);
+                }
+            }
+            return path + model.get("name");
+        },
+        
         render: function() {
             var me = this;
 
@@ -561,10 +598,9 @@ function program1(depth0,data) {
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
-                "labelHandler" : function(model) {
-                    return model.get("path")+model.get("name");
-                },
-                "displaySelected" : false
+                "labelHandler" : this.labelHandler,
+                "displaySelected" : false,
+                "getRoles" : this.getRoles
             };
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
             
@@ -678,6 +714,10 @@ function program1(depth0,data) {
             }
             if (options.displaySelected === false) {
                 this.displaySelected = false;
+            }
+            
+            if (options.getRoles) {
+                this.getRoles = options.getRoles;
             }
 
             // set Collection
@@ -864,10 +904,14 @@ function program1(depth0,data) {
                 if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                     if (true) {
                         model.destroy({
+                            wait : true,
                             success:function(collection) {
                                 $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                squid_api.model.status.set({'error' : response});
                             }
                         });
                     }
@@ -875,9 +919,9 @@ function program1(depth0,data) {
             });
         },
 
-        userRoles: function() {
+        getRoles: function() {
             // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false};
+            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
 
             var parentRole = this.parent.get("_role");
 
@@ -886,10 +930,6 @@ function program1(depth0,data) {
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
-            }
-
-            // decide which models can be refreshed
-            if ((this.model.definition == "Project" || this.model.definition == "Domain") && (parentRole == "OWNER" || parentRole == "WRITE")) {
                 roles.refresh = true;
             }
 
@@ -899,7 +939,7 @@ function program1(depth0,data) {
         render: function() {
             var me = this;
 
-            this.roles = this.userRoles();
+            this.roles = this.getRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
             var jsonData = {
@@ -2294,12 +2334,11 @@ function program1(depth0,data) {
                             me.successHandler.call(model);
                         }
                     },
-                    error: function (model, response) {
-                        var msg = response.objectType + " error saving with name " + response.name;
-                        me.setStatusMessage(msg);
+                    error: function (xhr) {
+                        squid_api.model.status.set({"error":xhr});
 
                         if (me.errorHandler) {
-                            me.errorHandler.call(model);
+                            me.errorHandler.call(xhr);
                         }
                     }
                 });

@@ -101,6 +101,10 @@
             if (options.displaySelected === false) {
                 this.displaySelected = false;
             }
+            
+            if (options.getRoles) {
+                this.getRoles = options.getRoles;
+            }
 
             // set Collection
             
@@ -286,10 +290,14 @@
                 if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                     if (true) {
                         model.destroy({
+                            wait : true,
                             success:function(collection) {
                                 $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
                                 squid_api.model.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                squid_api.model.status.set({'error' : response});
                             }
                         });
                     }
@@ -297,9 +305,9 @@
             });
         },
 
-        userRoles: function() {
+        getRoles: function() {
             // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false};
+            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
 
             var parentRole = this.parent.get("_role");
 
@@ -308,10 +316,6 @@
                 roles.create = true;
                 roles.edit = true;
                 roles.delete = true;
-            }
-
-            // decide which models can be refreshed
-            if ((this.model.definition == "Project" || this.model.definition == "Domain") && (parentRole == "OWNER" || parentRole == "WRITE")) {
                 roles.refresh = true;
             }
 
@@ -321,7 +325,7 @@
         render: function() {
             var me = this;
 
-            this.roles = this.userRoles();
+            this.roles = this.getRoles();
             var collectionNotAvailableReason = "please select a " + this.parent.definition + " first ";
 
             var jsonData = {
