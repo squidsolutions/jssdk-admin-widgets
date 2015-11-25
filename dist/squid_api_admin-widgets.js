@@ -458,7 +458,7 @@ function program1(depth0,data) {
 
         initialize: function(options) {
             this.config = squid_api.model.config;
-            this.status = squid_api.model.status;
+
             if (options) {
                 if (options.autoOpen) {
                     this.autoOpen = true;
@@ -474,9 +474,6 @@ function program1(depth0,data) {
                 }
                 if (options.comparator) {
                     this.comparator = options.comparator;
-                }
-                if (options.createOnlyView) {
-                    this.createOnlyView = options.createOnlyView;
                 }
             }
 
@@ -553,15 +550,8 @@ function program1(depth0,data) {
             return path +"/"+ model.get("name");
         },
 
-        configCompare : function(model) {
-            // if called via callback
+        configCompare : function() {
             var el = this.$el.find("button");
-
-            // if called via config change
-            if (! model && this.createOnlyView.$el) {
-                el = this.createOnlyView.$el.find("button");
-            }
-
             if (this.model.get("id")) {
                 if (JSON.stringify(this.model.get("config")) == JSON.stringify(_.omit(this.config.toJSON(), "project", "bookmark"))) {
                     el.addClass("same");
@@ -614,9 +604,6 @@ function program1(depth0,data) {
                         squid_api.model.status.set({"error":xhr});
                     }
                 });
-                if (this.collectionView) {
-                    this.collectionView.triggerFetch();
-                }
             } else {
                 this.model.set({"id" : null});
             }
@@ -632,33 +619,17 @@ function program1(depth0,data) {
                 "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
-                "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
+                "afterRenderHandler" : this.configCompare,
                 "labelHandler" : this.labelHandler,
                 "displaySelected" : false,
                 "getRoles" : this.getRoles
             };
 
-            var successHandler = function() {
-                if (this.get("id")) {
-                    squid_api.setBookmarkId(this.get("id").bookmarkId);
-                    me.status.set("message", "successfully created a new bookmark with name: " + this.get("name") );
-                }
-            };
-
-            if (! this.createOnlyView) {
-                this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
-            } else {
-                // once model has been saved
-                viewOptions.successHandler = successHandler;
-                // verify model config with current config
-                viewOptions.afterRenderHandler = this.configCompare;
-                // render model management view
-                this.createOnlyView = new squid_api.view.ModelManagementView(viewOptions);
-            }
+            this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
 
             return this;
         }
@@ -685,6 +656,7 @@ function program1(depth0,data) {
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
+        afterRenderHandler : null,
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
@@ -752,6 +724,9 @@ function program1(depth0,data) {
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
+            }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -1071,6 +1046,10 @@ function program1(depth0,data) {
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
 
             if (this.collectionModal) {
                 this.collectionModal.$el.find(".modal-body").html(this.html);

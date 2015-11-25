@@ -15,6 +15,7 @@
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
+        afterRenderHandler : null,
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
@@ -82,6 +83,9 @@
             }
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
+            }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -401,6 +405,10 @@
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
 
             if (this.collectionModal) {
                 this.collectionModal.$el.find(".modal-body").html(this.html);
