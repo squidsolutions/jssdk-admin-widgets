@@ -46,6 +46,9 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
             if (options.modalTitle) {
                 this.modalTitle = options.modalTitle;
             }
@@ -64,6 +67,9 @@
                 this.login = options.login;
             } else {
                 this.login = squid_api.model.login;
+            }
+            if (options.getRoles) {
+                this.getRoles = options.getRoles;
             }
             if (options.status) {
                 this.status = options.status;
@@ -163,7 +169,7 @@
             var me = this;
             var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
-            // validate form ()
+            // validate form
             var errors = this.formContent.validate();
             if (errors) {
                 // if errors, display them & keep modal open
@@ -577,6 +583,9 @@
                     }
                     // print template
                     this.$el.html(this.template(jsonData));
+                    if (this.afterRenderHandler) {
+                        this.afterRenderHandler.call(this);
+                    }
                 }
             }
         }

@@ -18,7 +18,7 @@
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
-        
+
         alphaNameComparator : function(a,b) {
             var va = a.get("name").toLowerCase();
             var vb = b.get("name").toLowerCase();
@@ -30,13 +30,13 @@
             }
             return 0;
         },
-        
+
         dynamicComparator : function(a,b) {
             var da = a.get("dynamic");
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
-        
+
         labelHandler : function(model) {
             return model.get("name");
         },
@@ -101,13 +101,13 @@
             if (options.displaySelected === false) {
                 this.displaySelected = false;
             }
-            
+
             if (options.getRoles) {
                 this.getRoles = options.getRoles;
             }
 
             // set Collection
-            
+
             // match a base collection
             for (var collectionItem in squid_api.model) {
                 var str = collectionItem;
@@ -159,11 +159,15 @@
                                 squid_api.model.status.set({"error":response});
                                 me.collectionAvailable = true;
                             }
-                        });
+                    });
                 }
             });
 
             this.render();
+        },
+
+        triggerFetch: function() {
+            this.collection.fetch();
         },
 
         setModel : function(model) {
@@ -350,7 +354,7 @@
 
             // selected obj
             var sel = [];
-            
+
             // populate view data
             for (i=0; i<models.length; i++) {
                 jsonData.selAvailable = true;

@@ -153,6 +153,36 @@
 	border-radius: 8px;
 }
 
+.squid-api-admin-widgets-Bookmark button, .squid-api-model-widget-Bookmark button {
+    background: none;
+    border: none;
+}
+.squid-api-admin-widgets-Bookmark button:before, .squid-api-model-widget-Bookmark button:before {
+    font-family: FontAwesome;
+}
+.squid-api-admin-widgets-Bookmark  button:before, .squid-api-admin-widgets-Bookmark button.different:before {
+    content: "\f006";
+}
+.squid-api-admin-widgets-Bookmark button.same:before {
+    content: "\f005";
+}
+.squid-api-model-widget-Bookmark button {
+    text-indent: 100%;
+    overflow: hidden;
+    box-shadow: none;
+}
+.squid-api-model-widget-Bookmark button:before {
+    content: "\f03a";
+    text-indent: 0%;
+    float: left;
+}
+.squid-api-Bookmark-model-widget-popup-container .squid-api-model-widget-Bookmark button:before {
+    text-indent: 0%;
+    content: none;
+}
+.squid-api-admin-widgets-Bookmark button i {
+    display: none;
+}
 .squid-api-pre-suggestions .TABLE:before {
 	content: "\f0ce";
 }
