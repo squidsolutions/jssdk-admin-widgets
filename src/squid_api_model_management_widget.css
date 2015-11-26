@@ -170,8 +170,16 @@
 	padding-left: 5px;
 }
 
+.squid-api-pre-suggestions .table:before {
+	background: #2c3e50;
+}
+
 .squid-api-pre-suggestions .date:before {
 	background: hotpink;
+}
+
+.squid-api-pre-suggestions .domain:before {
+	background: #c0392b;
 }
 
 .squid-api-pre-suggestions .string:before {
@@ -186,20 +194,12 @@
 	background: black;
 }
 
-.squid-api-pre-suggestions .object:before {
-	background: blue;
-}
-
 .squid-api-pre-suggestions .condition:before {
 	background: darkgoldenrod;
 }
 
 .squid-api-pre-suggestions .DOMAIN:before {
 	content: "\f1c0";
-}
-
-.squid-api-pre-suggestions .METRIC:before {
-	/*content: "\f1c0";*/
 }
 
 .squid-api-pre-suggestions .FORMULA:before {

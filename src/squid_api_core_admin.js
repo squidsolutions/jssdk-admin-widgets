@@ -89,7 +89,7 @@
                 "subSchema" : {
                     "value" : {
                         "title" : "Subject Value",
-                        "type" : "TextArea",
+                        "type" : "DomainExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
                 },
@@ -186,7 +186,7 @@
                 "subSchema" : {
                     "value" : {
                         "title" : "Join Expression",
-                        "type" : "TextArea",
+                        "type" : "RelationExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
                 },
@@ -271,7 +271,7 @@
                 title : "",
                 "subSchema" : {
                     "value" : {
-                        "type" : "TextArea",
+                        "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
                         "title" : "Expression Value"
                     }
@@ -281,8 +281,8 @@
             }
     };
 
-    squid_api.model.DimensionModel.prototype.definition = "Metric";
-    squid_api.model.DimensionModel.prototype.schema = {
+    squid_api.model.MetricModel.prototype.definition = "Metric";
+    squid_api.model.MetricModel.prototype.schema = {
             "id" : {
                 "title" : " ",
                 "type" : "Object",
@@ -322,8 +322,8 @@
                 "subSchema" : {
                     "value" : {
                         "title" : "Expression Value",
-                        "type" : "TextArea",
-                        "editorClass" : "form-control suggestion-box"
+                        "type" : "MetricExpressionEditor",
+                        "editorClass" : "form-control suggestion-box",
                     }
                 },
                 "position" : 1,
@@ -428,7 +428,138 @@
             return json;
         },
     });
-    
+
+    // Define "baseExpressionEditor" Custom Editor
+    var baseExpressionEditor = Backbone.Form.editors.Base.extend({
+        tagName: 'textarea',
+        modelId: null,
+
+        events: {
+            'keyup' : 'renderDialog',
+            'click' : 'renderDialog'
+        },
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            if (options.schema.modelId) {
+                this.modelId = options.schema.modelId;
+            }
+        },
+
+        getValue: function() {
+            return this.$el.val();
+        },
+
+        setValue: function(value) {
+            this.$el.val(value);
+        },
+
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
+        },
+
+        performRequest: function(url, data) {
+            var me = this;
+            var request = $.ajax({
+                type: "GET",
+                url: url,
+                dataType: 'json',
+                data: data,
+                success:function(response) {
+                    // remove any existing suggestions dialogs
+                    me.$el.parents().find(".squid-api-pre-suggestions").dialog("destroy").remove();
+                    // detemine if there is an error or not
+                    if (response.validateMessage.length === 0) {
+                        me.$el.removeClass("invalid-expression").addClass("valid-expression");
+                    } else {
+                        me.$el.removeClass("valid-expression").addClass("invalid-expression");
+                    }
+                    // append box if definitions exist
+                    if (response.suggestions && response.suggestions.length > 0) {
+                        // store offset
+                        var offset = response.filterIndex;
+                        // append div
+                        me.$el.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
+                        for (i=0; i<response.suggestions.length; i++) {
+                            me.$el.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  response.suggestions[i].suggestion + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                        }
+                        me.$el.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
+                            var item;
+                            if ($(event.target).is("li")) {
+                                item = $(event.target).find(".suggestion").html();
+                            } else {
+                                item = $(event.target).parent().find(".suggestion").html();
+                            }
+                            var str = me.$el.val().substring(0, offset) + item.substring(0);
+                            me.setValue(str);
+                            me.renderDialog();
+                        });
+                        me.$el.siblings(".squid-api-pre-suggestions").dialog({
+                            dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
+                            position: { my: "center top", at: "center bottom+4", of: me.$el },
+                            clickOutside: true, // clicking outside the dialog will close it
+                            clickOutsideTrigger: me.$el, // Element (id or class) that triggers the dialog opening
+                        });
+                    } else {
+                        // set message
+                        squid_api.model.status.set("message", response.validateMessage);
+                    }
+                    me.$el.focus();
+                },
+                error: function(response) {
+                    if (response.responseJSON.error) {
+                        squid_api.model.status.set({'message' : response.responseJSON.error});
+                    } else {
+                        squid_api.model.status.set({'error' : response});
+                    }
+                }
+            });
+        }
+    });
+
+    var domainExpressionEditor = baseExpressionEditor.extend({
+        renderDialog: function() {
+            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
+            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            this.performRequest(url, data);
+
+        }
+    });
+    var dimensionExpressionEditor = baseExpressionEditor.extend({
+        renderDialog: function() {
+            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
+            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            data.dimensionId = this.modelId;
+            this.performRequest(url, data);
+
+        }
+    });
+    var metricExpressionEditor = baseExpressionEditor.extend({
+        renderDialog: function() {
+            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            this.performRequest(url, data);
+
+        }
+    });
+    var relationExpressionEditor = baseExpressionEditor.extend({
+        renderDialog: function() {
+            var url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";
+            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
+            data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();
+            this.performRequest(url, data);
+
+        }
+    });
+
     // Register custom editors
     Backbone.Form.editors.JsonTextArea = jsonTextArea;
+    Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
+    Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
+    Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
+    Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
 }));

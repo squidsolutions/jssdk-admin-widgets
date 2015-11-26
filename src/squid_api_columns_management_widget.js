@@ -102,16 +102,16 @@
                         this.collection.fetch();
                     }
                 }
-                this.collection.on("add remove change", function() {
+                this.collection.on("add remove sync", function() {
                 	/*
-						for dimensions: 
+						for dimensions:
 							1. remove period config
 							2. set user selection based on what models are found in the collection returned
-						
+
 						for dimensions & metrics:
 							1. refresh the domain
 							2. re-fetch the collection
-                	 */              	
+                	 */
                 	if (me.model.definition == "Dimension") {
             			var selection = me.filters.get("selection");
             			var period = me.config.get("period");
@@ -122,7 +122,7 @@
             					var updatedFacets = [];
             					for (var i=0; i<facets.length; i++) {
                 					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// reset period if facet not found  
+                						// reset period if facet not found
                 						if (period) {
                 							if (period[domain]) {
                 								if (period[domain].id == facets[i].id) {
@@ -131,24 +131,17 @@
                 								}
                 							}
                 						}
-                						// reset user selection if facet not found             						
-                						selection.facets.splice(i, 1);               						
+                						// reset user selection if facet not found
+                						selection.facets.splice(i, 1);
                 						me.filters.set("userSelection", selection);
                 					}
                 				}
             				}
             			}
-            		}
-                	// to update domain collection & update metric list            	
-                	me.config.trigger("change:domain", me.config);
-                	
-                	// triggers a "change" event if the server's state differs from the current attributes
-                	this.collection.fetch({
-        				success: function() {
-        					me.render();
-        				}
-        			});
-        			
+            		} else if (me.model.definition == "Metric") {
+                        me.config.trigger("change:domain", me.config);
+                    }
+
                 }, this);
             }
             if (this.parent) {
@@ -157,6 +150,8 @@
             if (this.autoOpen) {
                 this.render();
             }
+
+            me.render();
         },
 
         updateForm : function() {
@@ -164,7 +159,7 @@
         },
 
         sortData : function(data) {
-            
+
         	// build the parent index
         	var lookup = {};
             for (var ix1=0; ix1<data.length; ix1++)  {
@@ -187,12 +182,12 @@
             	}
             }
 
-        	// alphabetical sorting         
+        	// alphabetical sorting
             data.sort(function(a, b){
 				 var nameA = a.sortName.toLowerCase();
 				 var nameB = b.sortName.toLowerCase();
 				 if (nameA < nameB)  {
-					 // sort string ascending        			 
+					 // sort string ascending
 					 return -1;
 				 } else if (nameA > nameB) {
 					 return 1;
@@ -237,7 +232,7 @@
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("reset change remove sync", this.render, this);
+                    this.collection.on("sync", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -281,6 +276,7 @@
                         var id = $(event.target).attr("data-value");
                         var model = me.collection.get(id);
                         if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                            console.log("here");
                             if (true) {
                                 model.destroy({
                                     success:function() {
@@ -355,13 +351,9 @@
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
-                        
-                        // update all models at the same time                        
-                        this.collection.saveAll(this.collection.models).then(function() {
-                        	if (forceChange) {
-                        		me.collection.trigger("change");
-                        	}
-                        });
+
+                        // update all models at the same time
+                        this.collection.saveAll(this.collection.models);
                     }
                 },
                 render: function() {
