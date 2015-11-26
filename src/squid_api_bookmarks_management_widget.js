@@ -78,9 +78,24 @@
         },
 
         configCompare : function() {
+            var match = true;
             var el = this.$el.find("button");
-            if (this.model.get("id")) {
-                if (JSON.stringify(this.model.get("config")) == JSON.stringify(_.omit(this.config.toJSON(), "project", "bookmark"))) {
+            var model = this.model.get("config");
+
+            // omit project / bookmark properties from comparison
+            var config = _.omit(this.config.toJSON(), "project", "bookmark");
+
+            if (! this.model.isNew()) {
+                // get order of keys to compare
+                var atts = Object.keys(config);
+
+                for (i=0; i<atts.length; i++) {
+                    // compare in raw state
+                    if (JSON.stringify(model[atts[i]]) !== JSON.stringify(config[atts[i]])) {
+                        match = false;
+                    }
+                }
+                if (match) {
                     el.addClass("same");
                     el.removeClass("different");
                 } else {
@@ -106,7 +121,7 @@
         beforeRenderHandler : function(model) {
             if (model.isNew()) {
                 // set config to current state when creating a new model
-                var config = squid_api.model.config.toJSON();
+                var config = this.config.toJSON();
                 delete config.bookmark;
                 delete config.project;
                 model.set("config", config);

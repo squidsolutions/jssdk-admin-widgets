@@ -170,10 +170,6 @@
             this.render();
         },
 
-        triggerFetch: function() {
-            this.collection.fetch();
-        },
-
         setModel : function(model) {
             this.model = model;
             this.listenTo(this.model, "change", this.render);
