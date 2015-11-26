@@ -146,7 +146,7 @@
                     me.collection.fetch();
                 });
                 this.collection.on('beforeFetch', function() {
-                    me.$el.find("button").text("Fetching " + this.typeLabelPlural);
+                    me.$el.find("button").text("Fetching " + me.typeLabelPlural);
                 });
 
                 this.render();
