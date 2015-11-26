@@ -11,10 +11,11 @@
         type : null,
         typeLabel : null,
         typeLabelPlural : null,
-        collectionAvailable : false,
+        collectionAvailable : true,
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
+        afterRenderHandler : null,
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
@@ -83,6 +84,9 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -106,68 +110,62 @@
                 this.getRoles = options.getRoles;
             }
 
-            // set Collection
-
-            // match a base collection
-            for (var collectionItem in squid_api.model) {
-                var str = collectionItem;
-                var res = str.match(this.type + "Collection");
-                if (res) {
-                    this.collection = new squid_api.model[res]();
-                }
-            }
-            if (!this.collection) {
-                squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
-            }
-
-            this.collection.comparator = this.comparator;
-            this.collection.on("remove", function(model) {
-                if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
-                    me.config.unset(me.model.definition.toLowerCase());
-                }
-            });
-            this.collection.on("reset change sync", this.render, this);
-            this.collection.on("remove change", function() {
-            	if (me.model.definition == "Domain") {
-            		this.fetch();
-            	}
-            });
-
-            this.collection.on('beforeFetch', function() {
-                me.$el.find("button").text("Fetching " + me.model.definition.toLowerCase() + "'s");
-            });
-
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change", function() {
-                var parentActive = true;
+            this.listenTo(this.parent, "change:id", function() {
+                this.initCollection();
+            });
 
-                // project has changed
+            this.initCollection();
+        },
+
+        initCollection : function() {
+            if (this.collectionAvailable) {
                 this.collectionAvailable = false;
-                this.render();
+                var me = this;
 
-                this.collection.parentId = this.parent.get("id");
-
-                if (this.parent.definition == "Project") {
-                    if (! this.collection.parentId.projectId) {
-                        parentActive = false;
+                // match a base collection
+                for (var collectionItem in squid_api.model) {
+                    var str = collectionItem;
+                    var res = str.match(this.type + "Collection");
+                    if (res) {
+                        this.collection = new squid_api.model[res]();
                     }
                 }
-
-                if (parentActive) {
-                    this.collection
-                        .fetch({
-                            success : function() {
-                                me.collectionAvailable = true;
-                            },
-                            error : function(collection, response, options) {
-                                squid_api.model.status.set({"error":response});
-                                me.collectionAvailable = true;
-                            }
-                        });
+                if (!this.collection) {
+                    squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
                 }
-            });
 
-            this.render();
+                this.collection.comparator = this.comparator;
+                this.collection.on("remove", function(model) {
+                    if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
+                        me.config.unset(me.model.definition.toLowerCase());
+                    }
+                });
+                this.collection.on("reset change sync", this.render, this);
+                this.collection.on("remove change", function() {
+                    me.collection.fetch();
+                });
+                this.collection.on('beforeFetch', function() {
+                    me.$el.find("button").text("Fetching " + this.typeLabelPlural);
+                });
+
+                this.render();
+
+                if (this.parent.get("id")) {
+                    this.collection.parentId = this.parent.get("id");
+                    this.collection.fetch({
+                        success : function() {
+                            me.collectionAvailable = true;
+                        },
+                        error : function(collection, response, options) {
+                            squid_api.model.status.set({"error":response});
+                            me.collectionAvailable = true;
+                        }
+                    });
+                } else {
+                    me.collectionAvailable = true;
+                }
+            }
         },
 
         setModel : function(model) {
@@ -246,6 +244,7 @@
                         autoOpen : true,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
+                        afterRenderHandler : me.afterRenderHandler,
                         successHandler : function() {
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
@@ -270,8 +269,12 @@
                     autoOpen : true,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
+                    afterRenderHandler : me.afterRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
@@ -401,6 +404,10 @@
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
 
             if (this.collectionModal) {
                 this.collectionModal.$el.find(".modal-body").html(this.html);

@@ -14,48 +14,10 @@
         typeLabel : null,
         typeLabelPlural : null,
         collectionView : null,
-        
-        comparator : function(a,b) {
-            // default is : sort by alpha path + name
-            var va = a.get("path")+a.get("name").toLowerCase();
-            var vb = b.get("path")+b.get("name").toLowerCase();
-            if (va < vb) {
-                return -1;
-            }
-            if (va > vb) {
-                return 1;
-            }
-            return 0;
-        },
-        
-        beforeRenderHandler : function(model) {
-            if (model.isNew()) {
-                // set config to current state when creating a new model
-                var config = squid_api.model.config.toJSON();
-                delete config.bookmark;
-                delete config.project;
-                model.set("config", config);
-            }
-        },
-        
-        getRoles: function() {
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
-
-            var parentRole = this.parent.get("_role");
-
-            // write role
-            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
-                roles.create = true;
-                roles.edit = true;
-                roles.delete = true;
-            }
-
-            return roles;
-        },
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+
             if (options) {
                 if (options.autoOpen) {
                     this.autoOpen = true;
@@ -73,28 +35,112 @@
                     this.comparator = options.comparator;
                 }
             }
-            
+
             if (!this.typeLabel) {
                 this.typeLabel = this.type;
             }
             if (!this.typeLabelPlural) {
                 this.typeLabelPlural = this.typeLabel + "s";
             }
-            
+
             if (!this.changeEventHandler) {
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
+                    } else {
+                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
-            
+
             this.model = new squid_api.model.BookmarkModel();
             this.parent = new squid_api.model.ProjectModel();
-            
+
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
+            this.listenTo(this.config, "change", this.afterRenderHandler);
+
             this.render();
+        },
+
+        getRoles: function() {
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
+
+            var parentRole = this.parent.get("_role");
+
+            // write role
+            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
+            return roles;
+        },
+
+        afterRenderHandler : function() {
+            var me = this;
+
+            /* Config Compare with Current Model Config */
+            var match = true;
+            var el = this.$el.find("button");
+            var model = this.model.get("config");
+
+            // omit project / bookmark properties from comparison
+            var config = _.omit(this.config.toJSON(), "project", "bookmark");
+
+            if (! this.model.isNew()) {
+                // get order of keys to compare
+                var atts = Object.keys(config);
+
+                for (i=0; i<atts.length; i++) {
+                    // compare in raw state
+                    if (JSON.stringify(model[atts[i]]) !== JSON.stringify(config[atts[i]])) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    el.addClass("same");
+                    el.removeClass("different");
+                } else {
+                    el.addClass("different");
+                    el.removeClass("same");
+                }
+
+                /* Replace Current Config Events */
+                if (this.formContent) {
+                    this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
+                    this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
+                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                    });
+                }
+            } else if (this.formContent) {
+                this.formContent.$el.find("#btn-use-current-config").addClass("disabled");
+            }
+        },
+
+        comparator : function(a,b) {
+            // default is : sort by alpha path + name
+            var va = a.get("path")+a.get("name").toLowerCase();
+            var vb = b.get("path")+b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+
+        beforeRenderHandler : function(model) {
+            if (model.isNew()) {
+                // set config to current state when creating a new model
+                var config = this.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config", config);
+            }
         },
 
         setParent : function() {
@@ -103,7 +149,7 @@
             this.parent.set({"id" : {"projectId" : projectId}});
             this.parent.fetch();
         },
-           
+
         setModel : function() {
             var me = this;
             var projectId = this.config.get("project");
@@ -119,7 +165,7 @@
                 this.model.set({"id" : null});
             }
         },
-        
+
         labelHandler : function(model) {
             var path = model.get("path");
             var user = path.indexOf("/USER/");
@@ -151,7 +197,7 @@
             }
             return path +"/"+ model.get("name");
         },
-        
+
         render: function() {
             var me = this;
 
@@ -163,17 +209,18 @@
                 "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
-                "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
+                "afterRenderHandler" : this.afterRenderHandler,
                 "labelHandler" : this.labelHandler,
                 "displaySelected" : false,
                 "getRoles" : this.getRoles
             };
+
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
-            
+
             return this;
         }
 
