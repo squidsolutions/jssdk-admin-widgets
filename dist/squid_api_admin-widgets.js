@@ -625,7 +625,7 @@ function program1(depth0,data) {
         type : null,
         typeLabel : null,
         typeLabelPlural : null,
-        collectionAvailable : false,
+        collectionAvailable : true,
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
@@ -720,64 +720,61 @@ function program1(depth0,data) {
                 this.getRoles = options.getRoles;
             }
 
-            // set Collection
-            
-            // match a base collection
-            for (var collectionItem in squid_api.model) {
-                var str = collectionItem;
-                var res = str.match(this.type + "Collection");
-                if (res) {
-                    this.collection = new squid_api.model[res]();
-                }
-            }
-            if (!this.collection) {
-                squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
-            }
-
-            this.collection.comparator = this.comparator;
-            this.collection.on("remove", function(model) {
-                if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
-                    me.config.unset(me.model.definition.toLowerCase());
-                }
-            });
-            this.collection.on("reset change sync", this.render, this);
-            this.collection.on("remove change", function() {
-            	if (me.model.definition == "Domain") {
-            		this.fetch();
-            	}
-            });
-
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change", function() {
-                var parentActive = true;
+            this.listenTo(this.parent, "change:id", function() {
+                this.initCollection();
+            });
 
-                // project has changed
+            this.initCollection();
+        },
+        
+        initCollection : function() {
+            if (this.collectionAvailable) {
                 this.collectionAvailable = false;
-                this.render();
-
-                this.collection.parentId = this.parent.get("id");
-
-                if (this.parent.definition == "Project") {
-                    if (! this.collection.parentId.projectId) {
-                        parentActive = false;
+                var me = this;
+                
+                // match a base collection
+                for (var collectionItem in squid_api.model) {
+                    var str = collectionItem;
+                    var res = str.match(this.type + "Collection");
+                    if (res) {
+                        this.collection = new squid_api.model[res]();
                     }
                 }
-
-                if (parentActive) {
-                    this.collection
-                        .fetch({
-                            success : function() {
-                                me.collectionAvailable = true;
-                            },
-                            error : function(collection, response, options) {
-                                squid_api.model.status.set({"error":response});
-                                me.collectionAvailable = true;
-                            }
-                        });
+                if (!this.collection) {
+                    squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
                 }
-            });
-
-            this.render();
+    
+                this.collection.comparator = this.comparator;
+                this.collection.on("remove", function(model) {
+                    if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
+                        me.config.unset(me.model.definition.toLowerCase());
+                    }
+                });
+                this.collection.on("reset change sync", this.render, this);
+                this.collection.on("remove change", function() {
+                    if (me.model.definition == "Domain") {
+                            me.collection.fetch();
+                    }
+                });
+                
+                this.render();
+                
+                if (this.parent.get("id")) {
+                    this.collection.parentId = this.parent.get("id");
+                    this.collection.fetch({
+                        success : function() {
+                            me.collectionAvailable = true;
+                        },
+                        error : function(collection, response, options) {
+                            squid_api.model.status.set({"error":response});
+                            me.collectionAvailable = true;
+                        }
+                    });
+                } else {
+                    me.collectionAvailable = true;
+                }
+            }
         },
 
         setModel : function(model) {
