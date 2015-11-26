@@ -15,6 +15,7 @@
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
+        afterRenderHandler : null,
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
@@ -83,6 +84,9 @@
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -113,12 +117,12 @@
 
             this.initCollection();
         },
-        
+
         initCollection : function() {
             if (this.collectionAvailable) {
                 this.collectionAvailable = false;
                 var me = this;
-                
+
                 // match a base collection
                 for (var collectionItem in squid_api.model) {
                     var str = collectionItem;
@@ -130,7 +134,7 @@
                 if (!this.collection) {
                     squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
                 }
-    
+
                 this.collection.comparator = this.comparator;
                 this.collection.on("remove", function(model) {
                     if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
@@ -144,9 +148,9 @@
                 this.collection.on('beforeFetch', function() {
                     me.$el.find("button").text("Fetching " + this.typeLabelPlural);
                 });
-                
+
                 this.render();
-                
+
                 if (this.parent.get("id")) {
                     this.collection.parentId = this.parent.get("id");
                     this.collection.fetch({
@@ -240,6 +244,7 @@
                         autoOpen : true,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
+                        afterRenderHandler : me.afterRenderHandler,
                         successHandler : function() {
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
@@ -264,8 +269,12 @@
                     autoOpen : true,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
+                    afterRenderHandler : me.afterRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
@@ -395,6 +404,10 @@
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
 
             if (this.collectionModal) {
                 this.collectionModal.$el.find(".modal-body").html(this.html);

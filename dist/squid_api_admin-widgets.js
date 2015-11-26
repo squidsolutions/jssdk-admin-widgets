@@ -455,48 +455,10 @@ function program1(depth0,data) {
         typeLabel : null,
         typeLabelPlural : null,
         collectionView : null,
-        
-        comparator : function(a,b) {
-            // default is : sort by alpha path + name
-            var va = a.get("path")+a.get("name").toLowerCase();
-            var vb = b.get("path")+b.get("name").toLowerCase();
-            if (va < vb) {
-                return -1;
-            }
-            if (va > vb) {
-                return 1;
-            }
-            return 0;
-        },
-        
-        beforeRenderHandler : function(model) {
-            if (model.isNew()) {
-                // set config to current state when creating a new model
-                var config = squid_api.model.config.toJSON();
-                delete config.bookmark;
-                delete config.project;
-                model.set("config", config);
-            }
-        },
-        
-        getRoles: function() {
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
-
-            var parentRole = this.parent.get("_role");
-
-            // write role
-            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
-                roles.create = true;
-                roles.edit = true;
-                roles.delete = true;
-            }
-
-            return roles;
-        },
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+
             if (options) {
                 if (options.autoOpen) {
                     this.autoOpen = true;
@@ -514,28 +476,112 @@ function program1(depth0,data) {
                     this.comparator = options.comparator;
                 }
             }
-            
+
             if (!this.typeLabel) {
                 this.typeLabel = this.type;
             }
             if (!this.typeLabelPlural) {
                 this.typeLabelPlural = this.typeLabel + "s";
             }
-            
+
             if (!this.changeEventHandler) {
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
+                    } else {
+                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
-            
+
             this.model = new squid_api.model.BookmarkModel();
             this.parent = new squid_api.model.ProjectModel();
-            
+
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
+            this.listenTo(this.config, "change", this.afterRenderHandler);
+
             this.render();
+        },
+
+        getRoles: function() {
+            // roles
+            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
+
+            var parentRole = this.parent.get("_role");
+
+            // write role
+            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
+                roles.create = true;
+                roles.edit = true;
+                roles.delete = true;
+            }
+
+            return roles;
+        },
+
+        afterRenderHandler : function() {
+            var me = this;
+
+            /* Config Compare with Current Model Config */
+            var match = true;
+            var el = this.$el.find("button");
+            var model = this.model.get("config");
+
+            // omit project / bookmark properties from comparison
+            var config = _.omit(this.config.toJSON(), "project", "bookmark");
+
+            if (! this.model.isNew()) {
+                // get order of keys to compare
+                var atts = Object.keys(config);
+
+                for (i=0; i<atts.length; i++) {
+                    // compare in raw state
+                    if (JSON.stringify(model[atts[i]]) !== JSON.stringify(config[atts[i]])) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    el.addClass("same");
+                    el.removeClass("different");
+                } else {
+                    el.addClass("different");
+                    el.removeClass("same");
+                }
+
+                /* Replace Current Config Events */
+                if (this.formContent) {
+                    this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
+                    this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
+                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                    });
+                }
+            } else if (this.formContent) {
+                this.formContent.$el.find("#btn-use-current-config").addClass("disabled");
+            }
+        },
+
+        comparator : function(a,b) {
+            // default is : sort by alpha path + name
+            var va = a.get("path")+a.get("name").toLowerCase();
+            var vb = b.get("path")+b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+
+        beforeRenderHandler : function(model) {
+            if (model.isNew()) {
+                // set config to current state when creating a new model
+                var config = this.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config", config);
+            }
         },
 
         setParent : function() {
@@ -544,7 +590,7 @@ function program1(depth0,data) {
             this.parent.set({"id" : {"projectId" : projectId}});
             this.parent.fetch();
         },
-           
+
         setModel : function() {
             var me = this;
             var projectId = this.config.get("project");
@@ -560,7 +606,7 @@ function program1(depth0,data) {
                 this.model.set({"id" : null});
             }
         },
-        
+
         labelHandler : function(model) {
             var path = model.get("path");
             var user = path.indexOf("/USER/");
@@ -592,7 +638,7 @@ function program1(depth0,data) {
             }
             return path +"/"+ model.get("name");
         },
-        
+
         render: function() {
             var me = this;
 
@@ -604,17 +650,18 @@ function program1(depth0,data) {
                 "typeLabelPlural" : this.typeLabelPlural,
                 "model" : this.model,
                 "parent" : this.parent,
-                "createOnlyView" : this.createOnlyView,
                 "autoOpen" : this.autoOpen,
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
+                "afterRenderHandler" : this.afterRenderHandler,
                 "labelHandler" : this.labelHandler,
                 "displaySelected" : false,
                 "getRoles" : this.getRoles
             };
+
             this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
-            
+
             return this;
         }
 
@@ -640,6 +687,7 @@ function program1(depth0,data) {
         suggestionHandler : null,
         changeEventHandler : null,
         schemasCallback : null,
+        afterRenderHandler : null,
         beforeRenderHandler : null,
         comparator : null,
         displaySelected : true,
@@ -708,6 +756,9 @@ function program1(depth0,data) {
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -738,12 +789,12 @@ function program1(depth0,data) {
 
             this.initCollection();
         },
-        
+
         initCollection : function() {
             if (this.collectionAvailable) {
                 this.collectionAvailable = false;
                 var me = this;
-                
+
                 // match a base collection
                 for (var collectionItem in squid_api.model) {
                     var str = collectionItem;
@@ -755,7 +806,7 @@ function program1(depth0,data) {
                 if (!this.collection) {
                     squid_api.model.status.set({error : true, message: "No collection found for type :"+ this.type});
                 }
-    
+
                 this.collection.comparator = this.comparator;
                 this.collection.on("remove", function(model) {
                     if (model.get("oid") == me.config.get(me.model.definition.toLowerCase())) {
@@ -769,9 +820,9 @@ function program1(depth0,data) {
                 this.collection.on('beforeFetch', function() {
                     me.$el.find("button").text("Fetching " + this.typeLabelPlural);
                 });
-                
+
                 this.render();
-                
+
                 if (this.parent.get("id")) {
                     this.collection.parentId = this.parent.get("id");
                     this.collection.fetch({
@@ -865,6 +916,7 @@ function program1(depth0,data) {
                         autoOpen : true,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
+                        afterRenderHandler : me.afterRenderHandler,
                         successHandler : function() {
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
@@ -889,8 +941,12 @@ function program1(depth0,data) {
                     autoOpen : true,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
+                    afterRenderHandler : me.afterRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
@@ -1020,6 +1076,10 @@ function program1(depth0,data) {
             // print template
             this.html = this.template(jsonData);
             this.$el.html(this.html);
+
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
 
             if (this.collectionModal) {
                 this.collectionModal.$el.find(".modal-body").html(this.html);
@@ -1478,6 +1538,8 @@ function program1(depth0,data) {
     factory(root.Backbone, root.squid_api);
 }(this, function (Backbone, squid_api) {
 
+    /*jshint multistr: true */
+
     squid_api.model.ProjectModel.prototype.definition = "Project";
     squid_api.model.ProjectModel.prototype.ignoredAttributes = [
                                                                 'accessRights', 'config', 'relations', 'domains' ];
@@ -1845,6 +1907,20 @@ function program1(depth0,data) {
         },
         "config" : {
             "type" : "JsonTextArea",
+            "template" : _.template('\
+                            <div>\<div>\
+                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
+                            </div>\<label for="<%= editorId %>">\
+                                <% if (titleHTML){ %><%= titleHTML %>\
+                                <% } else { %><%- title %><% } %>\
+                              </label>\
+                              <div>\
+                                <span data-editor></span>\
+                                <div class="error-text" data-error></div>\
+                                <div class="error-help"><%= help %></div>\
+                              </div>\
+                            </div>\
+                          ', null, null),
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
@@ -1862,7 +1938,7 @@ function program1(depth0,data) {
                          };
                      }
                  }
-             ] 
+             ]
         }
     };
 
@@ -1888,7 +1964,7 @@ function program1(depth0,data) {
             }
             this.$el.val(val);
         },
-        
+
         getValue: function() {
             // transform text value to json
             var json;
@@ -2192,6 +2268,9 @@ function program1(depth0,data) {
             if (options.beforeRenderHandler) {
                 this.beforeRenderHandler = options.beforeRenderHandler;
             }
+            if (options.afterRenderHandler) {
+                this.afterRenderHandler = options.afterRenderHandler;
+            }
             if (options.modalTitle) {
                 this.modalTitle = options.modalTitle;
             }
@@ -2210,6 +2289,9 @@ function program1(depth0,data) {
                 this.login = options.login;
             } else {
                 this.login = squid_api.model.login;
+            }
+            if (options.getRoles) {
+                this.getRoles = options.getRoles;
             }
             if (options.status) {
                 this.status = options.status;
@@ -2309,7 +2391,7 @@ function program1(depth0,data) {
             var me = this;
             var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
 
-            // validate form ()
+            // validate form
             var errors = this.formContent.validate();
             if (errors) {
                 // if errors, display them & keep modal open
@@ -2585,6 +2667,9 @@ function program1(depth0,data) {
                 this.beforeRenderHandler(this.model);
             }
             this.renderForm();
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
         },
 
         events: {
