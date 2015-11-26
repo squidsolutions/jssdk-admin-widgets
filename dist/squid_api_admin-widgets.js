@@ -488,6 +488,8 @@ function program1(depth0,data) {
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
+                    } else {
+                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
@@ -497,7 +499,7 @@ function program1(depth0,data) {
 
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
-            this.listenTo(this.config, "change", this.configCompare);
+            this.listenTo(this.config, "change", this.afterRenderHandler);
 
             this.render();
         },
@@ -518,7 +520,10 @@ function program1(depth0,data) {
             return roles;
         },
 
-        configCompare : function() {
+        afterRenderHandler : function() {
+            var me = this;
+
+            /* Config Compare with Current Model Config */
             var match = true;
             var el = this.$el.find("button");
             var model = this.model.get("config");
@@ -543,6 +548,16 @@ function program1(depth0,data) {
                     el.addClass("different");
                     el.removeClass("same");
                 }
+
+                /* Replace Current Config Events */
+                if (this.formContent) {
+                    this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
+                    this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
+                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                    });
+                }
+            } else if (this.formContent) {
+                this.formContent.$el.find("#btn-use-current-config").addClass("disabled");
             }
         },
 
@@ -639,7 +654,7 @@ function program1(depth0,data) {
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
-                "afterRenderHandler" : this.configCompare,
+                "afterRenderHandler" : this.afterRenderHandler,
                 "labelHandler" : this.labelHandler,
                 "displaySelected" : false,
                 "getRoles" : this.getRoles
@@ -903,6 +918,7 @@ function program1(depth0,data) {
                         autoOpen : true,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
+                        afterRenderHandler : me.afterRenderHandler,
                         successHandler : function() {
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
@@ -927,8 +943,12 @@ function program1(depth0,data) {
                     autoOpen : true,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
+                    afterRenderHandler : me.afterRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});
@@ -1520,6 +1540,8 @@ function program1(depth0,data) {
     factory(root.Backbone, root.squid_api);
 }(this, function (Backbone, squid_api) {
 
+    /*jshint multistr: true */
+
     squid_api.model.ProjectModel.prototype.definition = "Project";
     squid_api.model.ProjectModel.prototype.ignoredAttributes = [
                                                                 'accessRights', 'config', 'relations', 'domains' ];
@@ -1887,6 +1909,20 @@ function program1(depth0,data) {
         },
         "config" : {
             "type" : "JsonTextArea",
+            "template" : _.template('\
+                            <div>\<div>\
+                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
+                            </div>\<label for="<%= editorId %>">\
+                                <% if (titleHTML){ %><%= titleHTML %>\
+                                <% } else { %><%- title %><% } %>\
+                              </label>\
+                              <div>\
+                                <span data-editor></span>\
+                                <div class="error-text" data-error></div>\
+                                <div class="error-help"><%= help %></div>\
+                              </div>\
+                            </div>\
+                          ', null, null),
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
@@ -1904,7 +1940,7 @@ function program1(depth0,data) {
                          };
                      }
                  }
-             ] 
+             ]
         }
     };
 
@@ -1930,7 +1966,7 @@ function program1(depth0,data) {
             }
             this.$el.val(val);
         },
-        
+
         getValue: function() {
             // transform text value to json
             var json;
@@ -2633,6 +2669,9 @@ function program1(depth0,data) {
                 this.beforeRenderHandler(this.model);
             }
             this.renderForm();
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
         },
 
         events: {
@@ -2771,9 +2810,6 @@ function program1(depth0,data) {
                     }
                     // print template
                     this.$el.html(this.template(jsonData));
-                    if (this.afterRenderHandler) {
-                        this.afterRenderHandler.call(this);
-                    }
                 }
             }
         }

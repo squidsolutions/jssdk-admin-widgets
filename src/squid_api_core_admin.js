@@ -2,6 +2,8 @@
     factory(root.Backbone, root.squid_api);
 }(this, function (Backbone, squid_api) {
 
+    /*jshint multistr: true */
+
     squid_api.model.ProjectModel.prototype.definition = "Project";
     squid_api.model.ProjectModel.prototype.ignoredAttributes = [
                                                                 'accessRights', 'config', 'relations', 'domains' ];
@@ -369,6 +371,20 @@
         },
         "config" : {
             "type" : "JsonTextArea",
+            "template" : _.template('\
+                            <div>\<div>\
+                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
+                            </div>\<label for="<%= editorId %>">\
+                                <% if (titleHTML){ %><%= titleHTML %>\
+                                <% } else { %><%- title %><% } %>\
+                              </label>\
+                              <div>\
+                                <span data-editor></span>\
+                                <div class="error-text" data-error></div>\
+                                <div class="error-help"><%= help %></div>\
+                              </div>\
+                            </div>\
+                          ', null, null),
             "title" : "Config",
             "position" : 1,
             "fieldClass" : "config",
@@ -386,7 +402,7 @@
                          };
                      }
                  }
-             ] 
+             ]
         }
     };
 
@@ -412,7 +428,7 @@
             }
             this.$el.val(val);
         },
-        
+
         getValue: function() {
             // transform text value to json
             var json;

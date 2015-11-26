@@ -445,6 +445,9 @@
                 this.beforeRenderHandler(this.model);
             }
             this.renderForm();
+            if (this.afterRenderHandler) {
+                this.afterRenderHandler.call(this);
+            }
         },
 
         events: {
@@ -583,9 +586,6 @@
                     }
                     // print template
                     this.$el.html(this.template(jsonData));
-                    if (this.afterRenderHandler) {
-                        this.afterRenderHandler.call(this);
-                    }
                 }
             }
         }

@@ -246,6 +246,7 @@
                         autoOpen : true,
                         schemasCallback : me.schemasCallback,
                         beforeRenderHandler : me.beforeRenderHandler,
+                        afterRenderHandler : me.afterRenderHandler,
                         successHandler : function() {
                             if (me.changeEventHandler) {
                                 me.changeEventHandler.call(this);
@@ -270,8 +271,12 @@
                     autoOpen : true,
                     schemasCallback : me.schemasCallback,
                     beforeRenderHandler : me.beforeRenderHandler,
+                    afterRenderHandler : me.afterRenderHandler,
                     buttonLabel : "edit",
                     successHandler : function() {
+                        if (me.changeEventHandler) {
+                            me.changeEventHandler.call(this);
+                        }
                         var message = me.type + " with name " + this.get("name") + " has been successfully modified";
                         squid_api.model.config.trigger("change:project", squid_api.model.config);
                         squid_api.model.status.set({'message' : message});

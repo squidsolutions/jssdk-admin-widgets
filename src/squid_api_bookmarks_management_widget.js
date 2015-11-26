@@ -47,6 +47,8 @@
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
+                    } else {
+                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
@@ -56,7 +58,7 @@
 
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
-            this.listenTo(this.config, "change", this.configCompare);
+            this.listenTo(this.config, "change", this.afterRenderHandler);
 
             this.render();
         },
@@ -77,7 +79,10 @@
             return roles;
         },
 
-        configCompare : function() {
+        afterRenderHandler : function() {
+            var me = this;
+
+            /* Config Compare with Current Model Config */
             var match = true;
             var el = this.$el.find("button");
             var model = this.model.get("config");
@@ -102,6 +107,16 @@
                     el.addClass("different");
                     el.removeClass("same");
                 }
+
+                /* Replace Current Config Events */
+                if (this.formContent) {
+                    this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
+                    this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
+                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                    });
+                }
+            } else if (this.formContent) {
+                this.formContent.$el.find("#btn-use-current-config").addClass("disabled");
             }
         },
 
@@ -198,7 +213,7 @@
                 "changeEventHandler" : this.changeEventHandler,
                 "comparator" : this.comparator,
                 "beforeRenderHandler" : this.beforeRenderHandler,
-                "afterRenderHandler" : this.configCompare,
+                "afterRenderHandler" : this.afterRenderHandler,
                 "labelHandler" : this.labelHandler,
                 "displaySelected" : false,
                 "getRoles" : this.getRoles

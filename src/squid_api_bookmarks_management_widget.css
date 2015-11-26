@@ -30,3 +30,14 @@
 .squid-api-admin-widgets-Bookmark button i {
     display: none;
 }
+.squid-api-admin-widgets-modal-form .Bookmark .config textarea {
+    height: 150px;
+}
+.squid-api-admin-widgets-modal-form .Bookmark .config #btn-use-current-config {
+    margin: 10px 0px 10px 0px;
+    float: right;
+    background: #ccc;
+}
+.squid-api-admin-widgets-modal-form .Bookmark .config label {
+    margin-top: 18px;
+}
