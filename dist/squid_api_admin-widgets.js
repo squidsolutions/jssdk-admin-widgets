@@ -818,7 +818,7 @@ function program1(depth0,data) {
                     me.collection.fetch();
                 });
                 this.collection.on('beforeFetch', function() {
-                    me.$el.find("button").text("Fetching " + this.typeLabelPlural);
+                    me.$el.find("button").text("Fetching " + me.typeLabelPlural);
                 });
 
                 this.render();
@@ -2544,7 +2544,7 @@ function program1(depth0,data) {
                     if (this.model.definition == "Relation") {
                         if (this.model.isNew()) {
                             // by default set the current domain as the leftId
-                            this.$el.find(".leftId select").val(this.config.get("domain"));
+                            this.$el.find(".leftId select").val(me.config.get("domain"));
 
                             var leftName = this.$el.find(".leftId select option:selected").text();
                             this.$el.find(".leftName input").val(leftName);
