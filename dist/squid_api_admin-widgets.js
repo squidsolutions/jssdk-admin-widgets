@@ -500,8 +500,6 @@ function program1(depth0,data) {
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
             this.listenTo(this.config, "change", this.afterRenderHandler);
-
-            this.render();
         },
 
         getRoles: function() {
@@ -588,7 +586,11 @@ function program1(depth0,data) {
             var me = this;
             var projectId = this.config.get("project");
             this.parent.set({"id" : {"projectId" : projectId}});
-            this.parent.fetch();
+            this.parent.fetch({
+                success: function() {
+                    me.render();
+                }
+            });
         },
 
         setModel : function() {
