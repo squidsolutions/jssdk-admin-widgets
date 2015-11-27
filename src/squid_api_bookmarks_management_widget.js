@@ -112,7 +112,7 @@
                 if (this.formContent) {
                     this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
                     this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
-                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                        e.data.form.setValue({"config" : _.omit(e.data.config.toJSON(),"bookmark")});
                     });
                 }
             } else if (this.formContent) {

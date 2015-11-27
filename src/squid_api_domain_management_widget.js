@@ -57,7 +57,7 @@
 
         render: function() {
         	var me = this;
-        	
+
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -78,6 +78,7 @@
                     squid_api.model.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
@@ -90,6 +91,7 @@
                     me.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 // DomainCollectionManagementWidget
                 var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);

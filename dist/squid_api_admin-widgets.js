@@ -553,7 +553,7 @@ function program1(depth0,data) {
                 if (this.formContent) {
                     this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
                     this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
-                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                        e.data.form.setValue({"config" : _.omit(e.data.config.toJSON(),"bookmark")});
                     });
                 }
             } else if (this.formContent) {
@@ -2175,7 +2175,7 @@ function program1(depth0,data) {
 
         render: function() {
         	var me = this;
-        	
+
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -2196,6 +2196,7 @@ function program1(depth0,data) {
                     squid_api.model.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
@@ -2208,6 +2209,7 @@ function program1(depth0,data) {
                     me.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 // DomainCollectionManagementWidget
                 var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
@@ -2847,7 +2849,7 @@ function program1(depth0,data) {
             	this.customer = options.customer;
             } else {
             	this.customer = squid_api.model.customer;
-            }         	
+            }
             this.render();
         },
 
@@ -2911,12 +2913,13 @@ function program1(depth0,data) {
                 } else {
                     // update the config
                     me.config.set({"project" : value, "domain" : null});
+                    me.config.unset("bookmark");
                 }
                 // trigger a customer change
                 me.customer.trigger("change");
             };
-            
-            /* Creating a new project or managing a collection */           
+
+            /* Creating a new project or managing a collection */
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
