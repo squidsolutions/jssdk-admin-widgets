@@ -457,6 +457,8 @@ function program1(depth0,data) {
         collectionView : null,
 
         initialize: function(options) {
+            var me = this;
+            
             this.config = squid_api.model.config;
 
             if (options) {
@@ -488,8 +490,6 @@ function program1(depth0,data) {
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
-                    } else {
-                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
@@ -500,6 +500,9 @@ function program1(depth0,data) {
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
             this.listenTo(this.config, "change", this.afterRenderHandler);
+            this.listenTo(this.config, "change:domain", function() {
+                me.model.trigger("change");
+            });
 
             this.render();
         },
@@ -512,7 +515,9 @@ function program1(depth0,data) {
 
             // write role
             if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
-                roles.create = true;
+                if (this.config.get("domain")) {
+                    roles.create = true;
+                }
                 roles.edit = true;
                 roles.delete = true;
             }
