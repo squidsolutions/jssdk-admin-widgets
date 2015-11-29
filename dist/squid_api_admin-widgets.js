@@ -2918,7 +2918,9 @@ function program1(depth0,data) {
                 } else {
                     // update the config
                     me.config.set({"project" : value, "domain" : null});
-                    me.config.unset("bookmark");
+
+                    // unset bookmark & filters
+                    me.config.unset("selection");
                 }
                 // trigger a customer change
                 me.customer.trigger("change");
