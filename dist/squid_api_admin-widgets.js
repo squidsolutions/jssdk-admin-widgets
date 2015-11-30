@@ -788,7 +788,7 @@ function program1(depth0,data) {
             }
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change", function() {
+            this.listenTo(this.parent, "change:id", function() {
                 this.initCollection();
             });
 
@@ -2916,10 +2916,12 @@ function program1(depth0,data) {
                 if (value === me.config.get("project")) {
                     me.config.trigger("change:project", me.config);
                 } else {
-                    // update the config
+                    // set domain as null
                     me.config.set({"project" : value, "domain" : null});
 
-                    // unset bookmark & filters
+                    // unset bookmark which may exist in the config
+                    me.config.unset("bookmark");
+                    // to prevent passing invalid facets between projects
                     me.config.unset("selection");
                 }
                 // trigger a customer change
