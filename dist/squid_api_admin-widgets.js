@@ -2924,7 +2924,7 @@ function program1(depth0,data) {
                     me.config.clear({silent: true});
                     // set default config
                     me.config.set(squid_api.defaultConfig);
-                    // set domain as null
+                    // set project in config
                     me.config.set({"project" : value});
                 }
                 // trigger a customer change
