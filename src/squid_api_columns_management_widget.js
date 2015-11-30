@@ -102,47 +102,6 @@
                         this.collection.fetch();
                     }
                 }
-                this.collection.on("add remove sync", function() {
-                	/*
-						for dimensions:
-							1. remove period config
-							2. set user selection based on what models are found in the collection returned
-
-						for dimensions & metrics:
-							1. refresh the domain
-							2. re-fetch the collection
-                	 */
-                	if (me.model.definition == "Dimension") {
-            			var selection = me.filters.get("selection");
-            			var period = me.config.get("period");
-            			var domain = me.config.get("domain");
-            			if (selection) {
-            				var facets = selection.facets;
-            				if (facets) {
-            					var updatedFacets = [];
-            					for (var i=0; i<facets.length; i++) {
-                					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// reset period if facet not found
-                						if (period) {
-                							if (period[domain]) {
-                								if (period[domain].id == facets[i].id) {
-                									delete period[domain];
-                									me.config.set("period", period);
-                								}
-                							}
-                						}
-                						// reset user selection if facet not found
-                						selection.facets.splice(i, 1);
-                						me.filters.set("userSelection", selection);
-                					}
-                				}
-            				}
-            			}
-            		} else if (me.model.definition == "Metric") {
-                        me.config.trigger("change:domain", me.config);
-                    }
-
-                }, this);
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
@@ -225,6 +184,39 @@
             return viewData;
         },
 
+        refreshCollection: function() {
+            var me = this;
+            if (me.model.definition == "Dimension") {
+                var selection = me.filters.get("selection");
+                var period = me.config.get("period");
+                var domain = me.config.get("domain");
+                if (selection) {
+                    var facets = selection.facets;
+                    if (facets) {
+                        var updatedFacets = [];
+                        for (var i=0; i<facets.length; i++) {
+                            if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
+                                // reset period if facet not found
+                                if (period) {
+                                    if (period[domain]) {
+                                        if (period[domain].id == facets[i].id) {
+                                            delete period[domain];
+                                            me.config.set("period", period);
+                                        }
+                                    }
+                                }
+                                // reset user selection if facet not found
+                                selection.facets.splice(i, 1);
+                                me.config.trigger("change:domain", me.config);
+                            }
+                        }
+                    }
+                }
+            } else if (me.model.definition == "Metric") {
+                me.config.trigger("change:domain", me.config);
+            }
+        },
+
         render : function() {
             var me = this;
             var collection = this.collection;
@@ -232,7 +224,7 @@
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("sync", this.render, this);
+                    this.collection.on("add remove change", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -254,7 +246,7 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
-                                me.collection.create(this);
+                                me.refreshCollection();
                             }
                         });
                     },
@@ -269,6 +261,7 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
+                                me.refreshCollection();
                             }
                         });
                     },
@@ -282,6 +275,7 @@
                                     success:function() {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
+                                        me.refreshCollection();
                                     }
                                 });
                             }
