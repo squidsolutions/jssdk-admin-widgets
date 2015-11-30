@@ -329,11 +329,11 @@
                         }
                         // check nonDynamic Data
                         var model;
-                        var forceChange = false;
+                        var changeCount = 0;
                         for (i=0; i<nonDynamic.length; i++) {
                             model = this.collection.get($(nonDynamic[i]).val());
                             if (model.get("dynamic") === true) {
-                            	forceChange = true;
+                                changeCount++;
                                 model.set({"dynamic":false},{silent: true});
                             }
                         }
@@ -341,13 +341,17 @@
                         for (i=0; i<dynamic.length; i++) {
                             model = this.collection.get($(dynamic[i]).val());
                             if (model.get("dynamic") === false) {
-                            	forceChange = true;
+                                changeCount++;
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
 
                         // update all models at the same time
-                        this.collection.saveAll(this.collection.models);
+                        if (changeCount > 0) {
+                            this.collection.saveAll(this.collection.models).then(function(collection, model) {
+                                me.refreshCollection();
+                            });
+                        }
                     }
                 },
                 render: function() {
