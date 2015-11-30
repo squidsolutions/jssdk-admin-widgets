@@ -603,9 +603,6 @@ function program1(depth0,data) {
             if (bookmarkId) {
                 this.model.set({"id" : {"projectId" : projectId, "bookmarkId" : bookmarkId}});
                 this.model.fetch({
-                    success: function() {
-                        me.config.trigger("change:currentAnalysis", me.config, true);
-                    },
                     error: function(xhr) {
                         squid_api.model.status.set({"error":xhr});
                     }
@@ -2924,13 +2921,11 @@ function program1(depth0,data) {
                 if (value === me.config.get("project")) {
                     me.config.trigger("change:project", me.config);
                 } else {
+                    me.config.clear({silent: true});
+                    // set default config
+                    me.config.set(squid_api.defaultConfig);
                     // set domain as null
-                    me.config.set({"project" : value, "domain" : null});
-
-                    // unset bookmark which may exist in the config
-                    me.config.unset("bookmark");
-                    // to prevent passing invalid facets between projects
-                    me.config.unset("selection");
+                    me.config.set({"project" : value});
                 }
                 // trigger a customer change
                 me.customer.trigger("change");
