@@ -1225,7 +1225,7 @@ function program1(depth0,data) {
                     me.domains.fetched = true;
                 }
             });
-
+            this.render();
             if (this.collection) {
             	if (! this.collection.fetched) {
                     if (me.config.get("domain")) {
@@ -1233,18 +1233,20 @@ function program1(depth0,data) {
                         	projectId : me.config.get("project"),
                         	domainId : me.config.get("domain")
                         };
-                        this.collection.fetch();
+                        this.collection.on("beforeFetch", function() {
+                            me.formModal.$el.find("select").prop("disabled", true);
+                        });
+                        this.collection.fetch({
+                            success: function() {
+                                me.formModal.$el.find("select").prop("disabled", false);
+                            }
+                        });
                     }
                 }
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
             }
-            if (this.autoOpen) {
-                this.render();
-            }
-
-            me.render();
         },
 
         updateForm : function() {
@@ -1358,7 +1360,7 @@ function program1(depth0,data) {
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("add remove change", this.render, this);
+                    this.collection.on("add", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
