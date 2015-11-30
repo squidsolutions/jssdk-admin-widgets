@@ -17,7 +17,7 @@
 
         initialize: function(options) {
             var me = this;
-            
+
             this.config = squid_api.model.config;
 
             if (options) {
@@ -162,6 +162,9 @@
             if (bookmarkId) {
                 this.model.set({"id" : {"projectId" : projectId, "bookmarkId" : bookmarkId}});
                 this.model.fetch({
+                    success: function() {
+                        me.config.trigger("change:currentAnalysis", me.config, true);
+                    },
                     error: function(xhr) {
                         squid_api.model.status.set({"error":xhr});
                     }
