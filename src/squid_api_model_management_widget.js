@@ -284,7 +284,7 @@
                             success: function (response) {
                                 me.status.set({"error":null});
                                 if (me.schemasCallback) {
-                                    me.schemasCallback.call(me);
+                                    me.schemasCallback.call(me,response);
                                 }
                                 me1.$el.find('#btn-check').removeClass("in-progress");
                                 me1.$el.find('#btn-check').removeClass("btn-danger");

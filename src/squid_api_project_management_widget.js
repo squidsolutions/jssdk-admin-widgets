@@ -33,12 +33,17 @@
             this.render();
         },
 
-        getDbSchemas : function() {
+        getDbSchemas : function(response) {
             var me = this;
+            if (response) {
+            	me.schema.dbSchemas.options = response.definitions;
+                me.formContent.fields.dbSchemas.editor.setOptions(response.definitions);
+            } else
             if (this.model.get("dbSchemas")) {
                 var request = $.ajax({
                     type: "GET",
-                    url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
+                    url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+me.model.get("id").projectId,
+                    //url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
                     dataType: 'json',
                     success:function(collection) {
                         if (me.model.get("dbSchemas").length === 0) {
@@ -91,8 +96,13 @@
                 if (value === me.config.get("project")) {
                     me.config.trigger("change:project", me.config);
                 } else {
-                    // update the config
+                    // set domain as null
                     me.config.set({"project" : value, "domain" : null});
+
+                    // unset bookmark which may exist in the config
+                    me.config.unset("bookmark");
+                    // to prevent passing invalid facets between projects
+                    me.config.unset("selection");
                 }
                 // trigger a customer change
                 me.customer.trigger("change");

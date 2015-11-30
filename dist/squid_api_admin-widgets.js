@@ -457,6 +457,8 @@ function program1(depth0,data) {
         collectionView : null,
 
         initialize: function(options) {
+            var me = this;
+            
             this.config = squid_api.model.config;
 
             if (options) {
@@ -488,8 +490,6 @@ function program1(depth0,data) {
                 this.changeEventHandler = function(value) {
                     if (value) {
                         squid_api.setBookmarkId(value);
-                    } else {
-                        squid_api.model.config.trigger("change:bookmark", squid_api.model.config);
                     }
                 };
             }
@@ -500,6 +500,11 @@ function program1(depth0,data) {
             this.listenTo(this.config, "change:bookmark", this.setModel);
             this.listenTo(this.config, "change:project", this.setParent);
             this.listenTo(this.config, "change", this.afterRenderHandler);
+            this.listenTo(this.config, "change:domain", function() {
+                me.model.trigger("change");
+            });
+
+            this.render();
         },
 
         getRoles: function() {
@@ -510,7 +515,9 @@ function program1(depth0,data) {
 
             // write role
             if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
-                roles.create = true;
+                if (this.config.get("domain")) {
+                    roles.create = true;
+                }
                 roles.edit = true;
                 roles.delete = true;
             }
@@ -551,7 +558,7 @@ function program1(depth0,data) {
                 if (this.formContent) {
                     this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
                     this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
-                        e.data.form.setValue({"config" : e.data.config.toJSON()});
+                        e.data.form.setValue({"config" : _.omit(e.data.config.toJSON(),"bookmark")});
                     });
                 }
             } else if (this.formContent) {
@@ -586,11 +593,7 @@ function program1(depth0,data) {
             var me = this;
             var projectId = this.config.get("project");
             this.parent.set({"id" : {"projectId" : projectId}});
-            this.parent.fetch({
-                success: function() {
-                    me.render();
-                }
-            });
+            this.parent.fetch();
         },
 
         setModel : function() {
@@ -785,7 +788,7 @@ function program1(depth0,data) {
             }
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function() {
+            this.listenTo(this.parent, "change", function() {
                 this.initCollection();
             });
 
@@ -2177,7 +2180,7 @@ function program1(depth0,data) {
 
         render: function() {
         	var me = this;
-        	
+
             var viewOptions = {
                     "el" : this.$el,
                     type : "Domain",
@@ -2198,6 +2201,7 @@ function program1(depth0,data) {
                     squid_api.model.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 viewOptions.buttonLabel = "Create a new one";
                 viewOptions.createOnlyView = this.createOnlyView;
@@ -2210,6 +2214,7 @@ function program1(depth0,data) {
                     me.config.set({
                         "domain" : value
                     });
+                    me.config.unset("bookmark");
                 };
                 // DomainCollectionManagementWidget
                 var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
@@ -2849,7 +2854,7 @@ function program1(depth0,data) {
             	this.customer = options.customer;
             } else {
             	this.customer = squid_api.model.customer;
-            }         	
+            }
             this.render();
         },
 
@@ -2913,12 +2918,15 @@ function program1(depth0,data) {
                 } else {
                     // update the config
                     me.config.set({"project" : value, "domain" : null});
+
+                    // unset bookmark & filters
+                    me.config.unset("selection");
                 }
                 // trigger a customer change
                 me.customer.trigger("change");
             };
-            
-            /* Creating a new project or managing a collection */           
+
+            /* Creating a new project or managing a collection */
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";
