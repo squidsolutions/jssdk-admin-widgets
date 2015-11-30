@@ -29,7 +29,7 @@
             	this.customer = options.customer;
             } else {
             	this.customer = squid_api.model.customer;
-            }         	
+            }
             this.render();
         },
 
@@ -107,8 +107,8 @@
                 // trigger a customer change
                 me.customer.trigger("change");
             };
-            
-            /* Creating a new project or managing a collection */           
+
+            /* Creating a new project or managing a collection */
             if (this.createOnlyView) {
                 viewOptions.successHandler = successHandler;
                 viewOptions.buttonLabel = "Create a new one";

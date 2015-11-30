@@ -111,7 +111,7 @@
             }
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.parent, "change:id", function() {
+            this.listenTo(this.parent, "change", function() {
                 this.initCollection();
             });
 
