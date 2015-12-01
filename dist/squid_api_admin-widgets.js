@@ -1317,6 +1317,18 @@ function program1(depth0,data) {
             return viewData;
         },
 
+        refreshChosenColumns: function(model) {
+            var metrics = this.config.get("chosenMetrics");
+            if (this.model.definition == "Metric") {
+                if (metrics) {
+                    if (metrics.indexOf(model.get("oid")) > -1) {
+                        // remove metric from chosen array
+                        this.config.set("chosenMetrics", metrics.splice(metrics.indexOf(model.get("oid")), 1));
+                    }
+                }
+            }
+        },
+
         refreshCollection: function() {
             var me = this;
             if (me.model.definition == "Dimension") {
@@ -1406,10 +1418,14 @@ function program1(depth0,data) {
                             console.log("here");
                             if (true) {
                                 model.destroy({
-                                    success:function() {
+                                    success:function(model) {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                         me.refreshCollection();
+                                        /* if deleting a dimension/metric, we need to remove it
+                                           from the config if it exists
+                                         */
+                                        me.refreshChosenColumns(model);
                                     }
                                 });
                             }
