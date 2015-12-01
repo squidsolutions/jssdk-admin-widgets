@@ -248,6 +248,7 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
+                                me.collection.add(this);
                                 me.refreshCollection();
                             }
                         });
