@@ -91,7 +91,7 @@
                     me.domains.fetched = true;
                 }
             });
-
+            this.render();
             if (this.collection) {
             	if (! this.collection.fetched) {
                     if (me.config.get("domain")) {
@@ -99,59 +99,20 @@
                         	projectId : me.config.get("project"),
                         	domainId : me.config.get("domain")
                         };
-                        this.collection.fetch();
+                        this.collection.on("beforeFetch", function() {
+                            me.formModal.$el.find("select").prop("disabled", true);
+                        });
+                        this.collection.fetch({
+                            success: function() {
+                                me.formModal.$el.find("select").prop("disabled", false);
+                            }
+                        });
                     }
                 }
-                this.collection.on("add remove sync", function() {
-                	/*
-						for dimensions:
-							1. remove period config
-							2. set user selection based on what models are found in the collection returned
-
-						for dimensions & metrics:
-							1. refresh the domain
-							2. re-fetch the collection
-                	 */
-                	if (me.model.definition == "Dimension") {
-            			var selection = me.filters.get("selection");
-            			var period = me.config.get("period");
-            			var domain = me.config.get("domain");
-            			if (selection) {
-            				var facets = selection.facets;
-            				if (facets) {
-            					var updatedFacets = [];
-            					for (var i=0; i<facets.length; i++) {
-                					if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                						// reset period if facet not found
-                						if (period) {
-                							if (period[domain]) {
-                								if (period[domain].id == facets[i].id) {
-                									delete period[domain];
-                									me.config.set("period", period);
-                								}
-                							}
-                						}
-                						// reset user selection if facet not found
-                						selection.facets.splice(i, 1);
-                						me.filters.set("userSelection", selection);
-                					}
-                				}
-            				}
-            			}
-            		} else if (me.model.definition == "Metric") {
-                        me.config.trigger("change:domain", me.config);
-                    }
-
-                }, this);
             }
             if (this.parent) {
                 this.listenTo(this.parent, "change:id", this.render);
             }
-            if (this.autoOpen) {
-                this.render();
-            }
-
-            me.render();
         },
 
         updateForm : function() {
@@ -225,6 +186,51 @@
             return viewData;
         },
 
+        refreshChosenColumns: function(model) {
+            var metrics = this.config.get("chosenMetrics");
+            if (this.model.definition == "Metric") {
+                if (metrics) {
+                    if (metrics.indexOf(model.get("oid")) > -1) {
+                        // remove metric from chosen array
+                        this.config.set("chosenMetrics", metrics.splice(metrics.indexOf(model.get("oid")), 1));
+                    }
+                }
+            }
+        },
+
+        refreshCollection: function() {
+            var me = this;
+            if (me.model.definition == "Dimension") {
+                var selection = me.filters.get("selection");
+                var period = me.config.get("period");
+                var domain = me.config.get("domain");
+                if (selection) {
+                    var facets = selection.facets;
+                    if (facets) {
+                        var updatedFacets = [];
+                        for (var i=0; i<facets.length; i++) {
+                            if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
+                                // reset period if facet not found
+                                if (period) {
+                                    if (period[domain]) {
+                                        if (period[domain].id == facets[i].id) {
+                                            delete period[domain];
+                                            me.config.set("period", period);
+                                        }
+                                    }
+                                }
+                                // reset user selection if facet not found
+                                selection.facets.splice(i, 1);
+                                me.config.trigger("change:domain", me.config);
+                            }
+                        }
+                    }
+                }
+            } else if (me.model.definition == "Metric") {
+                me.config.trigger("change:domain", me.config);
+            }
+        },
+
         render : function() {
             var me = this;
             var collection = this.collection;
@@ -232,7 +238,7 @@
             this.columnsView = Backbone.View.extend({
                 initialize: function() {
                     this.collection = collection;
-                    this.collection.on("sync", this.render, this);
+                    this.collection.on("add remove change", this.render, this);
                 },
                 activatePlugin: function() {
                     this.$el.find("select").bootstrapDualListbox({
@@ -254,7 +260,8 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
-                                me.collection.create(this);
+                                me.collection.add(this);
+                                me.refreshCollection();
                             }
                         });
                     },
@@ -269,6 +276,7 @@
                             buttonLabel : "add",
                             successHandler : function() {
                                 squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
+                                me.refreshCollection();
                             }
                         });
                     },
@@ -279,9 +287,14 @@
                             console.log("here");
                             if (true) {
                                 model.destroy({
-                                    success:function() {
+                                    success:function(model) {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
+                                        me.refreshCollection();
+                                        /* if deleting a dimension/metric, we need to remove it
+                                           from the config if it exists
+                                         */
+                                        me.refreshChosenColumns(model);
                                     }
                                 });
                             }
@@ -335,11 +348,11 @@
                         }
                         // check nonDynamic Data
                         var model;
-                        var forceChange = false;
+                        var changeCount = 0;
                         for (i=0; i<nonDynamic.length; i++) {
                             model = this.collection.get($(nonDynamic[i]).val());
                             if (model.get("dynamic") === true) {
-                            	forceChange = true;
+                                changeCount++;
                                 model.set({"dynamic":false},{silent: true});
                             }
                         }
@@ -347,13 +360,17 @@
                         for (i=0; i<dynamic.length; i++) {
                             model = this.collection.get($(dynamic[i]).val());
                             if (model.get("dynamic") === false) {
-                            	forceChange = true;
+                                changeCount++;
                                 model.set({"dynamic":true},{silent: true});
                             }
                         }
 
                         // update all models at the same time
-                        this.collection.saveAll(this.collection.models);
+                        if (changeCount > 0) {
+                            this.collection.saveAll(this.collection.models).then(function(collection, model) {
+                                me.refreshCollection();
+                            });
+                        }
                     }
                 },
                 render: function() {
