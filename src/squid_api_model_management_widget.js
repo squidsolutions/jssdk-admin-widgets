@@ -68,6 +68,11 @@
             } else {
                 this.login = squid_api.model.login;
             }
+            if (options.filters) {
+                this.filters = option.filters;
+            } else {
+                this.filters = squid_api.model.filters;
+            }
             if (options.getRoles) {
                 this.getRoles = options.getRoles;
             }

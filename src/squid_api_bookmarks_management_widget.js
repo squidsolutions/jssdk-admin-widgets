@@ -17,7 +17,7 @@
 
         initialize: function(options) {
             var me = this;
-            
+
             this.config = squid_api.model.config;
 
             if (options) {
