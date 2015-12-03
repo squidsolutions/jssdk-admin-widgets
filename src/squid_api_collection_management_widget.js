@@ -39,6 +39,21 @@
             if (options.parent) {
                 this.parent = options.parent;
             }
+            if (options.modelView) {
+                this.modelView = options.modelView;
+            }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  function(a, b) {
+                    var r = me.dynamicComparator(a,b);
+                    if (r === 0) {
+                        r = me.alphaNameComparator(a,b);
+                    }
+                    return r;
+                };
+            }
 
             this.listenTo(this.config, "change:"+this.type.toLowerCase(), this.render);
 
@@ -120,6 +135,33 @@
 
         initializeModal: function(){
             var me = this;
+
+            this.collectionModal = new Backbone.BootstrapModal({
+                content: new this.contentView(),
+                title: this.typeLabelPlural
+            }).open();
+
+            this.modalOpen = true;
+
+            /* bootstrap doesn't remove modal from dom when clicking outside of it.
+            Check to make sure it has been removed whenever it isn't displayed.
+            */
+            $(this.collectionModal.el).on('hidden.bs.modal', function () {
+                me.collectionModal.close();
+                me.collectionModal.remove();
+                me.modelOpen = false;
+            });
+            $(this.collectionModal.el).find(".close").on("click", function() {
+                $(me.collectionModal.el).trigger("hidden.bs.modal");
+            });
+            $(this.collectionModal.el).find(".cancel").on("click", function() {
+                $(me.collectionModal.el).trigger("hidden.bs.modal");
+            });
+         },
+
+        render: function() {
+            var me = this;
+
             if (! this.contentView) {
                 // modal content view
                 this.contentView = Backbone.View.extend({
@@ -132,6 +174,16 @@
                         } else {
                             this.listenTo(squid_api.model.login, "change:accessToken", this.initParent);
                         }
+
+                        me.selectedModel = new squid_api.model[me.type + "Model"]();
+
+                        this.listenTo(me.selectedModel, "change", function(model) {
+                            // creation
+                            if (model.get("oid")) {
+                                // add model to collection
+                                me.collection.add(model);
+                            }
+                        });
 
                         this.initParent();
                     },
@@ -165,39 +217,20 @@
                         "click .select": function(event) {
                             var value = $(event.target).parent('tr').attr('data-attr');
                             me.config.set(me.type.toLowerCase(), value);
-                            // $(me.el).trigger("hidden.bs.modal");
+                            $(me.el).trigger("hidden.bs.modal");
                         },
                         "click .create": function() {
-                            if (me.roles.create) {
-                                new this.modelView({
-                                    el : $(this).find(".create"),
-                                    successHandler : function() {
-                                        if (me.changeEventHandler) {
-                                            me.changeEventHandler.call(this);
-                                        }
-                                        me.collection.add(this);
-                                        $(me.collectionModal.el).trigger("hidden.bs.modal");
-                                        var message = me.typeLabel + " has been successfully created";
-                                        squid_api.model.status.set({'message' : message});
-                                    }
-                                });
-                            }
+                            me.selectedModel.clear();
+                            new me.modelView({
+                                model: me.selectedModel
+                            });
                         },
                         "click .edit": function(event) {
                             var id = $(event.target).parents('tr').attr("data-attr");
-                            var model = this.collection.get(id);
-                            new this.modelView({
-                                el : $(this),
-                                model : model,
-                                parent : me.parent,
-                                successHandler : function() {
-                                    if (me.changeEventHandler) {
-                                        me.changeEventHandler.call(this);
-                                    }
-                                    var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                                    squid_api.model.config.trigger("change:project", squid_api.model.config);
-                                    squid_api.model.status.set({'message' : message});
-                                }
+                            var model = me.collection.get(id);
+                            me.selectedModel.set(model.attributes, {"silent" : true});
+                            new me.modelView({
+                                model : me.selectedModel
                             });
                         },
                         "click .refresh": function(event) {
@@ -212,13 +245,15 @@
                                 if (true) {
                                     model.destroy({
                                         wait : true,
-                                        success:function(collection) {
+                                        success:function(model) {
+                                            // close modal
                                             $(me.collectionModal.el).trigger("hidden.bs.modal");
-                                            var message = me.typeLabel + " with name " + collection.get("name") + " has been successfully deleted";
-                                            squid_api.model.status.set({'message' : message});
+                                            // set status
+                                            var message = me.typeLabel + " with name " + model.get("name") + " has been successfully deleted";
+                                            me.status.set({'message' : message});
                                         },
                                         error : function(collection, response) {
-                                            squid_api.model.status.set({'error' : response});
+                                            me.status.set({'error' : response});
                                         }
                                     });
                                 }
@@ -259,7 +294,6 @@
                                 if (model.value == me.config.get(me.type.toLowerCase())) {
                                     model.selected = true;
                                 }
-
                                 jsonData.models.push(model);
                             }
                         }
@@ -272,32 +306,7 @@
                 });
             }
 
-            this.collectionModal = new Backbone.BootstrapModal({
-                content: new this.contentView(),
-                title: this.typeLabelPlural
-            }).open();
-
-            this.modalOpen = true;
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-            Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                me.collectionModal.close();
-                me.collectionModal.remove();
-                me.modelOpen = false;
-            });
-            $(this.collectionModal.el).find(".close").on("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.collectionModal.el).find(".cancel").on("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
-            });
-         },
-
-        render: function() {
             if (!this.modalOpen) {
-
                 var jsonData = {
                     collectionAvailable : this.collectionAvailable,
                     type : this.typeLabelPlural,
@@ -307,7 +316,6 @@
                 // print template
                 var html = $(this.template(jsonData));
                 this.$el.html(html);
-
             }
 
             return this;
