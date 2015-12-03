@@ -2,101 +2,100 @@
 	color: #666;
 }
 
-.squid-api-model-widget-popup table {
+.squid-api-collection-management-widget table {
 	color: #666;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
-	float: left;
 }
 
-.squid-api-model-widget-popup table tbody {
+.squid-api-collection-management-widget table tbody {
 	max-height: 400px;
 	display: inline-block;
 	width: 100%;
 	overflow-y: scroll;
 }
 
-.squid-api-model-widget-popup table tbody.no-values {
+.squid-api-collection-management-widget table tbody.no-values {
 	overflow-y: auto;
 }
 
-.squid-api-model-widget-popup table td {
+.squid-api-collection-management-widgettable td {
   	padding: 2px 3px;
 	border-bottom: 1px solid #eaebec;
   	font-size: 12px;
 }
 
-.squid-api-model-widget-popup .create button, .squid-api-model-widget-popup .create button:active:focus {
+.squid-api-collection-management-widget .create button, .squid-api-collection-management-widget .create button:active:focus {
 	outline: 0 !important;
 }
 
-.squid-api-model-widget-popup table td.select {
+.squid-api-collection-management-widget table td.select {
 	padding-left: 20px;
 }
 
-.squid-api-model-widget-popup table tr {
+.squid-api-collection-management-widget table tr {
 	min-width: 298px;
 	height: 45px;
 	display: table;
 }
 
-.squid-api-model-widget-popup table td.edit {
+.squid-api-collection-management-widget table td.edit {
 	border-left: 1px solid #e0e0e0;
 }
 
-.squid-api-model-widget-popup table td {
+.squid-api-collection-management-widget table td {
 	text-align: center;
 	width: 20px;
 	padding-left: 10px;
 }
 
-.squid-api-model-widget-popup table td.select {
+.squid-api-collection-management-widget table td.select {
 	width: auto;
 	text-align: left;
 }
 
-.squid-api-model-widget-popup table td.delete {
+.squid-api-collection-management-widget table td.delete {
 	padding-right: 25px;
 }
 
-.squid-api-model-widget-popup table td:hover {
+.squid-api-collection-management-widget table td:hover {
 	background-color: #fff;
 }
 
-.squid-api-model-widget-popup table tr {
+.squid-api-collection-management-widget table tr {
 	background: #fff;
 	height: 35px;
 }
 
-.squid-api-model-widget-popup table tr td {
+.squid-api-collection-management-widget table tr td {
 	cursor: pointer;
 	padding: 15px;
 	font-size: 15px;
 }
 
-.squid-api-model-widget-popup table tr td.select:hover {
+.squid-api-collection-management-widget table tr td.select:hover {
 	background: #f3f3f3;
 }
 
-.squid-api-model-widget-popup table tr {
+.squid-api-collection-management-widget table tr {
 	width: 100%;
 }
 
-.squid-api-model-widget-popup table tr.selected {
+.squid-api-collection-management-widget table tr.selected {
 	background-color: #f3f3f3;
 	height: 50px;
 }
 
-.squid-api-model-widget-popup table tr.selected i {
+.squid-api-collection-management-widget table tr.selected i {
 	font-size: 15px;
 }
 
-.squid-api-model-widget-popup .new-model {
+.squid-api-collection-management-widget .new-model {
 	margin-bottom: 20px;
 }
 
-.squid-api-model-widget-popup .new-model button {
+.squid-api-collection-management-widget .new-model button {
 	position: absolute;
 	background: none;
 	right: 0px;
@@ -104,7 +103,7 @@
 	top: 4px;
 }
 
-.squid-api-model-widget-popup .ui-widget-header {
+.squid-api-collection-management-widget .ui-widget-header {
 	position: absolute;
 	right: 0px;
 	background: none;
@@ -114,7 +113,7 @@
 	display: none;
 }
 
-.squid-api-model-widget-popup .management-type {
+.squid-api-collection-management-widget .management-type {
 	text-align: center;
 	border-bottom: 1px solid #e0e0e0;
 	background-color: #f9f9f9;
@@ -171,4 +170,23 @@
 
 .squid-api-model-widget-Domain .create {
 	display: none;
+}
+
+
+/* Updated Styles */
+.squid-api-collection-management-widget button.squid-api-collection-modal-trigger .glyphicon-refresh {
+	position: relative;
+	top: 2px;
+	right: 3px;
+	-moz-animation: spin .7s infinite linear;
+	-webkit-animation: spin .7s infinite linear;
+}
+
+@-moz-keyframes spin {
+	0% {
+		-moz-transform: rotate(0deg);
+	}
+	100% {
+		-moz-transform: rotate(360deg);
+	};
 }

@@ -1,18 +1,19 @@
-<div class="squid-api-model-widget squid-api-model-widget-{{type}}" {{#unless collectionAvailable}} data-toggle="tooltip" data-placement="bottom" title="{{collectionNotAvailableReason}}" {{/unless}}>
-    <button class="form-control selected-model squid-api-action" {{#unless collectionAvailable}} disabled="true" {{/unless}}>
-    </button>
-    <div id="squid-api-{{type}}-model-widget-popup-container">
-    <div class="squid-api-{{type}}-model-widget-popup squid-api-model-widget-popup">
-        {{#if create}}
-            <button type="button"  class="create btn btn-default">
-                <i class="fa fa-plus"></i> New {{typeLabel}}
-            </button>
-        {{/if}}
-        {{#if collectionAvailable}}
-            {{#if selAvailable}}
+<div class="squid-api-collection-management-widget">
+    {{#unless modalHtml}}
+        <button class="form-control squid-api-collection-modal-trigger" {{#unless collectionAvailable}} disabled="true" {{/unless}}>
+            {{type}}
+        </button>
+    {{/unless}}
+    {{#if modalHtml}}
+        <div class="squid-api-{{type}}-collection-management">
+            {{#if roles.create}}
+                <button type="button"  class="create btn btn-default">
+                    <i class="fa fa-plus"></i> New {{typeLabel}}
+                </button>
+            {{/if}}
                 <table style="width:100%">
                     <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
-                        {{#each options}}
+                        {{#each models}}
                             <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
                                 {{#if selected}}
                                     <td class="select selected">
@@ -27,21 +28,13 @@
                                     {{#if delete}}
                                         <td class="delete"><i class="fa fa-trash-o"></i></td>
                                     {{/if}}
-                                {{else}}
-                                    <td class="select" colspan="3">{{label}}</td>
-                                {{/if}}
-                            </tr>
-                        {{/each}}
-                    </tbody>
+                                    {{else}}
+                                        <td class="select" colspan="3">{{label}}</td>
+                                    {{/if}}
+                                </tr>
+                            {{/each}}
+                        </tbody>
                 </table>
-            {{else}}
-                <div class="no-data">No {{typeLabel}} Available</div>
-            {{/if}}
         </div>
-    </div>
-        {{else}}
-            <div class="parent-missing">
-			<i class="glyphicon glyphicon-refresh loading"></i> {{typeLabelPlural}} list computing in progress
-            </div>
-        {{/if}}
+    {{/if}}
 </div>
