@@ -146,15 +146,15 @@
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
             */
-            $(this.collectionModal.el).on('hidden.bs.modal', function () {
+            $(this.collectionModal.el).one('hidden.bs.modal', function () {
                 me.collectionModal.close();
                 me.collectionModal.remove();
                 me.modelOpen = false;
             });
-            $(this.collectionModal.el).find(".close").on("click", function() {
+            $(this.collectionModal.el).find(".close").one("click", function() {
                 $(me.collectionModal.el).trigger("hidden.bs.modal");
             });
-            $(this.collectionModal.el).find(".cancel").on("click", function() {
+            $(this.collectionModal.el).find(".cancel").one("click", function() {
                 $(me.collectionModal.el).trigger("hidden.bs.modal");
             });
          },

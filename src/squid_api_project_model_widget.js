@@ -52,39 +52,65 @@
             }
         },
 
-        render: function() {
+        contentView: function(formContent) {
             var me = this;
-            this.formContent = new Backbone.Form({
-                schema: me.schema,
-                model: me.model
-            }).render();
-            var contentView = Backbone.View.extend({
+            this.contentView = Backbone.View.extend({
                 initialize: function() {
-                    this.render();
+                    this.bind("ok", this.saveForm);
+                },
+                saveForm: function () {
+                    var error = me.formContent.validate();
+                    var isNew = me.model.isNew();
+                    if (! error) {
+                        var data = me.formContent.getValue();
+
+                        // save model
+                        me.model.save(data, {
+
+                        });
+                        console.log(data);
+                    }
                 },
                 render: function() {
-                    this.$el.html(me.formContent.el);
+                    this.$el.html(formContent.render().el);
                     return this;
                 }
             });
-            this.collectionModal = new Backbone.BootstrapModal({
-                content: new contentView(),
-                title: me.typeLabelPlural
-            }).open();
+        },
 
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-            Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.collectionModal.el).on('hidden.bs.modal', function () {
-                me.collectionModal.close();
-                me.collectionModal.remove();
+        render: function() {
+            var me = this;
+
+            // create form
+            var formContent = new Backbone.Form({
+                schema: me.schema,
+                model: me.model
             });
-            $(this.collectionModal.el).find(".close").on("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.collectionModal.el).find(".cancel").on("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
-            });
+
+            // place the form into a backbone view
+            this.contentView(formContent);
+
+            // render modal
+            if (! this.collectionModal) {
+                this.collectionModal = new Backbone.BootstrapModal({
+                    content: new this.contentView(),
+                    title: me.typeLabelPlural
+                }).open();
+
+                /* bootstrap doesn't remove modal from dom when clicking outside of it.
+                Check to make sure it has been removed whenever it isn't displayed.
+                */
+                $(this.collectionModal.el).one('hidden.bs.modal', function () {
+                    me.collectionModal.close();
+                    me.collectionModal.remove();
+                });
+                $(this.collectionModal.el).find(".close").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                });
+                $(this.collectionModal.el).find(".cancel").one("click", function() {
+                    $(me.collectionModal.el).trigger("hidden.bs.modal");
+                });
+            }
 
             return this;
         }
