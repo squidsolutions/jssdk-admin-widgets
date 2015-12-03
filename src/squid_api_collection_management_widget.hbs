@@ -8,33 +8,29 @@
         <div class="squid-api-{{type}}-collection-management">
             {{#if roles.create}}
                 <button type="button"  class="create btn btn-default">
-                    <i class="fa fa-plus"></i> New {{typeLabel}}
+                    <i class="fa fa-plus"></i> New {{type}}
                 </button>
             {{/if}}
                 <table style="width:100%">
                     <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
                         {{#each models}}
-                            <tr {{#if selected}} class="selected" {{/if}}data-attr="{{value}}">
-                                {{#if selected}}
-                                    <td class="select selected">
-                                        {{label}}
-                                    </td>
-                                    {{#if edit}}
-                                        <td class="edit"><i class="fa fa-pencil-square-o"></i></td>
-                                    {{/if}}
-                                    {{#if refresh}}
-                                        <td class="refresh"><i class="fa fa-refresh"></i></td>
-                                    {{/if}}
-                                    {{#if delete}}
-                                        <td class="delete"><i class="fa fa-trash-o"></i></td>
-                                    {{/if}}
-                                    {{else}}
-                                        <td class="select" colspan="3">{{label}}</td>
-                                    {{/if}}
-                                </tr>
-                            {{/each}}
-                        </tbody>
-                </table>
+                            <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
+                                <td class="select selected">
+                                    {{label}}
+                                </td>
+                                {{#if roles.delete}}
+                                    <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
+                                {{/if}}
+                                {{#if roles.refresh}}
+                                    <td class="refresh collection-option"><i class="fa fa-refresh"></i></td>
+                                {{/if}}
+                                {{#if roles.edit}}
+                                    <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+                                {{/if}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
+            </table>
         </div>
     {{/if}}
 </div>
