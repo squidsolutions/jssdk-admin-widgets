@@ -1319,6 +1319,7 @@ function program1(depth0,data) {
 
         refreshChosenColumns: function(model) {
             var metrics = this.config.get("chosenMetrics");
+            var dimensions = this.config.get("chosenDimensions");
             if (this.model.definition == "Metric") {
                 if (metrics) {
                     if (metrics.indexOf(model.get("oid")) > -1) {
@@ -1327,12 +1328,19 @@ function program1(depth0,data) {
                     }
                 }
             }
+            if (this.model.definition == "Dimension") {
+                if (dimensions) {
+                    if (dimensions.indexOf(model.get("oid")) > -1) {
+                        // remove metric from chosen array
+                        this.config.set("chosenDimensions", metrics.splice(metrics.indexOf(model.get("oid")), 1));
+                    }
+                }
+            }
         },
 
         refreshCollection: function() {
             var me = this;
             if (me.model.definition == "Dimension") {
-                var selection = me.filters.get("selection");
                 var period = me.config.get("period");
                 var domain = me.config.get("domain");
                 if (selection) {
@@ -1350,16 +1358,12 @@ function program1(depth0,data) {
                                         }
                                     }
                                 }
-                                // reset user selection if facet not found
-                                selection.facets.splice(i, 1);
-                                me.filters.set("userSelection", selection);
                             }
                         }
                     }
                 }
-            } else if (me.model.definition == "Metric") {
-                me.config.trigger("change:domain", me.config);
             }
+            me.config.trigger("change:domain", me.config);
         },
 
         render : function() {
