@@ -221,7 +221,7 @@
                                 }
                                 // reset user selection if facet not found
                                 selection.facets.splice(i, 1);
-                                me.config.trigger("change:domain", me.config);
+                                me.filters.set("userSelection", selection);
                             }
                         }
                     }
