@@ -42,6 +42,11 @@
             if (options.modelView) {
                 this.modelView = options.modelView;
             }
+            if (options.modalView) {
+                this.modalView = options.modalView;
+            } else {
+                this.modalView = squid_api.view.ModalView;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -130,32 +135,13 @@
         },
 
         events: {
-            "click button": "initializeModal"
+            "click .squid-api-collection-modal-trigger": "initializeModal"
         },
 
         initializeModal: function(){
-            var me = this;
-
-            this.collectionModal = new Backbone.BootstrapModal({
-                content: new this.contentView(),
-                title: this.typeLabelPlural
-            }).open();
-
-            this.modalOpen = true;
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-            Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.collectionModal.el).one('hidden.bs.modal', function () {
-                me.collectionModal.close();
-                me.collectionModal.remove();
-                me.modelOpen = false;
-            });
-            $(this.collectionModal.el).find(".close").one("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.collectionModal.el).find(".cancel").one("click", function() {
-                $(me.collectionModal.el).trigger("hidden.bs.modal");
+            this.modalView = new squid_api.view.ModalView({
+                el : this.$el.find(".modal-wrapper"),
+                internalView : new this.contentView()
             });
          },
 
@@ -217,21 +203,20 @@
                         "click .select": function(event) {
                             var value = $(event.target).parent('tr').attr('data-attr');
                             me.config.set(me.type.toLowerCase(), value);
-                            $(me.el).trigger("hidden.bs.modal");
                         },
                         "click .create": function() {
                             me.selectedModel.clear();
-                            new me.modelView({
-                                model: me.selectedModel
-                            });
+                            me.modalView.render(new me.modelView({
+                                model : me.selectedModel
+                            }));
                         },
                         "click .edit": function(event) {
                             var id = $(event.target).parents('tr').attr("data-attr");
                             var model = me.collection.get(id);
                             me.selectedModel.set(model.attributes, {"silent" : true});
-                            new me.modelView({
+                            me.modalView.render(new me.modelView({
                                 model : me.selectedModel
-                            });
+                            }));
                         },
                         "click .refresh": function(event) {
                             var id = $(event.target).parents('tr').attr("data-attr");
@@ -249,7 +234,7 @@
                                             // close modal
                                             $(me.collectionModal.el).trigger("hidden.bs.modal");
                                             // set status
-                                            var message = me.typeLabel + " with name " + model.get("name") + " has been successfully deleted";
+                                            var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
                                             me.status.set({'message' : message});
                                         },
                                         error : function(collection, response) {
@@ -303,10 +288,9 @@
                         this.$el.html(html);
                         return this;
                     }
-                });
-            }
+                    });
+                }
 
-            if (!this.modalOpen) {
                 var jsonData = {
                     collectionAvailable : this.collectionAvailable,
                     type : this.typeLabelPlural,
@@ -316,7 +300,6 @@
                 // print template
                 var html = $(this.template(jsonData));
                 this.$el.html(html);
-            }
 
             return this;
         }
