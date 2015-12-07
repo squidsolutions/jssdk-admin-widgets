@@ -2184,7 +2184,6 @@ function program1(depth0,data) {
             this.contentView = Backbone.View.extend({
                 initialize: function() {
                     this.bind("ok", this.saveForm);
-                    this.render();
                 },
                 saveForm: function () {
                     var error = formContent.validate();
@@ -2224,42 +2223,9 @@ function program1(depth0,data) {
                         });
                     }
                 },
-                getDbSchemas : function() {
-                    var me = this;
-                    if (this.model.get("dbSchemas")) {
-                        var request = $.ajax({
-                            type: "GET",
-                            url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
-                            dataType: 'json',
-                            success:function(collection) {
-                                if (me.model.get("dbSchemas").length === 0) {
-                                    me.setStatusMessage('please set a db schema');
-                                }
-                                me.schema.dbSchemas.options = collection.definitions;
-                                me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                            },
-                            error: function(data) {
-                                me.setStatusMessage(data.responseJSON.error);
-                            }
-                        });
-                    } else if (this.formContent) {
-                        var formData = this.formContent.getValue();
-                        if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
-                            $.ajax({
-                                type: "GET",
-                                url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + encodeURIComponent(formData.dbPassword),
-                                dataType: 'json',
-                                contentType: 'application/json',
-                                success: function (collection) {
-                                    me.schema.dbSchemas.options = collection.definitions;
-                                    me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                                },
-                                error: function(xhr, textStatus, error){
-
-                                }
-                            });
-                        }
-                    }
+                render: function() {
+                    this.$el.html(formContent.render().el);
+                    return this;
                 }
             });
         }
