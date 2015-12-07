@@ -34,6 +34,16 @@
     margin: 20px 0px 0px 37%;
 }
 
+.squid-api-model-management-footer {
+	border-top: 1px solid #e5e5e5;
+	padding: 15px;
+    text-align: right;
+}
+
+.squid-api-model-management-footer .btn-return-collection {
+    float: left;
+}
+
 .squid-api-admin-widgets-modal-form .modal-footer a.ok {
 	position: relative;
 	vertical-align: top;
