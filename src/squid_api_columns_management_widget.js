@@ -3,122 +3,115 @@
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
+    var View = squid_api.view.CollectionManagementWidget.extend({
+        events: {
+            // select
+            "click .select": function(event) {
+                var value = $(event.target).parent('tr').attr('data-attr');
+                this.config.set(this.type.toLowerCase(), value);
+            },
+            "click .create": function(event) {
+                var me = this;
+                this.selectedModel.clear({"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .edit": function(event) {
+                var me = this;
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                this.selectedModel.set(model.attributes, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "change select" : function(event) {
+                var me = this;
+                var dynamic = [];
+                var nonDynamic = [];
 
-        successHandler: null,
-        errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
-        buttonLabel : null,
-        autoOpen: null,
-        parent: null,
-        schemasCallback : null,
-        beforeRenderHandler : null,
-        modalTitle : null,
-        collection : null,
+                // update edit element
+                var name = $(event.target).find("option:selected:last").html();
+                var value = $(event.target).find("option:selected:last").val();
 
-        initialize: function(options) {
-            var me = this;
+                //update edit / delete buttons
+                if (name !== undefined) {
+                    this.$el.find(".edit").removeAttr("disabled");
+                    this.$el.find(".edit").html("edit " + name);
+                    this.$el.find(".edit").attr("data-value", value);
 
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.successHandler) {
-                this.successHandler = options.successHandler;
-            }
-            if (options.errorHandler) {
-                this.errorHandler = options.errorHandler;
-            }
-            if (options.buttonLabel) {
-                this.buttonLabel = options.buttonLabel;
-            }
-            if (options.autoOpen) {
-                this.autoOpen = options.autoOpen;
-            }
-            if (options.parent) {
-                this.parent = options.parent;
-            }
-            if (options.schemasCallback) {
-                this.schemasCallback = options.schemasCallback;
-            }
-            if (options.beforeRenderHandler) {
-                this.beforeRenderHandler = options.beforeRenderHandler;
-            }
-            if (options.modalTitle) {
-                this.modalTitle = options.modalTitle;
-            }
-            if (options.createOnlyView) {
-                this.createOnlyView = options.createOnlyView;
-            }
-            if (options.type) {
-                this.type = options.type;
-            }
-            if (options.config) {
-            	this.config = options.config;
-            } else {
-            	this.config = squid_api.model.config;
-            }
-            if (options.filters) {
-            	this.filters = options.filters;
-            } else {
-            	this.filters = squid_api.model.filters;
-            }
-            if (options.status) {
-            	this.status = options.status;
-            } else {
-            	this.status = squid_api.model.status;
-            }
-
-            // relations
-            me.relations = new squid_api.model.RelationCollection();
-            me.relations.collectionAvailable = true;
-            me.relations.parentId = {};
-            me.relations.parentId.projectId = squid_api.model.config.get("project");
-            me.relations.fetch({
-                success: function() {
-                    me.relations.fetched = true;
+                    this.$el.find(".delete").removeAttr("disabled");
+                    this.$el.find(".delete").html("delete " + name);
+                    this.$el.find(".delete").attr("data-value", value);
                 }
-            });
-            // domains
-            me.domains = new squid_api.model.DomainCollection();
-            me.domains.collectionAvailable = true;
-            me.domains.parentId = {};
-            me.domains.parentId.projectId =  squid_api.model.config.get("project");
-            me.domains.fetch({
-                success: function() {
-                    me.domains.fetched = true;
+
+                // selected values in the second select box
+                var options1 = $(this.$el.find("select")[1]).find("option");
+                var options2 = $(this.$el.find("select")[0]).find("option");
+
+                // store visually updated attributes
+                for (i=0; i<options1.length; i++) {
+                    nonDynamic.push(options1[i]);
                 }
-            });
-            this.render();
-            if (this.collection) {
-            	if (! this.collection.fetched) {
-                    if (me.config.get("domain")) {
-                        this.collection.parentId = {
-                        	projectId : me.config.get("project"),
-                        	domainId : me.config.get("domain")
-                        };
-                        this.collection.on("beforeFetch", function() {
-                            me.formModal.$el.find("select").prop("disabled", true);
-                        });
-                        this.collection.fetch({
-                            success: function() {
-                                me.formModal.$el.find("select").prop("disabled", false);
+                for (i=0; i<options2.length; i++) {
+                    dynamic.push(options2[i]);
+                }
+                // check nonDynamic Data
+                var model;
+                var changeCount = 0;
+                for (i=0; i<nonDynamic.length; i++) {
+                    model = this.collection.get($(nonDynamic[i]).val());
+                    if (model.get("dynamic") === true) {
+                        changeCount++;
+                        model.set({"dynamic":false},{silent: true});
+                    }
+                }
+                // check dynamic Data
+                for (i=0; i<dynamic.length; i++) {
+                    model = this.collection.get($(dynamic[i]).val());
+                    if (model.get("dynamic") === false) {
+                        changeCount++;
+                        model.set({"dynamic":true},{silent: true});
+                    }
+                }
+
+                // update all models at the same time
+                if (changeCount > 0) {
+                    this.collection.saveAll(this.collection.models).then(function(collection, model) {
+                        me.refreshCollection();
+                    });
+                }
+            },
+            "click .delete": function(event) {
+                var id = $(event.target).parents('tr').attr("data-attr");
+                var model = this.collection.get(id);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
+                                me.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
                             }
                         });
                     }
                 }
             }
-            if (this.parent) {
-                this.listenTo(this.parent, "change:id", this.render);
-            }
         },
-
-        updateForm : function() {
-            var jsonData = this.viewData();
+        refreshCollection: function() {
+            this.config.trigger("change:domain", this.config);
         },
-
         sortData : function(data) {
 
         	// build the parent index
@@ -159,17 +152,26 @@
 
             return data;
         },
-
+        activatePlugin: function() {
+            this.$el.find("select").bootstrapDualListbox({
+                moveOnSelect: false,
+                showFilterInputs: false,
+                filterTextClear : " ",
+                selectedListLabel: "Selected " + this.typeLabelPlural + " -",
+                nonSelectedListLabel: "Available " + this.typeLabelPlural + " -",
+                selectorMinimalHeight: 250
+            });
+        },
         viewData: function() {
             var models = this.collection.models;
-            var viewData = {"dynamic" : [], "nonDynamic" : []};
+            var viewData = {"dynamic" : [], "nonDynamic" : [], "typeLabelPlural" : this.typeLabelPlural};
             for (i=0; i<models.length; i++) {
                 var obj = {};
                 obj.name = models[i].get("name");
                 obj.id = models[i].get("oid");
 
                 if (models[i].get("parentId")) {
-                    obj.parentId = models[i].get("parentId")[this.model.definition.toLowerCase() + "Id"];
+                    obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
                 }
 
                 if (models[i].get("dynamic")) {
@@ -185,240 +187,10 @@
 
             return viewData;
         },
-
-        refreshChosenColumns: function(model) {
-            var metrics = this.config.get("chosenMetrics");
-            if (this.model.definition == "Metric") {
-                if (metrics) {
-                    if (metrics.indexOf(model.get("oid")) > -1) {
-                        // remove metric from chosen array
-                        this.config.set("chosenMetrics", metrics.splice(metrics.indexOf(model.get("oid")), 1));
-                    }
-                }
-            }
-        },
-
-        refreshCollection: function() {
-            var me = this;
-            if (me.model.definition == "Dimension") {
-                var selection = me.filters.get("selection");
-                var period = me.config.get("period");
-                var domain = me.config.get("domain");
-                if (selection) {
-                    var facets = selection.facets;
-                    if (facets) {
-                        var updatedFacets = [];
-                        for (var i=0; i<facets.length; i++) {
-                            if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                                // reset period if facet not found
-                                if (period) {
-                                    if (period[domain]) {
-                                        if (period[domain].id == facets[i].id) {
-                                            delete period[domain];
-                                            me.config.set("period", period);
-                                        }
-                                    }
-                                }
-                                // reset user selection if facet not found
-                                selection.facets.splice(i, 1);
-                                me.config.trigger("change:domain", me.config);
-                            }
-                        }
-                    }
-                }
-            } else if (me.model.definition == "Metric") {
-                me.config.trigger("change:domain", me.config);
-            }
-        },
-
         render : function() {
-            var me = this;
-            var collection = this.collection;
-
-            this.columnsView = Backbone.View.extend({
-                initialize: function() {
-                    this.collection = collection;
-                    this.collection.on("add remove change", this.render, this);
-                },
-                activatePlugin: function() {
-                    this.$el.find("select").bootstrapDualListbox({
-                        moveOnSelect: false,
-                        showFilterInputs: false,
-                        filterTextClear : " ",
-                        selectedListLabel: "Selected " + me.model.definition.toLowerCase() +"s",
-                        nonSelectedListLabel: "Available " + me.model.definition.toLowerCase() +"s",
-                        selectorMinimalHeight: 250
-                    });
-                },
-                events: {
-                    "click .add" : function() {
-                        new squid_api.view.ModelManagementView({
-                            model : new squid_api.model[me.model.definition + "Model"](),
-                            collection : me.collection,
-                            parent : me.parent,
-                            autoOpen : true,
-                            buttonLabel : "add",
-                            successHandler : function() {
-                                squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
-                                me.collection.add(this);
-                                me.refreshCollection();
-                            }
-                        });
-                    },
-                    "click .edit" : function(event) {
-                        var id = $(event.target).attr("data-value");
-                        var model = me.collection.get(id);
-                        new squid_api.view.ModelManagementView({
-                            model : model,
-                            parent : me.parent,
-                            collection : me.collection,
-                            autoOpen : true,
-                            buttonLabel : "add",
-                            successHandler : function() {
-                                squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.refreshCollection();
-                            }
-                        });
-                    },
-                    "click .delete" : function(event) {
-                        var id = $(event.target).attr("data-value");
-                        var model = me.collection.get(id);
-                        if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                            console.log("here");
-                            if (true) {
-                                model.destroy({
-                                    success:function(model) {
-                                        var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
-                                        squid_api.model.status.set({'message' : message});
-                                        me.refreshCollection();
-                                        /* if deleting a dimension/metric, we need to remove it
-                                           from the config if it exists
-                                         */
-                                        me.refreshChosenColumns(model);
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    "click .relations" : function() {
-                        new squid_api.view.RelationModelManagementView({
-                            el : this.el,
-                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                            type : "Relation",
-                            modalTitle : "Relation for domain: " + this.domainName,
-                            collection : me.relations,
-                            model : new squid_api.model.RelationModel(),
-                            parent : me.domains,
-                            autoOpen : true,
-                            successHandler : function() {
-                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                                squid_api.model.status.set({'message' : message});
-                            }
-                        });
-                    },
-                    "change select" : function(event) {
-                        var dynamic = [];
-                        var nonDynamic = [];
-
-                        // update edit element
-                        var name = $(event.target).find("option:selected:last").html();
-                        var value = $(event.target).find("option:selected:last").val();
-
-                        //update edit / delete buttons
-                        if (name !== undefined) {
-                            this.$el.find(".edit").removeAttr("disabled");
-                            this.$el.find(".edit").html("edit " + name);
-                            this.$el.find(".edit").attr("data-value", value);
-
-                            this.$el.find(".delete").removeAttr("disabled");
-                            this.$el.find(".delete").html("delete " + name);
-                            this.$el.find(".delete").attr("data-value", value);
-                        }
-
-                        // selected values in the second select box
-                        var options1 = $(this.$el.find("select")[1]).find("option");
-                        var options2 = $(this.$el.find("select")[0]).find("option");
-
-                        // store visually updated attributes
-                        for (i=0; i<options1.length; i++) {
-                            nonDynamic.push(options1[i]);
-                        }
-                        for (i=0; i<options2.length; i++) {
-                            dynamic.push(options2[i]);
-                        }
-                        // check nonDynamic Data
-                        var model;
-                        var changeCount = 0;
-                        for (i=0; i<nonDynamic.length; i++) {
-                            model = this.collection.get($(nonDynamic[i]).val());
-                            if (model.get("dynamic") === true) {
-                                changeCount++;
-                                model.set({"dynamic":false},{silent: true});
-                            }
-                        }
-                        // check dynamic Data
-                        for (i=0; i<dynamic.length; i++) {
-                            model = this.collection.get($(dynamic[i]).val());
-                            if (model.get("dynamic") === false) {
-                                changeCount++;
-                                model.set({"dynamic":true},{silent: true});
-                            }
-                        }
-
-                        // update all models at the same time
-                        if (changeCount > 0) {
-                            this.collection.saveAll(this.collection.models).then(function(collection, model) {
-                                me.refreshCollection();
-                            });
-                        }
-                    }
-                },
-                render: function() {
-                    this.$el.html(template(me.viewData()));
-                    this.activatePlugin();
-                    return this;
-                }
-            });
-
-            // instantiate a new modal view, set the content & automatically open
-            if (this.formModal) {
-                this.formModal.open();
-            } else {
-                this.formModal = new Backbone.BootstrapModal({
-                    content: new this.columnsView(),
-                    cancelText: "close",
-                    title: me.type
-                });
-                this.formModal.open();
-            }
-
-            // modal wrapper class
-            $(this.formModal.el).addClass(this.modalElementClassName);
-
-            // modal definition class
-            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition + "-primary");
-
-            // on cancel
-            this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
-            });
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).one('hidden.bs.modal', function () {
-                me.closeModal();
-            });
-            $(this.formModal.el).find(".close").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.formModal.el).find(".cancel").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-        },
-        closeModal : function() {
-            this.formModal.close();
-            this.formModal.remove();
+            this.$el.html(template(this.viewData()));
+            this.activatePlugin();
+            return this;
         }
     });
 

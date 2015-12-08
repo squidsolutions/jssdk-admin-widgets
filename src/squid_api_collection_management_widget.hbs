@@ -12,22 +12,28 @@
                 {{/if}}
                     <table style="width:100%">
                         <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
-                            {{#each models}}
-                                <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
-                                    <td class="select selected">
-                                        {{label}}
-                                    </td>
-                                    {{#if roles.delete}}
-                                        <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
-                                    {{/if}}
-                                    {{#if roles.refresh}}
-                                        <td class="refresh collection-option"><i class="fa fa-refresh"></i></td>
-                                    {{/if}}
-                                    {{#if roles.edit}}
-                                        <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
-                                    {{/if}}
-                                </tr>
-                            {{/each}}
+                            {{#if models}}
+                                {{#each models}}
+                                    <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
+                                        <td class="select selected">
+                                            {{label}}
+                                        </td>
+                                        {{#if roles.delete}}
+                                            <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
+                                        {{/if}}
+                                        {{#if roles.refresh}}
+                                            <td class="refresh collection-option"><i class="fa fa-refresh"></i></td>
+                                        {{/if}}
+                                        {{#if roles.edit}}
+                                            <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+                                            {{/if}}
+                                    </tr>
+                                {{/each}}
+                            {{else}}
+                                <div class="no-data">
+                                    No {{typeLabelPlural}} available
+                                </div>
+                            {{/if}}
                         </tbody>
                 </table>
             </div>

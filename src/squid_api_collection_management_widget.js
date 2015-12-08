@@ -42,6 +42,12 @@
             if (options.modelView) {
                 this.modelView = options.modelView;
             }
+            if (options.setCollectionParent) {
+                this.setCollectionParent = options.setCollectionParent;
+            }
+            if (options.setParentModel) {
+                this.setParentModel = options.setParentModel;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -55,43 +61,60 @@
                 };
             }
 
-            this.initParent();
+            this.setParent();
 
             // once the parent role changes, initialize the collection
             if (this.parent) {
-                this.listenTo(this.config, "change:"+this.parent.toLowerCase(), this.initCollection);
-                this.listenTo(this.parentModel, "change:_role", this.render);
+                this.listenTo(this.config, "change:"+this.parent.toLowerCase(), function() {
+                    me.initParent();
+                    me.initCollection();
+                });
             } else {
-                this.listenTo(squid_api.model.login, "change:_role", this.initCollection);
+                this.listenTo(squid_api.model.login, "change", function() {
+                    me.initParent();
+                    me.initCollection();
+                });
             }
+
+            this.listenTo(this.parentModel, "change:_role", this.render);
 
             this.selectedModel = new squid_api.model[this.type + "Model"]();
             this.listenTo(this.selectedModel, "change", function(model) {
-                // creation
-                if (model.get("oid")) {
-                    // {merge: true}
-                    this.collection.remove(model.get("oid"), {silent: true});
-                }
-                // add model to collection
-                this.collection.add(model);
+                this.collection.add(model, { merge : true });
             });
 
             this.listenTo(this.config, "change:" + this.type.toLowerCase(), this.render);
         },
 
-        setParent : function() {
-            // set & fetch parent
-            this.parent.set("id", { projectId : this.config.get("project")});
+        setParent: function() {
+            if (this.parent) {
+                // match a base model
+                for (var modelItem in squid_api.model) {
+                    var str = modelItem;
+                    var res = str.match(this.parent + "Model");
+                    if (res) {
+                        this.parentModel = new squid_api.model[res]();
+                    }
+                }
+            } else {
+                this.parentModel = squid_api.model.login;
+            }
         },
 
-        fetchParent : function() {
+        initParent: function() {
             var me = this;
-            // fetch parent
-            this.parent.fetch({
-                error: function() {
-                    me.status.set({"error":response});
+            if (this.parent) {
+                // set & fetch collection
+                if (this.setParentModel) {
+                    this.setParentModel.call(this);
                 }
-            });
+                // fetch model
+                this.parentModel.fetch({
+                    error: function(xhr) {
+                        me.status.set("error", xhr);
+                    }
+                });
+            }
         },
 
         initCollection : function() {
@@ -109,13 +132,12 @@
                 this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + me.typeLabelPlural);
                 // once collection synced, re-render button
                 this.collection.on("sync change add remove", this.render, this);
+
                 // set & fetch collection
-                if (this.parent) {
-                    var parentId =  this.config.get(this.parent.toLowerCase());
-                    if (parentId) {
-                        this.collection.parentId = {"projectId" : parentId};
-                    }
+                if (this.setCollectionParent) {
+                    this.setCollectionParent.call(this);
                 }
+
                 this.collection.fetch({
                     success : function() {
                         me.collectionAvailable = true;
@@ -186,37 +208,12 @@
                         model.destroy({
                             wait : true,
                             success:function(model) {
-                                // close modal
-                                $(me.collectionModal.el).trigger("hidden.bs.modal");
                                 // set status
                                 var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
                                 me.status.set({'message' : message});
                             },
                             error : function(collection, response) {
                                 me.status.set({'error' : response});
-                            }
-                        });
-                    }
-                }
-            }
-        },
-
-        initParent: function() {
-            this.parentModel = squid_api.model.login;
-            if (this.parent) {
-                var parentId = this.config.get(this.parent.toLowerCase());
-                // match a base model
-                for (var modelItem in squid_api.model) {
-                    var str = modelItem;
-                    var res = str.match(this.parent + "Model");
-                    if (res && parentId) {
-                        this.parentModel = new squid_api.model[res]();
-                        this.parentModel.set("id", {projectId : parent});
-                        // fetch model
-                        this.parentModel.fetch({
-                            success: this.render,
-                            error: function() {
-                                // status error
                             }
                         });
                     }

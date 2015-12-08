@@ -224,6 +224,15 @@
 	-webkit-animation: spin .7s infinite linear;
 }
 
+.squid-api-collection-management-widget .no-data {
+	position: absolute;
+	top: 50%;
+	padding: 10px;
+	left: 50%;
+	border-radius: 8px;
+	transform: translate(-50%, -50%);
+}
+
 @-moz-keyframes spin {
 	0% {
 		-moz-transform: rotate(0deg);

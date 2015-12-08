@@ -43,9 +43,7 @@
             }
 
             this.$el.modal();
-            this.$el.on('hidden.bs.modal', function (e) {
-                me.view.render();
-            });
+            me.view.render();
 
             return this;
         }

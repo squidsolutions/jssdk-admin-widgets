@@ -5,25 +5,30 @@
 
     var View = Backbone.View.extend({
 
-        model : null,
+        configAttribute : null,
+        parent : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
-        	if (options.model) {
-                this.model = options.model;
+        	if (options.configAttribute) {
+                this.configAttribute = options.configAttribute;
             }
-            this.listenTo(this.config, "change:" + this.model, this.render);
-            this.render();
+            if (options.parent) {
+                this.parent = options.parent;
+            }
+            if (this.parent) {
+                this.listenTo(this.config, "change:" + this.parent.toLowerCase(), this.render);
+            } else {
+                this.render();
+            }
+            this.listenTo(this.config, "change:" + this.configAttribute.toLowerCase(), this.render);
         },
 
         render: function() {
-            var configValue = this.config.get(this.model);
+            var label = this.configAttribute;
             var jsonData = {
-                value : this.model
+                label : label
             };
-            if (configValue) {
-                jsonData.value = configValue;
-            }
         	this.$el.html(template(jsonData));
 
             return this;

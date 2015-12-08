@@ -26,12 +26,19 @@
             this.render();
         },
 
-        formLengthCheck: function(data) {
+        dataManipulation: function(data) {
             for (var x in data) {
                 if (data[x].length === 0) {
                     data[x] = null;
                 }
             }
+            if (this.model.isNew()) {
+                data.id[this.model.definition.toLowerCase() + "Id"] = null;
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
             return data;
         },
 
@@ -45,9 +52,12 @@
             "click .btn-save-form" : function() {
                 var me = this;
                 var error = this.formContent.validate();
-                var isNew = this.model.isNew();
                 if (! error) {
-                    var data = this.formLengthCheck(this.formContent.getValue());
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
 
                     // save model
                     this.model.save(data, {

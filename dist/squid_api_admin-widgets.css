@@ -269,6 +269,15 @@
 	-webkit-animation: spin .7s infinite linear;
 }
 
+.squid-api-collection-management-widget .no-data {
+	position: absolute;
+	top: 50%;
+	padding: 10px;
+	left: 50%;
+	border-radius: 8px;
+	transform: translate(-50%, -50%);
+}
+
 @-moz-keyframes spin {
 	0% {
 		-moz-transform: rotate(0deg);
@@ -309,7 +318,7 @@
     width: 100%;
 }
 
-.squid-api-admin-widget-columns-management .management button.add, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
+.squid-api-admin-widget-columns-management .management button.create, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
     float: left;
     margin: 15px 10px 0px 0px;
 }
@@ -350,6 +359,9 @@
     padding-left: 100px;
 }
 
+.squid-api-admin-widget-columns-management .bootstrap-duallistbox-container label {
+    display: inline-block;
+}
 
 
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
