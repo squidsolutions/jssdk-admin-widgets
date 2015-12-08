@@ -28,7 +28,15 @@
 
         dataManipulation: function(data) {
             for (var x in data) {
-                if (data[x].length === 0) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (data[x].length === 0) {
                     data[x] = null;
                 }
             }
