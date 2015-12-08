@@ -659,6 +659,10 @@
     display: none;
 }
 
+.squid-api-relations-widget-data-table table tr {
+    display: inherit;
+}
+
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;

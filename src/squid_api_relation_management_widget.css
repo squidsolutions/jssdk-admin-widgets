@@ -79,3 +79,7 @@
 .squid-api-admin-widgets-modal-form .Relation form .leftId form fieldset > div:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .rightId form fieldset > div:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .leftId > label:first-of-type, .squid-api-admin-widgets-modal-form .Relation form .rightId > label:first-of-type {
     display: none;
 }
+
+.squid-api-relations-widget-data-table table tr {
+    display: inherit;
+}
