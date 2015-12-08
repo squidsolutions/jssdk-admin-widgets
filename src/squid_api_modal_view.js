@@ -7,6 +7,8 @@
 
         internalView : null,
         template : null,
+        views : [],
+        el : "body",
 
         initialize: function(options) {
             if (options.template) {
@@ -14,27 +16,34 @@
             } else {
                 this.template = squid_api.template.squid_api_modal_view;
             }
-            if (options.internalView) {
-                this.internalView = options.internalView;
+            if (options.view) {
+                this.view = options.view;
             }
             // output base html
             this.renderBase();
-            // show modal
-            this.initializeModal();
-            // update view
-            this.render(this.internalView);
         },
 
         renderBase: function() {
-            var html = this.template();
-            this.$el.html(html);
+            var viewData = {
+                modalCount : $(".squid-api-modal-view").length
+            };
+            var html = this.template(viewData);
+            // print template
+            this.$el.append(html);
+            // set el
+            this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
-        initializeModal: function() {
-            this.$el.find(".modal").modal();
-        },
-        render: function(view) {
+        render: function() {
+            var me = this;
+
             // insert template
-            this.$el.find(".modal-body").html(view.el);
+            if (! this.viewInserted) {
+                this.$el.find(".modal-content").html(this.view.el);
+                this.viewInserted = true;
+            }
+
+            this.$el.modal();
+            me.view.render();
 
             return this;
         }

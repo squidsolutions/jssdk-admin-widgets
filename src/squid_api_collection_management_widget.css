@@ -209,6 +209,11 @@
 	display: none;
 }
 
+.squid-api-collection-management-footer {
+	border-top: 1px solid #e5e5e5;
+	padding: 15px;
+	text-align: right;
+}
 
 /* Updated Styles */
 .squid-api-collection-management-widget button.squid-api-collection-modal-trigger .glyphicon-refresh {
@@ -217,6 +222,15 @@
 	right: 3px;
 	-moz-animation: spin .7s infinite linear;
 	-webkit-animation: spin .7s infinite linear;
+}
+
+.squid-api-collection-management-widget .no-data {
+	position: absolute;
+	top: 50%;
+	padding: 10px;
+	left: 50%;
+	border-radius: 8px;
+	transform: translate(-50%, -50%);
 }
 
 @-moz-keyframes spin {
