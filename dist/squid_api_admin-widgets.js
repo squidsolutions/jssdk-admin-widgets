@@ -819,9 +819,6 @@ function program1(depth0,data) {
                     }
                 });
                 this.collection.on("reset change sync", this.render, this);
-                this.collection.on("remove change", function() {
-                    me.collection.fetch();
-                });
                 this.collection.on('beforeFetch', function() {
                     me.$el.find("button").text("Fetching " + me.typeLabelPlural);
                 });
