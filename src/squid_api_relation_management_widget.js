@@ -39,7 +39,7 @@
 
         render : function() {
             var me = this;
-            var jsonData = {"models" : this.viewData()};
+            var jsonData = {"models" : this.viewData(), "typeLabelPlural" : this.typeLabelPlural};
             this.$el.html(template(jsonData));
             return this;
         }

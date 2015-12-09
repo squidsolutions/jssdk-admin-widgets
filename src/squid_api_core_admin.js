@@ -47,12 +47,17 @@
                 "position" : 3,
                 "fieldClass" : "dbPassword"
             },
+            "dbCheckConnection" : {
+                "type" : "DbCheckConnection",
+                "editorClass" : "form-control",
+                "position" : 4
+            },
             "dbSchemas" : {
                 "title" : "Database Schemas",
                 "type" : "Checkboxes",
                 "editorClass" : " ",
                 "options" : [],
-                "position" : 4,
+                "position" : 5,
                 "fieldClass" : "dbSchemas"
             }
     };
@@ -445,6 +450,41 @@
         },
     });
 
+    // Define "dbCheckConnection" Custom Editor
+    var dbCheckConnection = Backbone.Form.editors.Base.extend({
+
+        tagName: 'button',
+        defaultValue : "Check Connection",
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            this.status = squid_api.model.status;
+        },
+        events: {
+            "click" : "checkConnection"
+        },
+
+        checkConnection: function(event) {
+            // prevent redirect
+            event.preventDefault();
+            this.form.fields.dbUrl.getValue();
+        },
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
+        },
+
+        getValue: function() {
+            return this.$el.html();
+        },
+
+        setValue: function(value) {
+            this.$el.html(value);
+        }
+    });
+
     // Define "baseExpressionEditor" Custom Editor
     var baseExpressionEditor = Backbone.Form.editors.Base.extend({
         tagName: 'textarea',
@@ -578,4 +618,5 @@
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
+    Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
 }));
