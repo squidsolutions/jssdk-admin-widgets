@@ -819,9 +819,6 @@ function program1(depth0,data) {
                     }
                 });
                 this.collection.on("reset change sync", this.render, this);
-                this.collection.on("remove change", function() {
-                    me.collection.fetch();
-                });
                 this.collection.on('beforeFetch', function() {
                     me.$el.find("button").text("Fetching " + me.typeLabelPlural);
                 });
@@ -1317,10 +1314,30 @@ function program1(depth0,data) {
             return viewData;
         },
 
+        refreshChosenColumns: function(model) {
+            var metrics = this.config.get("chosenMetrics");
+            var dimensions = this.config.get("chosenDimensions");
+            if (this.model.definition == "Metric") {
+                if (metrics) {
+                    if (metrics.indexOf(model.get("oid")) > -1) {
+                        // remove metric from chosen array
+                        this.config.set("chosenMetrics", metrics.splice(metrics.indexOf(model.get("oid")), 1));
+                    }
+                }
+            }
+            if (this.model.definition == "Dimension") {
+                if (dimensions) {
+                    if (dimensions.indexOf(model.get("oid")) > -1) {
+                        // remove metric from chosen array
+                        this.config.set("chosenDimensions", metrics.splice(metrics.indexOf(model.get("oid")), 1));
+                    }
+                }
+            }
+        },
+
         refreshCollection: function() {
             var me = this;
             if (me.model.definition == "Dimension") {
-                var selection = me.filters.get("selection");
                 var period = me.config.get("period");
                 var domain = me.config.get("domain");
                 if (selection) {
@@ -1338,16 +1355,12 @@ function program1(depth0,data) {
                                         }
                                     }
                                 }
-                                // reset user selection if facet not found
-                                selection.facets.splice(i, 1);
-                                me.config.trigger("change:domain", me.config);
                             }
                         }
                     }
                 }
-            } else if (me.model.definition == "Metric") {
-                me.config.trigger("change:domain", me.config);
             }
+            me.config.trigger("change:domain", me.config);
         },
 
         render : function() {
@@ -1406,10 +1419,14 @@ function program1(depth0,data) {
                             console.log("here");
                             if (true) {
                                 model.destroy({
-                                    success:function() {
+                                    success:function(model) {
                                         var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
                                         squid_api.model.status.set({'message' : message});
                                         me.refreshCollection();
+                                        /* if deleting a dimension/metric, we need to remove it
+                                           from the config if it exists
+                                         */
+                                        me.refreshChosenColumns(model);
                                     }
                                 });
                             }
