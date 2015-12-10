@@ -85,6 +85,10 @@
             }
         },
 
+        formEvents: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {};
@@ -106,6 +110,9 @@
 
             // place the form into a backbone view
             this.$el.find(".modal-body").html(this.formContent.el);
+
+            // form events
+            this.formEvents();
 
             return this;
         }

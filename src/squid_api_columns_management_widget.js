@@ -4,34 +4,8 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.CollectionManagementWidget.extend({
+        modelView : squid_api.view.ModelManagementWidget,
         events: {
-            // select
-            "click .select": function(event) {
-                var value = $(event.target).parent('tr').attr('data-attr');
-                this.config.set(this.type.toLowerCase(), value);
-            },
-            "click .create": function(event) {
-                var me = this;
-                this.selectedModel.clear({"silent" : true});
-                this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
-                    resetParentView : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .edit": function(event) {
-                var me = this;
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.get(id);
-                this.selectedModel.set(model.attributes, {"silent" : true});
-                this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
-                    resetParentView : function() {
-                        me.render();
-                    }
-                }));
-            },
             "change select" : function(event) {
                 var me = this;
                 var dynamic = [];
@@ -88,27 +62,23 @@
                         me.refreshCollection();
                     });
                 }
-            },
-            "click .delete": function(event) {
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
-                                me.status.set({'message' : message});
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
-                }
             }
         },
+
+        initCollection : function() {
+            var me = this;
+            // listen for project/domain change
+
+            this.config.on("change:domain", function (config) {
+                if (config.get("domain")) {
+                    // squid_api.getSelectedDomain().always( function(domain) {
+                    //     me.collection = domain.get(me.type + "s");
+                    //     me.initListeners();
+                    // });
+                }
+            });
+        },
+
         refreshCollection: function() {
             this.config.trigger("change:domain", this.config);
         },

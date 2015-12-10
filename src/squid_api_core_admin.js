@@ -49,6 +49,7 @@
             },
             "dbCheckConnection" : {
                 "type" : "DbCheckConnection",
+                "fieldClass" : "squid-api-check-db-connection",
                 "editorClass" : "form-control",
                 "position" : 4
             },
@@ -459,16 +460,54 @@
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+
             this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
+            this.login = squid_api.model.login;
         },
         events: {
             "click" : "checkConnection"
         },
 
         checkConnection: function(event) {
+            var me = this;
+
             // prevent redirect
             event.preventDefault();
-            this.form.fields.dbUrl.getValue();
+            // add class for spinning wheel
+            this.$el.addClass("in-progress");
+            // collect prerequisites
+            var dburl = this.form.fields.dbUrl.getValue();
+            var dbPassword =  this.form.fields.dbPassword.getValue();
+            var dbUser = this.form.fields.dbUser.getValue();
+            var projectId = this.config.has("project") ? this.config.get("project") : null;
+            var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
+            if (projectId) {
+                url = url + "&projectId="+projectId;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (response) {
+                    me.status.set({"error":null});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-danger");
+                    me.$el.addClass("btn-success");
+                    me.form.fields.dbSchemas.editor.setOptions(response.definitions);
+                    me.form.fields.dbSchemas.$el.find("ul").show();
+                },
+                error: function(xhr, textStatus, error){
+                    me.status.set({"error":xhr});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-success");
+                    me.$el.addClass("btn-danger");
+                    me.form.fields.dbSchemas.$el.find("ul").hide();
+                }
+
+            });
         },
         render: function() {
             this.setValue(this.value);
