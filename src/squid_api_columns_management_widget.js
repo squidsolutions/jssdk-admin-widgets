@@ -59,7 +59,7 @@
                 // update all models at the same time
                 if (changeCount > 0) {
                     this.collection.saveAll(this.collection.models).then(function(collection, model) {
-                        me.refreshCollection();
+
                     });
                 }
             },
@@ -131,10 +131,7 @@
         fetchCollection: function() {
 
         },
-
-        refreshCollection: function() {
-            this.config.trigger("change:domain", this.config);
-        },
+        
         sortData : function(data) {
 
         	// build the parent index
