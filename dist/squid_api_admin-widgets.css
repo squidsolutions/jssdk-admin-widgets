@@ -336,9 +336,14 @@
     width: 100%;
 }
 
-.squid-api-admin-widget-columns-management .management button.create, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete {
+.squid-api-admin-widget-columns-management .management button.create, .squid-api-admin-widget-columns-management .management button.edit, .squid-api-admin-widget-columns-management .management button.delete, .squid-api-admin-widget-columns-management .management button.close-modal {
     float: left;
     margin: 15px 10px 0px 0px;
+}
+
+.squid-api-admin-widget-columns-management .management button.close-modal {
+    float: right;
+    margin-right: 0px;
 }
 
 .squid-api-admin-widget-columns-management .management button.relations {
