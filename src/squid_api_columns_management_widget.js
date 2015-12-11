@@ -131,7 +131,7 @@
         fetchCollection: function() {
 
         },
-        
+
         sortData : function(data) {
 
         	// build the parent index
@@ -177,8 +177,10 @@
                 moveOnSelect: false,
                 showFilterInputs: false,
                 filterTextClear : " ",
-                selectedListLabel: "Selected " + this.typeLabelPlural + " -",
-                nonSelectedListLabel: "Available " + this.typeLabelPlural + " -",
+                selectedListLabel: "Active",
+                nonSelectedListLabel: "Inactive",
+                infoText: '({0})',
+                infoTextEmpty: "(0)",
                 selectorMinimalHeight: 250
             });
         },

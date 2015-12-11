@@ -999,7 +999,7 @@ function program1(depth0,data) {
         fetchCollection: function() {
 
         },
-        
+
         sortData : function(data) {
 
         	// build the parent index
@@ -1045,8 +1045,10 @@ function program1(depth0,data) {
                 moveOnSelect: false,
                 showFilterInputs: false,
                 filterTextClear : " ",
-                selectedListLabel: "Selected " + this.typeLabelPlural + " -",
-                nonSelectedListLabel: "Available " + this.typeLabelPlural + " -",
+                selectedListLabel: "Active",
+                nonSelectedListLabel: "Inactive",
+                infoText: '({0})',
+                infoTextEmpty: "(0)",
                 selectorMinimalHeight: 250
             });
         },
