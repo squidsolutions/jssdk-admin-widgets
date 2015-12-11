@@ -4,14 +4,22 @@ this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 this["squid_api"]["template"]["squid_api_button_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
-
-  buffer += "<button class=\"form-control squid-api-button-view\">\n    ";
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    <button class=\"form-control squid-api-button-view\">\n        ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n</button>\n";
+    + "\n    </button>\n";
+  return buffer;
+  }
+
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
   return buffer;
   });
 
@@ -645,9 +653,18 @@ function program1(depth0,data) {
         render: function() {
             var label = this.configAttribute;
             var jsonData = {
-                label : label
+                label : label,
+                visible : false,
             };
-        	this.$el.html(template(jsonData));
+            if (this.parent) {
+                if (this.config.get(this.parent.toLowerCase()) !== null) {
+                	jsonData.visible = true;
+                }
+            } else {
+                jsonData.visible = true;
+            }
+
+            this.$el.html(template(jsonData));
 
             return this;
         }
@@ -694,8 +711,7 @@ function program1(depth0,data) {
                 }
             }
 
-            me.initCollection();
-
+            this.initCollection();
             this.initModelView();
         },
 
@@ -713,16 +729,15 @@ function program1(depth0,data) {
             this.listenTo(this.config, "change:" + this.type, this.render);
             this.collection.on("change add remove", this.render, this);
             this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + this.typeLabelPlural);
+            this.fetchCollection();
+        },
 
+        fetchCollection: function() {
             this.collection.fetch({
-                success : function() {
-                    
-                },
                 error : function(collection, response, options) {
                     me.status.set({"error":response});
                 }
             });
-
         },
 
         alphaNameComparator : function(a,b) {
@@ -915,23 +930,74 @@ function program1(depth0,data) {
                         me.refreshCollection();
                     });
                 }
+            },
+            "click .create": function() {
+                var me = this;
+                this.selectedModel.clear({"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .edit": function(event) {
+                var me = this;
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                this.selectedModel.set(model.attributes, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .refresh": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                squid_api.refreshObjectType(model);
+            },
+            "click .delete": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
+                                me.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
             }
+        },
+
+        initModelView: function() {
+            this.modelView = squid_api.view.ModelManagementWidget;
         },
 
         initCollection : function() {
             var me = this;
             // listen for project/domain change
-
             this.config.on("change:domain", function (config) {
-                squid_api.getSelectedDomain().always( function(domain) {
-                    me.collection = domain.get(me.typeLabelPlural.toLowerCase());
-                    me.collection.parentId = {
-                        "projectId" : me.config.get("project"),
-                        "domainId" : me.config.get("domain")
-                    };
-                    me.initListeners();
-                });
+                if (config.get("domain")) {
+                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).always( function(collection) {
+                        me.collection = collection;
+                        me.initListeners();
+                    });
+                }
             });
+        },
+
+        fetchCollection: function() {
+
         },
 
         refreshCollection: function() {
@@ -988,28 +1054,29 @@ function program1(depth0,data) {
             });
         },
         viewData: function() {
-            var models = this.collection.models;
             var viewData = {"dynamic" : [], "nonDynamic" : [], "typeLabelPlural" : this.typeLabelPlural};
-            for (i=0; i<models.length; i++) {
-                var obj = {};
-                obj.name = models[i].get("name");
-                obj.id = models[i].get("oid");
+            if (this.collection) {
+                var models = this.collection.models;
+                for (i=0; i<models.length; i++) {
+                    var obj = {};
+                    obj.name = models[i].get("name");
+                    obj.id = models[i].get("oid");
 
-                if (models[i].get("parentId")) {
-                    obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
+                    if (models[i].get("parentId")) {
+                        obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
+                    }
+
+                    if (models[i].get("dynamic")) {
+                        viewData.dynamic.push(obj);
+                    } else {
+                        viewData.nonDynamic.push(obj);
+                    }
                 }
 
-                if (models[i].get("dynamic")) {
-                    viewData.dynamic.push(obj);
-                } else {
-                    viewData.nonDynamic.push(obj);
-                }
+                // sort data
+                viewData.dynamic = this.sortData(viewData.dynamic);
+                viewData.nonDynamic = this.sortData(viewData.nonDynamic);
             }
-
-            // sort data
-            viewData.dynamic = this.sortData(viewData.dynamic);
-            viewData.nonDynamic = this.sortData(viewData.nonDynamic);
-
             return viewData;
         },
         render : function() {

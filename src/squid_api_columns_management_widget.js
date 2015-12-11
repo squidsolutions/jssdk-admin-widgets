@@ -62,23 +62,74 @@
                         me.refreshCollection();
                     });
                 }
+            },
+            "click .create": function() {
+                var me = this;
+                this.selectedModel.clear({"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .edit": function(event) {
+                var me = this;
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                this.selectedModel.set(model.attributes, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .refresh": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                squid_api.refreshObjectType(model);
+            },
+            "click .delete": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
+                                me.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
             }
+        },
+
+        initModelView: function() {
+            this.modelView = squid_api.view.ModelManagementWidget;
         },
 
         initCollection : function() {
             var me = this;
             // listen for project/domain change
-
             this.config.on("change:domain", function (config) {
-                squid_api.getSelectedDomain().always( function(domain) {
-                    me.collection = domain.get(me.typeLabelPlural.toLowerCase());
-                    me.collection.parentId = {
-                        "projectId" : me.config.get("project"),
-                        "domainId" : me.config.get("domain")
-                    };
-                    me.initListeners();
-                });
+                if (config.get("domain")) {
+                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).always( function(collection) {
+                        me.collection = collection;
+                        me.initListeners();
+                    });
+                }
             });
+        },
+
+        fetchCollection: function() {
+
         },
 
         refreshCollection: function() {
@@ -135,28 +186,29 @@
             });
         },
         viewData: function() {
-            var models = this.collection.models;
             var viewData = {"dynamic" : [], "nonDynamic" : [], "typeLabelPlural" : this.typeLabelPlural};
-            for (i=0; i<models.length; i++) {
-                var obj = {};
-                obj.name = models[i].get("name");
-                obj.id = models[i].get("oid");
+            if (this.collection) {
+                var models = this.collection.models;
+                for (i=0; i<models.length; i++) {
+                    var obj = {};
+                    obj.name = models[i].get("name");
+                    obj.id = models[i].get("oid");
 
-                if (models[i].get("parentId")) {
-                    obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
+                    if (models[i].get("parentId")) {
+                        obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
+                    }
+
+                    if (models[i].get("dynamic")) {
+                        viewData.dynamic.push(obj);
+                    } else {
+                        viewData.nonDynamic.push(obj);
+                    }
                 }
 
-                if (models[i].get("dynamic")) {
-                    viewData.dynamic.push(obj);
-                } else {
-                    viewData.nonDynamic.push(obj);
-                }
+                // sort data
+                viewData.dynamic = this.sortData(viewData.dynamic);
+                viewData.nonDynamic = this.sortData(viewData.nonDynamic);
             }
-
-            // sort data
-            viewData.dynamic = this.sortData(viewData.dynamic);
-            viewData.nonDynamic = this.sortData(viewData.nonDynamic);
-
             return viewData;
         },
         render : function() {

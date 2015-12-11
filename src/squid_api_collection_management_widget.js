@@ -36,8 +36,7 @@
                 }
             }
 
-            me.initCollection();
-
+            this.initCollection();
             this.initModelView();
         },
 
@@ -55,16 +54,15 @@
             this.listenTo(this.config, "change:" + this.type, this.render);
             this.collection.on("change add remove", this.render, this);
             this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + this.typeLabelPlural);
+            this.fetchCollection();
+        },
 
+        fetchCollection: function() {
             this.collection.fetch({
-                success : function() {
-                    
-                },
                 error : function(collection, response, options) {
                     me.status.set({"error":response});
                 }
             });
-
         },
 
         alphaNameComparator : function(a,b) {

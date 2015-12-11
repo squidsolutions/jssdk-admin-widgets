@@ -27,9 +27,18 @@
         render: function() {
             var label = this.configAttribute;
             var jsonData = {
-                label : label
+                label : label,
+                visible : false,
             };
-        	this.$el.html(template(jsonData));
+            if (this.parent) {
+                if (this.config.get(this.parent.toLowerCase()) !== null) {
+                	jsonData.visible = true;
+                }
+            } else {
+                jsonData.visible = true;
+            }
+
+            this.$el.html(template(jsonData));
 
             return this;
         }
