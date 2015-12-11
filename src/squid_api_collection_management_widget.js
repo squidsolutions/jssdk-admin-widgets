@@ -15,6 +15,7 @@
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+            this.status = squid_api.model.status;
             var me = this;
 
             if (options) {
@@ -57,6 +58,7 @@
 
             this.collection.fetch({
                 success : function() {
+                    
                 },
                 error : function(collection, response, options) {
                     me.status.set({"error":response});

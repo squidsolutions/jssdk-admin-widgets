@@ -14,12 +14,10 @@
             // listen for project/domain change
 
             this.config.on("change:project", function (config) {
-                if (config.get("project")) {
-                    squid_api.getSelectedProject().always( function(project) {
-                        me.collection = project.get("domains");
-                        me.initListeners();
-                    });
-                }
+                squid_api.getSelectedProject().always( function(project) {
+                    me.collection = project.get("domains");
+                    me.initListeners();
+                });            
             });
         },
 

@@ -673,6 +673,7 @@ function program1(depth0,data) {
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+            this.status = squid_api.model.status;
             var me = this;
 
             if (options) {
@@ -715,6 +716,7 @@ function program1(depth0,data) {
 
             this.collection.fetch({
                 success : function() {
+                    
                 },
                 error : function(collection, response, options) {
                     me.status.set({"error":response});
@@ -921,12 +923,14 @@ function program1(depth0,data) {
             // listen for project/domain change
 
             this.config.on("change:domain", function (config) {
-                if (config.get("domain")) {
-                    // squid_api.getSelectedDomain().always( function(domain) {
-                    //     me.collection = domain.get(me.type + "s");
-                    //     me.initListeners();
-                    // });
-                }
+                squid_api.getSelectedDomain().always( function(domain) {
+                    me.collection = domain.get(me.typeLabelPlural.toLowerCase());
+                    me.collection.parentId = {
+                        "projectId" : me.config.get("project"),
+                        "domainId" : me.config.get("domain")
+                    };
+                    me.initListeners();
+                });
             });
         },
 
@@ -1681,6 +1685,19 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    root.squid_api.view.DimensionCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ColumnsManagementWidget.extend({
+        type : "Dimension",
+        typeLabelPlural : "Dimensions"
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -1696,12 +1713,10 @@ function program1(depth0,data) {
             // listen for project/domain change
 
             this.config.on("change:project", function (config) {
-                if (config.get("project")) {
-                    squid_api.getSelectedProject().always( function(project) {
-                        me.collection = project.get("domains");
-                        me.initListeners();
-                    });
-                }
+                squid_api.getSelectedProject().always( function(project) {
+                    me.collection = project.get("domains");
+                    me.initListeners();
+                });            
             });
         },
 
@@ -1709,6 +1724,19 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.ProjectModelManagementWidget;
         }
 
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ColumnsManagementWidget.extend({
+        type : "Metric",
+        typeLabelPlural : "Metrics"
     });
 
     return View;

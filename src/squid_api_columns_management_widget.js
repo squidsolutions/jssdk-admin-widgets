@@ -70,12 +70,14 @@
             // listen for project/domain change
 
             this.config.on("change:domain", function (config) {
-                if (config.get("domain")) {
-                    // squid_api.getSelectedDomain().always( function(domain) {
-                    //     me.collection = domain.get(me.type + "s");
-                    //     me.initListeners();
-                    // });
-                }
+                squid_api.getSelectedDomain().always( function(domain) {
+                    me.collection = domain.get(me.typeLabelPlural.toLowerCase());
+                    me.collection.parentId = {
+                        "projectId" : me.config.get("project"),
+                        "domainId" : me.config.get("domain")
+                    };
+                    me.initListeners();
+                });
             });
         },
 
