@@ -13,8 +13,8 @@
             var me = this;
 
             // listen for project/domain change
-            squid_api.model.customer.on("change", function () {
-                me.collection = squid_api.model.customer.get("projects");
+            squid_api.getCustomer().always(function (customer) {
+                me.collection = customer.get("projects");
                 me.initListeners();
             });
         },

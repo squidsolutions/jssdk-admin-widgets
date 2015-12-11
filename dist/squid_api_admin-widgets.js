@@ -673,6 +673,7 @@ function program1(depth0,data) {
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+            var me = this;
 
             if (options) {
                 if (options.type) {
@@ -692,7 +693,8 @@ function program1(depth0,data) {
                 }
             }
 
-            this.initCollection();
+            me.initCollection();
+
             this.initModelView();
         },
 
@@ -1687,7 +1689,7 @@ function program1(depth0,data) {
 
         typeLabelPlural : "Domains",
         type : "domain",
-        modelView : squid_api.view.ModelManagementWidget,
+        modelView : null,
 
         initCollection : function() {
             var me = this;
@@ -1701,6 +1703,10 @@ function program1(depth0,data) {
                     });
                 }
             });
+        },
+
+        initModelView: function() {
+            this.modelView = squid_api.view.ProjectModelManagementWidget;
         }
 
     });
@@ -1901,8 +1907,8 @@ function program1(depth0,data) {
             var me = this;
 
             // listen for project/domain change
-            squid_api.model.customer.on("change", function () {
-                me.collection = squid_api.model.customer.get("projects");
+            squid_api.getCustomer().always(function (customer) {
+                me.collection = customer.get("projects");
                 me.initListeners();
             });
         },

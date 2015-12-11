@@ -15,6 +15,7 @@
 
         initialize: function(options) {
             this.config = squid_api.model.config;
+            var me = this;
 
             if (options) {
                 if (options.type) {
@@ -34,7 +35,8 @@
                 }
             }
 
-            this.initCollection();
+            me.initCollection();
+
             this.initModelView();
         },
 

@@ -7,7 +7,7 @@
 
         typeLabelPlural : "Domains",
         type : "domain",
-        modelView : squid_api.view.ModelManagementWidget,
+        modelView : null,
 
         initCollection : function() {
             var me = this;
@@ -21,6 +21,10 @@
                     });
                 }
             });
+        },
+
+        initModelView: function() {
+            this.modelView = squid_api.view.ProjectModelManagementWidget;
         }
 
     });
