@@ -157,11 +157,19 @@
 }
 
 .squid-api-pre-suggestions .COLUMN:before {
-	content: "\f0db";
+	content:  "\f198";
 }
 
 .squid-api-pre-suggestions .DOMAIN:before {
 	content: "\f1c0";
+}
+
+.squid-api-pre-suggestions .FORMULA:before {
+    content:  "\f1b2";
+}
+
+.squid-api-pre-suggestions .RELATION:before {
+    content:  "\f061";
 }
 
 .squid-api-pre-suggestions .valueType {
@@ -171,6 +179,10 @@
 
 .squid-api-pre-suggestions .table:before {
 	background: #2c3e50;
+}
+
+.squid-api-pre-suggestions .view:before {
+    background: #7a8799;
 }
 
 .squid-api-pre-suggestions .date:before {
@@ -193,14 +205,10 @@
 	background: black;
 }
 
+.squid-api-pre-suggestions .metric:before {
+    background: grey;
+}
+
 .squid-api-pre-suggestions .condition:before {
 	background: darkgoldenrod;
-}
-
-.squid-api-pre-suggestions .DOMAIN:before {
-	content: "\f1c0";
-}
-
-.squid-api-pre-suggestions .FORMULA:before {
-	content: "\f1ec";
 }
