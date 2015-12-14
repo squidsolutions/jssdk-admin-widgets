@@ -152,11 +152,7 @@
             var me = this;
             var projectId = this.config.get("project");
             this.parent.set({"id" : {"projectId" : projectId}});
-            this.parent.fetch({
-                success: function() {
-                    me.render();
-                }
-            });
+            this.parent.fetch();
         },
 
         setModel : function() {
