@@ -16,8 +16,8 @@
             
             // listen for customer change
             squid_api.getCustomer().done(function (customer) {
-                me.collection = customer.get("projects");
-                me.collection.fetch().always( function() {
+                customer.get("projects").load().done( function(projects) {
+                    me.collection = projects;
                     me.initListeners();
                     me.render();
                 });
