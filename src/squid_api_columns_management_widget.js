@@ -111,25 +111,19 @@
             }
         },
 
-        initModelView: function() {
-            this.modelView = squid_api.view.ModelManagementWidget;
-        },
-
-        initCollection : function() {
+        init : function() {
             var me = this;
-            // listen for project/domain change
+            this.modelView = squid_api.view.ModelManagementWidget;
+            
+            // listen for domain change
             this.config.on("change:domain", function (config) {
                 if (config.get("domain")) {
-                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).always( function(collection) {
+                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
                         me.collection = collection;
                         me.initListeners();
                     });
                 }
             });
-        },
-
-        fetchCollection: function() {
-
         },
 
         sortData : function(data) {

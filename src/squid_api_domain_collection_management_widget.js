@@ -9,22 +9,20 @@
         type : "domain",
         modelView : null,
 
-        initCollection : function() {
+        init : function() {
             var me = this;
-            // listen for project/domain change
-
+            
+            this.modelView = squid_api.view.ProjectModelManagementWidget;
+            
+            // listen for project change
             this.config.on("change:project", function (config) {
-                squid_api.getSelectedProject().always( function(project) {
-                    me.collection = project.get("domains");
+                squid_api.getSelectedProjectCollection("domains").done( function(domains) {
+                    me.collection = domains;
                     me.initListeners();
                 });            
             });
-        },
-
-        initModelView: function() {
-            this.modelView = squid_api.view.ProjectModelManagementWidget;
         }
-
+    
     });
 
     return View;

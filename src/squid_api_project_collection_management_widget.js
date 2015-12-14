@@ -9,18 +9,19 @@
         type : "project",
         modelView : null,
 
-        initCollection : function() {
+        init : function() {
             var me = this;
 
-            // listen for project/domain change
-            squid_api.getCustomer().always(function (customer) {
-                me.collection = customer.get("projects");
-                me.initListeners();
-            });
-        },
-
-        initModelView: function() {
             this.modelView = squid_api.view.ProjectModelManagementWidget;
+            
+            // listen for customer change
+            squid_api.getCustomer().done(function (customer) {
+                me.collection = customer.get("projects");
+                me.collection.fetch().always( function() {
+                    me.initListeners();
+                    me.render();
+                });
+            });
         }
 
     });

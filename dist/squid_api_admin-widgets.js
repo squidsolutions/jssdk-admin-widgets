@@ -711,33 +711,19 @@ function program1(depth0,data) {
                 }
             }
 
-            this.initCollection();
-            this.initModelView();
-        },
-
-        initModelView: function() {
-
+            this.init();
         },
 
         initListeners: function() {
             var me = this;
             this.selectedModel = new this.collection.model();
-            this.listenTo(this.collection, "change", this.render);
+            this.listenTo(this.collection, "sync remove", this.render);
             this.listenTo(this.selectedModel, "change", function(model) {
                 this.collection.add(model, { merge : true });
+                this.render();
             });
             this.listenTo(this.config, "change:" + this.type, this.render);
-            this.collection.on("change add remove", this.render, this);
             this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + this.typeLabelPlural);
-            this.fetchCollection();
-        },
-
-        fetchCollection: function() {
-            this.collection.fetch({
-                error : function(collection, response, options) {
-                    me.status.set({"error":response});
-                }
-            });
         },
 
         alphaNameComparator : function(a,b) {
@@ -833,6 +819,7 @@ function program1(depth0,data) {
         },
 
         render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
             // store models
             if (this.collection) {
                 var jsonData = {
@@ -979,25 +966,19 @@ function program1(depth0,data) {
             }
         },
 
-        initModelView: function() {
-            this.modelView = squid_api.view.ModelManagementWidget;
-        },
-
-        initCollection : function() {
+        init : function() {
             var me = this;
-            // listen for project/domain change
+            this.modelView = squid_api.view.ModelManagementWidget;
+            
+            // listen for domain change
             this.config.on("change:domain", function (config) {
                 if (config.get("domain")) {
-                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).always( function(collection) {
+                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
                         me.collection = collection;
                         me.initListeners();
                     });
                 }
             });
-        },
-
-        fetchCollection: function() {
-
         },
 
         sortData : function(data) {
@@ -1774,22 +1755,20 @@ function program1(depth0,data) {
         type : "domain",
         modelView : null,
 
-        initCollection : function() {
+        init : function() {
             var me = this;
-            // listen for project/domain change
-
+            
+            this.modelView = squid_api.view.ProjectModelManagementWidget;
+            
+            // listen for project change
             this.config.on("change:project", function (config) {
-                squid_api.getSelectedProject().always( function(project) {
-                    me.collection = project.get("domains");
+                squid_api.getSelectedProjectCollection("domains").done( function(domains) {
+                    me.collection = domains;
                     me.initListeners();
                 });            
             });
-        },
-
-        initModelView: function() {
-            this.modelView = squid_api.view.ProjectModelManagementWidget;
         }
-
+    
     });
 
     return View;
@@ -1997,18 +1976,19 @@ function program1(depth0,data) {
         type : "project",
         modelView : null,
 
-        initCollection : function() {
+        init : function() {
             var me = this;
 
-            // listen for project/domain change
-            squid_api.getCustomer().always(function (customer) {
-                me.collection = customer.get("projects");
-                me.initListeners();
-            });
-        },
-
-        initModelView: function() {
             this.modelView = squid_api.view.ProjectModelManagementWidget;
+            
+            // listen for customer change
+            squid_api.getCustomer().done(function (customer) {
+                me.collection = customer.get("projects");
+                me.collection.fetch().always( function() {
+                    me.initListeners();
+                    me.render();
+                });
+            });
         }
 
     });

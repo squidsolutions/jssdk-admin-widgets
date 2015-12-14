@@ -36,33 +36,19 @@
                 }
             }
 
-            this.initCollection();
-            this.initModelView();
-        },
-
-        initModelView: function() {
-
+            this.init();
         },
 
         initListeners: function() {
             var me = this;
             this.selectedModel = new this.collection.model();
-            this.listenTo(this.collection, "change", this.render);
+            this.listenTo(this.collection, "sync remove", this.render);
             this.listenTo(this.selectedModel, "change", function(model) {
                 this.collection.add(model, { merge : true });
+                this.render();
             });
             this.listenTo(this.config, "change:" + this.type, this.render);
-            this.collection.on("change add remove", this.render, this);
             this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + this.typeLabelPlural);
-            this.fetchCollection();
-        },
-
-        fetchCollection: function() {
-            this.collection.fetch({
-                error : function(collection, response, options) {
-                    me.status.set({"error":response});
-                }
-            });
         },
 
         alphaNameComparator : function(a,b) {
@@ -158,6 +144,7 @@
         },
 
         render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
             // store models
             if (this.collection) {
                 var jsonData = {
