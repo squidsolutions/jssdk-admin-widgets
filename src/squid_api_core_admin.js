@@ -281,7 +281,8 @@
                     "value" : {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value"
+                        "title" : "Expression Value",
+                        "validators": ['required']
                     }
                 },
                 "position" : 3,

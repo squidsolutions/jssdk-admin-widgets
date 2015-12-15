@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.ModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_model_management_widget);
+    root.squid_api.view.BaseModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -40,9 +40,6 @@
                 } else if (data[x].length === 0) {
                     data[x] = null;
                 }
-            }
-            if (this.model.isNew()) {
-                data.id[this.model.definition.toLowerCase() + "Id"] = null;
             }
             return data;
         },

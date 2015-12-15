@@ -3,12 +3,14 @@
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = squid_api.view.ModelManagementWidget.extend({
+    var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
             // to be overridden from other model management widgets
         },
         customDataManipulation: function(data) {
-            console.log("hello");
+            if (data.dbCheckConnection) {
+                delete data.dbCheckConnection;
+            }
             return data;
         },
         onceSaved: function(model) {

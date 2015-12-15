@@ -4,7 +4,7 @@
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.CollectionManagementWidget.extend({
-        modelView : squid_api.view.ModelManagementWidget,
+        modelView : squid_api.view.ColumnsModelManagementWidget,
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -66,6 +66,7 @@
             "click .create": function() {
                 var me = this;
                 this.selectedModel.clear({"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
                     resetParentView : function() {
@@ -78,6 +79,7 @@
                 var id = $(event.target).attr("data-value");
                 var model = this.collection.get(id);
                 this.selectedModel.set(model.attributes, {"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
                     resetParentView : function() {
@@ -113,7 +115,7 @@
 
         init : function() {
             var me = this;
-            this.modelView = squid_api.view.ModelManagementWidget;
+            this.modelView = squid_api.view.ColumnsModelManagementWidget;
 
             // listen for domain change
             this.config.on("change:domain", function (config) {

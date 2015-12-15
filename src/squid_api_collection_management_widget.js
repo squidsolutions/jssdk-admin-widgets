@@ -114,7 +114,7 @@
                             wait : true,
                             success:function(model) {
                                 // set status
-                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
+                                var message = model.get("objectType") + " with name " + model.get("name") + " has been successfully deleted";
                                 me.status.set({'message' : message});
                             },
                             error : function(collection, response) {
