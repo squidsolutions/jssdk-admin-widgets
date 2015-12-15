@@ -114,7 +114,7 @@
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ModelManagementWidget;
-            
+
             // listen for domain change
             this.config.on("change:domain", function (config) {
                 if (config.get("domain")) {

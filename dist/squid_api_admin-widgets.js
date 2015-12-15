@@ -717,6 +717,8 @@ function program1(depth0,data) {
         initListeners: function() {
             var me = this;
             this.selectedModel = new this.collection.model();
+            this.selectedModel.set("id", this.collection.parent.get("id"));
+            console.log(this.selectedModel.urlRoot());
             this.listenTo(this.collection, "sync remove", this.render);
             this.listenTo(this.selectedModel, "change", function(model) {
                 this.collection.add(model, { merge : true });
@@ -969,7 +971,7 @@ function program1(depth0,data) {
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ModelManagementWidget;
-            
+
             // listen for domain change
             this.config.on("change:domain", function (config) {
                 if (config.get("domain")) {
@@ -1068,6 +1070,7 @@ function program1(depth0,data) {
 
     return View;
 }));
+
 
 (function (root, factory) {
     factory(root.Backbone, root.squid_api);
@@ -1551,7 +1554,7 @@ function program1(depth0,data) {
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.config.has("project") ? this.config.get("project") : null;
+            var projectId = this.form.fields.id.getValue().projectId;
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
             if (projectId) {
                 url = url + "&projectId="+projectId;
@@ -1757,18 +1760,18 @@ function program1(depth0,data) {
 
         init : function() {
             var me = this;
-            
-            this.modelView = squid_api.view.ProjectModelManagementWidget;
-            
+
+            this.modelView = squid_api.view.ModelManagementWidget;
+
             // listen for project change
             this.config.on("change:project", function (config) {
                 squid_api.getSelectedProjectCollection("domains").done( function(domains) {
                     me.collection = domains;
                     me.initListeners();
-                });            
+                });
             });
         }
-    
+
     });
 
     return View;
@@ -1853,6 +1856,7 @@ function program1(depth0,data) {
 
         initialize: function(options) {
             this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
 
             if (options.model) {
                 this.model = options.model;
@@ -1913,10 +1917,14 @@ function program1(depth0,data) {
                     // save model
                     this.model.save(data, {
                         wait: true,
-                        success: function() {
+                        success: function(model) {
                             // status update
                             if (me.resetParentView) {
                                 me.resetParentView.call();
+                            }
+                            // call once saved
+                            if (me.onceSaved) {
+                                me.onceSaved(model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },
@@ -1926,6 +1934,11 @@ function program1(depth0,data) {
                     });
                 }
             }
+        },
+
+        onceSaved: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
         },
 
         formEvents: function() {
@@ -2005,7 +2018,16 @@ function program1(depth0,data) {
     var View = squid_api.view.ModelManagementWidget.extend({
         formEvents: function() {
             // to be overridden from other model management widgets
-            
+        },
+        customDataManipulation: function(data) {
+            console.log("hello");
+            return data;
+        },
+        onceSaved: function(model) {
+            // once the form is successfully saved, set the current project as the active one
+            if (! this.config.get("project")) {
+                // console.log("hello");
+            }
         }
     });
 

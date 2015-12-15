@@ -10,6 +10,7 @@
 
         initialize: function(options) {
             this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
 
             if (options.model) {
                 this.model = options.model;
@@ -70,10 +71,14 @@
                     // save model
                     this.model.save(data, {
                         wait: true,
-                        success: function() {
+                        success: function(model) {
                             // status update
                             if (me.resetParentView) {
                                 me.resetParentView.call();
+                            }
+                            // call once saved
+                            if (me.onceSaved) {
+                                me.onceSaved(model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },
@@ -83,6 +88,11 @@
                     });
                 }
             }
+        },
+
+        onceSaved: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
         },
 
         formEvents: function() {

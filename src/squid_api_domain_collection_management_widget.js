@@ -11,18 +11,18 @@
 
         init : function() {
             var me = this;
-            
-            this.modelView = squid_api.view.ProjectModelManagementWidget;
-            
+
+            this.modelView = squid_api.view.ModelManagementWidget;
+
             // listen for project change
             this.config.on("change:project", function (config) {
                 squid_api.getSelectedProjectCollection("domains").done( function(domains) {
                     me.collection = domains;
                     me.initListeners();
-                });            
+                });
             });
         }
-    
+
     });
 
     return View;

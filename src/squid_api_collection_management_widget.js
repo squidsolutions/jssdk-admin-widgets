@@ -42,6 +42,8 @@
         initListeners: function() {
             var me = this;
             this.selectedModel = new this.collection.model();
+            this.selectedModel.set("id", this.collection.parent.get("id"));
+            console.log(this.selectedModel.urlRoot());
             this.listenTo(this.collection, "sync remove", this.render);
             this.listenTo(this.selectedModel, "change", function(model) {
                 this.collection.add(model, { merge : true });

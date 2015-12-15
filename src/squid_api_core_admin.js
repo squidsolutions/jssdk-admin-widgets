@@ -480,7 +480,7 @@
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.config.has("project") ? this.config.get("project") : null;
+            var projectId = this.form.fields.id.getValue().projectId;
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
             if (projectId) {
                 url = url + "&projectId="+projectId;
