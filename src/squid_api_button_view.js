@@ -21,7 +21,9 @@
             } else {
                 this.render();
             }
-            this.listenTo(this.config, "change:" + this.configAttribute.toLowerCase(), this.render);
+            if (this.configAttribute) {
+                this.listenTo(this.config, "change:" + this.configAttribute.toLowerCase(), this.render);
+            }
         },
 
         render: function() {
