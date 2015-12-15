@@ -80,6 +80,7 @@
             "click .create": function() {
                 var me = this;
                 this.selectedModel.clear({"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
                     resetParentView : function() {

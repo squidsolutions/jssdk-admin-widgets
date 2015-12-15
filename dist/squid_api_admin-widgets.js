@@ -755,6 +755,7 @@ function program1(depth0,data) {
             "click .create": function() {
                 var me = this;
                 this.selectedModel.clear({"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
                     resetParentView : function() {
@@ -1070,7 +1071,6 @@ function program1(depth0,data) {
 
     return View;
 }));
-
 
 (function (root, factory) {
     factory(root.Backbone, root.squid_api);
