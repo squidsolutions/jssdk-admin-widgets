@@ -2031,6 +2031,7 @@ function program1(depth0,data) {
                 customer.get("projects").load().done( function(projects) {
                     me.collection = projects;
                     me.initListeners();
+                    me.render();
                 });
             });
         }
@@ -2079,7 +2080,7 @@ function program1(depth0,data) {
 
         init : function() {
             var me = this;
-            this.modelView = squid_api.view.ModelManagementWidget;
+            this.modelView = squid_api.view.BaseModelManagementWidget;
 
             // listen for domain change
             this.config.on("change:project", function (config) {

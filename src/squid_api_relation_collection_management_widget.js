@@ -10,7 +10,7 @@
 
         init : function() {
             var me = this;
-            this.modelView = squid_api.view.ModelManagementWidget;
+            this.modelView = squid_api.view.BaseModelManagementWidget;
 
             // listen for domain change
             this.config.on("change:project", function (config) {
