@@ -13,7 +13,7 @@
             var me = this;
 
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-            
+
             // listen for customer change
             squid_api.getCustomer().done(function (customer) {
                 customer.get("projects").load().done( function(projects) {
