@@ -43,7 +43,6 @@
             var me = this;
             this.selectedModel = new this.collection.model();
             this.selectedModel.set("id", this.collection.parent.get("id"));
-            console.log(this.selectedModel.urlRoot());
             this.listenTo(this.collection, "sync remove", this.render);
             this.listenTo(this.selectedModel, "change", function(model) {
                 this.collection.add(model, { merge : true });
@@ -129,7 +128,7 @@
         getRoles: function() {
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
-            if (this.collection.parent) {
+            if (this.collection && this.collection.parent) {
                 var parentRole = this.collection.parent.get("_role");
                 // write role
                 if (parentRole == "OWNER" || parentRole == "WRITE") {
@@ -148,14 +147,13 @@
 
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            // store models
-            if (this.collection) {
-                var jsonData = {
+            var jsonData = {
                     models : [],
                     roles : this.getRoles(),
                     typeLabelPlural : this.typeLabelPlural,
                     modalHtml : true
                 };
+            if (this.collection) {
                 for (i=0; i<this.collection.size(); i++) {
                     var model = {};
                     model.label = this.collection.at(i).get("name");
@@ -169,10 +167,12 @@
                     jsonData.models.push(model);
                 }
 
-                // print template
-                var html = this.template(jsonData);
-                this.$el.html(html);
+
             }
+            
+            // print template
+            var html = this.template(jsonData);
+            this.$el.html(html);
 
             return this;
         }

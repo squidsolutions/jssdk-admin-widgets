@@ -16,6 +16,8 @@
 
             // listen for project change
             this.config.on("change:project", function (config) {
+                me.collection = null;
+                me.render();
                 squid_api.getSelectedProjectCollection("domains").done( function(domains) {
                     me.collection = domains;
                     me.initListeners();
