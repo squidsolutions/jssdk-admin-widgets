@@ -700,6 +700,7 @@ function program1(depth0,data) {
         comparator : null,
         parentType : null,
         modelView : null,
+        cancelCallback : null,
         collectionLoading : false,
 
         initialize: function(options) {
@@ -776,7 +777,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -788,7 +789,7 @@ function program1(depth0,data) {
                 this.selectedModel.set(model.attributes, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));

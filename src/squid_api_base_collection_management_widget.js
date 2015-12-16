@@ -12,6 +12,7 @@
         comparator : null,
         parentType : null,
         modelView : null,
+        cancelCallback : null,
         collectionLoading : false,
 
         initialize: function(options) {
@@ -88,7 +89,7 @@
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -100,7 +101,7 @@
                 this.selectedModel.set(model.attributes, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
