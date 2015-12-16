@@ -28,6 +28,9 @@
             if (options.setConfigOnSave) {
                 this.setConfigOnSave = options.setConfigOnSave;
             }
+            if (options.onceSaved) {
+                this.onceSaved = options.onceSaved;
+            }
             this.render();
         },
 

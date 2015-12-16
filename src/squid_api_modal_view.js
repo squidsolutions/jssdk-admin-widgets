@@ -23,6 +23,10 @@
             this.renderBase();
         },
 
+        close: function() {
+            this.$el.modal("toggle");
+        },
+
         renderBase: function() {
             var viewData = {
                 modalCount : $(".squid-api-modal-view").length
@@ -33,7 +37,7 @@
             // set el
             this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
-        
+
         render: function() {
             var me = this;
 

@@ -831,6 +831,9 @@ function program1(depth0,data) {
             if (options.setConfigOnSave) {
                 this.setConfigOnSave = options.setConfigOnSave;
             }
+            if (options.onceSaved) {
+                this.onceSaved = options.onceSaved;
+            }
             this.render();
         },
 
@@ -2419,6 +2422,10 @@ function program1(depth0,data) {
             this.renderBase();
         },
 
+        close: function() {
+            this.$el.modal("toggle");
+        },
+
         renderBase: function() {
             var viewData = {
                 modalCount : $(".squid-api-modal-view").length
@@ -2429,7 +2436,7 @@ function program1(depth0,data) {
             // set el
             this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
-        
+
         render: function() {
             var me = this;
 
@@ -2501,17 +2508,6 @@ function program1(depth0,data) {
                 delete data.dbCheckConnection;
             }
             return data;
-        },
-        onceSaved: function(model) {
-            // once the form is successfully saved, set the current project as the active one
-            if (this.setConfigOnSave) {
-                if (model.get("id")) {
-                    if (this.$el.parents(".squid-api-modal-view")) {
-                        this.$el.parents(".squid-api-modal-view").modal("hide");
-                    }
-                    this.config.set("project", model.get("id").projectId);
-                }
-            }
         }
     });
 

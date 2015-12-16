@@ -12,17 +12,6 @@
                 delete data.dbCheckConnection;
             }
             return data;
-        },
-        onceSaved: function(model) {
-            // once the form is successfully saved, set the current project as the active one
-            if (this.setConfigOnSave) {
-                if (model.get("id")) {
-                    if (this.$el.parents(".squid-api-modal-view")) {
-                        this.$el.parents(".squid-api-modal-view").modal("hide");
-                    }
-                    this.config.set("project", model.get("id").projectId);
-                }
-            }
         }
     });
 
