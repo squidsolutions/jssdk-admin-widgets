@@ -37,7 +37,7 @@
 
 .squid-api-collection-management-widget table td.select {
 	padding-left: 20px;
-	width: 60%;
+	width: 75%;
 	text-align: left;
 }
 
@@ -52,10 +52,6 @@
 	text-align: center;
 	width: 20px;
 	padding-left: 10px;
-}
-
-.squid-api-collection-management-widget table td.delete {
-	padding-right: 25px;
 }
 
 .squid-api-collection-management-widget table tr {
@@ -79,6 +75,15 @@
 
 .squid-api-collection-management-widget table .collection-option {
 	float: right;
+	padding: 15px 0px 0px 0px;
+}
+
+.squid-api-collection-management-widget table .collection-option:hover {
+	font-size: 20px;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
 }
 
 .squid-api-collection-management-widget table tr:hover .collection-option, .squid-api-collection-management-widget table tr.selected .collection-option {
@@ -122,10 +127,6 @@
 
 .squid-api-collection-management-widget table .collection-option {
 	display: none;
-}
-
-.squid-api-collection-management-widget table tr.selected i {
-	font-size: 15px;
 }
 
 .squid-api-collection-management-widget .new-model {

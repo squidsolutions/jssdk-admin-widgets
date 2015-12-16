@@ -186,7 +186,8 @@
                 roles : null,
                 createRole : null,
                 typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true
+                modalHtml : true,
+                type : this.type
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};

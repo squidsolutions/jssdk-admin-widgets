@@ -33,7 +33,7 @@
                     me.initListeners();
                 }
             };
-            
+
             this.config.on("change", function (config) {
                 var projectId = config.get("project");
                 var domainId = config.get("domain");
@@ -65,7 +65,7 @@
                 }
             });
         },
-        
+
         additionalEvents: {
             "click .relation": function(event) {
                 var me = this;
@@ -82,7 +82,7 @@
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-        
+
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
             var jsonData = {
@@ -91,7 +91,8 @@
                 roles : null,
                 createRole : null,
                 typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true
+                modalHtml : true,
+                type : this.type
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};
