@@ -77,8 +77,9 @@
             // to be overridden from other model management widgets
         },
 
-        setSchema: function(schema) {
+        setSchema: function() {
             var dfd = $.Deferred();
+            var schema = this.model.schema;
             var me = this;
             var project = this.model.get("id").projectId;
             squid_api.getCustomer().then(function(customer) {

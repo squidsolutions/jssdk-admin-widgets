@@ -7,6 +7,7 @@
 
         model : null,
         collectionPluralLabel : null,
+        setConfigOnSave : null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -23,6 +24,9 @@
             }
             if (options.cancelCallback) {
                 this.cancelCallback = options.cancelCallback;
+            }
+            if (options.setConfigOnSave) {
+                this.setConfigOnSave = options.setConfigOnSave;
             }
             this.render();
         },
@@ -112,7 +116,7 @@
                 jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
             }
 
-            this.setSchema(this.model.schema).then(function(schema) {
+            this.setSchema().then(function(schema) {
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,

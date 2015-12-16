@@ -767,6 +767,7 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
+        setConfigOnSave : null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -783,6 +784,9 @@ function program1(depth0,data) {
             }
             if (options.cancelCallback) {
                 this.cancelCallback = options.cancelCallback;
+            }
+            if (options.setConfigOnSave) {
+                this.setConfigOnSave = options.setConfigOnSave;
             }
             this.render();
         },
@@ -872,7 +876,7 @@ function program1(depth0,data) {
                 jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
             }
 
-            this.setSchema(this.model.schema).then(function(schema) {
+            this.setSchema().then(function(schema) {
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -2266,6 +2270,7 @@ function program1(depth0,data) {
             // set el
             this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
+        
         render: function() {
             var me = this;
 
@@ -2333,8 +2338,13 @@ function program1(depth0,data) {
         },
         onceSaved: function(model) {
             // once the form is successfully saved, set the current project as the active one
-            if (! this.config.get("project")) {
-                // console.log("hello");
+            if (this.setConfigOnSave) {
+                if (model.get("id")) {
+                    if (this.$el.parents(".squid-api-modal-view")) {
+                        this.$el.parents(".squid-api-modal-view").modal("hide");
+                    }
+                    this.config.set("project", model.get("id").projectId);
+                }
             }
         }
     });
@@ -2513,8 +2523,9 @@ function program1(depth0,data) {
             // to be overridden from other model management widgets
         },
 
-        setSchema: function(schema) {
+        setSchema: function() {
             var dfd = $.Deferred();
+            var schema = this.model.schema;
             var me = this;
             var project = this.model.get("id").projectId;
             squid_api.getCustomer().then(function(customer) {
