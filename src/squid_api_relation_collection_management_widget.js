@@ -73,7 +73,7 @@
             if (this.collection) {
                 var jsonData = {
                     models : this.viewData(),
-                    roles : this.getRoles(),
+                    roles : null,
                     typeLabelPlural : this.typeLabelPlural,
                     type : this.type,
                     modalHtml : true

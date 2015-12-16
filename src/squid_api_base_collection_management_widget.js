@@ -148,22 +148,29 @@
         events : function() {
             return _.extend({},this.originalEvents,this.additionalEvents);
         },
-
-        getRoles: function() {
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
+        
+        getCreateRole: function() {
+            var role = false;
             if (this.collection) {
                 if (this.collection.parent) {
                     var parentRole = this.collection.parent.get("_role");
                     // write role
-                    if (parentRole == "OWNER" || parentRole == "WRITE") {
-                        roles.create = true;
-                        roles.edit = true;
-                        roles.delete = true;
-                        roles.refresh = true;
+                    if (parentRole === "OWNER" || parentRole === "WRITE") {
+                        role = true;
                     }
                 }
             }
+            return role;
+        },
+
+        getModelRoles: function(model) {
+            var roles;
+            var role = model.get("_role");
+            if (!role || (role === "OWNER" || role === "WRITE")) {
+                roles = {"edit" : true, "delete" : true, "refresh" : true};
+            } else {
+                roles = {"edit" : false, "delete" : false, "refresh" : false};
+            } 
             return roles;
         },
 
@@ -176,17 +183,21 @@
             var jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
-                roles : this.getRoles(),
+                roles : null,
+                createRole : null,
                 typeLabelPlural : this.typeLabelPlural,
                 modalHtml : true
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};
+                jsonData.createRole = this.getCreateRole();
+                
                 for (i=0; i<this.collection.size(); i++) {
+                    var item = this.collection.at(i);
                     var model = {};
-                    model.label = this.collection.at(i).get("name");
-                    model.value = this.collection.at(i).get("oid");
-                    model.roles = this.getRoles();
+                    model.label = item.get("name");
+                    model.value = item.get("oid");
+                    model.roles = this.getModelRoles(item);
 
                     // detect selected model
                     if (model.value === this.config.get(this.type.toLowerCase())) {

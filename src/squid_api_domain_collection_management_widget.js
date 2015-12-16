@@ -88,19 +88,23 @@
             var jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
-                roles : this.getRoles(),
+                roles : null,
+                createRole : null,
                 typeLabelPlural : this.typeLabelPlural,
                 modalHtml : true
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};
+                jsonData.createRole = this.getCreateRole();
+                
                 for (i=0; i<this.collection.size(); i++) {
+                    var item = this.collection.at(i);
                     var model = {};
-                    model.label = this.collection.at(i).get("name");
-                    model.value = this.collection.at(i).get("oid");
-                    model.roles = this.getRoles();
+                    model.label = item.get("name");
+                    model.value = item.get("oid");
+                    model.roles = this.getModelRoles(item);
 
-                    if (this.collection.at(i).get("dynamic")) {
+                    if (item.get("dynamic")) {
                         model.label = "~ " + model.label;
                     }
 
