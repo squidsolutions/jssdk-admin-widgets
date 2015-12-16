@@ -608,12 +608,12 @@ function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n                                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.programWithDepth(8, program8, data, depth0),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                            ";
   return buffer;
   }
-function program8(depth0,data,depth1) {
+function program8(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n            						<tr class=\"no-background\" data-attr=";
@@ -635,10 +635,10 @@ function program8(depth0,data,depth1) {
   else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</td>\n            							</td>\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth1 && depth1.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth1 && depth1.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n            						</tr>\n            					";
   return buffer;
@@ -742,7 +742,7 @@ function program28(depth0,data) {
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "-collection-management\">\n                ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.create), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
@@ -2829,6 +2829,7 @@ function program1(depth0,data) {
                 obj.oid = filteredModels[ix].get("oid");
                 obj.leftName = filteredModels[ix].get("leftName");
                 obj.rightName = filteredModels[ix].get("rightName");
+                obj.roles = this.getModelRoles(filteredModels[ix]);
 
                 // set cardinality booleans for handlebar display
                 var leftCardinality = filteredModels[ix].get("leftCardinality");
@@ -2869,6 +2870,7 @@ function program1(depth0,data) {
             if (this.collection) {
                 var jsonData = {
                     models : this.viewData(),
+                    createRole : this.getCreateRole(),
                     roles : null,
                     typeLabelPlural : this.typeLabelPlural,
                     type : this.type,

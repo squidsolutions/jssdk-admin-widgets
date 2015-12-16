@@ -33,6 +33,7 @@
                 obj.oid = filteredModels[ix].get("oid");
                 obj.leftName = filteredModels[ix].get("leftName");
                 obj.rightName = filteredModels[ix].get("rightName");
+                obj.roles = this.getModelRoles(filteredModels[ix]);
 
                 // set cardinality booleans for handlebar display
                 var leftCardinality = filteredModels[ix].get("leftCardinality");
@@ -73,6 +74,7 @@
             if (this.collection) {
                 var jsonData = {
                     models : this.viewData(),
+                    createRole : this.getCreateRole(),
                     roles : null,
                     typeLabelPlural : this.typeLabelPlural,
                     type : this.type,
