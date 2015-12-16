@@ -664,10 +664,10 @@
     });
     var relationExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='relationId']").val() + "/relations-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/relations-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
-            data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
-            data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();
+            data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
+            data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
 
         }
