@@ -33,6 +33,7 @@
             // set el
             this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
+        
         render: function() {
             var me = this;
 

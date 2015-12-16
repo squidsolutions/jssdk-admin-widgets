@@ -430,72 +430,122 @@ function program5(depth0,data) {
 function program7(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(18, program18, data),fn:self.program(8, program8, data),data:data});
+  buffer += "\n                                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.programWithDepth(8, program8, data, depth0),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        ";
+  buffer += "\n                            ";
   return buffer;
   }
-function program8(depth0,data) {
+function program8(depth0,data,depth1) {
   
-  var buffer = "", stack1;
-  buffer += "\n                                ";
-  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  var buffer = "", stack1, helper;
+  buffer += "\n            						<tr class=\"no-background\" data-attr=";
+  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + ">\n            							<td class=\"domain\">";
+  if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n            							<td class=\"leftIcon\">\n            							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                            ";
+  buffer += "\n            							</td>\n            							<td class=\"rightIcon\">\n            							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(19, program19, data),fn:self.program(17, program17, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        <td class=\"domain\">";
+  if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n            							</td>\n                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth1 && depth1.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth1 && depth1.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            						</tr>\n            					";
   return buffer;
   }
 function program9(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n                                    <tr ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " data-attr=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                                        <td class=\"select selected\">\n                                            ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                                        </td>\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    </tr>\n                                ";
-  return buffer;
-  }
-function program10(depth0,data) {
   
-  
-  return " class=\"selected\" ";
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n              										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            								";
   }
 
+function program11(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(14, program14, data),fn:self.program(12, program12, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							";
+  return buffer;
+  }
 function program12(depth0,data) {
+  
+  
+  return "\n            								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n            								</svg>\n            									";
+  }
+
+function program14(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							 	";
+  return buffer;
+  }
+function program15(depth0,data) {
+  
+  
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
+  }
+
+function program17(depth0,data) {
+  
+  
+  return "\n            							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n            							</svg>\n            								";
+  }
+
+function program19(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(22, program22, data),fn:self.program(20, program20, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							";
+  return buffer;
+  }
+function program20(depth0,data) {
+  
+  
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
+  }
+
+function program22(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							 	";
+  return buffer;
+  }
+
+function program24(depth0,data) {
   
   
   return "\n                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n                                        ";
   }
 
-function program14(depth0,data) {
-  
-  
-  return "\n                                            <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\"></i></td>\n                                        ";
-  }
-
-function program16(depth0,data) {
+function program26(depth0,data) {
   
   
   return "\n                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        ";
   }
 
-function program18(depth0,data) {
+function program28(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                                <div class=\"no-data\">\n                                    No ";
@@ -503,17 +553,6 @@ function program18(depth0,data) {
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + " available\n                                </div>\n                            ";
-  return buffer;
-  }
-
-function program20(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                        	<div class=\"no-data\">\n                            	";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " loading in progress...\n                            </div>\n                        ";
   return buffer;
   }
 
@@ -531,132 +570,10 @@ function program20(depth0,data) {
   buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(20, program20, data),fn:self.program(7, program7, data),data:data});
+  buffer += ">\n                            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(28, program28, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n    <button type=\"button\" class=\"btn btn-default cancel\">Cancel</button>\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_relation_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, self=this, functionType="function", escapeExpression=this.escapeExpression;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n					<table style=\"width:100%\">\n						";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n					</table>\n					";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n							<tr data-attr=";
-  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + ">\n								<td class=\"domain\">";
-  if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n								<td class=\"leftIcon\">\n								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								</td>\n								<td>\n								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								</td>\n								<td class=\"domain\">";
-  if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n								<td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n								<td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n							</tr>\n						";
-  return buffer;
-  }
-function program3(depth0,data) {
-  
-  
-  return "\n										<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n	  										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n	  										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n	  										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n	  										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										</svg>\n									";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								";
-  return buffer;
-  }
-function program6(depth0,data) {
-  
-  
-  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n											<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n											<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n											<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n											<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n									</svg>\n										";
-  }
-
-function program8(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n										";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								 	";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  
-  return "\n										<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n											<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n											<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										</svg>\n										";
-  }
-
-function program11(depth0,data) {
-  
-  
-  return "\n								<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n									<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n									<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n									<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n									<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n								</svg>\n									";
-  }
-
-function program13(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(16, program16, data),fn:self.program(14, program14, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								";
-  return buffer;
-  }
-function program14(depth0,data) {
-  
-  
-  return "\n										<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n											<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n											<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n											<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n											<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										</svg>\n										";
-  }
-
-function program16(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n										";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n								 	";
-  return buffer;
-  }
-
-function program18(depth0,data) {
-  
-  
-  return "\n					<div class=\"no-relations-available\">\n						no relations available\n					</div>\n				";
-  }
-
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n	<div id=\"squid-api-relations-widget-data-table\">\n		<div class=\"row\">\n			<div class=\"col-md-10\">\n			</div>\n			<div class=\"col-md-2\">\n				<button class=\"form-control create\">create</button>\n			</div>\n		</div>\n		<div class=\"row\">\n			<div class=\"col-md-12\">\n				";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(18, program18, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n			</div>\n		</div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -724,12 +641,12 @@ function program1(depth0,data) {
                         return r;
                     };
                 }
-                if (options.resetParentView) {
-                    this.resetParentView = options.resetParentView;
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
                 }
             }
 
-            this.init();
+            this.init(options);
         },
 
         initListeners: function() {
@@ -893,6 +810,7 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
+        setConfigOnSave : null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -907,8 +825,11 @@ function program1(depth0,data) {
             } else {
                 this.template = template;
             }
-            if (options.resetParentView) {
-                this.resetParentView = options.resetParentView;
+            if (options.cancelCallback) {
+                this.cancelCallback = options.cancelCallback;
+            }
+            if (options.setConfigOnSave) {
+                this.setConfigOnSave = options.setConfigOnSave;
             }
             this.render();
         },
@@ -936,9 +857,9 @@ function program1(depth0,data) {
 
         events: {
             "click .btn-cancel": function() {
-                // add handler
-                if (this.resetParentView) {
-                    this.resetParentView.call();
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             },
             "click .btn-save-form" : function() {
@@ -956,8 +877,8 @@ function program1(depth0,data) {
                         wait: true,
                         success: function(model) {
                             // status update
-                            if (me.resetParentView) {
-                                me.resetParentView.call();
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
                             }
                             // call once saved
                             if (me.onceSaved) {
@@ -982,6 +903,12 @@ function program1(depth0,data) {
             // to be overridden from other model management widgets
         },
 
+        setSchema: function() {
+            var dfd = $.Deferred();
+            // to be overridden from other model management widgets
+            return dfd.resolve(this.schema);
+        },
+
         render: function() {
             var me = this;
             var jsonData = {};
@@ -992,20 +919,22 @@ function program1(depth0,data) {
                 jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
             }
 
-            // create form
-            this.formContent = new Backbone.Form({
-                schema: me.model.schema,
-                model: me.model
-            }).render();
+            this.setSchema().then(function(schema) {
+                // create form
+                me.formContent = new Backbone.Form({
+                    schema: schema,
+                    model: me.model
+                }).render();
 
-            // append save buttons
-            this.$el.html(this.template(jsonData));
+                // append save buttons
+                me.$el.html(me.template(jsonData));
 
-            // place the form into a backbone view
-            this.$el.find(".modal-body").html(this.formContent.el);
+                // place the form into a backbone view
+                me.$el.find(".modal-body").html(me.formContent.el);
 
-            // form events
-            this.formEvents();
+                // form events
+                me.formEvents();
+            });
 
             return this;
         }
@@ -1440,7 +1369,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -1453,7 +1382,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -2276,7 +2205,7 @@ function program1(depth0,data) {
     });
     var relationExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input").val() + "/relations-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
             data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();
@@ -2376,10 +2305,12 @@ function program1(depth0,data) {
         },
         
         additionalEvents: {
-            "click .relation": function() {
+            "click .relation": function(event) {
                 var me = this;
+                var modelValue = $(event.target).parents('tr').attr("data-attr");
                 this.renderRelationView(new this.relationView({
-                    resetParentView : function() {
+                    modelValue : modelValue,
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -2477,6 +2408,7 @@ function program1(depth0,data) {
             // set el
             this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
+        
         render: function() {
             var me = this;
 
@@ -2551,8 +2483,13 @@ function program1(depth0,data) {
         },
         onceSaved: function(model) {
             // once the form is successfully saved, set the current project as the active one
-            if (! this.config.get("project")) {
-                // console.log("hello");
+            if (this.setConfigOnSave) {
+                if (model.get("id")) {
+                    if (this.$el.parents(".squid-api-modal-view")) {
+                        this.$el.parents(".squid-api-modal-view").modal("hide");
+                    }
+                    this.config.set("project", model.get("id").projectId);
+                }
             }
         }
     });
@@ -2574,48 +2511,31 @@ function program1(depth0,data) {
         additionalEvents: {
             "click .cancel": function() {
                 // reset parent view if cancel button clicked
-                if (this.resetParentView) {
-                    this.resetParentView.call();
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             }
         },
 
-        init : function() {
-            var me = this;
-            this.modelView = squid_api.view.BaseModelManagementWidget;
-
-            this.config.on("change:project", function (config) {
-                squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
-                    me.collection = collection;
-                    me.initListeners();
-                    me.render();
-                });
-            });
-        }
-    });
-
-    return View;
-}));
-
-(function (root, factory) {
-    root.squid_api.view.RelationManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_relation_management_widget);
-
-}(this, function (Backbone, squid_api, template) {
-
-    var View = squid_api.view.BaseCollectionManagementWidget.extend({
-
         viewData: function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, squid_api.model.config.get("domain"));
-            var arr = [];
-            for (i=0; i<models.length; i++) {
+            var filteredModels = [];
+            for (i=0; i<this.collection.size(); i++) {
+                if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        filteredModels.push(this.collection.at(i));
+                    }
+                }
+            }
+            var models = [];
+            for (ix=0; ix<filteredModels.length; ix++) {
                 var obj = {};
-                obj.oid = models[i].get("oid");
-                obj.leftName = models[i].get("leftName");
-                obj.rightName = models[i].get("rightName");
+                obj.oid = filteredModels[ix].get("oid");
+                obj.leftName = filteredModels[ix].get("leftName");
+                obj.rightName = filteredModels[ix].get("rightName");
 
                 // set cardinality booleans for handlebar display
-                var leftCardinality = models[i].get("leftCardinality");
-                var rightCardinality = models[i].get("rightCardinality");
+                var leftCardinality = filteredModels[ix].get("leftCardinality");
+                var rightCardinality = filteredModels[ix].get("rightCardinality");
                 if (leftCardinality == "MANY") {
                     obj.leftMany = true;
                 } else if (leftCardinality == "ZERO_OR_ONE") {
@@ -2630,18 +2550,149 @@ function program1(depth0,data) {
                 } else if (rightCardinality == "ONE") {
                     obj.rightOne = true;
                 }
-                arr.push(obj);
+                models.push(obj);
             }
 
-            return arr;
+            return models;
         },
 
-        render : function() {
+        init : function(options) {
             var me = this;
-            var jsonData = {"models" : this.viewData(), "typeLabelPlural" : this.typeLabelPlural};
-            this.$el.html(template(jsonData));
-            return this;
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+            this.modelValue = options.modelValue;
+
+            this.config.on("change:project", function (config) {
+                squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
+                    me.collection = collection;
+                    me.initListeners();
+                    me.render();
+                });
+            });
+        },
+        render: function() {
+            // store models
+            if (this.collection) {
+                var jsonData = {
+                    models : this.viewData(),
+                    roles : this.getRoles(),
+                    typeLabelPlural : this.typeLabelPlural,
+                    type : this.type,
+                    modalHtml : true
+                };
+
+                // print template
+                var html = this.template(jsonData);
+                this.$el.html(html);
+            }
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.RelationModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        model : null,
+        collectionPluralLabel : null,
+
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (data[x].length === 0) {
+                    data[x] = null;
+                }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onceSaved) {
+                                me.onceSaved(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
+                    });
+                }
+            }
+        },
+
+        onceSaved: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
+
+        formEvents: function() {
+            // to be overridden from other model management widgets
+        },
+
+        setSchema: function() {
+            var dfd = $.Deferred();
+            var schema = this.model.schema;
+            var me = this;
+            var project = this.model.get("id").projectId;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load(project).then(function(project) {
+                    project.get("domains").load().then(function(domains) {
+                        var arr = [];
+                        for (i=0; i<domains.size(); i++) {
+                            obj = {};
+                            obj.val = domains.at(i).get("oid");
+                            obj.label = domains.at(i).get("name");
+                            arr.push(obj);
+                        }
+                        schema.leftId.subSchema.domainId.options = arr;
+                        schema.rightId.subSchema.domainId.options = arr;
+                        dfd.resolve(schema);
+                    });
+                });
+            });
+            return dfd;
+        }
+
     });
 
     return View;

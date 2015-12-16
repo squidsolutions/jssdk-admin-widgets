@@ -67,10 +67,12 @@
         },
         
         additionalEvents: {
-            "click .relation": function() {
+            "click .relation": function(event) {
                 var me = this;
+                var modelValue = $(event.target).parents('tr').attr("data-attr");
                 this.renderRelationView(new this.relationView({
-                    resetParentView : function() {
+                    modelValue : modelValue,
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));

@@ -36,12 +36,12 @@
                         return r;
                     };
                 }
-                if (options.resetParentView) {
-                    this.resetParentView = options.resetParentView;
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
                 }
             }
 
-            this.init();
+            this.init(options);
         },
 
         initListeners: function() {
