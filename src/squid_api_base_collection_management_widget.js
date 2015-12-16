@@ -50,14 +50,16 @@
         initListeners: function() {
             var me = this;
             if (me.collection) {
-            this.selectedModel = new this.collection.model();
-            this.selectedModel.set("id", this.collection.parent.get("id"));
-            console.log(this.selectedModel.urlRoot());
-            this.listenTo(this.collection, "sync remove", this.render);
-            this.listenTo(this.selectedModel, "change", function(model) {
-                this.collection.add(model, { merge : true });
-                this.render();
-            });
+                if (!this.selectedModel) {
+                    this.selectedModel = new this.collection.model();
+                    this.selectedModel.set("id", this.collection.parent.get("id"));
+                }
+                console.log(this.selectedModel.urlRoot());
+                this.listenTo(this.collection, "sync remove", this.render);
+                this.listenTo(this.selectedModel, "change", function(model) {
+                    this.collection.add(model, { merge : true });
+                    this.render();
+                });
             }
             me.render();
         },

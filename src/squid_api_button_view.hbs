@@ -1,5 +1,9 @@
 {{#if visible}}
-    <button class="form-control squid-api-button-view">
+	<button class="form-control squid-api-button-view">
+	{{#if collectionLoaded}}
         {{label}}
+    {{else}}
+    	{{typeLabelPlural}} loading   
+    {{/if}}
     </button>
 {{/if}}
