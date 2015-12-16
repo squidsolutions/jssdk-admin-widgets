@@ -902,6 +902,7 @@ function program1(depth0,data) {
                 }));
             },
             "click .delete": function(event) {
+                var me = this;
                 var id = $(event.target).parents('tr').attr("data-attr");
                 var model = this.collection.get(id);
                 if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
@@ -930,7 +931,7 @@ function program1(depth0,data) {
         events : function() {
             return _.extend({},this.originalEvents,this.additionalEvents);
         },
-        
+
         getCreateRole: function() {
             var role = false;
             if (this.collection) {
@@ -952,7 +953,7 @@ function program1(depth0,data) {
                 roles = {"edit" : true, "delete" : true, "refresh" : true};
             } else {
                 roles = {"edit" : false, "delete" : false, "refresh" : false};
-            } 
+            }
             return roles;
         },
 
@@ -974,7 +975,7 @@ function program1(depth0,data) {
             if (this.collection) {
                 jsonData.collection = {"models" : []};
                 jsonData.createRole = this.getCreateRole();
-                
+
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
