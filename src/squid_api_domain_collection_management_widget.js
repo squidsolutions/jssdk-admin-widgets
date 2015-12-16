@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
+    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_domain_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -8,11 +8,13 @@
         typeLabelPlural : "Domains",
         type : "domain",
         modelView : null,
+        template : template,
 
         init : function() {
             var me = this;
 
             this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.relationView = squid_api.view.RelationCollectionManagementWidget;
 
             // listen for project change
             this.config.on("change:project", function (config) {
@@ -22,6 +24,20 @@
                     me.initListeners();
                 });
             });
+        },
+        additionalEvents: {
+            "click .relation": function() {
+                var me = this;
+                this.renderRelationView(new this.relationView({
+                    resetParentView : function() {
+                        me.render();
+                    }
+                }));
+            }
+        },
+
+        renderRelationView: function(relationView) {
+            this.$el.html(relationView.el);
         },
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);

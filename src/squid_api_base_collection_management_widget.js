@@ -34,6 +34,9 @@
                         return r;
                     };
                 }
+                if (options.resetParentView) {
+                    this.resetParentView = options.resetParentView;
+                }
             }
 
             this.init();
@@ -71,7 +74,7 @@
             return (da === db) ? 0 : da ? 1 : -1;
         },
 
-        events: {
+        originalEvents: {
             // select
             "click .select": function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
@@ -126,6 +129,15 @@
             }
         },
 
+        // Additional Events to be overridden
+        additionalEvents: {
+
+        },
+
+        events : function() {
+            return _.extend({},this.originalEvents,this.additionalEvents);
+        },
+
         getRoles: function() {
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
@@ -139,7 +151,6 @@
                 }
             }
             return roles;
-
         },
 
         renderModelView: function(modelView) {
