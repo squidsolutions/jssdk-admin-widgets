@@ -618,7 +618,7 @@
 
     var domainExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -626,7 +626,7 @@
     });
     var dimensionExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             data.dimensionId = this.modelId;
             this.performRequest(url, data);
@@ -635,7 +635,7 @@
     });
     var metricExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -643,7 +643,7 @@
     });
     var relationExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input").val() + "/relations-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='relationId']").val() + "/relations-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
             data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();

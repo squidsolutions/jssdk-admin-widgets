@@ -62,12 +62,10 @@
             this.modelView = squid_api.view.RelationModelManagementWidget;
             this.modelValue = options.modelValue;
 
-            this.config.on("change:project", function (config) {
-                squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
-                    me.collection = collection;
-                    me.initListeners();
-                    me.render();
-                });
+            squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
+                me.collection = collection;
+                me.initListeners();
+                me.render();
             });
         },
         render: function() {
