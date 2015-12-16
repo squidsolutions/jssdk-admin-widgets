@@ -3,7 +3,7 @@
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = squid_api.view.CollectionManagementWidget.extend({
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
         modelView : squid_api.view.ColumnsModelManagementWidget,
         events: {
             "change select" : function(event) {
