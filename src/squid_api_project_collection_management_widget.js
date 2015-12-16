@@ -3,7 +3,7 @@
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = squid_api.view.CollectionManagementWidget.extend({
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
 
         typeLabelPlural : "Projects",
         type : "project",
@@ -19,7 +19,6 @@
                 customer.get("projects").load().done( function(projects) {
                     me.collection = projects;
                     me.initListeners();
-                    me.render();
                 });
             });
         }

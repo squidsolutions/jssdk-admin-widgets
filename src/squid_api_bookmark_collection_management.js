@@ -1,11 +1,11 @@
 (function (root, factory) {
-    root.squid_api.view.RelationCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-        type : "Relation",
-        typeLabelPlural : "Relations",
+        type : "Bookmark",
+        typeLabelPlural : "Bookmarks",
         modelView : null,
 
         init : function() {
