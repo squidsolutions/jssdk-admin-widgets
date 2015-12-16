@@ -31,7 +31,7 @@
                 var modelValue = $(event.target).parents('tr').attr("data-attr");
                 this.renderRelationView(new this.relationView({
                     modelValue : modelValue,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));

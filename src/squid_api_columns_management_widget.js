@@ -69,7 +69,7 @@
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -82,7 +82,7 @@
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));

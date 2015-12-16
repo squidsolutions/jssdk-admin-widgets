@@ -1,31 +1,12 @@
 (function (root, factory) {
-    root.squid_api.view.BaseModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
+    root.squid_api.view.RelationModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
+    var View = squid_api.view.BaseModelManagementWidget.extend({
 
         model : null,
         collectionPluralLabel : null,
-
-        initialize: function(options) {
-            this.status = squid_api.model.status;
-            this.config = squid_api.model.config;
-
-            if (options.model) {
-                this.model = options.model;
-            }
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.cancelCallback) {
-                this.cancelCallback = options.cancelCallback;
-            }
-            this.render();
-        },
 
         dataManipulation: function(data) {
             for (var x in data) {
@@ -96,40 +77,27 @@
             // to be overridden from other model management widgets
         },
 
-        setSchema: function() {
+        setSchema: function(schema) {
             var dfd = $.Deferred();
-            // to be overridden from other model management widgets
-            return dfd.resolve(this.schema);
-        },
-
-        render: function() {
             var me = this;
-            var jsonData = {};
-
-            if (this.model.isNew()) {
-                jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
-            } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
-            }
-
-            this.setSchema(this.model.schema).then(function(schema) {
-                // create form
-                me.formContent = new Backbone.Form({
-                    schema: schema,
-                    model: me.model
-                }).render();
-
-                // append save buttons
-                me.$el.html(me.template(jsonData));
-
-                // place the form into a backbone view
-                me.$el.find(".modal-body").html(me.formContent.el);
-
-                // form events
-                me.formEvents();
+            var project = this.model.get("id").projectId;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load(project).then(function(project) {
+                    project.get("domains").load().then(function(domains) {
+                        var arr = [];
+                        for (i=0; i<domains.size(); i++) {
+                            obj = {};
+                            obj.val = domains.at(i).get("oid");
+                            obj.label = domains.at(i).get("name");
+                            arr.push(obj);
+                        }
+                        schema.leftId.subSchema.domainId.options = arr;
+                        schema.rightId.subSchema.domainId.options = arr;
+                        dfd.resolve(schema);
+                    });
+                });
             });
-
-            return this;
+            return dfd;
         }
 
     });

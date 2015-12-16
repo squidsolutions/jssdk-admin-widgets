@@ -577,7 +577,7 @@ function program1(depth0,data) {
         comparator : null,
         parentType : null,
         modelView : null,
-        modelValue : null,
+        cancelCallback : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -600,16 +600,12 @@ function program1(depth0,data) {
                         return r;
                     };
                 }
-                if (options.resetParentView) {
-                    this.resetParentView = options.resetParentView;
-                }
-                // used if we want to pass a model id from a previous collection
-                if (options.modelValue) {
-                    this.modelValue = options.modelValue;
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
                 }
             }
 
-            this.init();
+            this.init(options);
         },
 
         initListeners: function() {
@@ -656,7 +652,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -668,7 +664,7 @@ function program1(depth0,data) {
                 this.selectedModel.set(model.attributes, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -785,8 +781,8 @@ function program1(depth0,data) {
             } else {
                 this.template = template;
             }
-            if (options.resetParentView) {
-                this.resetParentView = options.resetParentView;
+            if (options.cancelCallback) {
+                this.cancelCallback = options.cancelCallback;
             }
             this.render();
         },
@@ -814,9 +810,9 @@ function program1(depth0,data) {
 
         events: {
             "click .btn-cancel": function() {
-                // add handler
-                if (this.resetParentView) {
-                    this.resetParentView.call();
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             },
             "click .btn-save-form" : function() {
@@ -834,8 +830,8 @@ function program1(depth0,data) {
                         wait: true,
                         success: function(model) {
                             // status update
-                            if (me.resetParentView) {
-                                me.resetParentView.call();
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
                             }
                             // call once saved
                             if (me.onceSaved) {
@@ -860,6 +856,12 @@ function program1(depth0,data) {
             // to be overridden from other model management widgets
         },
 
+        setSchema: function() {
+            var dfd = $.Deferred();
+            // to be overridden from other model management widgets
+            return dfd.resolve(this.schema);
+        },
+
         render: function() {
             var me = this;
             var jsonData = {};
@@ -870,20 +872,22 @@ function program1(depth0,data) {
                 jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
             }
 
-            // create form
-            this.formContent = new Backbone.Form({
-                schema: me.model.schema,
-                model: me.model
-            }).render();
+            this.setSchema(this.model.schema).then(function(schema) {
+                // create form
+                me.formContent = new Backbone.Form({
+                    schema: schema,
+                    model: me.model
+                }).render();
 
-            // append save buttons
-            this.$el.html(this.template(jsonData));
+                // append save buttons
+                me.$el.html(me.template(jsonData));
 
-            // place the form into a backbone view
-            this.$el.find(".modal-body").html(this.formContent.el);
+                // place the form into a backbone view
+                me.$el.find(".modal-body").html(me.formContent.el);
 
-            // form events
-            this.formEvents();
+                // form events
+                me.formEvents();
+            });
 
             return this;
         }
@@ -1278,7 +1282,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -1291,7 +1295,7 @@ function program1(depth0,data) {
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -2164,7 +2168,7 @@ function program1(depth0,data) {
                 var modelValue = $(event.target).parents('tr').attr("data-attr");
                 this.renderRelationView(new this.relationView({
                     modelValue : modelValue,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -2352,8 +2356,8 @@ function program1(depth0,data) {
         additionalEvents: {
             "click .cancel": function() {
                 // reset parent view if cancel button clicked
-                if (this.resetParentView) {
-                    this.resetParentView.call();
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             }
         },
@@ -2397,9 +2401,10 @@ function program1(depth0,data) {
             return models;
         },
 
-        init : function() {
+        init : function(options) {
             var me = this;
-            this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+            this.modelValue = options.modelValue;
 
             // TODO: implement project change listening if used immediately within the app
             squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
@@ -2424,6 +2429,113 @@ function program1(depth0,data) {
                 this.$el.html(html);
             }
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.RelationModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        model : null,
+        collectionPluralLabel : null,
+
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (data[x].length === 0) {
+                    data[x] = null;
+                }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onceSaved) {
+                                me.onceSaved(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
+                    });
+                }
+            }
+        },
+
+        onceSaved: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
+
+        formEvents: function() {
+            // to be overridden from other model management widgets
+        },
+
+        setSchema: function(schema) {
+            var dfd = $.Deferred();
+            var me = this;
+            var project = this.model.get("id").projectId;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load(project).then(function(project) {
+                    project.get("domains").load().then(function(domains) {
+                        var arr = [];
+                        for (i=0; i<domains.size(); i++) {
+                            obj = {};
+                            obj.val = domains.at(i).get("oid");
+                            obj.label = domains.at(i).get("name");
+                            arr.push(obj);
+                        }
+                        schema.leftId.subSchema.domainId.options = arr;
+                        schema.rightId.subSchema.domainId.options = arr;
+                        dfd.resolve(schema);
+                    });
+                });
+            });
+            return dfd;
+        }
+
     });
 
     return View;

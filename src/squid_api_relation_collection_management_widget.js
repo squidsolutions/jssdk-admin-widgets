@@ -12,8 +12,8 @@
         additionalEvents: {
             "click .cancel": function() {
                 // reset parent view if cancel button clicked
-                if (this.resetParentView) {
-                    this.resetParentView.call();
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             }
         },
@@ -57,9 +57,10 @@
             return models;
         },
 
-        init : function() {
+        init : function(options) {
             var me = this;
-            this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+            this.modelValue = options.modelValue;
 
             // TODO: implement project change listening if used immediately within the app
             squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {

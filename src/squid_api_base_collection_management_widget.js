@@ -12,7 +12,7 @@
         comparator : null,
         parentType : null,
         modelView : null,
-        modelValue : null,
+        cancelCallback : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -35,16 +35,12 @@
                         return r;
                     };
                 }
-                if (options.resetParentView) {
-                    this.resetParentView = options.resetParentView;
-                }
-                // used if we want to pass a model id from a previous collection
-                if (options.modelValue) {
-                    this.modelValue = options.modelValue;
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
                 }
             }
 
-            this.init();
+            this.init(options);
         },
 
         initListeners: function() {
@@ -91,7 +87,7 @@
                 this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
@@ -103,7 +99,7 @@
                 this.selectedModel.set(model.attributes, {"silent" : true});
                 this.renderModelView(new this.modelView({
                     model : this.selectedModel,
-                    resetParentView : function() {
+                    cancelCallback : function() {
                         me.render();
                     }
                 }));
