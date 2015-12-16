@@ -13,14 +13,21 @@
             var me = this;
 
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-
-            // listen for customer change
-            squid_api.getCustomer().done(function (customer) {
-                customer.get("projects").load().done( function(projects) {
-                    me.collection = projects;
-                    me.initListeners();
+            
+            // set the collection
+            me.collectionLoading = true;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load().done(function(collection) {
+                        me.collectionLoading = false;
+                        me.collection = collection;
+                        me.initListeners();
+                }).fail(function() {
+                    me.collectionLoading = false;
+                    me.render();
                 });
             });
+
+            me.render();
         }
 
     });

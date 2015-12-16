@@ -12,6 +12,7 @@
         comparator : null,
         parentType : null,
         modelView : null,
+        collectionLoading : false,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -44,6 +45,7 @@
 
         initListeners: function() {
             var me = this;
+            if (me.collection) {
             this.selectedModel = new this.collection.model();
             this.selectedModel.set("id", this.collection.parent.get("id"));
             console.log(this.selectedModel.urlRoot());
@@ -52,8 +54,8 @@
                 this.collection.add(model, { merge : true });
                 this.render();
             });
-            this.listenTo(this.config, "change:" + this.type, this.render);
-            this.$el.find("button").html("<span class='glyphicon glyphicon-refresh'></span> fetching " + this.typeLabelPlural);
+            }
+            me.render();
         },
 
         alphaNameComparator : function(a,b) {
@@ -141,13 +143,15 @@
         getRoles: function() {
             // roles
             var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
-            if (this.collection.parent) {
-                var parentRole = this.collection.parent.get("_role");
-                // write role
-                if (parentRole == "OWNER" || parentRole == "WRITE") {
-                    roles.create = true;
-                    roles.edit = true;
-                    roles.delete = true;
+            if (this.collection) {
+                if (this.collection.parent) {
+                    var parentRole = this.collection.parent.get("_role");
+                    // write role
+                    if (parentRole == "OWNER" || parentRole == "WRITE") {
+                        roles.create = true;
+                        roles.edit = true;
+                        roles.delete = true;
+                    }
                 }
             }
             return roles;
@@ -159,14 +163,15 @@
 
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            // store models
+            var jsonData = {
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                roles : this.getRoles(),
+                typeLabelPlural : this.typeLabelPlural,
+                modalHtml : true
+            };
             if (this.collection) {
-                var jsonData = {
-                    models : [],
-                    roles : this.getRoles(),
-                    typeLabelPlural : this.typeLabelPlural,
-                    modalHtml : true
-                };
+                jsonData.collection = {"models" : []};
                 for (i=0; i<this.collection.size(); i++) {
                     var model = {};
                     model.label = this.collection.at(i).get("name");
@@ -177,14 +182,12 @@
                     if (model.value === this.config.get(this.type.toLowerCase())) {
                         model.selected = true;
                     }
-                    jsonData.models.push(model);
+                    jsonData.collection.models.push(model);
                 }
-
-                // print template
-                var html = this.template(jsonData);
-                this.$el.html(html);
             }
-
+            // print template
+            var html = this.template(jsonData);
+            this.$el.html(html);
             return this;
         }
     });

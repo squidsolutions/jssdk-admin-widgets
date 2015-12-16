@@ -12,8 +12,9 @@
                 {{/if}}
                     <table style="width:100%">
                         <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
-                            {{#if models}}
-                                {{#each models}}
+                        {{#if collectionLoaded}}
+                            {{#if collection.models}}
+                                {{#each collection.models}}
                                     <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
                                         <td class="select selected">
                                             {{label}}
@@ -34,6 +35,11 @@
                                     No {{typeLabelPlural}} available
                                 </div>
                             {{/if}}
+                        {{else}}
+                        	<div class="no-data">
+                            	{{typeLabelPlural}} loading in progress...
+                            </div>
+                        {{/if}}
                         </tbody>
                 </table>
             </div>

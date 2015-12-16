@@ -9,6 +9,7 @@
         type : "domain",
         modelView : null,
         template : template,
+        collectionLoading : false,
 
         init : function() {
             var me = this;
@@ -16,16 +17,55 @@
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
 
-            // listen for project change
-            this.config.on("change:project", function (config) {
-                me.collection = null;
-                me.render();
-                squid_api.getSelectedProjectCollection("domains").done( function(domains) {
-                    me.collection = domains;
+            // listen for project/domain change
+            var setSelectedModel = function(projectId, domainId) {
+                if (projectId && domainId) {
+                    // set selected model
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(project) {
+                            project.get("domains").load(domainId).done(function(model) {
+                                me.selectedModel = model;
+                                me.initListeners();
+                            });
+                        });
+                    });
+                } else {
                     me.initListeners();
-                });
+                }
+            };
+            
+            this.config.on("change", function (config) {
+                var projectId = config.get("project");
+                var domainId = config.get("domain");
+                if (config.hasChanged("project")) {
+                    // project has changed
+                    me.collectionLoading = true;
+                    if (projectId) {
+                        // set domain collection
+                        squid_api.getCustomer().then(function(customer) {
+                            customer.get("projects").load(projectId).then(function(project) {
+                                project.get("domains").load().done(function(collection) {
+                                    me.collectionLoading = false;
+                                    me.collection = collection;
+                                    me.initListeners();
+                                }).fail(function() {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                });
+                            });
+                        });
+                        if (config.hasChanged("domain")) {
+                            setSelectedModel(projectId, domainId);
+                        }
+                    }
+                    me.render();
+                } else if (config.hasChanged("domain")) {
+                    // domain only has changed
+                    setSelectedModel(projectId, domainId);
+                }
             });
         },
+        
         additionalEvents: {
             "click .relation": function() {
                 var me = this;
@@ -40,16 +80,18 @@
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
+        
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            // store models
+            var jsonData = {
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                roles : this.getRoles(),
+                typeLabelPlural : this.typeLabelPlural,
+                modalHtml : true
+            };
             if (this.collection) {
-                var jsonData = {
-                    models : [],
-                    roles : this.getRoles(),
-                    typeLabelPlural : this.typeLabelPlural,
-                    modalHtml : true
-                };
+                jsonData.collection = {"models" : []};
                 for (i=0; i<this.collection.size(); i++) {
                     var model = {};
                     model.label = this.collection.at(i).get("name");
@@ -64,14 +106,12 @@
                     if (model.value === this.config.get(this.type.toLowerCase())) {
                         model.selected = true;
                     }
-                    jsonData.models.push(model);
+                    jsonData.collection.models.push(model);
                 }
-
-                // print template
-                var html = this.template(jsonData);
-                this.$el.html(html);
             }
-
+            // print template
+            var html = this.template(jsonData);
+            this.$el.html(html);
             return this;
         }
 

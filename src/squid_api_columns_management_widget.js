@@ -116,15 +116,29 @@
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ColumnsModelManagementWidget;
-
-            // listen for domain change
+            
             this.config.on("change:domain", function (config) {
-                if (config.get("domain")) {
-                    squid_api.getSelectedDomainCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
-                        me.collection = collection;
-                        me.initListeners();
+                var projectId = config.get("project");
+                var domainId = config.get("domain");
+                me.collectionLoading = true;
+                if (projectId && domainId) {
+                    // set collection
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(project) {
+                            project.get("domains").load(domainId).done(function(model) {
+                                model.get(me.typeLabelPlural.toLowerCase()).load().done( function(collection) {
+                                    me.collectionLoading = false;
+                                    me.collection = collection;
+                                    me.initListeners();
+                                }).fail(function() {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                });
+                            });
+                        });
                     });
                 }
+                me.render();
             });
         },
 

@@ -22,11 +22,12 @@
             var me = this;
             this.modelView = squid_api.view.BaseModelManagementWidget;
 
-            // TODO: implement project change listening if used immediately within the app
-            squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
-                me.collection = collection;
-                me.initListeners();
-                me.render();
+            this.config.on("change:project", function (config) {
+                squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
+                    me.collection = collection;
+                    me.initListeners();
+                    me.render();
+                });
             });
         }
     });
