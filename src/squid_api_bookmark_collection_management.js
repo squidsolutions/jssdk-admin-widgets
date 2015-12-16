@@ -59,6 +59,38 @@
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+        },
+        
+        getModelLabel : function(model) {
+            var path = model.get("path");
+            var user = path.indexOf("/USER/");
+            if (user === 0) {
+                path = path.substring(6);
+                var userId;
+                if (path.indexOf("/") > -1) {
+                    userId = path.substring(0,path.indexOf("/"));
+                    path = path.substring(path.indexOf("/"));
+                } else {
+                    userId = path;
+                    path = "";
+                }
+                if (userId === squid_api.model.login.get("oid")) {
+                    // self
+                    path = "/My Bookmarks"+path;
+                } else {
+                    path = "/Others Bookmarks"+path;
+                }
+            } else {
+                var shared = path.indexOf("/SHARED");
+                if (shared === 0) {
+                    if (path.length>7) {
+                        path = "/Shared Bookmarks/"+path.substring(8);
+                    } else {
+                        path = "/Shared Bookmarks";
+                    }
+                }
+            }
+            return path +"/"+ model.get("name");
         }
     });
 

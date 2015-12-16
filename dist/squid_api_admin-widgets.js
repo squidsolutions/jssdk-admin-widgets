@@ -955,6 +955,10 @@ function program1(depth0,data) {
             } 
             return roles;
         },
+        
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
 
         renderModelView: function(modelView) {
             this.$el.html(modelView.el);
@@ -978,7 +982,7 @@ function program1(depth0,data) {
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
-                    model.label = item.get("name");
+                    model.label = this.getModelLabel(item);
                     model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
 
@@ -1206,6 +1210,38 @@ function program1(depth0,data) {
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+        },
+        
+        getModelLabel : function(model) {
+            var path = model.get("path");
+            var user = path.indexOf("/USER/");
+            if (user === 0) {
+                path = path.substring(6);
+                var userId;
+                if (path.indexOf("/") > -1) {
+                    userId = path.substring(0,path.indexOf("/"));
+                    path = path.substring(path.indexOf("/"));
+                } else {
+                    userId = path;
+                    path = "";
+                }
+                if (userId === squid_api.model.login.get("oid")) {
+                    // self
+                    path = "/My Bookmarks"+path;
+                } else {
+                    path = "/Others Bookmarks"+path;
+                }
+            } else {
+                var shared = path.indexOf("/SHARED");
+                if (shared === 0) {
+                    if (path.length>7) {
+                        path = "/Shared Bookmarks/"+path.substring(8);
+                    } else {
+                        path = "/Shared Bookmarks";
+                    }
+                }
+            }
+            return path +"/"+ model.get("name");
         }
     });
 
@@ -2528,44 +2564,13 @@ function program1(depth0,data) {
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-
-        render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
-            var jsonData = {
-                collectionLoaded : !this.collectionLoading,
-                collection : this.collection,
-                roles : null,
-                createRole : null,
-                typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true,
-                type : this.type
-            };
-            if (this.collection) {
-                jsonData.collection = {"models" : []};
-                jsonData.createRole = this.getCreateRole();
-                
-                for (i=0; i<this.collection.size(); i++) {
-                    var item = this.collection.at(i);
-                    var model = {};
-                    model.label = item.get("name");
-                    model.value = item.get("oid");
-                    model.roles = this.getModelRoles(item);
-
-                    if (item.get("dynamic")) {
-                        model.label = "~ " + model.label;
-                    }
-
-                    // detect selected model
-                    if (model.value === this.config.get(this.type.toLowerCase())) {
-                        model.selected = true;
-                    }
-                    jsonData.collection.models.push(model);
-                }
+        
+        getModelLabel: function(model) {
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
             }
-            // print template
-            var html = this.template(jsonData);
-            this.$el.html(html);
-            return this;
         }
 
     });
