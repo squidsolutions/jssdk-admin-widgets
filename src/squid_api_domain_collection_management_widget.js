@@ -82,44 +82,13 @@
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-
-        render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
-            var jsonData = {
-                collectionLoaded : !this.collectionLoading,
-                collection : this.collection,
-                roles : null,
-                createRole : null,
-                typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true,
-                type : this.type
-            };
-            if (this.collection) {
-                jsonData.collection = {"models" : []};
-                jsonData.createRole = this.getCreateRole();
-                
-                for (i=0; i<this.collection.size(); i++) {
-                    var item = this.collection.at(i);
-                    var model = {};
-                    model.label = item.get("name");
-                    model.value = item.get("oid");
-                    model.roles = this.getModelRoles(item);
-
-                    if (item.get("dynamic")) {
-                        model.label = "~ " + model.label;
-                    }
-
-                    // detect selected model
-                    if (model.value === this.config.get(this.type.toLowerCase())) {
-                        model.selected = true;
-                    }
-                    jsonData.collection.models.push(model);
-                }
+        
+        getModelLabel: function(model) {
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
             }
-            // print template
-            var html = this.template(jsonData);
-            this.$el.html(html);
-            return this;
         }
 
     });

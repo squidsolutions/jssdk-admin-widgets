@@ -174,6 +174,10 @@
             }
             return roles;
         },
+        
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
 
         renderModelView: function(modelView) {
             this.$el.html(modelView.el);
@@ -197,7 +201,7 @@
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
-                    model.label = item.get("name");
+                    model.label = this.getModelLabel(item);
                     model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
 
