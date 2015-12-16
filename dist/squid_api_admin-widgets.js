@@ -2656,8 +2656,7 @@ function program1(depth0,data) {
             var me = this;
 
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-<<<<<<< HEAD
-            
+
             this.config.on("change:project", function (config) {
                 var projectId = config.get("project");
                 if (projectId) {
@@ -2670,10 +2669,7 @@ function program1(depth0,data) {
                     });
                 }
             });
-            
-=======
 
->>>>>>> 288f72c7f41911c6f15f777226cdd19aa2cd517b
             // set the collection
             me.collectionLoading = true;
             squid_api.getCustomer().then(function(customer) {
