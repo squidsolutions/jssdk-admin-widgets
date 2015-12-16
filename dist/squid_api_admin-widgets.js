@@ -161,12 +161,32 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n	<button class=\"form-control squid-api-button-view\">\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </button>\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n    <button class=\"form-control squid-api-button-view\">\n        ";
+  buffer += "\n        ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </button>\n";
+    + "\n    ";
+  return buffer;
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    	";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " loading   \n    ";
   return buffer;
   }
 
@@ -652,14 +672,16 @@ function program1(depth0,data) {
         initListeners: function() {
             var me = this;
             if (me.collection) {
-            this.selectedModel = new this.collection.model();
-            this.selectedModel.set("id", this.collection.parent.get("id"));
-            console.log(this.selectedModel.urlRoot());
-            this.listenTo(this.collection, "sync remove", this.render);
-            this.listenTo(this.selectedModel, "change", function(model) {
-                this.collection.add(model, { merge : true });
-                this.render();
-            });
+                if (!this.selectedModel) {
+                    this.selectedModel = new this.collection.model();
+                    this.selectedModel.set("id", this.collection.parent.get("id"));
+                }
+                console.log(this.selectedModel.urlRoot());
+                this.listenTo(this.collection, "sync remove", this.render);
+                this.listenTo(this.selectedModel, "change", function(model) {
+                    this.collection.add(model, { merge : true });
+                    this.render();
+                });
             }
             me.render();
         },
@@ -1012,6 +1034,43 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    root.squid_api.view.BookmarkSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    jsonData.visible = true;
+                    if (this.selectedModel.get("oid")) {
+                        // always display default label
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(template(jsonData));
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.BookmarksManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api, template) {
@@ -1242,57 +1301,6 @@ function program1(depth0,data) {
             return this;
         }
 
-    });
-
-    return View;
-}));
-
-(function (root, factory) {
-    root.squid_api.view.ButtonView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
-
-}(this, function (Backbone, squid_api, template) {
-
-    var View = Backbone.View.extend({
-
-        configAttribute : null,
-        parent : null,
-
-        initialize: function(options) {
-            this.config = squid_api.model.config;
-        	if (options.configAttribute) {
-                this.configAttribute = options.configAttribute;
-            }
-            if (options.parent) {
-                this.parent = options.parent;
-            }
-            if (this.parent) {
-                this.listenTo(this.config, "change:" + this.parent.toLowerCase(), this.render);
-            } else {
-                this.render();
-            }
-            if (this.configAttribute) {
-                this.listenTo(this.config, "change:" + this.configAttribute.toLowerCase(), this.render);
-            }
-        },
-
-        render: function() {
-            var label = this.configAttribute;
-            var jsonData = {
-                label : label,
-                visible : false,
-            };
-            if (this.parent) {
-                if (this.config.get(this.parent.toLowerCase()) !== null) {
-                	jsonData.visible = true;
-                }
-            } else {
-                jsonData.visible = true;
-            }
-
-            this.$el.html(template(jsonData));
-
-            return this;
-        }
     });
 
     return View;
@@ -2361,6 +2369,43 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    root.squid_api.view.DomainSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.DomainCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    jsonData.visible = true;
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(template(jsonData));
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -2444,6 +2489,19 @@ function program1(depth0,data) {
 
             this.modelView = squid_api.view.ProjectModelManagementWidget;
             
+            this.config.on("change:project", function (config) {
+                var projectId = config.get("project");
+                if (projectId) {
+                    // set selected model
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).done(function(model) {
+                            me.selectedModel = model;
+                            me.initListeners();
+                        });
+                    });
+                }
+            });
+            
             // set the collection
             me.collectionLoading = true;
             squid_api.getCustomer().then(function(customer) {
@@ -2492,6 +2550,40 @@ function program1(depth0,data) {
                 }
             }
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ProjectSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ProjectCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : true,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            }
+
+            this.$el.html(template(jsonData));
+
+            return this;
+        }
+
     });
 
     return View;
