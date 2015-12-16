@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.ProjectCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
+    root.squid_api.view.ProjectCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_project_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -8,12 +8,13 @@
         typeLabelPlural : "Projects",
         type : "project",
         modelView : null,
+        template: template,
 
         init : function() {
             var me = this;
 
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-            
+
             // set the collection
             me.collectionLoading = true;
             squid_api.getCustomer().then(function(customer) {

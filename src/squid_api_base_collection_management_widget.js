@@ -83,6 +83,11 @@
                 var value = $(event.target).parent('tr').attr('data-attr');
                 this.config.set(this.type.toLowerCase(), value);
             },
+            "click .refresh": function(event) {
+                var id = $(event.target).parents('tr').attr("data-attr");
+                var model = this.collection.get(id);
+                squid_api.refreshObjectType(model);
+            },
             "click .create": function() {
                 var me = this;
                 this.selectedModel.clear({"silent" : true});
@@ -105,11 +110,6 @@
                         me.render();
                     }
                 }));
-            },
-            "click .refresh": function(event) {
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                squid_api.refreshObjectType(model);
             },
             "click .delete": function(event) {
                 var id = $(event.target).parents('tr').attr("data-attr");
@@ -152,6 +152,7 @@
                         roles.create = true;
                         roles.edit = true;
                         roles.delete = true;
+                        roles.refresh = true;
                     }
                 }
             }

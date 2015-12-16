@@ -59,7 +59,7 @@
                 "editorClass" : " ",
                 "options" : [],
                 "position" : 5,
-                "fieldClass" : "dbSchemas"
+                "fieldClass" : "dbSchemas checkbox"
             }
     };
 
@@ -246,7 +246,7 @@
                     "label" : "Period"
                 } ],
                 "position" : 1,
-                "fieldClass" : "type"
+                "fieldClass" : "type checkbox"
             },
             "parentId" : {
                 "title" : " ",
