@@ -26,9 +26,11 @@
             });
         },
         additionalEvents: {
-            "click .relation": function() {
+            "click .relation": function(event) {
                 var me = this;
+                var modelValue = $(event.target).parents('tr').attr("data-attr");
                 this.renderRelationView(new this.relationView({
+                    modelValue : modelValue,
                     resetParentView : function() {
                         me.render();
                     }

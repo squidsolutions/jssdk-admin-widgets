@@ -1,0 +1,17 @@
+.squid-api-Relation-collection-management .domain {
+    min-width: 60px;
+    display: inline-block;
+    position: relative;
+    padding: 0px;
+    top: -3px;
+    left: 20px;
+    text-align: left;
+}
+.squid-api-Relation-collection-management .leftIcon, .squid-api-Relation-collection-management .rightIcon {
+    width: 95px;
+    display: inline-block;
+}
+
+.squid-api-Relation-collection-management .rightIcon {
+    width: 120px;
+}

@@ -12,6 +12,7 @@
         comparator : null,
         parentType : null,
         modelView : null,
+        modelValue : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -36,6 +37,10 @@
                 }
                 if (options.resetParentView) {
                     this.resetParentView = options.resetParentView;
+                }
+                // used if we want to pass a model id from a previous collection
+                if (options.modelValue) {
+                    this.modelValue = options.modelValue;
                 }
             }
 
