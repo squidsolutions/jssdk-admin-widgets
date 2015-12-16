@@ -774,6 +774,9 @@ function program1(depth0,data) {
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
                 }
+                if (options.onSelect) {
+                    this.onSelect = options.onSelect;
+                }
             }
 
             this.init(options);
@@ -817,6 +820,9 @@ function program1(depth0,data) {
             "click .select": function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 this.config.set(this.type.toLowerCase(), value);
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
             },
             "click .refresh": function(event) {
                 var id = $(event.target).parents('tr').attr("data-attr");
