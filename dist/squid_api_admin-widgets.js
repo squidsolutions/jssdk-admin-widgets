@@ -1177,6 +1177,7 @@ function program1(depth0,data) {
                         });
                     });
                 } else {
+                    me.selectedModel = null;
                     me.initListeners();
                 }
             };
@@ -1194,16 +1195,13 @@ function program1(depth0,data) {
                                 project.get("bookmarks").load().done(function(collection) {
                                     me.collectionLoading = false;
                                     me.collection = collection;
-                                    me.initListeners();
+                                    setSelectedModel(projectId, bookmarkId);
                                 }).fail(function() {
                                     me.collectionLoading = false;
                                     me.render();
                                 });
                             });
                         });
-                        if (config.hasChanged("bookmark")) {
-                            setSelectedModel(projectId, bookmarkId);
-                        }
                     }
                     me.render();
                 } else if (config.hasChanged("bookmark")) {
@@ -1211,6 +1209,11 @@ function program1(depth0,data) {
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+        },
+        
+        getCreateRole: function() {
+            // anyone can create a bookmark
+            return true;
         },
         
         getModelLabel : function(model) {
@@ -2513,6 +2516,7 @@ function program1(depth0,data) {
                         });
                     });
                 } else {
+                    me.selectedModel = null;
                     me.initListeners();
                 }
             };
@@ -2530,16 +2534,13 @@ function program1(depth0,data) {
                                 project.get("domains").load().done(function(collection) {
                                     me.collectionLoading = false;
                                     me.collection = collection;
-                                    me.initListeners();
+                                    setSelectedModel(projectId, domainId);
                                 }).fail(function() {
                                     me.collectionLoading = false;
                                     me.render();
                                 });
                             });
                         });
-                        if (config.hasChanged("domain")) {
-                            setSelectedModel(projectId, domainId);
-                        }
                     }
                     me.render();
                 } else if (config.hasChanged("domain")) {
@@ -2896,75 +2897,6 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
-
-        dataManipulation: function(data) {
-            for (var x in data) {
-                if (typeof(data[x]) == "object") {
-                    for (var y in data[x]) {
-                        if (data[x][y] !== null) {
-                            if (data[x][y].length === 0) {
-                                data[x][y] = null;
-                            }
-                        }
-                    }
-                } else if (data[x].length === 0) {
-                    data[x] = null;
-                }
-            }
-            return data;
-        },
-
-        customDataManipulation: function(data) {
-            return data;
-        },
-
-        events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
-                }
-            },
-            "click .btn-save-form" : function() {
-                var me = this;
-                var error = this.formContent.validate();
-                if (! error) {
-                    // global data manipulation
-                    var data = this.dataManipulation(this.formContent.getValue());
-
-                    // for any custom model manipulation before save
-                    data = this.customDataManipulation(data);
-
-                    // save model
-                    this.model.save(data, {
-                        wait: true,
-                        success: function(model) {
-                            // status update
-                            if (me.cancelCallback) {
-                                me.cancelCallback.call();
-                            }
-                            // call once saved
-                            if (me.onceSaved) {
-                                me.onceSaved(model);
-                            }
-                            me.status.set("message", "Sucessfully saved");
-                        },
-                        error: function(xhr) {
-                            me.status.set("error", xhr);
-                        }
-                    });
-                }
-            }
-        },
-
-        onceSaved: function(model) {
-            // to be overridden from other model management widgets
-            console.log("once saved");
-        },
-
-        formEvents: function() {
-            // to be overridden from other model management widgets
-        },
 
         setSchema: function() {
             var dfd = $.Deferred();

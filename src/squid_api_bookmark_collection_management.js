@@ -25,6 +25,7 @@
                         });
                     });
                 } else {
+                    me.selectedModel = null;
                     me.initListeners();
                 }
             };
@@ -42,16 +43,13 @@
                                 project.get("bookmarks").load().done(function(collection) {
                                     me.collectionLoading = false;
                                     me.collection = collection;
-                                    me.initListeners();
+                                    setSelectedModel(projectId, bookmarkId);
                                 }).fail(function() {
                                     me.collectionLoading = false;
                                     me.render();
                                 });
                             });
                         });
-                        if (config.hasChanged("bookmark")) {
-                            setSelectedModel(projectId, bookmarkId);
-                        }
                     }
                     me.render();
                 } else if (config.hasChanged("bookmark")) {
@@ -59,6 +57,11 @@
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+        },
+        
+        getCreateRole: function() {
+            // anyone can create a bookmark
+            return true;
         },
         
         getModelLabel : function(model) {

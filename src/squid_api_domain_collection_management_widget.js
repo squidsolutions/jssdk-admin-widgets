@@ -30,6 +30,7 @@
                         });
                     });
                 } else {
+                    me.selectedModel = null;
                     me.initListeners();
                 }
             };
@@ -47,16 +48,13 @@
                                 project.get("domains").load().done(function(collection) {
                                     me.collectionLoading = false;
                                     me.collection = collection;
-                                    me.initListeners();
+                                    setSelectedModel(projectId, domainId);
                                 }).fail(function() {
                                     me.collectionLoading = false;
                                     me.render();
                                 });
                             });
                         });
-                        if (config.hasChanged("domain")) {
-                            setSelectedModel(projectId, domainId);
-                        }
                     }
                     me.render();
                 } else if (config.hasChanged("domain")) {
