@@ -55,8 +55,8 @@
                                 me.cancelCallback.call();
                             }
                             // call once saved
-                            if (me.onceSaved) {
-                                me.onceSaved(model);
+                            if (me.onSave) {
+                                me.onSave(model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },
@@ -69,7 +69,7 @@
             }
         },
 
-        onceSaved: function(model) {
+        onSave: function(model) {
             // to be overridden from other model management widgets
             console.log("once saved");
         },

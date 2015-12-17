@@ -14,7 +14,7 @@
             return data;
         },
 
-        onceSaved: function(model) {
+        onSave: function(model) {
             // to be overridden from other model management widgets
             console.log("once saved");
         },
