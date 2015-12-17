@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.DimensionCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.DimensionColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 

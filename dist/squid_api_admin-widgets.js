@@ -828,6 +828,10 @@ function program1(depth0,data) {
 
             this.init(options);
         },
+        
+        init: function(options) {
+            // may be overridden
+        },
 
         initListeners: function() {
             var me = this;
@@ -1520,8 +1524,9 @@ function program1(depth0,data) {
 
                 // update all models at the same time
                 if (changeCount > 0) {
-                    this.collection.saveAll(this.collection.models).then(function(collection, model) {
-
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // force a filters re-computation because dimension selector uses it
+                        me.config.trigger("change:selection");
                     });
                 }
             },
@@ -2407,7 +2412,7 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.DimensionCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.DimensionColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
