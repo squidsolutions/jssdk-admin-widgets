@@ -10,7 +10,7 @@
 
         init : function() {
             var me = this;
-            this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.modelView = squid_api.view.BookmarkModelManagementWidget;
             
             // listen for project/bookmark change
             var setSelectedModel = function(projectId, bookmarkId) {
@@ -57,6 +57,13 @@
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+            
+            // override select event
+            this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
+            this.originalEvents["click .select"] = function(event) {
+                var value = $(event.target).parent('tr').attr('data-attr');
+                squid_api.setBookmarkId(value);
+            };
         },
         
         getCreateRole: function() {
@@ -65,35 +72,39 @@
         },
         
         getModelLabel : function(model) {
+            var name = model.get("name");
             var path = model.get("path");
-            var user = path.indexOf("/USER/");
-            if (user === 0) {
-                path = path.substring(6);
-                var userId;
-                if (path.indexOf("/") > -1) {
-                    userId = path.substring(0,path.indexOf("/"));
-                    path = path.substring(path.indexOf("/"));
-                } else {
-                    userId = path;
-                    path = "";
-                }
-                if (userId === squid_api.model.login.get("oid")) {
-                    // self
-                    path = "/My Bookmarks"+path;
-                } else {
-                    path = "/Others Bookmarks"+path;
-                }
-            } else {
-                var shared = path.indexOf("/SHARED");
-                if (shared === 0) {
-                    if (path.length>7) {
-                        path = "/Shared Bookmarks/"+path.substring(8);
+            if (path) {
+                var user = path.indexOf("/USER/");
+                if (user === 0) {
+                    path = path.substring(6);
+                    var userId;
+                    if (path.indexOf("/") > -1) {
+                        userId = path.substring(0,path.indexOf("/"));
+                        path = path.substring(path.indexOf("/"));
                     } else {
-                        path = "/Shared Bookmarks";
+                        userId = path;
+                        path = "";
+                    }
+                    if (userId === squid_api.model.login.get("oid")) {
+                        // self
+                        path = "/My Bookmarks"+path;
+                    } else {
+                        path = "/Others Bookmarks"+path;
+                    }
+                } else {
+                    var shared = path.indexOf("/SHARED");
+                    if (shared === 0) {
+                        if (path.length>7) {
+                            path = "/Shared Bookmarks/"+path.substring(8);
+                        } else {
+                            path = "/Shared Bookmarks";
+                        }
                     }
                 }
+                name = path +"/"+ name;
             }
-            return path +"/"+ model.get("name");
+            return name;
         }
     });
 

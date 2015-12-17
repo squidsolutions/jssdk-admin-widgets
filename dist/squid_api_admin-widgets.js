@@ -1038,10 +1038,75 @@ function program1(depth0,data) {
             if (options.setConfigOnSave) {
                 this.setConfigOnSave = options.setConfigOnSave;
             }
-            if (options.onceSaved) {
-                this.onceSaved = options.onceSaved;
+            if (options.onSave) {
+                this.onSave = options.onSave;
             }
             this.render();
+        },
+
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (!data[x] || (data[x].length === 0)) {
+                    data[x] = null;
+                }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onSave) {
+                                me.onSave(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
+                    });
+                }
+            }
+        },
+
+        onSave: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
         },
 
         formEvents: function() {
@@ -1101,7 +1166,7 @@ function program1(depth0,data) {
 
         init : function() {
             var me = this;
-            this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.modelView = squid_api.view.BookmarkModelManagementWidget;
             
             // listen for project/bookmark change
             var setSelectedModel = function(projectId, bookmarkId) {
@@ -1148,6 +1213,13 @@ function program1(depth0,data) {
                     setSelectedModel(projectId, bookmarkId);
                 }
             });
+            
+            // override select event
+            this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
+            this.originalEvents["click .select"] = function(event) {
+                var value = $(event.target).parent('tr').attr('data-attr');
+                squid_api.setBookmarkId(value);
+            };
         },
         
         getCreateRole: function() {
@@ -1156,35 +1228,197 @@ function program1(depth0,data) {
         },
         
         getModelLabel : function(model) {
+            var name = model.get("name");
             var path = model.get("path");
-            var user = path.indexOf("/USER/");
-            if (user === 0) {
-                path = path.substring(6);
-                var userId;
-                if (path.indexOf("/") > -1) {
-                    userId = path.substring(0,path.indexOf("/"));
-                    path = path.substring(path.indexOf("/"));
-                } else {
-                    userId = path;
-                    path = "";
-                }
-                if (userId === squid_api.model.login.get("oid")) {
-                    // self
-                    path = "/My Bookmarks"+path;
-                } else {
-                    path = "/Others Bookmarks"+path;
-                }
-            } else {
-                var shared = path.indexOf("/SHARED");
-                if (shared === 0) {
-                    if (path.length>7) {
-                        path = "/Shared Bookmarks/"+path.substring(8);
+            if (path) {
+                var user = path.indexOf("/USER/");
+                if (user === 0) {
+                    path = path.substring(6);
+                    var userId;
+                    if (path.indexOf("/") > -1) {
+                        userId = path.substring(0,path.indexOf("/"));
+                        path = path.substring(path.indexOf("/"));
                     } else {
-                        path = "/Shared Bookmarks";
+                        userId = path;
+                        path = "";
+                    }
+                    if (userId === squid_api.model.login.get("oid")) {
+                        // self
+                        path = "/My Bookmarks"+path;
+                    } else {
+                        path = "/Others Bookmarks"+path;
+                    }
+                } else {
+                    var shared = path.indexOf("/SHARED");
+                    if (shared === 0) {
+                        if (path.length>7) {
+                            path = "/Shared Bookmarks/"+path.substring(8);
+                        } else {
+                            path = "/Shared Bookmarks";
+                        }
                     }
                 }
+                name = path +"/"+ name;
             }
-            return path +"/"+ model.get("name");
+            return name;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+    
+    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
+    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
+    squid_api.model.BookmarkModel.prototype.schema = {
+        "id" : {
+            "title" : " ",
+            "type" : "Object",
+            "subSchema" : {
+                "projectId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "hidden"
+                },
+                "bookmarkId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "form-control"
+                }
+            },
+            "editorClass" : "hidden",
+            "fieldClass" : "id"
+        },
+        "name" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "name"
+        },
+        "description" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "description"
+        },
+        "path" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "path"
+        },
+        "setConfig" : {
+            "type" : "SetConfig",
+            "fieldClass" : "squid-api-set-config",
+            "editorClass" : "form-control"
+        },
+        "config" : {
+            "type" : "JsonTextArea",
+            "title" : "Config",
+            "position" : 1,
+            "fieldClass" : "config",
+            "editorClass" : "form-control",
+            "validators": [
+                 function checkJSON(value, formValues) {
+                     try {
+                         if (value && (typeof value === "string")) {
+                             JSON.parse(value);
+                         }
+                     } catch (e) {
+                         return {
+                             type: 'config',
+                             message: 'Config must be valid JSON'
+                         };
+                     }
+                 }
+             ]
+        }
+    };
+    
+    // Define "setConfig" Custom Editor
+    var setConfigEditor = Backbone.Form.editors.Base.extend({
+
+        tagName: 'button',
+        defaultValue : "Set current config",
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+        },
+        events: {
+            "click" : "setConfig"
+        },
+
+        setConfig: function(event) {
+            var me = this;
+            // prevent redirect
+            event.preventDefault();
+            // collect prerequisites
+            this.form.fields.config.setValue(squid_api.model.config.toJSON());
+        },
+        
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
+        },
+
+        getValue: function() {
+            return this.$el.html();
+        },
+
+        setValue: function(value) {
+            this.$el.html(value);
+        }
+    });
+
+    // Define "jsonTextArea" Custom Editor
+    var jsonTextArea = Backbone.Form.editors.Text.extend({
+
+        tagName: 'textarea',
+
+        /**
+         * Override Text constructor so type property isn't set (issue #261)
+         */
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            this.$el.attr("rows", 3);
+        },
+
+        setValue: function(value) {
+            // beautify json value
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
+            this.$el.val(val);
+        },
+
+        getValue: function() {
+            // transform text value to json
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
+            return json;
+        },
+    });
+    
+    Backbone.Form.editors.JsonTextArea = jsonTextArea;
+    Backbone.Form.editors.SetConfig = setConfigEditor;
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        customDataManipulation: function(data) {
+            return data;
         }
     });
 
@@ -1713,7 +1947,7 @@ function program1(depth0,data) {
             return data;
         },
 
-        onceSaved: function(model) {
+        onSave: function(model) {
             // to be overridden from other model management widgets
             console.log("once saved");
         },
@@ -2069,118 +2303,6 @@ function program1(depth0,data) {
             }
     };
 
-    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
-    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
-    squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
-        "name" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "name"
-        },
-        "description" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "description"
-        },
-        "path" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "path"
-        },
-        "config" : {
-            "type" : "JsonTextArea",
-            "template" : _.template('\
-                            <div>\<div>\
-                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
-                            </div>\<label for="<%= editorId %>">\
-                                <% if (titleHTML){ %><%= titleHTML %>\
-                                <% } else { %><%- title %><% } %>\
-                              </label>\
-                              <div>\
-                                <span data-editor></span>\
-                                <div class="error-text" data-error></div>\
-                                <div class="error-help"><%= help %></div>\
-                              </div>\
-                            </div>\
-                          ', null, null),
-            "title" : "Config",
-            "position" : 1,
-            "fieldClass" : "config",
-            "editorClass" : "form-control",
-            "validators": [
-                 function checkJSON(value, formValues) {
-                     try {
-                         if (value && (typeof value === "string")) {
-                             JSON.parse(value);
-                         }
-                     } catch (e) {
-                         return {
-                             type: 'config',
-                             message: 'Config must be valid JSON'
-                         };
-                     }
-                 }
-             ]
-        }
-    };
-
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
-
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
-        initialize: function(options) {
-            // Call parent constructor
-            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
-        },
-
-        setValue: function(value) {
-            // beautify json value
-            var val;
-            if (value) {
-                val = JSON.stringify(value, null, 4);
-            }
-            this.$el.val(val);
-        },
-
-        getValue: function() {
-            // transform text value to json
-            var json;
-            var val = this.$el.val();
-            if (val) {
-                try {
-                    json = JSON.parse(val);
-                } catch (e) {
-                    // parse error, ignore to let validation proceed
-                    json = val;
-                }
-            }
-            return json;
-        },
-    });
-
     // Define "dbCheckConnection" Custom Editor
     var dbCheckConnection = Backbone.Form.editors.Base.extend({
 
@@ -2403,7 +2525,6 @@ function program1(depth0,data) {
     });
 
     // Register custom editors
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
@@ -2902,8 +3023,8 @@ function program1(depth0,data) {
                                 me.cancelCallback.call();
                             }
                             // call once saved
-                            if (me.onceSaved) {
-                                me.onceSaved(model);
+                            if (me.onSave) {
+                                me.onSave(model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },
@@ -2916,7 +3037,7 @@ function program1(depth0,data) {
             }
         },
 
-        onceSaved: function(model) {
+        onSave: function(model) {
             // to be overridden from other model management widgets
             console.log("once saved");
         },

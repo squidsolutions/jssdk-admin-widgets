@@ -340,118 +340,6 @@
             }
     };
 
-    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
-    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
-    squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
-        "name" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "name"
-        },
-        "description" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "description"
-        },
-        "path" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "path"
-        },
-        "config" : {
-            "type" : "JsonTextArea",
-            "template" : _.template('\
-                            <div>\<div>\
-                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
-                            </div>\<label for="<%= editorId %>">\
-                                <% if (titleHTML){ %><%= titleHTML %>\
-                                <% } else { %><%- title %><% } %>\
-                              </label>\
-                              <div>\
-                                <span data-editor></span>\
-                                <div class="error-text" data-error></div>\
-                                <div class="error-help"><%= help %></div>\
-                              </div>\
-                            </div>\
-                          ', null, null),
-            "title" : "Config",
-            "position" : 1,
-            "fieldClass" : "config",
-            "editorClass" : "form-control",
-            "validators": [
-                 function checkJSON(value, formValues) {
-                     try {
-                         if (value && (typeof value === "string")) {
-                             JSON.parse(value);
-                         }
-                     } catch (e) {
-                         return {
-                             type: 'config',
-                             message: 'Config must be valid JSON'
-                         };
-                     }
-                 }
-             ]
-        }
-    };
-
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
-
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
-        initialize: function(options) {
-            // Call parent constructor
-            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
-        },
-
-        setValue: function(value) {
-            // beautify json value
-            var val;
-            if (value) {
-                val = JSON.stringify(value, null, 4);
-            }
-            this.$el.val(val);
-        },
-
-        getValue: function() {
-            // transform text value to json
-            var json;
-            var val = this.$el.val();
-            if (val) {
-                try {
-                    json = JSON.parse(val);
-                } catch (e) {
-                    // parse error, ignore to let validation proceed
-                    json = val;
-                }
-            }
-            return json;
-        },
-    });
-
     // Define "dbCheckConnection" Custom Editor
     var dbCheckConnection = Backbone.Form.editors.Base.extend({
 
@@ -674,7 +562,6 @@
     });
 
     // Register custom editors
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
