@@ -74,7 +74,14 @@
         },
 
         formEvents: function() {
-            // to be overridden from other model management widgets
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
+            });
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
+            });
         },
 
         setSchema: function() {

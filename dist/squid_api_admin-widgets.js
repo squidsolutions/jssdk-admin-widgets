@@ -2747,8 +2747,25 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
-            // to be overridden from other model management widgets
+            var me = this;
+            this.formContent.on('dbUrl:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbPassword:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbUser:change', function(form) {
+                me.resetSchemas(form);
+            });
         },
+
+        resetSchemas: function(form) {
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-danger");
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-success");
+            form.$el.find('.dbSchemas').hide();
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-warning");
+        },
+
         customDataManipulation: function(data) {
             if (data.dbCheckConnection) {
                 delete data.dbCheckConnection;
@@ -2963,7 +2980,14 @@ function program1(depth0,data) {
         },
 
         formEvents: function() {
-            // to be overridden from other model management widgets
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
+            });
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
+            });
         },
 
         setSchema: function() {
