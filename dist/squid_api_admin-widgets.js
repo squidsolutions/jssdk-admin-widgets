@@ -1040,71 +1040,6 @@ function program1(depth0,data) {
             this.render();
         },
 
-        dataManipulation: function(data) {
-            for (var x in data) {
-                if (typeof(data[x]) == "object") {
-                    for (var y in data[x]) {
-                        if (data[x][y] !== null) {
-                            if (data[x][y].length === 0) {
-                                data[x][y] = null;
-                            }
-                        }
-                    }
-                } else if (data[x].length === 0) {
-                    data[x] = null;
-                }
-            }
-            return data;
-        },
-
-        customDataManipulation: function(data) {
-            return data;
-        },
-
-        events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
-                }
-            },
-            "click .btn-save-form" : function() {
-                var me = this;
-                var error = this.formContent.validate();
-                if (! error) {
-                    // global data manipulation
-                    var data = this.dataManipulation(this.formContent.getValue());
-
-                    // for any custom model manipulation before save
-                    data = this.customDataManipulation(data);
-
-                    // save model
-                    this.model.save(data, {
-                        wait: true,
-                        success: function(model) {
-                            // status update
-                            if (me.cancelCallback) {
-                                me.cancelCallback.call();
-                            }
-                            // call once saved
-                            if (me.onceSaved) {
-                                me.onceSaved(model);
-                            }
-                            me.status.set("message", "Sucessfully saved");
-                        },
-                        error: function(xhr) {
-                            me.status.set("error", xhr);
-                        }
-                    });
-                }
-            }
-        },
-
-        onceSaved: function(model) {
-            // to be overridden from other model management widgets
-            console.log("once saved");
-        },
-
         formEvents: function() {
             // to be overridden from other model management widgets
         },
@@ -2748,8 +2683,25 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
-            // to be overridden from other model management widgets
+            var me = this;
+            this.formContent.on('dbUrl:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbPassword:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbUser:change', function(form) {
+                me.resetSchemas(form);
+            });
         },
+
+        resetSchemas: function(form) {
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-danger");
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-success");
+            form.$el.find('.dbSchemas').hide();
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-warning");
+        },
+
         customDataManipulation: function(data) {
             if (data.dbCheckConnection) {
                 delete data.dbCheckConnection;
@@ -2898,6 +2850,83 @@ function program1(depth0,data) {
         model : null,
         collectionPluralLabel : null,
 
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (data[x].length === 0) {
+                    data[x] = null;
+                }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onceSaved) {
+                                me.onceSaved(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
+            });
+
+                }
+            }
+        },
+
+        onceSaved: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
+
+        formEvents: function() {
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
+            });
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
+            });
+        },
+        
         setSchema: function() {
             var dfd = $.Deferred();
             var schema = this.model.schema;
