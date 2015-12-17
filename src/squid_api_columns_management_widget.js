@@ -58,8 +58,9 @@
 
                 // update all models at the same time
                 if (changeCount > 0) {
-                    this.collection.saveAll(this.collection.models).then(function(collection, model) {
-
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // force a filters re-computation because dimension selector uses it
+                        me.config.trigger("change:selection");
                     });
                 }
             },
