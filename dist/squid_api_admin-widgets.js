@@ -1,7 +1,7 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
-this["squid_api"]["template"]["squid_api_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["squid_api"]["template"]["squid_api_base_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
@@ -9,193 +9,202 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += " data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"";
-  if (helper = helpers.collectionNotAvailableReason) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.collectionNotAvailableReason); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
+    + "\n                    </button>\n                ";
   return buffer;
   }
 
 function program3(depth0,data) {
   
   
-  return " disabled=\"true\" ";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n            <button type=\"button\"  class=\"create btn btn-default\">\n                <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n            </button>\n        ";
-  return buffer;
-  }
-
-function program7(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(25, program25, data),fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </div>\n    </div>\n        ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                <table style=\"width:100%\">\n                    <tbody ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    </tbody>\n                </table>\n            ";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  
   return " ";
   }
 
-function program11(depth0,data) {
+function program5(depth0,data) {
   
   
   return " class=\"no-values\" ";
   }
 
-function program13(depth0,data) {
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(17, program17, data),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                                ";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                            ";
+  return buffer;
+  }
+function program9(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                            <tr ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
+  buffer += "\n                                    <tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "data-attr=\"";
+  buffer += " data-attr=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.program(23, program23, data),fn:self.program(16, program16, data),data:data});
+    + "\">\n                                        <td class=\"select selected\">\n                                            ";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                                        </td>\n                                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                            </tr>\n                        ";
+  buffer += "\n                                    </tr>\n                                ";
   return buffer;
   }
-function program14(depth0,data) {
+function program10(depth0,data) {
   
   
   return " class=\"selected\" ";
   }
 
-function program16(depth0,data) {
+function program12(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select selected\">\n                                        ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                                    </td>\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  var buffer = "", stack1;
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.refresh), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0['delete']), {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                ";
+  buffer += "\n                                        ";
   return buffer;
   }
+function program13(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  }
+
+function program15(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  }
+
 function program17(depth0,data) {
   
-  
-  return "\n                                        <td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                    ";
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " available\n                                </div>\n                            ";
+  return buffer;
   }
 
 function program19(depth0,data) {
   
-  
-  return "\n                                        <td class=\"refresh\"><i class=\"fa fa-refresh\"></i></td>\n                                    ";
-  }
-
-function program21(depth0,data) {
-  
-  
-  return "\n                                        <td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n                                    ";
-  }
-
-function program23(depth0,data) {
-  
   var buffer = "", stack1, helper;
-  buffer += "\n                                    <td class=\"select\" colspan=\"3\">";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                                ";
-  return buffer;
-  }
-
-function program25(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                <div class=\"no-data\">No ";
-  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " Available</div>\n            ";
-  return buffer;
-  }
-
-function program27(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n            <div class=\"parent-missing\">\n			<i class=\"glyphicon glyphicon-refresh loading\"></i> ";
+  buffer += "\n                        	<div class=\"no-data\">\n                            	";
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " list computing in progress\n            </div>\n        ";
+    + " loading in progress...\n                            </div>\n                        ";
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-model-widget squid-api-model-widget-";
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+    + "-collection-management\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n    <button class=\"form-control selected-model squid-api-action\" ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n    </button>\n    <div id=\"squid-api-";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += ">\n                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(19, program19, data),fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_base_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.headerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.headerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-widget-popup-container\">\n    <div class=\"squid-api-";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "-model-widget-popup squid-api-model-widget-popup\">\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.create), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n	<button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_button_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n	<button class=\"form-control squid-api-button-view\">\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </button>\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
   buffer += "\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionAvailable), {hash:{},inverse:self.program(27, program27, data),fn:self.program(7, program7, data),data:data});
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n    ";
+  return buffer;
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    	";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " loading   \n    ";
+  return buffer;
+  }
+
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
+  buffer += "\n";
   return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, helper, self=this, functionType="function", escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <option ";
+  buffer += "\n                    <option ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " value=\"";
@@ -206,7 +215,7 @@ function program1(depth0,data) {
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</option>\n        ";
+    + "</option>\n                ";
   return buffer;
   }
 function program2(depth0,data) {
@@ -218,7 +227,7 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n            <option value=\"";
+  buffer += "\n                    <option value=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -229,7 +238,7 @@ function program4(depth0,data) {
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</option>\n        ";
+    + "</option>\n                ";
   return buffer;
   }
 function program5(depth0,data) {
@@ -243,173 +252,505 @@ function program5(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-admin-widget-columns-management\">\n    <select multiple=\"multiple\">\n        ";
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n        <div class=\"squid-api-admin-widget-columns-management\">\n            <select multiple=\"multiple\">\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        ";
+  buffer += "\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </select>\n    <div class=\"management\">\n        <button type=\"button\" class=\"btn btn-default add\">\n            Create\n		</button>\n        <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n            Edit\n		</button>\n        <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n            Delete\n		</button>\n        <button type=\"button\" class=\"btn btn-default relations\">\n            Manage Relations\n		</button>\n    </div>\n</div>\n";
+  buffer += "\n            </select>\n            <div class=\"management\">\n                <button type=\"button\" class=\"btn btn-default create\">\n                    Create\n                </button>\n                <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n                    Edit\n                </button>\n                <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n                    Delete\n                </button>\n                <button type=\"button\" class=\"btn btn-default close-modal\" data-dismiss=\"modal\">\n                    Close\n                </button>\n            </div>\n        </div>\n    </div>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
-this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["squid_api"]["template"]["squid_api_domain_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", self=this, escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n		<button type=\"button\"  class=\"btn btn-default\">\n			";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.buttonLabel), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		</button>\n	";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   var buffer = "", stack1, helper;
-  buffer += "\n				";
-  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n			";
+  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                    </button>\n                ";
   return buffer;
   }
 
-function program4(depth0,data) {
-  
-  
-  return "\n				<i class=\"fa fa-plus\"></i>\n			";
-  }
-
-  buffer += "<div class=\"";
-  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.accessible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_relation_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n				<table style=\"width:100%\">\n					";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n				</table>\n				";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n						<tr data-value=";
-  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + ">\n							<td class=\"domain\">";
-  if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n							<td class=\"leftIcon\">\n							";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							</td>\n							<td>\n							";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							</td>\n							<td class=\"domain\">";
-  if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n							<td class=\"edit\"><i class=\"fa fa-pencil-square-o\"></i></td>\n							<td class=\"delete\"><i class=\"fa fa-trash-o\"></i></td>\n						</tr>\n					";
-  return buffer;
-  }
 function program3(depth0,data) {
   
   
-  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n  										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n  										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n								";
+  return " ";
   }
 
 function program5(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							";
-  return buffer;
-  }
-function program6(depth0,data) {
   
-  
-  return "\n								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n								</svg>\n									";
+  return " class=\"no-values\" ";
   }
 
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(19, program19, data),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        ";
+  return buffer;
+  }
 function program8(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  buffer += "\n                                ";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							 	";
+  buffer += "\n                            ";
+  return buffer;
+  }
+function program9(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                    <tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " data-attr=\"";
+  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                                        <td class=\"select selected\">\n                                            ";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                                        </td>\n                                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                    </tr>\n                                ";
+  return buffer;
+  }
+function program10(depth0,data) {
+  
+  
+  return " class=\"selected\" ";
+  }
+
+function program12(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	                                        <td class=\"relation collection-option\"><i class=\"fa fa-link\"></i></td>\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        ";
+  return buffer;
+  }
+function program13(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  }
+
+function program15(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\"></i></td>\n	                                        ";
+  }
+
+function program17(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  }
+
+function program19(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " available\n                                </div>\n                            ";
+  return buffer;
+  }
+
+function program21(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                        	<div class=\"no-data\">\n                            	";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " loading in progress...\n                            </div>\n                        ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-collection-management\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(21, program21, data),fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"squid-api-modal-view squid-api-modal-view-";
+  if (helper = helpers.modalCount) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.modalCount); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      \n  </div>\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_project_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                    </button>\n                ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  
+  return " ";
+  }
+
+function program5(depth0,data) {
+  
+  
+  return " class=\"no-values\" ";
+  }
+
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(19, program19, data),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                                ";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                            ";
+  return buffer;
+  }
+function program9(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                    <tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " data-attr=\"";
+  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                                        <td class=\"select selected\">\n                                            ";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                                        </td>\n                                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                    </tr>\n                                ";
+  return buffer;
+  }
+function program10(depth0,data) {
+  
+  
+  return " class=\"selected\" ";
+  }
+
+function program12(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	                                     ";
+  return buffer;
+  }
+function program13(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  }
+
+function program15(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\"></i></td>\n	                                        ";
+  }
+
+function program17(depth0,data) {
+  
+  
+  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  }
+
+function program19(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " available\n                                </div>\n                            ";
+  return buffer;
+  }
+
+function program21(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                        	<div class=\"no-data\">\n                            	";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " loading in progress...\n                            </div>\n                        ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-collection-management\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(21, program21, data),fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_relation_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                    </button>\n                ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  
+  return " ";
+  }
+
+function program5(depth0,data) {
+  
+  
+  return " class=\"no-values\" ";
+  }
+
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                            ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n            						<tr class=\"no-background\" data-attr=";
+  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + ">\n            							<td class=\"domain\">";
+  if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n            							<td class=\"leftIcon\">\n            							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							</td>\n            							<td class=\"rightIcon\">\n            							";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(19, program19, data),fn:self.program(17, program17, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        <td class=\"domain\">";
+  if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n            							</td>\n                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            						</tr>\n            					";
   return buffer;
   }
 function program9(depth0,data) {
   
   
-  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n									";
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n              										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            								";
   }
 
 function program11(depth0,data) {
   
-  
-  return "\n							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n							</svg>\n								";
-  }
-
-function program13(depth0,data) {
-  
   var buffer = "", stack1;
-  buffer += "\n								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(16, program16, data),fn:self.program(14, program14, data),data:data});
+  buffer += "\n            								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(14, program14, data),fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							";
+  buffer += "\n            							";
   return buffer;
   }
+function program12(depth0,data) {
+  
+  
+  return "\n            								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n            								</svg>\n            									";
+  }
+
 function program14(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n            									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							 	";
+  return buffer;
+  }
+function program15(depth0,data) {
   
-  return "\n									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n									</svg>\n									";
+  
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
   }
 
-function program16(depth0,data) {
+function program17(depth0,data) {
+  
+  
+  return "\n            							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n            							</svg>\n            								";
+  }
+
+function program19(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  buffer += "\n            								";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(22, program22, data),fn:self.program(20, program20, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n							 	";
+  buffer += "\n            							";
+  return buffer;
+  }
+function program20(depth0,data) {
+  
+  
+  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
+  }
+
+function program22(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            									";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            							 	";
   return buffer;
   }
 
-function program18(depth0,data) {
+function program24(depth0,data) {
   
   
-  return "\n				<div class=\"no-relations-available\">\n					no relations available\n				</div>\n			";
+  return "\n                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n                                        ";
   }
 
-  buffer += "<div id=\"squid-api-relations-widget-data-table\">\n	<div class=\"row\">\n		<div class=\"col-md-10\">\n		</div>\n		<div class=\"col-md-2\">\n			<button class=\"form-control add\">add</button>\n		</div>\n	</div>\n	<div class=\"row\">\n		<div class=\"col-md-12\">\n			";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(18, program18, data),fn:self.program(1, program1, data),data:data});
+function program26(depth0,data) {
+  
+  
+  return "\n                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        ";
+  }
+
+function program28(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " available\n                                </div>\n                            ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-collection-management\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		</div>\n	</div>\n</div>\n";
+  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(28, program28, data),fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n    <button type=\"button\" class=\"btn btn-default cancel\">Cancel</button>\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -439,6 +780,688 @@ function program1(depth0,data) {
   buffer += "\n    </tbody>\n</table>\n</div>";
   return buffer;
   });
+(function (root, factory) {
+    root.squid_api.view.BaseCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_collection_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+        template : template,
+        collection : null,
+        config : null,
+        type : null,
+        typeLabelPlural : null,
+        comparator : null,
+        parentType : null,
+        modelView : null,
+        cancelCallback : null,
+        collectionLoading : false,
+
+        initialize: function(options) {
+            this.config = squid_api.model.config;
+            this.status = squid_api.model.status;
+            var me = this;
+
+            if (options) {
+                if (options.type) {
+                    this.type = options.type;
+                }
+                if (options.comparator) {
+                    this.comparator = options.comparator;
+                } else {
+                    // default is : sort by alpha name and dynamic last
+                    this.comparator =  function(a, b) {
+                        var r = me.dynamicComparator(a,b);
+                        if (r === 0) {
+                            r = me.alphaNameComparator(a,b);
+                        }
+                        return r;
+                    };
+                }
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
+                }
+                if (options.onSelect) {
+                    this.onSelect = options.onSelect;
+                }
+            }
+
+            this.init(options);
+        },
+        
+        init: function(options) {
+            // may be overridden
+        },
+
+        initListeners: function() {
+            var me = this;
+            if (me.collection) {
+                if (!this.selectedModel) {
+                    this.selectedModel = new this.collection.model();
+                    this.selectedModel.set("id", this.collection.parent.get("id"));
+                }
+                console.log(this.selectedModel.urlRoot());
+                this.listenTo(this.collection, "sync remove", this.render);
+                this.listenTo(this.selectedModel, "change", function(model) {
+                    this.collection.add(model, { merge : true });
+                    this.render();
+                });
+            }
+            me.render();
+        },
+
+        alphaNameComparator : function(a,b) {
+            var va = a.get("name").toLowerCase();
+            var vb = b.get("name").toLowerCase();
+            if (va < vb) {
+                return -1;
+            }
+            if (va > vb) {
+                return 1;
+            }
+            return 0;
+        },
+
+        dynamicComparator : function(a,b) {
+            var da = a.get("dynamic");
+            var db = b.get("dynamic");
+            return (da === db) ? 0 : da ? 1 : -1;
+        },
+
+        originalEvents: {
+            // select
+            "click .select": function(event) {
+                var value = $(event.target).parent('tr').attr('data-attr');
+                this.config.set(this.type.toLowerCase(), value);
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
+            },
+            "click .refresh": function(event) {
+                var id = $(event.target).parents('tr').attr("data-attr");
+                var model = this.collection.get(id);
+                squid_api.refreshObjectType(model);
+            },
+            "click .create": function() {
+                var me = this;
+                this.selectedModel.clear({"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .edit": function(event) {
+                var me = this;
+                var id = $(event.target).parents('tr').attr("data-attr");
+                var model = this.collection.get(id);
+                this.selectedModel.set(model.attributes, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .delete": function(event) {
+                var me = this;
+                var id = $(event.target).parents('tr').attr("data-attr");
+                var model = this.collection.get(id);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = model.get("objectType") + " with name " + model.get("name") + " has been successfully deleted";
+                                me.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
+            }
+        },
+
+        // Additional Events to be overridden
+        additionalEvents: {
+
+        },
+
+        events : function() {
+            return _.extend({},this.originalEvents,this.additionalEvents);
+        },
+
+        getCreateRole: function() {
+            var role = false;
+            if (this.collection) {
+                if (this.collection.parent) {
+                    var parentRole = this.collection.parent.get("_role");
+                    // write role
+                    if (parentRole === "OWNER" || parentRole === "WRITE") {
+                        role = true;
+                    }
+                }
+            }
+            return role;
+        },
+
+        getModelRoles: function(model) {
+            var roles;
+            var role = model.get("_role");
+            if (!role || (role === "OWNER" || role === "WRITE")) {
+                roles = {"edit" : true, "delete" : true, "refresh" : true};
+            } else {
+                roles = {"edit" : false, "delete" : false, "refresh" : false};
+            }
+            return roles;
+        },
+        
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
+
+        renderModelView: function(modelView) {
+            this.$el.html(modelView.el);
+        },
+
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var jsonData = {
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                roles : null,
+                createRole : null,
+                typeLabelPlural : this.typeLabelPlural,
+                modalHtml : true,
+                type : this.type
+            };
+            if (this.collection) {
+                jsonData.collection = {"models" : []};
+                jsonData.createRole = this.getCreateRole();
+
+                for (i=0; i<this.collection.size(); i++) {
+                    var item = this.collection.at(i);
+                    var model = {};
+                    model.label = this.getModelLabel(item);
+                    model.value = item.get("oid");
+                    model.roles = this.getModelRoles(item);
+
+                    // detect selected model
+                    if (model.value === this.config.get(this.type.toLowerCase())) {
+                        model.selected = true;
+                    }
+                    jsonData.collection.models.push(model);
+                }
+            }
+            // print template
+            var html = this.template(jsonData);
+            this.$el.html(html);
+            return this;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BaseModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        model : null,
+        collectionPluralLabel : null,
+        setConfigOnSave : null,
+
+        initialize: function(options) {
+            this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
+
+            if (options.model) {
+                this.model = options.model;
+            }
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = template;
+            }
+            if (options.cancelCallback) {
+                this.cancelCallback = options.cancelCallback;
+            }
+            if (options.setConfigOnSave) {
+                this.setConfigOnSave = options.setConfigOnSave;
+            }
+            if (options.onSave) {
+                this.onSave = options.onSave;
+            }
+            this.render();
+        },
+
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
+                            }
+                        }
+                    }
+                } else if (!data[x] || (data[x].length === 0)) {
+                    data[x] = null;
+                }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onSave) {
+                                me.onSave(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
+                    });
+                }
+            }
+        },
+
+        onSave: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
+
+        formEvents: function() {
+            // to be overridden from other model management widgets
+        },
+
+        setSchema: function() {
+            var dfd = $.Deferred();
+            // to be overridden from other model management widgets
+            return dfd.resolve(this.schema);
+        },
+
+        render: function() {
+            var me = this;
+            var jsonData = {};
+
+            if (this.model.isNew()) {
+                jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
+            } else {
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
+            }
+
+            this.setSchema().then(function(schema) {
+                // create form
+                me.formContent = new Backbone.Form({
+                    schema: schema,
+                    model: me.model
+                }).render();
+
+                // append save buttons
+                me.$el.html(me.template(jsonData));
+
+                // place the form into a backbone view
+                me.$el.find(".modal-body").html(me.formContent.el);
+
+                // form events
+                me.formEvents();
+            });
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        type : "Bookmark",
+        typeLabelPlural : "Bookmarks",
+        modelView : null,
+
+        init : function() {
+            var me = this;
+            this.modelView = squid_api.view.BookmarkModelManagementWidget;
+            
+            // listen for project/bookmark change
+            var setSelectedModel = function(projectId, bookmarkId) {
+                if (projectId && bookmarkId) {
+                    // set selected model
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(model) {
+                            model.get("bookmarks").load(bookmarkId).then(function(model) {
+                                me.selectedModel = model;
+                                me.initListeners();
+                            });
+                        });
+                    });
+                } else {
+                    me.selectedModel = null;
+                    me.initListeners();
+                }
+            };
+            
+            this.config.on("change", function (config) {
+                var projectId = config.get("project");
+                var bookmarkId = config.get("bookmarkId");
+                if (config.hasChanged("project")) {
+                    // project has changed
+                    me.collectionLoading = true;
+                    if (projectId) {
+                        // set domain collection
+                        squid_api.getCustomer().then(function(customer) {
+                            customer.get("projects").load(projectId).then(function(project) {
+                                project.get("bookmarks").load().done(function(collection) {
+                                    me.collectionLoading = false;
+                                    me.collection = collection;
+                                    setSelectedModel(projectId, bookmarkId);
+                                }).fail(function() {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                });
+                            });
+                        });
+                    }
+                    me.render();
+                } else if (config.hasChanged("bookmark")) {
+                    // domain only has changed
+                    setSelectedModel(projectId, bookmarkId);
+                }
+            });
+            
+            // override select event
+            this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
+            this.originalEvents["click .select"] = function(event) {
+                var value = $(event.target).parent('tr').attr('data-attr');
+                squid_api.setBookmarkId(value);
+            };
+        },
+        
+        getCreateRole: function() {
+            // anyone can create a bookmark
+            return true;
+        },
+        
+        getModelLabel : function(model) {
+            var name = model.get("name");
+            var path = model.get("path");
+            if (path) {
+                var user = path.indexOf("/USER/");
+                if (user === 0) {
+                    path = path.substring(6);
+                    var userId;
+                    if (path.indexOf("/") > -1) {
+                        userId = path.substring(0,path.indexOf("/"));
+                        path = path.substring(path.indexOf("/"));
+                    } else {
+                        userId = path;
+                        path = "";
+                    }
+                    if (userId === squid_api.model.login.get("oid")) {
+                        // self
+                        path = "/My Bookmarks"+path;
+                    } else {
+                        path = "/Others Bookmarks"+path;
+                    }
+                } else {
+                    var shared = path.indexOf("/SHARED");
+                    if (shared === 0) {
+                        if (path.length>7) {
+                            path = "/Shared Bookmarks/"+path.substring(8);
+                        } else {
+                            path = "/Shared Bookmarks";
+                        }
+                    }
+                }
+                name = path +"/"+ name;
+            }
+            return name;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+    
+    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
+    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
+    squid_api.model.BookmarkModel.prototype.schema = {
+        "id" : {
+            "title" : " ",
+            "type" : "Object",
+            "subSchema" : {
+                "projectId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "hidden"
+                },
+                "bookmarkId" : {
+                    "options" : [],
+                    "type" : "Text",
+                    "editorClass" : "form-control"
+                }
+            },
+            "editorClass" : "hidden",
+            "fieldClass" : "id"
+        },
+        "name" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "name"
+        },
+        "description" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "description"
+        },
+        "path" : {
+            "type" : "Text",
+            "editorClass" : "form-control",
+            "fieldClass" : "path"
+        },
+        "setConfig" : {
+            "type" : "SetConfig",
+            "fieldClass" : "squid-api-set-config",
+            "editorClass" : "form-control"
+        },
+        "config" : {
+            "type" : "JsonTextArea",
+            "title" : "Config",
+            "position" : 1,
+            "fieldClass" : "config",
+            "editorClass" : "form-control",
+            "validators": [
+                 function checkJSON(value, formValues) {
+                     try {
+                         if (value && (typeof value === "string")) {
+                             JSON.parse(value);
+                         }
+                     } catch (e) {
+                         return {
+                             type: 'config',
+                             message: 'Config must be valid JSON'
+                         };
+                     }
+                 }
+             ]
+        }
+    };
+    
+    // Define "setConfig" Custom Editor
+    var setConfigEditor = Backbone.Form.editors.Base.extend({
+
+        tagName: 'button',
+        defaultValue : "Set current config",
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+        },
+        events: {
+            "click" : "setConfig"
+        },
+
+        setConfig: function(event) {
+            var me = this;
+            // prevent redirect
+            event.preventDefault();
+            // collect prerequisites
+            this.form.fields.config.setValue(squid_api.model.config.toJSON());
+        },
+        
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
+        },
+
+        getValue: function() {
+            return this.$el.html();
+        },
+
+        setValue: function(value) {
+            this.$el.html(value);
+        }
+    });
+
+    // Define "jsonTextArea" Custom Editor
+    var jsonTextArea = Backbone.Form.editors.Text.extend({
+
+        tagName: 'textarea',
+
+        /**
+         * Override Text constructor so type property isn't set (issue #261)
+         */
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            this.$el.attr("rows", 3);
+        },
+
+        setValue: function(value) {
+            // beautify json value
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
+            this.$el.val(val);
+        },
+
+        getValue: function() {
+            // transform text value to json
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
+            return json;
+        },
+    });
+    
+    Backbone.Form.editors.JsonTextArea = jsonTextArea;
+    Backbone.Form.editors.SetConfig = setConfigEditor;
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        customDataManipulation: function(data) {
+            return data;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BookmarkSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    jsonData.visible = true;
+                    if (this.selectedModel.get("oid")) {
+                        // always display default label
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(template(jsonData));
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
 (function (root, factory) {
     root.squid_api.view.BookmarksManagementWidget = factory(root.Backbone, root.squid_api);
 
@@ -1131,120 +2154,144 @@ function program1(depth0,data) {
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        modelView : squid_api.view.ColumnsModelManagementWidget,
+        events: {
+            "change select" : function(event) {
+                var me = this;
+                var dynamic = [];
+                var nonDynamic = [];
 
-        successHandler: null,
-        errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
-        buttonLabel : null,
-        autoOpen: null,
-        parent: null,
-        schemasCallback : null,
-        beforeRenderHandler : null,
-        modalTitle : null,
-        collection : null,
+                // update edit element
+                var name = $(event.target).find("option:selected:last").html();
+                var value = $(event.target).find("option:selected:last").val();
 
-        initialize: function(options) {
-            var me = this;
+                //update edit / delete buttons
+                if (name !== undefined) {
+                    this.$el.find(".edit").removeAttr("disabled");
+                    this.$el.find(".edit").html("edit " + name);
+                    this.$el.find(".edit").attr("data-value", value);
 
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.successHandler) {
-                this.successHandler = options.successHandler;
-            }
-            if (options.errorHandler) {
-                this.errorHandler = options.errorHandler;
-            }
-            if (options.buttonLabel) {
-                this.buttonLabel = options.buttonLabel;
-            }
-            if (options.autoOpen) {
-                this.autoOpen = options.autoOpen;
-            }
-            if (options.parent) {
-                this.parent = options.parent;
-            }
-            if (options.schemasCallback) {
-                this.schemasCallback = options.schemasCallback;
-            }
-            if (options.beforeRenderHandler) {
-                this.beforeRenderHandler = options.beforeRenderHandler;
-            }
-            if (options.modalTitle) {
-                this.modalTitle = options.modalTitle;
-            }
-            if (options.createOnlyView) {
-                this.createOnlyView = options.createOnlyView;
-            }
-            if (options.type) {
-                this.type = options.type;
-            }
-            if (options.config) {
-            	this.config = options.config;
-            } else {
-            	this.config = squid_api.model.config;
-            }
-            if (options.filters) {
-            	this.filters = options.filters;
-            } else {
-            	this.filters = squid_api.model.filters;
-            }
-            if (options.status) {
-            	this.status = options.status;
-            } else {
-            	this.status = squid_api.model.status;
-            }
-
-            // relations
-            me.relations = new squid_api.model.RelationCollection();
-            me.relations.collectionAvailable = true;
-            me.relations.parentId = {};
-            me.relations.parentId.projectId = squid_api.model.config.get("project");
-            me.relations.fetch({
-                success: function() {
-                    me.relations.fetched = true;
+                    this.$el.find(".delete").removeAttr("disabled");
+                    this.$el.find(".delete").html("delete " + name);
+                    this.$el.find(".delete").attr("data-value", value);
                 }
-            });
-            // domains
-            me.domains = new squid_api.model.DomainCollection();
-            me.domains.collectionAvailable = true;
-            me.domains.parentId = {};
-            me.domains.parentId.projectId =  squid_api.model.config.get("project");
-            me.domains.fetch({
-                success: function() {
-                    me.domains.fetched = true;
+
+                // selected values in the second select box
+                var options1 = $(this.$el.find("select")[1]).find("option");
+                var options2 = $(this.$el.find("select")[0]).find("option");
+
+                // store visually updated attributes
+                for (i=0; i<options1.length; i++) {
+                    nonDynamic.push(options1[i]);
                 }
-            });
-            this.render();
-            if (this.collection) {
-            	if (! this.collection.fetched) {
-                    if (me.config.get("domain")) {
-                        this.collection.parentId = {
-                        	projectId : me.config.get("project"),
-                        	domainId : me.config.get("domain")
-                        };
-                        this.collection.on("beforeFetch", function() {
-                            me.formModal.$el.find("select").prop("disabled", true);
-                        });
-                        this.collection.fetch({
-                            success: function() {
-                                me.formModal.$el.find("select").prop("disabled", false);
+                for (i=0; i<options2.length; i++) {
+                    dynamic.push(options2[i]);
+                }
+                // check nonDynamic Data
+                var model;
+                var changeCount = 0;
+                for (i=0; i<nonDynamic.length; i++) {
+                    model = this.collection.get($(nonDynamic[i]).val());
+                    if (model.get("dynamic") === true) {
+                        changeCount++;
+                        model.set({"dynamic":false},{silent: true});
+                    }
+                }
+                // check dynamic Data
+                for (i=0; i<dynamic.length; i++) {
+                    model = this.collection.get($(dynamic[i]).val());
+                    if (model.get("dynamic") === false) {
+                        changeCount++;
+                        model.set({"dynamic":true},{silent: true});
+                    }
+                }
+
+                // update all models at the same time
+                if (changeCount > 0) {
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // force a filters re-computation because dimension selector uses it
+                        me.config.trigger("change:selection");
+                    });
+                }
+            },
+            "click .create": function() {
+                var me = this;
+                this.selectedModel.clear({"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .edit": function(event) {
+                var me = this;
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                this.selectedModel.set(model.attributes, {"silent" : true});
+                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                this.renderModelView(new this.modelView({
+                    model : this.selectedModel,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            },
+            "click .refresh": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                squid_api.refreshObjectType(model);
+            },
+            "click .delete": function(event) {
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.get(id);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
+                                me.status.set({'message' : message});
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
                             }
                         });
                     }
                 }
             }
-            if (this.parent) {
-                this.listenTo(this.parent, "change:id", this.render);
-            }
         },
 
-        updateForm : function() {
-            var jsonData = this.viewData();
+        init : function() {
+            var me = this;
+            this.modelView = squid_api.view.ColumnsModelManagementWidget;
+            
+            this.config.on("change:domain", function (config) {
+                var projectId = config.get("project");
+                var domainId = config.get("domain");
+                me.collectionLoading = true;
+                if (projectId && domainId) {
+                    // set collection
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(project) {
+                            project.get("domains").load(domainId).done(function(model) {
+                                model.get(me.typeLabelPlural.toLowerCase()).load().done( function(collection) {
+                                    me.collectionLoading = false;
+                                    me.collection = collection;
+                                    me.initListeners();
+                                }).fail(function() {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                });
+                            });
+                        });
+                    });
+                }
+                me.render();
+            });
         },
 
         sortData : function(data) {
@@ -1287,271 +2334,79 @@ function program1(depth0,data) {
 
             return data;
         },
-
+        activatePlugin: function() {
+            this.$el.find("select").bootstrapDualListbox({
+                moveOnSelect: false,
+                showFilterInputs: false,
+                filterTextClear : " ",
+                selectedListLabel: "Active",
+                nonSelectedListLabel: "Inactive",
+                infoText: '({0})',
+                infoTextEmpty: "(0)",
+                selectorMinimalHeight: 250
+            });
+        },
         viewData: function() {
-            var models = this.collection.models;
-            var viewData = {"dynamic" : [], "nonDynamic" : []};
-            for (i=0; i<models.length; i++) {
-                var obj = {};
-                obj.name = models[i].get("name");
-                obj.id = models[i].get("oid");
+            var viewData = {"dynamic" : [], "nonDynamic" : [], "typeLabelPlural" : this.typeLabelPlural};
+            if (this.collection) {
+                var models = this.collection.models;
+                for (i=0; i<models.length; i++) {
+                    var obj = {};
+                    obj.name = models[i].get("name");
+                    obj.id = models[i].get("oid");
 
-                if (models[i].get("parentId")) {
-                    obj.parentId = models[i].get("parentId")[this.model.definition.toLowerCase() + "Id"];
+                    if (models[i].get("parentId")) {
+                        obj.parentId = models[i].get("parentId")[this.type.toLowerCase() + "Id"];
+                    }
+
+                    if (models[i].get("dynamic")) {
+                        viewData.dynamic.push(obj);
+                    } else {
+                        viewData.nonDynamic.push(obj);
+                    }
                 }
 
-                if (models[i].get("dynamic")) {
-                    viewData.dynamic.push(obj);
-                } else {
-                    viewData.nonDynamic.push(obj);
-                }
+                // sort data
+                viewData.dynamic = this.sortData(viewData.dynamic);
+                viewData.nonDynamic = this.sortData(viewData.nonDynamic);
             }
-
-            // sort data
-            viewData.dynamic = this.sortData(viewData.dynamic);
-            viewData.nonDynamic = this.sortData(viewData.nonDynamic);
-
             return viewData;
         },
-
-        refreshChosenColumns: function(model) {
-            var metrics = this.config.get("chosenMetrics");
-            var dimensions = this.config.get("chosenDimensions");
-            if (this.model.definition == "Metric") {
-                if (metrics) {
-                    if (metrics.indexOf(model.get("oid")) > -1) {
-                        // remove metric from chosen array
-                        this.config.set("chosenMetrics", metrics.splice(metrics.indexOf(model.get("oid")), 1));
-                    }
-                }
-            }
-            if (this.model.definition == "Dimension") {
-                if (dimensions) {
-                    if (dimensions.indexOf(model.get("oid")) > -1) {
-                        // remove metric from chosen array
-                        this.config.set("chosenDimensions", metrics.splice(metrics.indexOf(model.get("oid")), 1));
-                    }
-                }
-            }
-        },
-
-        refreshCollection: function() {
-            var me = this;
-            if (me.model.definition == "Dimension") {
-                var period = me.config.get("period");
-                var domain = me.config.get("domain");
-                if (selection) {
-                    var facets = selection.facets;
-                    if (facets) {
-                        var updatedFacets = [];
-                        for (var i=0; i<facets.length; i++) {
-                            if (me.collection.where({oid: facets[i].dimension.oid}).length === 0) {
-                                // reset period if facet not found
-                                if (period) {
-                                    if (period[domain]) {
-                                        if (period[domain].id == facets[i].id) {
-                                            delete period[domain];
-                                            me.config.set("period", period);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            me.config.trigger("change:domain", me.config);
-        },
-
         render : function() {
-            var me = this;
-            var collection = this.collection;
-
-            this.columnsView = Backbone.View.extend({
-                initialize: function() {
-                    this.collection = collection;
-                    this.collection.on("add remove change", this.render, this);
-                },
-                activatePlugin: function() {
-                    this.$el.find("select").bootstrapDualListbox({
-                        moveOnSelect: false,
-                        showFilterInputs: false,
-                        filterTextClear : " ",
-                        selectedListLabel: "Selected " + me.model.definition.toLowerCase() +"s",
-                        nonSelectedListLabel: "Available " + me.model.definition.toLowerCase() +"s",
-                        selectorMinimalHeight: 250
-                    });
-                },
-                events: {
-                    "click .add" : function() {
-                        new squid_api.view.ModelManagementView({
-                            model : new squid_api.model[me.model.definition + "Model"](),
-                            collection : me.collection,
-                            parent : me.parent,
-                            autoOpen : true,
-                            buttonLabel : "add",
-                            successHandler : function() {
-                                squid_api.model.status.set({'message' : me.model.definition +  " successfully created"});
-                                me.collection.add(this);
-                                me.refreshCollection();
-                            }
-                        });
-                    },
-                    "click .edit" : function(event) {
-                        var id = $(event.target).attr("data-value");
-                        var model = me.collection.get(id);
-                        new squid_api.view.ModelManagementView({
-                            model : model,
-                            parent : me.parent,
-                            collection : me.collection,
-                            autoOpen : true,
-                            buttonLabel : "add",
-                            successHandler : function() {
-                                squid_api.model.status.set({'message' : me.model.definition +  " successfully modified"});
-                                me.refreshCollection();
-                            }
-                        });
-                    },
-                    "click .delete" : function(event) {
-                        var id = $(event.target).attr("data-value");
-                        var model = me.collection.get(id);
-                        if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                            console.log("here");
-                            if (true) {
-                                model.destroy({
-                                    success:function(model) {
-                                        var message = model.definition + " with name " + model.get("name") + " has been successfully deleted";
-                                        squid_api.model.status.set({'message' : message});
-                                        me.refreshCollection();
-                                        /* if deleting a dimension/metric, we need to remove it
-                                           from the config if it exists
-                                         */
-                                        me.refreshChosenColumns(model);
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    "click .relations" : function() {
-                        new squid_api.view.RelationModelManagementView({
-                            el : this.el,
-                            buttonLabel : "<i class='fa fa-arrows-h'></i>",
-                            type : "Relation",
-                            modalTitle : "Relation for domain: " + this.domainName,
-                            collection : me.relations,
-                            model : new squid_api.model.RelationModel(),
-                            parent : me.domains,
-                            autoOpen : true,
-                            successHandler : function() {
-                                var message = me.type + " with name " + this.get("name") + " has been successfully modified";
-                                squid_api.model.status.set({'message' : message});
-                            }
-                        });
-                    },
-                    "change select" : function(event) {
-                        var dynamic = [];
-                        var nonDynamic = [];
-
-                        // update edit element
-                        var name = $(event.target).find("option:selected:last").html();
-                        var value = $(event.target).find("option:selected:last").val();
-
-                        //update edit / delete buttons
-                        if (name !== undefined) {
-                            this.$el.find(".edit").removeAttr("disabled");
-                            this.$el.find(".edit").html("edit " + name);
-                            this.$el.find(".edit").attr("data-value", value);
-
-                            this.$el.find(".delete").removeAttr("disabled");
-                            this.$el.find(".delete").html("delete " + name);
-                            this.$el.find(".delete").attr("data-value", value);
-                        }
-
-                        // selected values in the second select box
-                        var options1 = $(this.$el.find("select")[1]).find("option");
-                        var options2 = $(this.$el.find("select")[0]).find("option");
-
-                        // store visually updated attributes
-                        for (i=0; i<options1.length; i++) {
-                            nonDynamic.push(options1[i]);
-                        }
-                        for (i=0; i<options2.length; i++) {
-                            dynamic.push(options2[i]);
-                        }
-                        // check nonDynamic Data
-                        var model;
-                        var changeCount = 0;
-                        for (i=0; i<nonDynamic.length; i++) {
-                            model = this.collection.get($(nonDynamic[i]).val());
-                            if (model.get("dynamic") === true) {
-                                changeCount++;
-                                model.set({"dynamic":false},{silent: true});
-                            }
-                        }
-                        // check dynamic Data
-                        for (i=0; i<dynamic.length; i++) {
-                            model = this.collection.get($(dynamic[i]).val());
-                            if (model.get("dynamic") === false) {
-                                changeCount++;
-                                model.set({"dynamic":true},{silent: true});
-                            }
-                        }
-
-                        // update all models at the same time
-                        if (changeCount > 0) {
-                            this.collection.saveAll(this.collection.models).then(function(collection, model) {
-                                me.refreshCollection();
-                            });
-                        }
-                    }
-                },
-                render: function() {
-                    this.$el.html(template(me.viewData()));
-                    this.activatePlugin();
-                    return this;
-                }
-            });
-
-            // instantiate a new modal view, set the content & automatically open
-            if (this.formModal) {
-                this.formModal.open();
-            } else {
-                this.formModal = new Backbone.BootstrapModal({
-                    content: new this.columnsView(),
-                    cancelText: "close",
-                    title: me.type
-                });
-                this.formModal.open();
-            }
-
-            // modal wrapper class
-            $(this.formModal.el).addClass(this.modalElementClassName);
-
-            // modal definition class
-            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition + "-primary");
-
-            // on cancel
-            this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
-            });
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).one('hidden.bs.modal', function () {
-                me.closeModal();
-            });
-            $(this.formModal.el).find(".close").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.formModal.el).find(".cancel").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-        },
-        closeModal : function() {
-            this.formModal.close();
-            this.formModal.remove();
+            this.$el.html(template(this.viewData()));
+            this.activatePlugin();
+            return this;
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ColumnsModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_model_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        customDataManipulation: function(data) {
+            if (data.type.length === 0) {
+                data.type = "INDEX";
+            } else {
+                data.type = data.type[0];
+            }
+            return data;
+        },
+
+        onSave: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
+
+        formEvents: function() {
+            // to be overridden from other model management widgets
+        }
+
     });
 
     return View;
@@ -1606,13 +2461,19 @@ function program1(depth0,data) {
                 "position" : 3,
                 "fieldClass" : "dbPassword"
             },
+            "dbCheckConnection" : {
+                "type" : "DbCheckConnection",
+                "fieldClass" : "squid-api-check-db-connection",
+                "editorClass" : "form-control",
+                "position" : 4
+            },
             "dbSchemas" : {
                 "title" : "Database Schemas",
                 "type" : "Checkboxes",
                 "editorClass" : " ",
                 "options" : [],
-                "position" : 4,
-                "fieldClass" : "dbSchemas"
+                "position" : 5,
+                "fieldClass" : "dbSchemas checkbox"
             }
     };
 
@@ -1799,7 +2660,7 @@ function program1(depth0,data) {
                     "label" : "Period"
                 } ],
                 "position" : 1,
-                "fieldClass" : "type"
+                "fieldClass" : "type checkbox"
             },
             "parentId" : {
                 "title" : " ",
@@ -1834,7 +2695,8 @@ function program1(depth0,data) {
                     "value" : {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value"
+                        "title" : "Expression Value",
+                        "validators": ['required']
                     }
                 },
                 "position" : 3,
@@ -1892,116 +2754,77 @@ function program1(depth0,data) {
             }
     };
 
-    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
-    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
-    squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
-        "name" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "name"
-        },
-        "description" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "description"
-        },
-        "path" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "path"
-        },
-        "config" : {
-            "type" : "JsonTextArea",
-            "template" : _.template('\
-                            <div>\<div>\
-                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
-                            </div>\<label for="<%= editorId %>">\
-                                <% if (titleHTML){ %><%= titleHTML %>\
-                                <% } else { %><%- title %><% } %>\
-                              </label>\
-                              <div>\
-                                <span data-editor></span>\
-                                <div class="error-text" data-error></div>\
-                                <div class="error-help"><%= help %></div>\
-                              </div>\
-                            </div>\
-                          ', null, null),
-            "title" : "Config",
-            "position" : 1,
-            "fieldClass" : "config",
-            "editorClass" : "form-control",
-            "validators": [
-                 function checkJSON(value, formValues) {
-                     try {
-                         if (value && (typeof value === "string")) {
-                             JSON.parse(value);
-                         }
-                     } catch (e) {
-                         return {
-                             type: 'config',
-                             message: 'Config must be valid JSON'
-                         };
-                     }
-                 }
-             ]
-        }
-    };
+    // Define "dbCheckConnection" Custom Editor
+    var dbCheckConnection = Backbone.Form.editors.Base.extend({
 
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
+        tagName: 'button',
+        defaultValue : "Check Connection",
 
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
+
+            this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
+            this.login = squid_api.model.login;
+        },
+        events: {
+            "click" : "checkConnection"
         },
 
-        setValue: function(value) {
-            // beautify json value
-            var val;
-            if (value) {
-                val = JSON.stringify(value, null, 4);
+        checkConnection: function(event) {
+            var me = this;
+
+            // prevent redirect
+            event.preventDefault();
+            // add class for spinning wheel
+            this.$el.addClass("in-progress");
+            // collect prerequisites
+            var dburl = this.form.fields.dbUrl.getValue();
+            var dbPassword =  this.form.fields.dbPassword.getValue();
+            var dbUser = this.form.fields.dbUser.getValue();
+            var projectId = this.form.fields.id.getValue().projectId;
+            var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
+            if (projectId) {
+                url = url + "&projectId="+projectId;
             }
-            this.$el.val(val);
+
+            $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (response) {
+                    me.status.set({"error":null});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-danger");
+                    me.$el.addClass("btn-success");
+                    me.form.fields.dbSchemas.editor.setOptions(response.definitions);
+                    me.form.fields.dbSchemas.$el.find("ul").show();
+                },
+                error: function(xhr, textStatus, error){
+                    me.status.set({"error":xhr});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-success");
+                    me.$el.addClass("btn-danger");
+                    me.form.fields.dbSchemas.$el.find("ul").hide();
+                }
+
+            });
+        },
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
         },
 
         getValue: function() {
-            // transform text value to json
-            var json;
-            var val = this.$el.val();
-            if (val) {
-                try {
-                    json = JSON.parse(val);
-                } catch (e) {
-                    // parse error, ignore to let validation proceed
-                    json = val;
-                }
-            }
-            return json;
+            return this.$el.html();
         },
+
+        setValue: function(value) {
+            this.$el.html(value);
+        }
     });
 
     // Define "baseExpressionEditor" Custom Editor
@@ -2055,22 +2878,43 @@ function program1(depth0,data) {
                     // append box if definitions exist
                     if (response.suggestions && response.suggestions.length > 0) {
                         // store offset
-                        var offset = response.filterIndex;
+                        var beginRange = me.$el.prop("selectionStart");
+                        var endRange = me.$el.prop("selectionEnd")-1;
+                        if (response.beginInsertPos !== undefined && response.endInsertPos !== undefined) {
+                            if (response.beginInsertPos<beginRange) {
+                                beginRange = response.beginInsertPos;
+                            }
+                            if (endRange<response.endInsertPos) {
+                                endRange = response.endInsertPos;
+                            }
+                        }
                         // append div
                         me.$el.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
+                        var suggestionList = me.$el.siblings(".squid-api-pre-suggestions").find("ul");
                         for (i=0; i<response.suggestions.length; i++) {
-                            me.$el.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  response.suggestions[i].suggestion + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                            var suggestionDisplay = response.suggestions[i].suggestion;
+                            if (response.suggestions[i].display) {
+                                suggestionDisplay = response.suggestions[i].display;
+                            }
+                            var item = $("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  suggestionDisplay + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                            item.data("suggestion-value",response.suggestions[i].suggestion);
+                            item.appendTo(suggestionList);
                         }
                         me.$el.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
                             var item;
                             if ($(event.target).is("li")) {
-                                item = $(event.target).find(".suggestion").html();
+                                item = $(event.target).data("suggestion-value");
                             } else {
-                                item = $(event.target).parent().find(".suggestion").html();
+                                item = $(event.target).closest("li").data("suggestion-value");
                             }
-                            var str = me.$el.val().substring(0, offset) + item.substring(0);
+                            var value = me.$el.val();
+                            var str = value.substring(0, beginRange);
+                            str += item;
+                            var newPos = str.length;
+                            str += value.substring(endRange+1);
                             me.setValue(str);
                             me.renderDialog();
+                            me.$el[0].setSelectionRange(newPos,newPos);
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
@@ -2097,7 +2941,7 @@ function program1(depth0,data) {
 
     var domainExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -2105,7 +2949,7 @@ function program1(depth0,data) {
     });
     var dimensionExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             data.dimensionId = this.modelId;
             this.performRequest(url, data);
@@ -2114,7 +2958,7 @@ function program1(depth0,data) {
     });
     var metricExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -2122,843 +2966,355 @@ function program1(depth0,data) {
     });
     var relationExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/relations-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
-            data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
-            data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();
+            data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
+            data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
 
         }
     });
 
     // Register custom editors
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
+    Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
 }));
 
 (function (root, factory) {
-    root.squid_api.view.DomainManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.DimensionColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
-
-        createOnlyView : null,
-        config : null,
-        domain : new squid_api.model.DomainModel(),
-        project : new squid_api.model.ProjectModel(),
-
-        initialize: function(options) {
-        	if (options.config) {
-        		this.config = options.config;
-        	} else {
-        		this.config = squid_api.model.config;
-        	}
-            if (options.createOnlyView) {
-                this.createOnlyView = true;
-            }
-            if (options.options) {
-                this.config = options.config;
-            }
-            if (options.status) {
-            	this.status = options.status;
-            } else {
-            	this.status = squid_api.model.status;
-            }
-            this.listenTo(this.config, "change:domain", this.setDomain);
-            this.listenTo(this.config, "change:project", this.setProject);
-            this.render();
-        },
-
-        setProject : function() {
-            var me = this;
-            var projectId = this.config.get("project");
-            this.project.set({"id" : {"projectId" : projectId}});
-            this.project.fetch();
-        },
-
-        setDomain : function() {
-            var me = this;
-            var projectId = this.config.get("project");
-            var domainId = this.config.get("domain");
-            if (domainId) {
-                this.domain.set({"id" : {"projectId" : projectId, "domainId" : domainId}});
-                this.domain.fetch({
-                    error: function(xhr) {
-                        me.status.set({"error":xhr});
-                    }
-                });
-            } else {
-                this.domain.set({"id" : null});
-            }
-        },
-
-        render: function() {
-        	var me = this;
-
-            var viewOptions = {
-                    "el" : this.$el,
-                    type : "Domain",
-                    "model" : this.domain,
-                    "parent" : this.project
-            };
-
-            if (this.createOnlyView) {
-                viewOptions.successHandler = function(value) {
-                    var collection = new squid_api.model.DomainCollection();
-                    collection.create(this);
-                    var message = me.type + " with name " + this.get("name") + " has been successfully created";
-                    me.status.set({'message' : message});
-
-                    if (!value) {
-                        value = this.get("id").domainId;
-                    }
-                    squid_api.model.config.set({
-                        "domain" : value
-                    });
-                    me.config.unset("bookmark");
-                };
-                viewOptions.buttonLabel = "Create a new one";
-                viewOptions.createOnlyView = this.createOnlyView;
-                var modelView = new squid_api.view.ModelManagementView(viewOptions);
-            } else {
-                viewOptions.changeEventHandler = function(value){
-                    if (!value) {
-                        value = this.get("id").domainId;
-                    }
-                    me.config.set({
-                        "domain" : value
-                    });
-                    me.config.unset("bookmark");
-                };
-                // DomainCollectionManagementWidget
-                var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
-            }
-
-            return this;
-        }
+    var View = squid_api.view.ColumnsManagementWidget.extend({
+        type : "Dimension",
+        typeLabelPlural : "Dimensions"
     });
 
     return View;
 }));
 
 (function (root, factory) {
-    root.squid_api.view.ModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_model_management_widget);
+    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_domain_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = Backbone.View.extend({
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
 
-        successHandler: null,
-        errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form",
-        buttonLabel : null,
-        autoOpen: null,
-        parent: null,
-        schemasCallback : null,
-        beforeRenderHandler : null,
-        modalTitle : null,
-        collection : null,
+        typeLabelPlural : "Domains",
+        type : "domain",
+        modelView : null,
+        template : template,
+        collectionLoading : false,
 
-        initialize: function(options) {
+        init : function() {
             var me = this;
 
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
-            }
-            if (options.successHandler) {
-                this.successHandler = options.successHandler;
-            }
-            if (options.errorHandler) {
-                this.errorHandler = options.errorHandler;
-            }
-            if (options.buttonLabel) {
-                this.buttonLabel = options.buttonLabel;
-            }
-            if (options.autoOpen) {
-                this.autoOpen = options.autoOpen;
-            }
-            if (options.parent) {
-                this.parent = options.parent;
-            }
-            if (options.schemasCallback) {
-                this.schemasCallback = options.schemasCallback;
-            }
-            if (options.beforeRenderHandler) {
-                this.beforeRenderHandler = options.beforeRenderHandler;
-            }
-            if (options.afterRenderHandler) {
-                this.afterRenderHandler = options.afterRenderHandler;
-            }
-            if (options.modalTitle) {
-                this.modalTitle = options.modalTitle;
-            }
-            if (options.createOnlyView) {
-                this.createOnlyView = options.createOnlyView;
-            }
-            if (options.collection) {
-                this.collection = options.collection;
-            }
-            if (options.config) {
-                this.config = this.config;
-            } else {
-                this.config = squid_api.model.config;
-            }
-            if (options.login) {
-                this.login = options.login;
-            } else {
-                this.login = squid_api.model.login;
-            }
-            if (options.filters) {
-                this.filters = option.filters;
-            } else {
-                this.filters = squid_api.model.filters;
-            }
-            if (options.getRoles) {
-                this.getRoles = options.getRoles;
-            }
-            if (options.status) {
-                this.status = options.status;
-            } else {
-                this.status = squid_api.model.status;
-            }
-            if (this.model) {
-                this.listenTo(this.model, 'change', this.setSchema);
-            }
-            if (this.parent) {
-                this.listenTo(this.parent, "change:id", this.render);
-            }
+            this.modelView = squid_api.view.BaseModelManagementWidget;
+            this.relationView = squid_api.view.RelationCollectionManagementWidget;
 
-            // Set Form Schema
-            this.setSchema();
-
-            if (this.autoOpen) {
-                this.prepareForm();
-            }
-        },
-
-        manipulateData : function(data) {
-            var modelDefinitionId = this.model.definition.toLowerCase() + "Id";
-
-            if (data.id) {
-                if (data.id.projectId.length === 0) {
-                    data.id.projectId = null;
-                }
-                if (this.config.get("domain") && (this.model.definition == "Metric" || this.model.definition == "Dimension")) {
-                    data.id.domainId = this.config.get("domain");
-                }
-            }
-            if (typeof data.id[modelDefinitionId] !== "undefined" && this.model.definition !== "Project") {
-                if (data.id[modelDefinitionId].length === 0) {
-                    data.id[modelDefinitionId] = null;
-                }
-            }
-
-            // if the definition isn't project, add the projectId
-            if (this.config.get("project") && this.model.definition !== "Project") {
-                var projectId =  this.config.get("project");
-                data.id.projectId = projectId;
-
-                if (data.parentId) {
-                    if (data.parentId[this.model.definition.toLowerCase() + "Id"].length === 0) {
-                        data.parentId = null;
-                    } else {
-                        data.parentId.domainId = this.config.get("domain");
-                        data.parentId.projectId = projectId;
-                    }
-                }
-            }
-
-            // password exception
-            if (typeof data.dbPassword !== "undefined") {
-                if (data.dbPassword.length === 0) {
-                    data.dbPassword = null;
-                }
-            }
-
-            // dimensions exception
-            if (data.type) {
-                if (data.type.length === 0) {
-                    data.type = "INDEX";
-                } else {
-                    data.type = data.type[0];
-                }
-            }
-
-            for (var x in data) {
-                if (x !== "id" && typeof data[x]=="object" && data[x] !== null) {
-                    if (data[x].projectId !== undefined) {
-                        if (data[x].projectId.length === 0) {
-                            data[x].projectId = this.config.get("project");
-                        }
-                    } else {
-                        if (data[x].domainid !== undefined) {
-                            if (data[x].domainid.length === 0) {
-                                data[x].domainid = this.config.get("domain");
-                            }
-                        }
-                    }
-                }
-            }
-
-            return data;
-        },
-
-        setStatusMessage: function(message) {
-            var me = this;
-            setTimeout(function() {
-                me.status.set({'message' : message});
-            }, 1000);
-        },
-
-        saveForm : function(formContent) {
-            var me = this;
-            var invalidExpression = this.formContent.$el.find(".invalid-expression").length > 0;
-
-            // validate form
-            var errors = this.formContent.validate();
-            if (errors) {
-                // if errors, display them & keep modal open
-                me.formModal.preventClose();
-            } else if (! invalidExpression) {
-                // remove all dialogs
-                $(".squid-api-dialog").remove();
-
-                // Save
-                var data = me.manipulateData(this.formContent.getValue());
-                me.model.save(data, {
-                    success: function (model, response) {
-                        // set project ID
-                        me.formContent.setValue("id", {"projectId" : model.get("id").projectId});
-
-                        if (me.model.definition === "Project") {
-                            if (data.dbSchemas.length !== 0) {
-                                $(me.formModal.el).trigger("hidden.bs.modal");
-                            }
-                        } else {
-                            $(me.formModal.el).trigger("hidden.bs.modal");
-                        }
-
-                        // project exception
-                        if (me.model.definition === "Project") {
-                            if (me.schemasCallback) {
-                                me.schemasCallback.call(me);
-                            }
-                        }
-                        if (me.successHandler) {
-                            me.successHandler.call(model);
-                        }
-                    },
-                    error: function (xhr) {
-                        squid_api.model.status.set({"error":xhr});
-
-                        if (me.errorHandler) {
-                            me.errorHandler.call(xhr);
-                        }
-                    }
-                });
-            } else {
-                me.formModal.preventClose();
-            }
-        },
-        resetStatusMessage : function() {
-            this.setStatusMessage("");
-        },
-        renderForm : function() {
-            // called when we want to set the model / schema & render the form via a modal
-            var me = this;
-
-            // set base schema & modal into form
-            this.formContent = new Backbone.Form({
-                schema: me.schema,
-                model: me.model
-            }).render();
-
-            this.formContent.on('dbUrl:change', function(form, dbUrlEditor) {
-                form.$el.find("#btn-check").removeClass("btn-danger");
-                form.$el.find("#btn-check").removeClass("btn-success");
-                form.$el.find('.dbSchemas').hide();
-                form.$el.find('.btn-warning').removeClass("btn-warning");
-            });
-
-            this.formContent.on('dbPassword:change', function(form, dbPasswordEditor) {
-                form.$el.find("#btn-check").removeClass("btn-danger");
-                form.$el.find("#btn-check").removeClass("btn-success");
-                form.$el.find('.dbSchemas').hide();
-                form.$el.find('.btn-warning').removeClass("btn-warning");
-
-            });
-
-            this.formContent.on('dbUser:change', function(form, dbUserEditor) {
-                form.$el.find('#btn-check').removeClass("btn-danger");
-                form.$el.find('#btn-check').removeClass("btn-success");
-                form.$el.find('.dbSchemas').hide();
-                form.$el.find('.modal-footer').find('.btn-warning').removeClass("btn-warning");
-            });
-
-            this.formContent.on('leftId:change', function(form) {
-                var rightText = form.$el.find(".leftId").find("select option:selected").text();
-                form.$el.find(".leftName input").val(rightText);
-            });
-
-            this.formContent.on('rightId:change', function(form) {
-                var rightText = form.$el.find(".rightId").find("select option:selected").text();
-                form.$el.find(".rightName input").val(rightText);
-            });
-
-            var incorrectCredentials = false;
-
-            // render the form into a backbone view
-            this.formView = Backbone.View.extend({
-                model: me.model,
-                parent: me.parent,
-                events: {
-                    "click #btn-check" : function(e) {
-                        var me1 = this;
-                        me1.$el.find('#btn-check').addClass("in-progress");
-                        console.log("Validating DB password");
-                        var dburl = this.$el.find('.dbUrl').find('.form-control').val();
-                        var dbPassword =  this.$el.find('.dbPassword').find('.form-control').val();
-                        var dbUser = this.$el.find('.dbUser').find('.form-control').val();
-                        var projectId = me.config.has("project")?me.config.get("project"):"";
-
-                        $.ajax({
-                            type: "GET",
-                            url: squid_api.apiURL + "/connections/validate" + "?access_token="+me.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
-                            dataType: 'json',
-                            contentType: 'application/json',
-                            success: function (response) {
-                                me.status.set({"error":null});
-                                if (me.schemasCallback) {
-                                    me.schemasCallback.call(me);
-                                }
-                                me1.$el.find('#btn-check').removeClass("in-progress");
-                                me1.$el.find('#btn-check').removeClass("btn-danger");
-                                me1.$el.find('#btn-check').addClass("btn-success");
-                                me1.$el.find('.dbSchemas').show();
-                                me1.$el.find('.modal-footer .btn-warning').removeClass("btn-warning");
-                                incorrectCredentials = false;
-                            },
-                            error: function(xhr, textStatus, error){
-                                me.status.set({"error":xhr});
-                                me1.$el.find('#btn-check').removeClass("in-progress");
-                                me1.$el.find('#btn-check').removeClass("btn-success");
-                                me1.$el.find('#btn-check').addClass("btn-danger");
-                                console.log("Validation failed");
-                                me1.$el.find('.dbSchemas').hide();
-                                me1.$el.find('.modal-footer').find('.ok').addClass("btn-warning");
-                                incorrectCredentials = true;
-                            }
-
+            // listen for project/domain change
+            var setSelectedModel = function(projectId, domainId) {
+                if (projectId && domainId) {
+                    // set selected model
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).then(function(project) {
+                            project.get("domains").load(domainId).done(function(model) {
+                                me.selectedModel = model;
+                                me.initListeners();
+                            });
                         });
-
-                    }
-                },
-                render: function() {
-                    this.$el.html(me.formContent.el);
-
-                    // detect and add dbPassword placeholder
-                    if (me.model.definition == "Project" && me.model.get("dbPasswordLength")) {
-                        var placeholder = "";
-                        for (i=0; i<me.model.get("dbPasswordLength"); i++) {
-                            placeholder = placeholder + "*";
-                        }
-                        this.$el.find("input[name*='dbPassword']").attr("placeholder", placeholder);
-                    }
-                    if (this.model.definition == "Relation") {
-                        if (this.model.isNew()) {
-                            // by default set the current domain as the leftId
-                            this.$el.find(".leftId select").val(me.config.get("domain"));
-
-                            var leftName = this.$el.find(".leftId select option:selected").text();
-                            this.$el.find(".leftName input").val(leftName);
-                            var rightName = this.$el.find(".rightId select option:selected").text();
-                            this.$el.find(".rightName input").val(rightName);
-                        }
-                    }
-                    return this;
-                }
-            });
-
-            // modal title
-            var modalTitle;
-            if (this.modalTitle) {
-
-            } else {
-                if (me.model.get("id")) {
-                    modalTitle = "Editing " + me.model.definition;
-                    if (me.model.get("name")) {
-                        modalTitle = modalTitle + ": " + me.model.get("name");
-                    }
-                } else {
-                    modalTitle = "Creating a new " + me.model.definition;
-                }
-            }
-
-            // instantiate a new modal view, set the content & automatically open
-            if (this.formModal) {
-                this.formModal.open();
-            } else {
-                this.formModal = new Backbone.BootstrapModal({
-                    content: new this.formView(),
-                    title: modalTitle
-                });
-                this.formModal.open();
-            }
-
-            // modal wrapper class
-            $(this.formModal.el).addClass(this.modalElementClassName);
-
-            // modal definition class
-            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            // auto focus on the first enabled input element
-            $(this.formContent.el).find('input[type=text],textarea,select').filter(':visible:first').focus();
-
-            // saveForm on 'ok' click
-            $(this.formModal.el).find(".ok").on("click", function() {
-                if(incorrectCredentials === true) {
-                    console.log("Warning popup");
-                    // Show warning.
-                    var PopupView = Backbone.View.extend({
-                        render: function () {
-                            this.$el.html('The connection settings are incorrect. Are you sure you want to continue?');
-                            return this;
-                        }
-                    });
-
-                    var confirmationModal = new Backbone.BootstrapModal({
-                        content: new PopupView(),
-                        title: "Confirmation"
-                    }).open();
-
-                    $(confirmationModal.el).one('hidden.bs.modal', function () {
-                        confirmationModal.close();
-                        confirmationModal.remove();
-                    });
-                    $(confirmationModal.el).find(".close").one("click", function() {
-                        $(confirmationModal.el).trigger("hidden.bs.modal");
-                    });
-                    $(confirmationModal.el).find(".cancel").one("click", function() {
-                        $(confirmationModal.el).trigger("hidden.bs.modal");
-                    });
-                    $(confirmationModal.el).find(".ok").one("click", function() {
-                        me.saveForm();
-                        $(confirmationModal.el).trigger("hidden.bs.modal");
                     });
                 } else {
-                    me.saveForm();
+                    me.selectedModel = null;
+                    me.initListeners();
                 }
-            });
-
-            // hide first div (id)
-            $(this.formModal.el).find("fieldset").first().find("div").first().hide();
-
-            // on cancel
-            this.formModal.on('cancel', function() {
-                $(".squid-api-dialog").remove();
-                me.resetStatusMessage();
-            });
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).one('hidden.bs.modal', function () {
-                me.closeModal();
-                if ($(".squid-api-pre-suggestions").hasClass('ui-dialog-content')) {
-                    $(".squid-api-pre-suggestions").dialog("destroy").remove();
-                }
-            });
-            $(this.formModal.el).find(".close").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.formModal.el).find(".cancel").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-        },
-
-        closeModal : function() {
-            this.formModal.close();
-            this.formModal.remove();
-        },
-
-        prepareForm: function() {
-            // obtain schema values if project
-            if (this.schemasCallback) {
-                this.schemasCallback.call(this);
-            }
-            if (this.beforeRenderHandler) {
-                this.beforeRenderHandler(this.model);
-            }
-            this.renderForm();
-            if (this.afterRenderHandler) {
-                this.afterRenderHandler.call(this);
-            }
-        },
-
-        events: {
-            "click button" : function() {
-                if (! this.autoOpen) {
-                    // reset model defaults
-                    this.model.clear().set(this.model.defaults);
-                    this.prepareForm();
-                }
-            }
-        },
-
-        remove: function() {
-            this.undelegateEvents();
-            this.$el.empty();
-            this.stopListening();
-            return this;
-        },
-
-        setSchema: function(property) {
-            var me = this;
-
-            if (this.formContent) {
-                this.formContent.model = me.model;
-            }
-
-            for (var x in me.model.schema) {
-                if (me.model.definition == "Relation") {
-                    if ((x == "leftId" || x == "rightId")) {
-                    	var domains = me.parent.models;
-                    	var domainArray = [];
-                        //reset left & rightId
-                        me.model.schema[x].subSchema.domainId.options = [];
-                        if (me.model.isNew()) {
-                            for (i = 0; i < domains.length; i++) {
-                                domainObj = {};
-                                domainObj.val = domains[i].get("oid");
-                                domainObj.label = domains[i].get("name");
-                                domainArray.push(domainObj);
-                            }
-                            me.model.schema[x].subSchema.domainId.options = domainArray;
-                        } else {
-                        	for (i = 0; i < domains.length; i++) {
-                        		if (me.model.get(x).domainId == domains[i].get("oid")) {
-                        			domainObj = {};
-                        			domainObj.val = domains[i].get("oid");
-                        			domainObj.label = domains[i].get("name");
-                        			domainArray.push(domainObj);
-                        			break;
-                        		}
-                            }
-                            me.model.schema[x].subSchema.domainId.options = domainArray;
-                        }
-                    }
-                }
-                if (me.model.definition == "Project") {
-                    if (me.model.isNew()) {
-                        if (x == "dbSchemas") {
-                            me.model.schema[x].options = [];
-                        }
-                    }
-                }
-                if (me.model.definition === "Project" && x === "dbPassword") {
-                    /*jshint multistr: true */
-                    var checkConnectionText = "Connect To Database";
-                    if (! me.model.isNew()) {
-                        checkConnectionText = "Refresh Schemas";
-                    }
-                    me.model.schema[x].template = _.template('\
-                                    <div>\
-                                      <label for="<%= editorId %>">\
-                                        <% if (titleHTML){ %><%= titleHTML %>\
-                                        <% } else { %><%- title %><% } %>\
-                                      </label>\
-                                      <div>\
-                                        <span data-editor></span>\
-                                        <div class="error-text" data-error></div>\
-                                        <div class="error-help"><%= help %></div>\
-                                      </div>\
-                                      <div>\
-                                          <button class="btn btn-default" id="btn-check" type="button"><span class="glyphicon glyphicon-refresh"></span>' + checkConnectionText + '</button>\
-                                      </div>\
-                                    </div>\
-                                  ', null, null);
-                }
-                if (me.model.definition == "Dimension") {
-                    if (x == "parentId") {
-                        me.model.schema[x].subSchema.dimensionId.type = "Select";
-                        me.model.schema[x].subSchema.dimensionId.options = [{val : null, label : " "}];
-                        for (i=0; i<me.collection.models.length; i++) {
-                            if (me.collection.models[i].get("oid") !== me.model.get("oid")) {
-                                if (me.collection.models[i].get("dynamic") === false) {
-                                    var objD = {};
-                                    objD.val = me.collection.models[i].get("oid");
-                                    objD.label = me.collection.models[i].get("name");
-                                    me.model.schema[x].subSchema.dimensionId.options.push(objD);
-                                }
-                            }
-                        }
-                    }
-                }
-                // when editing a model & using the expression editor always pass the current id
-                if (x == "expression") {
-                    if (! this.model.isNew()) {
-                        if (me.model.schema[x].subSchema) {
-                            if (me.model.schema[x].subSchema.value) {
-                                me.model.schema[x].subSchema.value.modelId = this.model.get("id")[this.model.definition.toLowerCase() + "Id"];
-                            }
-                        }
-                    }
-                }
-            }
-
-            // set schema
-            me.schema = me.model.schema;
-
-            // Render View
-            me.render();
-        },
-
-        render: function(currentView) {
-            var me = this;
-
-            var jsonData = {
-                "view" : "squid-api-admin-widgets-" + me.model.definition,
-                "definition" : me.model.definition,
-                "buttonLabel" : me.buttonLabel,
-                "accessible" : false,
             };
 
-            // Print Button to trigger management widget
-            if (! this.autoOpen) {
-                if (this.parent) {
-                    if (this.parent.get("_role") == "WRITE" || this.parent.get("_role") == "OWNER") {
-                        jsonData.accessible = true;
+            this.config.on("change", function (config) {
+                var projectId = config.get("project");
+                var domainId = config.get("domain");
+                if (config.hasChanged("project")) {
+                    // project has changed
+                    me.collectionLoading = true;
+                    if (projectId) {
+                        // set domain collection
+                        squid_api.getCustomer().then(function(customer) {
+                            customer.get("projects").load(projectId).then(function(project) {
+                                project.get("domains").load().done(function(collection) {
+                                    me.collectionLoading = false;
+                                    me.collection = collection;
+                                    setSelectedModel(projectId, domainId);
+                                }).fail(function() {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                });
+                            });
+                        });
                     }
-                    // print template
-                    this.$el.html(this.template(jsonData));
+                    me.render();
+                } else if (config.hasChanged("domain")) {
+                    // domain only has changed
+                    setSelectedModel(projectId, domainId);
                 }
+            });
+        },
+
+        additionalEvents: {
+            "click .relation": function(event) {
+                var me = this;
+                var modelValue = $(event.target).parents('tr').attr("data-attr");
+                this.renderRelationView(new this.relationView({
+                    modelValue : modelValue,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            }
+        },
+
+        renderRelationView: function(relationView) {
+            this.$el.html(relationView.el);
+        },
+        
+        getModelLabel: function(model) {
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
             }
         }
+
     });
 
     return View;
 }));
 
 (function (root, factory) {
-    root.squid_api.view.ProjectManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.DomainSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.DomainCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    jsonData.visible = true;
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(template(jsonData));
+
+            return this;
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ColumnsManagementWidget.extend({
+        type : "Metric",
+        typeLabelPlural : "Metrics"
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ModalView = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = Backbone.View.extend({
 
-        createOnlyView : null,
-        autoOpen : null,
+        internalView : null,
+        template : null,
+        views : [],
+        el : "body",
 
         initialize: function(options) {
-            if (options.createOnlyView) {
-                this.createOnlyView = true;
-            }
-            if (options.autoOpen) {
-                this.autoOpen = true;
-            }
-            if (options.config) {
-            	this.config = options.config;
+            if (options.template) {
+                this.template = options.template;
             } else {
-            	this.config = squid_api.model.config;
+                this.template = squid_api.template.squid_api_modal_view;
             }
-            if (options.project) {
-            	this.project = options.project;
-            } else {
-            	this.project = squid_api.model.project;
+            if (options.view) {
+                this.view = options.view;
             }
-            if (options.customer) {
-            	this.customer = options.customer;
-            } else {
-            	this.customer = squid_api.model.customer;
-            }
-            this.render();
+            // output base html
+            this.renderBase();
         },
 
-        getDbSchemas : function() {
-            var me = this;
-            if (this.model.get("dbSchemas")) {
-                var request = $.ajax({
-                    type: "GET",
-                    url: squid_api.apiURL + "/projects/" + me.model.get("id").projectId + "/schemas-suggestion?access_token=" + squid_api.model.login.get("accessToken"),
-                    dataType: 'json',
-                    success:function(collection) {
-                        if (me.model.get("dbSchemas").length === 0) {
-                            me.setStatusMessage('please set a db schema');
-                        }
-                        me.schema.dbSchemas.options = collection.definitions;
-                        me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                    },
-                    error: function(data) {
-                        me.setStatusMessage(data.responseJSON.error);
-                    }
-                });
-            } else if (this.formContent) {
-                var formData = this.formContent.getValue();
-                if (formData.dbUrl.length > 0 && formData.dbUser.length > 0) {
-                    $.ajax({
-                        type: "GET",
-                        url: squid_api.apiURL + "/connections/validate" + "?access_token="+squid_api.model.login.get("accessToken")+"&projectId="+formData.projectId+"&url="+formData.dbUrl+"&username="+ formData.dbUser +"&password=" + encodeURIComponent(formData.dbPassword),
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        success: function (collection) {
-                            me.schema.dbSchemas.options = collection.definitions;
-                            me.formContent.fields.dbSchemas.editor.setOptions(collection.definitions);
-                        },
-                        error: function(xhr, textStatus, error){
+        close: function() {
+            this.$el.modal("toggle");
+        },
 
-                        }
-                    });
-                }
-            }
+        renderBase: function() {
+            var viewData = {
+                modalCount : $(".squid-api-modal-view").length
+            };
+            var html = this.template(viewData);
+            // print template
+            this.$el.append(html);
+            // set el
+            this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
         },
 
         render: function() {
             var me = this;
 
-            var viewOptions = {
-                "el" : this.$el,
-                "type" : "Project",
-                "model" : this.project,
-                "parent" : this.customer,
-                "schemasCallback" : this.getDbSchemas,
-                "createOnlyView" : this.createOnlyView,
-                "autoOpen" : this.autoOpen,
-            };
-
-            var successHandler = function(value) {
-                if (!value) {
-                    value = this.get("id").projectId;
-                }
-                if (value === me.config.get("project")) {
-                    me.config.trigger("change:project", me.config);
-                } else {
-                    me.config.clear({silent: true});
-                    // set default config
-                    me.config.set(squid_api.defaultConfig);
-                    // set project in config
-                    me.config.set({"project" : value});
-                }
-                // trigger a customer change
-                me.customer.trigger("change");
-            };
-
-            /* Creating a new project or managing a collection */
-            if (this.createOnlyView) {
-                viewOptions.successHandler = successHandler;
-                viewOptions.buttonLabel = "Create a new one";
-                var modelView = new squid_api.view.ModelManagementView(viewOptions);
-            } else {
-                viewOptions.changeEventHandler  = successHandler;
-                viewOptions.template = squid_api.template.squid_api_project_collection_management_widget;
-                var collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
+            // insert template
+            if (! this.viewInserted) {
+                this.$el.find(".modal-content").html(this.view.el);
+                this.viewInserted = true;
             }
+
+            this.$el.modal();
+            me.view.render();
+
+            return this;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ProjectCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_project_collection_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+
+        typeLabelPlural : "Projects",
+        type : "project",
+        modelView : null,
+        template: template,
+
+        init : function() {
+            var me = this;
+
+            this.modelView = squid_api.view.ProjectModelManagementWidget;
+
+            this.config.on("change:project", function (config) {
+                var projectId = config.get("project");
+                if (projectId) {
+                    // set selected model
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(projectId).done(function(model) {
+                            me.selectedModel = model;
+                            me.initListeners();
+                        });
+                    });
+                }
+            });
+
+            // set the collection
+            me.collectionLoading = true;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load().done(function(collection) {
+                        me.collectionLoading = false;
+                        me.collection = collection;
+                        me.initListeners();
+                }).fail(function() {
+                    me.collectionLoading = false;
+                    me.render();
+                });
+            });
+
+            me.render();
+        }
+
+    });
+
+    return View;
+}));
+
+
+(function (root, factory) {
+    root.squid_api.view.ProjectModelManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+        formEvents: function() {
+            var me = this;
+            this.formContent.on('dbUrl:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbPassword:change', function(form) {
+                me.resetSchemas(form);
+            });
+            this.formContent.on('dbUser:change', function(form) {
+                me.resetSchemas(form);
+            });
+        },
+
+        resetSchemas: function(form) {
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-danger");
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-success");
+            form.$el.find('.dbSchemas').hide();
+            form.$el.find(".squid-api-check-db-connection button").removeClass("btn-warning");
+        },
+
+        customDataManipulation: function(data) {
+            if (data.dbCheckConnection) {
+                delete data.dbCheckConnection;
+            }
+            return data;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ProjectSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ProjectCollectionManagementWidget.extend({
+        
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : true,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection) {
+                if (this.selectedModel) {
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            }
+
+            this.$el.html(template(jsonData));
 
             return this;
         }
@@ -2969,94 +3325,45 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.RelationModelManagementView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_relation_management_widget);
+    root.squid_api.view.RelationCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_relation_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
-    var View = squid_api.view.ModelManagementView.extend({
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        type : "Relation",
+        typeLabelPlural : "Relations",
+        modelView : null,
+        template: template,
 
-        successHandler: null,
-        errorHandler: null,
-        modalElementClassName : "squid-api-admin-widgets-modal-form squid-api-admin-widgets-modal-form-collection",
-        buttonLabel : null,
-        autoOpen: null,
-        parent: null,
-        schemasCallback : null,
-        beforeRenderHandler : null,
-        modalTitle : null,
-        collection : null,
-
-        initialize: function(options) {
-            var me = this;
-
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
+        additionalEvents: {
+            "click .cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
             }
-            if (options.successHandler) {
-                this.successHandler = options.successHandler;
-            }
-            if (options.errorHandler) {
-                this.errorHandler = options.errorHandler;
-            }
-            if (options.buttonLabel) {
-                this.buttonLabel = options.buttonLabel;
-            }
-            if (options.autoOpen) {
-                this.autoOpen = options.autoOpen;
-            }
-            if (options.parent) {
-                this.parent = options.parent;
-            }
-            if (options.schemasCallback) {
-                this.schemasCallback = options.schemasCallback;
-            }
-            if (options.beforeRenderHandler) {
-                this.beforeRenderHandler = options.beforeRenderHandler;
-            }
-            if (options.modalTitle) {
-                this.modalTitle = options.modalTitle;
-            }
-            if (options.createOnlyView) {
-                this.createOnlyView = options.createOnlyView;
-            }
-
-            // Set Form Schema
-            this.setSchema();
-
-            if (this.collection) {
-                this.collection.on("reset change remove sync", this.updateForm, this);
-            }
-            if (this.model) {
-                this.listenTo(this.model, 'change', this.setSchema);
-            }
-            if (this.parent) {
-                this.listenTo(this.parent, "change:id", this.render);
-            }
-            if (this.autoOpen) {
-                this.prepareForm();
-            }
-        },
-
-        updateForm : function() {
-            var jsonData = {"models" : this.viewData()};
-            this.relationView.$el.html(this.template(jsonData));
         },
 
         viewData: function() {
-            var models = squid_api.utils.getDomainRelations(this.collection.models, squid_api.model.config.get("domain"));
-            var arr = [];
-            for (i=0; i<models.length; i++) {
+            var filteredModels = [];
+            for (i=0; i<this.collection.size(); i++) {
+                if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        filteredModels.push(this.collection.at(i));
+                    }
+                }
+            }
+            var models = [];
+            for (ix=0; ix<filteredModels.length; ix++) {
                 var obj = {};
-                obj.oid = models[i].get("oid");
-                obj.leftName = models[i].get("leftName");
-                obj.rightName = models[i].get("rightName");
+                obj.oid = filteredModels[ix].get("oid");
+                obj.leftName = filteredModels[ix].get("leftName");
+                obj.rightName = filteredModels[ix].get("rightName");
+                obj.roles = this.getModelRoles(filteredModels[ix]);
 
                 // set cardinality booleans for handlebar display
-                var leftCardinality = models[i].get("leftCardinality");
-                var rightCardinality = models[i].get("rightCardinality");
+                var leftCardinality = filteredModels[ix].get("leftCardinality");
+                var rightCardinality = filteredModels[ix].get("rightCardinality");
                 if (leftCardinality == "MANY") {
                     obj.leftMany = true;
                 } else if (leftCardinality == "ZERO_OR_ONE") {
@@ -3071,107 +3378,156 @@ function program1(depth0,data) {
                 } else if (rightCardinality == "ONE") {
                     obj.rightOne = true;
                 }
-                arr.push(obj);
+                models.push(obj);
             }
 
-            return arr;
+            return models;
         },
 
-        renderForm : function() {
+        init : function(options) {
             var me = this;
-            var jsonData = {"models" : this.viewData()};
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+            this.modelValue = options.modelValue;
 
-            // render the form into a backbone view
-            this.relationView = Backbone.View.extend({
-                events: {
-                    "click .edit" : function(event) {
-                        var oid = $(event.target).parents("tr").attr("data-value");
-                        var model = me.collection.get(oid);
-                        new squid_api.view.ModelManagementView({
-                            el : $(this),
-                            model : model,
-                            parent : me.parent,
-                            autoOpen : true,
-                            beforeRenderHandler : me.beforeRenderHandler,
-                            buttonLabel : "edit",
-                            successHandler : function() {
-                                var message = "relation successfully modified";
-                                squid_api.model.status.set({'message' : message});
-                            }
-                        });
-                    },
-                    "click .delete" : function(event) {
-                        var oid = $(event.target).parents("tr").attr("data-value");
-                        var model = me.collection.get(oid);
-                        if (confirm("are you sure you want to delete this relation?")) {
-                            if (true) {
-                                model.destroy({
-                                    success:function() {
-                                        $(me.formModal.el).trigger("hidden.bs.modal");
-                                        squid_api.model.status.set({'message' : "relation successfully deleted"});
-                                        me.collection.trigger("change");
-                                    }
-                                });
+            squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
+                me.collection = collection;
+                me.initListeners();
+                me.render();
+            });
+        },
+        render: function() {
+            // store models
+            if (this.collection) {
+                var jsonData = {
+                    models : this.viewData(),
+                    createRole : this.getCreateRole(),
+                    roles : null,
+                    typeLabelPlural : this.typeLabelPlural,
+                    type : this.type,
+                    modalHtml : true
+                };
+
+                // print template
+                var html = this.template(jsonData);
+                this.$el.html(html);
+            }
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.RelationModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseModelManagementWidget.extend({
+
+        model : null,
+        collectionPluralLabel : null,
+
+        dataManipulation: function(data) {
+            for (var x in data) {
+                if (typeof(data[x]) == "object") {
+                    for (var y in data[x]) {
+                        if (data[x][y] !== null) {
+                            if (data[x][y].length === 0) {
+                                data[x][y] = null;
                             }
                         }
-                    },
-                    "click .add" : function(event) {
-                        new squid_api.view.ModelManagementView({
-                            el : $(this),
-                            model : me.model,
-                            parent : me.parent,
-                            autoOpen : true,
-                            beforeRenderHandler : me.beforeRenderHandler,
-                            buttonLabel : "edit",
-                            successHandler : function() {
-                                squid_api.model.status.set({'message' : "relation successfully created"});
-                                me.collection.create(this);
-                            }
-                        });
                     }
-                },
-                render: function() {
-                    this.$el.html(template(jsonData));
-                    return this;
+                } else if (data[x].length === 0) {
+                    data[x] = null;
                 }
+            }
+            return data;
+        },
+
+        customDataManipulation: function(data) {
+            return data;
+        },
+
+        events: {
+            "click .btn-cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            },
+            "click .btn-save-form" : function() {
+                var me = this;
+                var error = this.formContent.validate();
+                if (! error) {
+                    // global data manipulation
+                    var data = this.dataManipulation(this.formContent.getValue());
+
+                    // for any custom model manipulation before save
+                    data = this.customDataManipulation(data);
+
+                    // save model
+                    this.model.save(data, {
+                        wait: true,
+                        success: function(model) {
+                            // status update
+                            if (me.cancelCallback) {
+                                me.cancelCallback.call();
+                            }
+                            // call once saved
+                            if (me.onSave) {
+                                me.onSave(model);
+                            }
+                            me.status.set("message", "Sucessfully saved");
+                        },
+                        error: function(xhr) {
+                            me.status.set("error", xhr);
+                        }
             });
 
-            // instantiate relation view
-            this.relationView = new this.relationView();
+                }
+            }
+        },
 
-            // modal title
-            modalTitle = "Domain Relations";
+        onSave: function(model) {
+            // to be overridden from other model management widgets
+            console.log("once saved");
+        },
 
-            // instantiate a new modal view, set the content & automatically open
-            this.formModal = new Backbone.BootstrapModal({
-                content: this.relationView,
-                cancelText: "close",
-                title: modalTitle
-            }).open();
-
-            // modal wrapper class
-            $(this.formModal.el).addClass(this.modalElementClassName);
-
-            // modal definition class
-            $(this.formModal.el).find(".modal-dialog").addClass(me.model.definition);
-
-            /* bootstrap doesn't remove modal from dom when clicking outside of it.
-               Check to make sure it has been removed whenever it isn't displayed.
-            */
-            $(this.formModal.el).one('hidden.bs.modal', function () {
-                me.closeModal();
+        formEvents: function() {
+            this.formContent.on('leftId:change', function(form) {
+                var rightText = form.$el.find(".leftId").find("select option:selected").text();
+                form.$el.find(".leftName input").val(rightText);
             });
-            $(this.formModal.el).find(".close").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
-            });
-            $(this.formModal.el).find(".cancel").one("click", function() {
-                $(me.formModal.el).trigger("hidden.bs.modal");
+            this.formContent.on('rightId:change', function(form) {
+                var rightText = form.$el.find(".rightId").find("select option:selected").text();
+                form.$el.find(".rightName input").val(rightText);
             });
         },
-        closeModal : function() {
-            this.formModal.close();
-            this.formModal.remove();
+        
+        setSchema: function() {
+            var dfd = $.Deferred();
+            var schema = this.model.schema;
+            var me = this;
+            var project = this.model.get("id").projectId;
+            squid_api.getCustomer().then(function(customer) {
+                customer.get("projects").load(project).then(function(project) {
+                    project.get("domains").load().then(function(domains) {
+                        var arr = [];
+                        for (i=0; i<domains.size(); i++) {
+                            obj = {};
+                            obj.val = domains.at(i).get("oid");
+                            obj.label = domains.at(i).get("name");
+                            arr.push(obj);
+                        }
+                        schema.leftId.subSchema.domainId.options = arr;
+                        schema.rightId.subSchema.domainId.options = arr;
+                        dfd.resolve(schema);
+                    });
+                });
+            });
+            return dfd;
         }
+
     });
 
     return View;
