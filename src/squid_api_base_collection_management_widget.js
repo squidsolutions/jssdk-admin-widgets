@@ -46,6 +46,10 @@
 
             this.init(options);
         },
+        
+        init: function(options) {
+            // may be overridden
+        },
 
         initListeners: function() {
             var me = this;
