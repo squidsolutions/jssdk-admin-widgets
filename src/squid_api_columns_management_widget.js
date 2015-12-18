@@ -94,6 +94,7 @@
                 squid_api.refreshObjectType(model);
             },
             "click .delete": function(event) {
+                var me = this;
                 var id = $(event.target).attr("data-value");
                 var model = this.collection.get(id);
                 if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
