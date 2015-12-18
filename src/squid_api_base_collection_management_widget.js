@@ -6,6 +6,7 @@
     var View = Backbone.View.extend({
         template : template,
         collection : null,
+        selectedModel : null,
         config : null,
         type : null,
         typeLabelPlural : null,
@@ -43,6 +44,76 @@
                     this.onSelect = options.onSelect;
                 }
             }
+            
+            // setup models and listeners
+            
+            var setSelectedModel = function(modelId) {
+                if (this.selectedModel) {
+                    this.stopListening(me.selectedModel);
+                }
+                if (modelId) {
+                    me.collection.load(modelId).then(function(model) {
+                        me.collectionLoading = false;
+                        me.selectedModel = model;
+                        me.listenTo(me.selectedModel, "change", me.render);
+                        me.render();
+                    });
+                } else {
+                    me.collectionLoading = false;
+                    me.render();
+                }
+            };
+            
+            this.config.on("change", function (config) {
+                var selectedId = config.get(me.configSelectedId);
+                if (me.configParentId) {
+                    if (config.hasChanged(me.configParentId)) {
+                        // parent has changed
+                        var parentId = config.get(me.configParentId);
+                        me.collectionLoading = true;
+                        if (parentId) {
+                            // set collection
+                            if (me.collection) {
+                                me.stopListening(me.collection);
+                            }
+                            me.loadCollection(parentId).done(function(collection) {
+                                me.collection = collection;
+                                me.listenTo(me.collection, "sync remove", this.render);
+                                if (config.hasChanged(me.configSelectedId)) {
+                                    // selected also changed
+                                    setSelectedModel(selectedId);
+                                } else {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                }
+                            }).fail(function() {
+                                me.collectionLoading = false;
+                                me.render();
+                            });
+                        }
+                        me.render();
+                    } else if (config.hasChanged(me.configSelectedId)) {
+                        // selection only has changed
+                        setSelectedModel(selectedId);
+                    }
+                } else if (config.hasChanged(me.configSelectedId)) {
+                    // no parent but selection has changed
+                    me.collectionLoading = true;
+                    // set collection
+                    if (me.collection) {
+                        me.stopListening(me.collection);
+                    }
+                    me.loadCollection(null).done(function(collection) {
+                        me.collection = collection;
+                        me.listenTo(me.collection, "sync remove", this.render);
+                        setSelectedModel(selectedId);
+                    }).fail(function() {
+                        me.collectionLoading = false;
+                        me.render();
+                    });
+                    me.render();
+                }
+            });
 
             this.init(options);
         },
@@ -52,27 +123,11 @@
         },
 
         /**
-         * Setup listeners for main collection and selected model.
+         * Load main collection
+         * @return Promise
          */
-        initListeners: function() {
-            if (this.collection) {
-                if (!this.selectedModel) {
-                    // if no selectedModel, init one from the main collection
-                    this.selectedModel = new this.collection.model();
-                    // we have to set the parent composite id to set object hierarchy
-                    this.selectedModel.set("id", this.collection.parent.get("id"));
-                }
-                console.log(this.selectedModel.urlRoot());
-                // listen to collection fetch or removals
-                this.listenTo(this.collection, "sync remove", this.render);
-                // listen to selected model changes
-                this.listenTo(this.selectedModel, "change", function(model) {
-                    // add or update the collection
-                    this.collection.add(model, { merge : true });
-                    this.render();
-                });
-            }
-            this.render();
+        loadCollection : function() {
+            console.error("loadCollection must be overridden");
         },
 
         alphaNameComparator : function(a,b) {
@@ -107,24 +162,34 @@
                 var model = this.collection.get(id);
                 squid_api.refreshObjectType(model);
             },
-            "click .create": function() {
+            "click .create" : function() {
                 var me = this;
-                this.selectedModel.clear({"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
                 }));
             },
-            "click .edit": function(event) {
+            "click .edit" : function(event) {
                 var me = this;
                 var id = $(event.target).parents('tr').attr("data-attr");
                 var model = this.collection.get(id);
-                this.selectedModel.set(model.attributes, {"silent" : true});
+                // listen for model changes
+                me.listenTo(model, "change", function() {
+                    me.render();
+                });
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }

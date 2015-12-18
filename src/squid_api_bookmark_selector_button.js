@@ -15,8 +15,8 @@
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
+                jsonData.visible = true;
                 if (this.selectedModel) {
-                    jsonData.visible = true;
                     if (this.selectedModel.get("oid")) {
                         // always display default label
                     }

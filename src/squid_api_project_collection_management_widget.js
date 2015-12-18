@@ -9,40 +9,20 @@
         type : "project",
         modelView : null,
         template: template,
+        configSelectedId : "project",
+        configParentId : null,
 
         init : function() {
             var me = this;
-
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-
-            this.config.on("change:project", function (config) {
-                var projectId = config.get("project");
-                if (projectId) {
-                    // set selected model
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).done(function(model) {
-                            me.selectedModel = model;
-                            me.initListeners();
-                        });
-                    });
-                }
-            });
-
-            // set the collection
-            me.collectionLoading = true;
-            squid_api.getCustomer().then(function(customer) {
-                customer.get("projects").load().done(function(collection) {
-                        me.collectionLoading = false;
-                        me.collection = collection;
-                        me.initListeners();
-                }).fail(function() {
-                    me.collectionLoading = false;
-                    me.render();
-                });
-            });
-
             me.render();
-        }
+        },
+        
+        loadCollection : function() {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load();
+            });
+        },
 
     });
 

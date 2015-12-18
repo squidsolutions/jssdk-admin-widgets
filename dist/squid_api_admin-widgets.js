@@ -788,6 +788,7 @@ function program1(depth0,data) {
     var View = Backbone.View.extend({
         template : template,
         collection : null,
+        selectedModel : null,
         config : null,
         type : null,
         typeLabelPlural : null,
@@ -825,6 +826,76 @@ function program1(depth0,data) {
                     this.onSelect = options.onSelect;
                 }
             }
+            
+            // setup models and listeners
+            
+            var setSelectedModel = function(modelId) {
+                if (this.selectedModel) {
+                    this.stopListening(me.selectedModel);
+                }
+                if (modelId) {
+                    me.collection.load(modelId).then(function(model) {
+                        me.collectionLoading = false;
+                        me.selectedModel = model;
+                        me.listenTo(me.selectedModel, "change", me.render);
+                        me.render();
+                    });
+                } else {
+                    me.collectionLoading = false;
+                    me.render();
+                }
+            };
+            
+            this.config.on("change", function (config) {
+                var selectedId = config.get(me.configSelectedId);
+                if (me.configParentId) {
+                    if (config.hasChanged(me.configParentId)) {
+                        // parent has changed
+                        var parentId = config.get(me.configParentId);
+                        me.collectionLoading = true;
+                        if (parentId) {
+                            // set collection
+                            if (me.collection) {
+                                me.stopListening(me.collection);
+                            }
+                            me.loadCollection(parentId).done(function(collection) {
+                                me.collection = collection;
+                                me.listenTo(me.collection, "sync remove", this.render);
+                                if (config.hasChanged(me.configSelectedId)) {
+                                    // selected also changed
+                                    setSelectedModel(selectedId);
+                                } else {
+                                    me.collectionLoading = false;
+                                    me.render();
+                                }
+                            }).fail(function() {
+                                me.collectionLoading = false;
+                                me.render();
+                            });
+                        }
+                        me.render();
+                    } else if (config.hasChanged(me.configSelectedId)) {
+                        // selection only has changed
+                        setSelectedModel(selectedId);
+                    }
+                } else if (config.hasChanged(me.configSelectedId)) {
+                    // no parent but selection has changed
+                    me.collectionLoading = true;
+                    // set collection
+                    if (me.collection) {
+                        me.stopListening(me.collection);
+                    }
+                    me.loadCollection(null).done(function(collection) {
+                        me.collection = collection;
+                        me.listenTo(me.collection, "sync remove", this.render);
+                        setSelectedModel(selectedId);
+                    }).fail(function() {
+                        me.collectionLoading = false;
+                        me.render();
+                    });
+                    me.render();
+                }
+            });
 
             this.init(options);
         },
@@ -834,27 +905,11 @@ function program1(depth0,data) {
         },
 
         /**
-         * Setup listeners for main collection and selected model.
+         * Load main collection
+         * @return Promise
          */
-        initListeners: function() {
-            if (this.collection) {
-                if (!this.selectedModel) {
-                    // if no selectedModel, init one from the main collection
-                    this.selectedModel = new this.collection.model();
-                    // we have to set the parent composite id to set object hierarchy
-                    this.selectedModel.set("id", this.collection.parent.get("id"));
-                }
-                console.log(this.selectedModel.urlRoot());
-                // listen to collection fetch or removals
-                this.listenTo(this.collection, "sync remove", this.render);
-                // listen to selected model changes
-                this.listenTo(this.selectedModel, "change", function(model) {
-                    // add or update the collection
-                    this.collection.add(model, { merge : true });
-                    this.render();
-                });
-            }
-            this.render();
+        loadCollection : function() {
+            console.error("loadCollection must be overridden");
         },
 
         alphaNameComparator : function(a,b) {
@@ -889,24 +944,34 @@ function program1(depth0,data) {
                 var model = this.collection.get(id);
                 squid_api.refreshObjectType(model);
             },
-            "click .create": function() {
+            "click .create" : function() {
                 var me = this;
-                this.selectedModel.clear({"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
                 }));
             },
-            "click .edit": function(event) {
+            "click .edit" : function(event) {
                 var me = this;
                 var id = $(event.target).parents('tr').attr("data-attr");
                 var model = this.collection.get(id);
-                this.selectedModel.set(model.attributes, {"silent" : true});
+                // listen for model changes
+                me.listenTo(model, "change", function() {
+                    me.render();
+                });
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -1170,63 +1235,61 @@ function program1(depth0,data) {
         type : "Bookmark",
         typeLabelPlural : "Bookmarks",
         modelView : null,
+        configSelectedId : "bookmark",
+        configParentId : "project",
 
         init : function() {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
-            
-            // listen for project/bookmark change
-            var setSelectedModel = function(projectId, bookmarkId) {
-                if (projectId && bookmarkId) {
-                    // set selected model
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).then(function(model) {
-                            model.get("bookmarks").load(bookmarkId).then(function(model) {
-                                me.selectedModel = model;
-                                me.initListeners();
-                            });
-                        });
-                    });
-                } else {
-                    me.selectedModel = null;
-                    me.initListeners();
-                }
-            };
-            
-            this.config.on("change", function (config) {
-                var projectId = config.get("project");
-                var bookmarkId = config.get("bookmarkId");
-                if (config.hasChanged("project")) {
-                    // project has changed
-                    me.collectionLoading = true;
-                    if (projectId) {
-                        // set domain collection
-                        squid_api.getCustomer().then(function(customer) {
-                            customer.get("projects").load(projectId).then(function(project) {
-                                project.get("bookmarks").load().done(function(collection) {
-                                    me.collectionLoading = false;
-                                    me.collection = collection;
-                                    setSelectedModel(projectId, bookmarkId);
-                                }).fail(function() {
-                                    me.collectionLoading = false;
-                                    me.render();
-                                });
-                            });
-                        });
-                    }
-                    me.render();
-                } else if (config.hasChanged("bookmark")) {
-                    // domain only has changed
-                    setSelectedModel(projectId, bookmarkId);
-                }
-            });
-            
+
             // override select event
             this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
             this.originalEvents["click .select"] = function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
             };
+            // override create event
+            this.originalEvents["click .create"] = function() {
+                var me = this;
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                var config = this.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config",config);
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
+                this.renderModelView(new this.modelView({
+                    model : model,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            };
+            
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("bookmarks").load();
+                });
+            });
+        },
+        
+        createModel : function() {
+            var model = new this.collection.model();
+            // set config to current state
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            return model;
         },
         
         getCreateRole: function() {
@@ -1361,8 +1424,11 @@ function program1(depth0,data) {
             var me = this;
             // prevent redirect
             event.preventDefault();
-            // collect prerequisites
-            this.form.fields.config.setValue(squid_api.model.config.toJSON());
+            // set config to current state
+            var config = squid_api.model.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            this.form.fields.config.setValue(config);
         },
         
         render: function() {
@@ -1449,8 +1515,8 @@ function program1(depth0,data) {
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
+                jsonData.visible = true;
                 if (this.selectedModel) {
-                    jsonData.visible = true;
                     if (this.selectedModel.get("oid")) {
                         // always display default label
                     }
@@ -1470,248 +1536,16 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.BookmarksManagementWidget = factory(root.Backbone, root.squid_api);
-
-}(this, function (Backbone, squid_api, template) {
-
-    var View = Backbone.View.extend({
-
-        config : null,
-        createOnlyView : false,
-        autoOpen : null,
-        parent : null,
-        changeEventHandler : null,
-        type : "Bookmark",
-        typeLabel : null,
-        typeLabelPlural : null,
-        collectionView : null,
-
-        initialize: function(options) {
-            var me = this;
-
-            this.config = squid_api.model.config;
-
-            if (options) {
-                if (options.autoOpen) {
-                    this.autoOpen = true;
-                }
-                if (options.changeEventHandler) {
-                    this.changeEventHandler = options.changeEventHandler;
-                }
-                if (options.typeLabel) {
-                    this.typeLabel = options.typeLabel;
-                }
-                if (options.typeLabelPlural) {
-                    this.typeLabelPlural = options.typeLabelPlural;
-                }
-                if (options.comparator) {
-                    this.comparator = options.comparator;
-                }
-            }
-
-            if (!this.typeLabel) {
-                this.typeLabel = this.type;
-            }
-            if (!this.typeLabelPlural) {
-                this.typeLabelPlural = this.typeLabel + "s";
-            }
-
-            if (!this.changeEventHandler) {
-                this.changeEventHandler = function(value) {
-                    if (value) {
-                        squid_api.setBookmarkId(value);
-                    }
-                };
-            }
-
-            this.model = new squid_api.model.BookmarkModel();
-            this.parent = new squid_api.model.ProjectModel();
-
-            this.listenTo(this.config, "change:bookmark", this.setModel);
-            this.listenTo(this.config, "change:project", this.setParent);
-            this.listenTo(this.config, "change", this.afterRenderHandler);
-            this.listenTo(this.config, "change:domain", function() {
-                me.model.trigger("change");
-            });
-
-            this.render();
-        },
-
-        getRoles: function() {
-            // roles
-            var roles = {"create" : false, "edit" : false, "delete" : false, "refresh" : false};
-
-            var parentRole = this.parent.get("_role");
-
-            // write role
-            if (parentRole == "OWNER" || parentRole == "WRITE" || parentRole == "READ") {
-                if (this.config.get("domain")) {
-                    roles.create = true;
-                }
-                roles.edit = true;
-                roles.delete = true;
-            }
-
-            return roles;
-        },
-
-        afterRenderHandler : function() {
-            var me = this;
-
-            /* Config Compare with Current Model Config */
-            var match = true;
-            var el = this.$el.find("button");
-            var model = this.model.get("config");
-
-            // omit project / bookmark properties from comparison
-            var config = _.omit(this.config.toJSON(), "project", "bookmark");
-
-            if (! this.model.isNew()) {
-                // get order of keys to compare
-                var atts = Object.keys(config);
-
-                for (i=0; i<atts.length; i++) {
-                    // compare in raw state
-                    if (JSON.stringify(model[atts[i]]) !== JSON.stringify(config[atts[i]])) {
-                        match = false;
-                    }
-                }
-                if (match) {
-                    el.addClass("same");
-                    el.removeClass("different");
-                } else {
-                    el.addClass("different");
-                    el.removeClass("same");
-                }
-
-                /* Replace Current Config Events */
-                if (this.formContent) {
-                    this.formContent.$el.find("#btn-use-current-config").removeClass("disabled");
-                    this.formContent.$el.find("#btn-use-current-config").click({form: this.formContent, config: this.config}, function(e) {
-                        e.data.form.setValue({"config" : _.omit(e.data.config.toJSON(),"bookmark")});
-                    });
-                }
-            } else if (this.formContent) {
-                this.formContent.$el.find("#btn-use-current-config").addClass("disabled");
-            }
-        },
-
-        comparator : function(a,b) {
-            // default is : sort by alpha path + name
-            var va = a.get("path")+a.get("name").toLowerCase();
-            var vb = b.get("path")+b.get("name").toLowerCase();
-            if (va < vb) {
-                return -1;
-            }
-            if (va > vb) {
-                return 1;
-            }
-            return 0;
-        },
-
-        beforeRenderHandler : function(model) {
-            if (model.isNew()) {
-                // set config to current state when creating a new model
-                var config = this.config.toJSON();
-                delete config.bookmark;
-                delete config.project;
-                model.set("config", config);
-            }
-        },
-
-        setParent : function() {
-            var me = this;
-            var projectId = this.config.get("project");
-            this.parent.set({"id" : {"projectId" : projectId}});
-            this.parent.fetch();
-        },
-
-        setModel : function() {
-            var me = this;
-            var projectId = this.config.get("project");
-            var bookmarkId = this.config.get("bookmark");
-            if (bookmarkId) {
-                this.model.set({"id" : {"projectId" : projectId, "bookmarkId" : bookmarkId}});
-                this.model.fetch({
-                    error: function(xhr) {
-                        squid_api.model.status.set({"error":xhr});
-                    }
-                });
-            } else {
-                this.model.set({"id" : null});
-            }
-        },
-
-        labelHandler : function(model) {
-            var path = model.get("path");
-            var user = path.indexOf("/USER/");
-            if (user === 0) {
-                path = path.substring(6);
-                var userId;
-                if (path.indexOf("/") > -1) {
-                    userId = path.substring(0,path.indexOf("/"));
-                    path = path.substring(path.indexOf("/"));
-                } else {
-                    userId = path;
-                    path = "";
-                }
-                if (userId === squid_api.model.login.get("oid")) {
-                    // self
-                    path = "/My Bookmarks"+path;
-                } else {
-                    path = "/Others Bookmarks"+path;
-                }
-            } else {
-                var shared = path.indexOf("/SHARED");
-                if (shared === 0) {
-                    if (path.length>7) {
-                        path = "/Shared Bookmarks/"+path.substring(8);
-                    } else {
-                        path = "/Shared Bookmarks";
-                    }
-                }
-            }
-            return path +"/"+ model.get("name");
-        },
-
-        render: function() {
-            var me = this;
-
-            // Build the CollectionManagementWidget
-            var viewOptions = {
-                "el" : this.$el,
-                "type" : "Bookmark",
-                "typeLabel" : this.typeLabel,
-                "typeLabelPlural" : this.typeLabelPlural,
-                "model" : this.model,
-                "parent" : this.parent,
-                "autoOpen" : this.autoOpen,
-                "changeEventHandler" : this.changeEventHandler,
-                "comparator" : this.comparator,
-                "beforeRenderHandler" : this.beforeRenderHandler,
-                "afterRenderHandler" : this.afterRenderHandler,
-                "labelHandler" : this.labelHandler,
-                "displaySelected" : false,
-                "getRoles" : this.getRoles
-            };
-
-            this.collectionView = new squid_api.view.CollectionManagementWidget(viewOptions);
-
-            return this;
-        }
-
-    });
-
-    return View;
-}));
-
-(function (root, factory) {
     root.squid_api.view.ColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         modelView : squid_api.view.ColumnsModelManagementWidget,
+        
+        configSelectedId : "domain",
+        configParentId : "project",
+        
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -1773,10 +1607,17 @@ function program1(depth0,data) {
             },
             "click .create": function() {
                 var me = this;
-                this.selectedModel.clear({"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -1784,12 +1625,14 @@ function program1(depth0,data) {
             },
             "click .edit": function(event) {
                 var me = this;
-                var id = $(event.target).attr("data-value");
+                var id = $(event.target).parents('tr').attr("data-attr");
                 var model = this.collection.get(id);
-                this.selectedModel.set(model.attributes, {"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // listen for model changes
+                me.listenTo(model, "change", function() {
+                    me.render();
+                });
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -1821,11 +1664,20 @@ function program1(depth0,data) {
                 }
             }
         },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load();
+                });
+            });
+        },
 
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ColumnsModelManagementWidget;
             
+            /*
             this.config.on("change:domain", function (config) {
                 var projectId = config.get("project");
                 var domainId = config.get("domain");
@@ -1849,6 +1701,7 @@ function program1(depth0,data) {
                 }
                 me.render();
             });
+            */
         },
 
         sortData : function(data) {
@@ -2565,6 +2418,8 @@ function program1(depth0,data) {
         modelView : null,
         template : template,
         collectionLoading : false,
+        configSelectedId : "domain",
+        configParentId : "project",
 
         init : function() {
             var me = this;
@@ -2572,6 +2427,7 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
 
+            /*
             // listen for project/domain change
             var setSelectedModel = function(projectId, domainId) {
                 if (projectId && domainId) {
@@ -2616,6 +2472,15 @@ function program1(depth0,data) {
                     // domain only has changed
                     setSelectedModel(projectId, domainId);
                 }
+            });
+            */
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load();
+                });
             });
         },
 
@@ -2769,40 +2634,20 @@ function program1(depth0,data) {
         type : "project",
         modelView : null,
         template: template,
+        configSelectedId : "project",
+        configParentId : null,
 
         init : function() {
             var me = this;
-
             this.modelView = squid_api.view.ProjectModelManagementWidget;
-
-            this.config.on("change:project", function (config) {
-                var projectId = config.get("project");
-                if (projectId) {
-                    // set selected model
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).done(function(model) {
-                            me.selectedModel = model;
-                            me.initListeners();
-                        });
-                    });
-                }
-            });
-
-            // set the collection
-            me.collectionLoading = true;
-            squid_api.getCustomer().then(function(customer) {
-                customer.get("projects").load().done(function(collection) {
-                        me.collectionLoading = false;
-                        me.collection = collection;
-                        me.initListeners();
-                }).fail(function() {
-                    me.collectionLoading = false;
-                    me.render();
-                });
-            });
-
             me.render();
-        }
+        },
+        
+        loadCollection : function() {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load();
+            });
+        },
 
     });
 
@@ -2891,6 +2736,7 @@ function program1(depth0,data) {
         typeLabelPlural : "Relations",
         modelView : null,
         template: template,
+        configParentId : "project",
 
         additionalEvents: {
             "click .cancel": function() {

@@ -7,63 +7,61 @@
         type : "Bookmark",
         typeLabelPlural : "Bookmarks",
         modelView : null,
+        configSelectedId : "bookmark",
+        configParentId : "project",
 
         init : function() {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
-            
-            // listen for project/bookmark change
-            var setSelectedModel = function(projectId, bookmarkId) {
-                if (projectId && bookmarkId) {
-                    // set selected model
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).then(function(model) {
-                            model.get("bookmarks").load(bookmarkId).then(function(model) {
-                                me.selectedModel = model;
-                                me.initListeners();
-                            });
-                        });
-                    });
-                } else {
-                    me.selectedModel = null;
-                    me.initListeners();
-                }
-            };
-            
-            this.config.on("change", function (config) {
-                var projectId = config.get("project");
-                var bookmarkId = config.get("bookmarkId");
-                if (config.hasChanged("project")) {
-                    // project has changed
-                    me.collectionLoading = true;
-                    if (projectId) {
-                        // set domain collection
-                        squid_api.getCustomer().then(function(customer) {
-                            customer.get("projects").load(projectId).then(function(project) {
-                                project.get("bookmarks").load().done(function(collection) {
-                                    me.collectionLoading = false;
-                                    me.collection = collection;
-                                    setSelectedModel(projectId, bookmarkId);
-                                }).fail(function() {
-                                    me.collectionLoading = false;
-                                    me.render();
-                                });
-                            });
-                        });
-                    }
-                    me.render();
-                } else if (config.hasChanged("bookmark")) {
-                    // domain only has changed
-                    setSelectedModel(projectId, bookmarkId);
-                }
-            });
-            
+
             // override select event
             this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
             this.originalEvents["click .select"] = function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
             };
+            // override create event
+            this.originalEvents["click .create"] = function() {
+                var me = this;
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                var config = this.config.toJSON();
+                delete config.bookmark;
+                delete config.project;
+                model.set("config",config);
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
+                this.renderModelView(new this.modelView({
+                    model : model,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            };
+            
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("bookmarks").load();
+                });
+            });
+        },
+        
+        createModel : function() {
+            var model = new this.collection.model();
+            // set config to current state
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            return model;
         },
         
         getCreateRole: function() {

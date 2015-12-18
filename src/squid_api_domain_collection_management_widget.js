@@ -10,6 +10,8 @@
         modelView : null,
         template : template,
         collectionLoading : false,
+        configSelectedId : "domain",
+        configParentId : "project",
 
         init : function() {
             var me = this;
@@ -17,6 +19,7 @@
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
 
+            /*
             // listen for project/domain change
             var setSelectedModel = function(projectId, domainId) {
                 if (projectId && domainId) {
@@ -61,6 +64,15 @@
                     // domain only has changed
                     setSelectedModel(projectId, domainId);
                 }
+            });
+            */
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load();
+                });
             });
         },
 

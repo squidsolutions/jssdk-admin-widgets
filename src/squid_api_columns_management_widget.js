@@ -5,6 +5,10 @@
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         modelView : squid_api.view.ColumnsModelManagementWidget,
+        
+        configSelectedId : "domain",
+        configParentId : "project",
+        
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -66,10 +70,17 @@
             },
             "click .create": function() {
                 var me = this;
-                this.selectedModel.clear({"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // create a new model
+                var model = new this.collection.model();
+                model.set("id", this.collection.parent.get("id"));
+                // listen for new model changes
+                me.listenTo(model, "sync", function() {
+                    me.collection.add(model);
+                    me.render();
+                });
+                
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -77,12 +88,14 @@
             },
             "click .edit": function(event) {
                 var me = this;
-                var id = $(event.target).attr("data-value");
+                var id = $(event.target).parents('tr').attr("data-attr");
                 var model = this.collection.get(id);
-                this.selectedModel.set(model.attributes, {"silent" : true});
-                this.selectedModel.set({"id": this.collection.parent.get("id")}, {"silent" : true});
+                // listen for model changes
+                me.listenTo(model, "change", function() {
+                    me.render();
+                });
                 this.renderModelView(new this.modelView({
-                    model : this.selectedModel,
+                    model : model,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -114,11 +127,20 @@
                 }
             }
         },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load();
+                });
+            });
+        },
 
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ColumnsModelManagementWidget;
             
+            /*
             this.config.on("change:domain", function (config) {
                 var projectId = config.get("project");
                 var domainId = config.get("domain");
@@ -142,6 +164,7 @@
                 }
                 me.render();
             });
+            */
         },
 
         sortData : function(data) {

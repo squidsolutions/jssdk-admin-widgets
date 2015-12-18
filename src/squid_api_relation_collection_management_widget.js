@@ -8,6 +8,7 @@
         typeLabelPlural : "Relations",
         modelView : null,
         template: template,
+        configParentId : "project",
 
         additionalEvents: {
             "click .cancel": function() {
