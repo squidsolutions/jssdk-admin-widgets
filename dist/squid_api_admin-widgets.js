@@ -833,21 +833,28 @@ function program1(depth0,data) {
             // may be overridden
         },
 
+        /**
+         * Setup listeners for main collection and selected model.
+         */
         initListeners: function() {
-            var me = this;
-            if (me.collection) {
+            if (this.collection) {
                 if (!this.selectedModel) {
+                    // if no selectedModel, init one from the main collection
                     this.selectedModel = new this.collection.model();
+                    // we have to set the parent composite id to set object hierarchy
                     this.selectedModel.set("id", this.collection.parent.get("id"));
                 }
                 console.log(this.selectedModel.urlRoot());
+                // listen to collection fetch or removals
                 this.listenTo(this.collection, "sync remove", this.render);
+                // listen to selected model changes
                 this.listenTo(this.selectedModel, "change", function(model) {
+                    // add or update the collection
                     this.collection.add(model, { merge : true });
                     this.render();
                 });
             }
-            me.render();
+            this.render();
         },
 
         alphaNameComparator : function(a,b) {
@@ -2657,9 +2664,9 @@ function program1(depth0,data) {
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural
             };
-            if (this.collection) {
-                if (this.selectedModel) {
-                    jsonData.visible = true;
+            if (this.collection || this.collectionLoading) {
+                jsonData.visible = true;
+                if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                     }

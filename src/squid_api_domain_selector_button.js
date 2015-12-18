@@ -14,9 +14,9 @@
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural
             };
-            if (this.collection) {
-                if (this.selectedModel) {
-                    jsonData.visible = true;
+            if (this.collection || this.collectionLoading) {
+                jsonData.visible = true;
+                if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                     }
