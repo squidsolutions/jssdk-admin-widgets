@@ -5,9 +5,7 @@
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         modelView : squid_api.view.ColumnsModelManagementWidget,
-        
-        configSelectedId : "domain",
-        configParentId : "project",
+        configParentId : "domain",
         
         events: {
             "change select" : function(event) {
@@ -129,9 +127,12 @@
         },
         
         loadCollection : function(parentId) {
+            var me = this;
             return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("domains").load();
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
                 });
             });
         },
@@ -139,71 +140,45 @@
         init : function() {
             var me = this;
             this.modelView = squid_api.view.ColumnsModelManagementWidget;
-            
-            /*
-            this.config.on("change:domain", function (config) {
-                var projectId = config.get("project");
-                var domainId = config.get("domain");
-                me.collectionLoading = true;
-                if (projectId && domainId) {
-                    // set collection
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).then(function(project) {
-                            project.get("domains").load(domainId).done(function(model) {
-                                model.get(me.typeLabelPlural.toLowerCase()).load().done( function(collection) {
-                                    me.collectionLoading = false;
-                                    me.collection = collection;
-                                    me.initListeners();
-                                }).fail(function() {
-                                    me.collectionLoading = false;
-                                    me.render();
-                                });
-                            });
-                        });
-                    });
-                }
-                me.render();
-            });
-            */
         },
 
         sortData : function(data) {
 
-        	// build the parent index
-        	var lookup = {};
+            // build the parent index
+            var lookup = {};
             for (var ix1=0; ix1<data.length; ix1++)  {
-            	lookup[data[ix1].id]=data[ix1];
+                lookup[data[ix1].id]=data[ix1];
             }
             // build the sort name
             for (var ix2=0; ix2<data.length; ix2++)  {
-            	var parentId = data[ix2].parentId;
-            	data[ix2].sortName = data[ix2].name;
-            	data[ix2].depth = 0;
-            	while (parentId) {
-            		var parent = lookup[parentId];
-            		if (parent) {
-	            		data[ix2].sortName = parent.name + "/" + data[ix2].sortName;
-	            		if (data[ix2].depth<5) data[ix2].depth++;
-	            		parentId = parent.parentId;
-            		} else {
-            			break;
-            		}
-            	}
+                var parentId = data[ix2].parentId;
+                data[ix2].sortName = data[ix2].name;
+                data[ix2].depth = 0;
+                while (parentId) {
+                    var parent = lookup[parentId];
+                    if (parent) {
+                        data[ix2].sortName = parent.name + "/" + data[ix2].sortName;
+                        if (data[ix2].depth<5) data[ix2].depth++;
+                        parentId = parent.parentId;
+                    } else {
+                        break;
+                    }
+                }
             }
 
-        	// alphabetical sorting
+            // alphabetical sorting
             data.sort(function(a, b){
-				 var nameA = a.sortName.toLowerCase();
-				 var nameB = b.sortName.toLowerCase();
-				 if (nameA < nameB)  {
-					 // sort string ascending
-					 return -1;
-				 } else if (nameA > nameB) {
-					 return 1;
-				 } else {
-					 return 0; // no sorting
-				 }
-        	});
+                var nameA = a.sortName.toLowerCase();
+                var nameB = b.sortName.toLowerCase();
+                if (nameA < nameB)  {
+                    // sort string ascending
+                    return -1;
+                } else if (nameA > nameB) {
+                    return 1;
+                } else {
+                    return 0; // no sorting
+                }
+            });
 
             return data;
         },
