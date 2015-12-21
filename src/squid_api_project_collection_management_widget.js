@@ -10,7 +10,7 @@
         modelView : null,
         template: template,
         configSelectedId : "project",
-        configParentId : null,
+        configParentId : "customer",
 
         init : function() {
             var me = this;
