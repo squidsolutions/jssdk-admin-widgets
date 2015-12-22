@@ -6,6 +6,22 @@
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         modelView : squid_api.view.ColumnsModelManagementWidget,
         configParentId : "domain",
+
+        init : function() {
+            var me = this;
+            this.modelView = squid_api.view.ColumnsModelManagementWidget;
+        },
+        
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
+                });
+            });
+        },
         
         events: {
             "change select" : function(event) {
@@ -131,22 +147,6 @@
                     }
                 }
             }
-        },
-        
-        loadCollection : function(parentId) {
-            var me = this;
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    return project.get("domains").load(parentId).then(function(domain) {
-                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
-                    });
-                });
-            });
-        },
-
-        init : function() {
-            var me = this;
-            this.modelView = squid_api.view.ColumnsModelManagementWidget;
         },
 
         sortData : function(data) {

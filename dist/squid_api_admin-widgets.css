@@ -491,6 +491,7 @@
 }
 
 
+
 .squid-api-admin-widget-columns-management .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
     display: none;
 }
@@ -568,6 +569,39 @@
     padding: 7px;
 }
 
+#origin .dropdownDisabled {
+	top: 0px;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+	position: absolute;
+	opacity: 0.5;
+	background: #ffffff;
+}
+
+.squid-api-data-widgets-dimension-selector ul li.disabled {
+	text-decoration: line-through;
+}
+
+.squid-api-data-widgets-dimension-selector li.configure {
+	cursor: pointer;
+    position: absolute;
+    background: #f3f3f3;
+    top: -29px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    left: -1px;
+    border: 1px solid #ccc;
+    height: 29px;
+    padding: 4px 7px 0px 10px;
+    min-width: 0px !important;
+}
+
+.squid-api-data-widgets-dimension-selector li.configure:before {
+	content: "\f040";
+	font-family: FontAwesome;
+}
+
 .squid-api-domain-collection-management table td.select {
 	width: 65%;
 }
@@ -602,6 +636,7 @@
 }
 
 
+
 .squid-api-Relation-collection-management .domain {
     min-width: 60px;
     display: inline-block;
@@ -619,6 +654,7 @@
 .squid-api-Relation-collection-management .rightIcon {
     width: 120px;
 }
+
 
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
