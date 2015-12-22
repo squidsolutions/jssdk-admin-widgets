@@ -915,8 +915,8 @@ function program1(depth0,data) {
                     me.collection.load(modelId).then(function(model) {
                         me.collectionLoading = false;
                         me.selectedModel = model;
-                        me.listenTo(me.selectedModel, "change", me.render);
                         me.render();
+                        me.listenTo(me.selectedModel, "change", me.render);
                     });
                 } else {
                     me.collectionLoading = false;
@@ -931,6 +931,7 @@ function program1(depth0,data) {
                         // parent has changed
                         var parentId = config.get(me.configParentId);
                         me.collectionLoading = true;
+                        me.render();
                         if (parentId) {
                             // set the collection to listen to
                             if (me.collection) {
@@ -951,7 +952,6 @@ function program1(depth0,data) {
                                 me.render();
                             });
                         }
-                        me.render();
                     } else if (config.hasChanged(me.configSelectedId)) {
                         // selection only has changed
                         setSelectedModel(selectedId);
@@ -959,6 +959,7 @@ function program1(depth0,data) {
                 } else if (config.hasChanged(me.configSelectedId)) {
                     // no parent but selection has changed
                     me.collectionLoading = true;
+                    me.render();
                     // set collection
                     if (me.collection) {
                         me.stopListening(me.collection);
@@ -971,7 +972,6 @@ function program1(depth0,data) {
                         me.collectionLoading = false;
                         me.render();
                     });
-                    me.render();
                 }
             });
 
