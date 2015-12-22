@@ -932,7 +932,7 @@ function program1(depth0,data) {
                         var parentId = config.get(me.configParentId);
                         me.collectionLoading = true;
                         if (parentId) {
-                            // set collection
+                            // set the collection to listen to
                             if (me.collection) {
                                 me.stopListening(me.collection);
                             }
