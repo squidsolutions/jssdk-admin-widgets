@@ -85,8 +85,11 @@
             var me = this;
             // prevent redirect
             event.preventDefault();
-            // collect prerequisites
-            this.form.fields.config.setValue(squid_api.model.config.toJSON());
+            // set config to current state
+            var config = squid_api.model.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            this.form.fields.config.setValue(config);
         },
         
         render: function() {

@@ -10,57 +10,21 @@
         modelView : null,
         template : template,
         collectionLoading : false,
+        configSelectedId : "domain",
+        configParentId : "project",
 
         init : function() {
             var me = this;
 
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
-
-            // listen for project/domain change
-            var setSelectedModel = function(projectId, domainId) {
-                if (projectId && domainId) {
-                    // set selected model
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(projectId).then(function(project) {
-                            project.get("domains").load(domainId).done(function(model) {
-                                me.selectedModel = model;
-                                me.initListeners();
-                            });
-                        });
-                    });
-                } else {
-                    me.selectedModel = null;
-                    me.initListeners();
-                }
-            };
-
-            this.config.on("change", function (config) {
-                var projectId = config.get("project");
-                var domainId = config.get("domain");
-                if (config.hasChanged("project")) {
-                    // project has changed
-                    me.collectionLoading = true;
-                    if (projectId) {
-                        // set domain collection
-                        squid_api.getCustomer().then(function(customer) {
-                            customer.get("projects").load(projectId).then(function(project) {
-                                project.get("domains").load().done(function(collection) {
-                                    me.collectionLoading = false;
-                                    me.collection = collection;
-                                    setSelectedModel(projectId, domainId);
-                                }).fail(function() {
-                                    me.collectionLoading = false;
-                                    me.render();
-                                });
-                            });
-                        });
-                    }
-                    me.render();
-                } else if (config.hasChanged("domain")) {
-                    // domain only has changed
-                    setSelectedModel(projectId, domainId);
-                }
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load();
+                });
             });
         },
 

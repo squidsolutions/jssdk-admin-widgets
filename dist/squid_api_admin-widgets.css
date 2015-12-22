@@ -490,50 +490,6 @@
     background: grey;
 }
 
-.squid-api-admin-widgets-Bookmark button:before, .squid-api-model-widget-Bookmark button:before {
-    font-family: FontAwesome;
-}
-.squid-api-model-widget-Bookmark button:before, .squid-api-model-widget-Bookmark button.different:before {
-    content: "\f006";
-}
-.squid-api-model-widget-Bookmark button.same:before {
-    content: "\f005";
-}
-.squid-api-model-widget-Bookmark > button {
-    text-indent: 100%;
-    overflow: hidden;
-    box-shadow: none;
-    width: 50px;
-    position: relative;
-    border: none;
-}
-.squid-api-model-widget-Bookmark .form-control {
-    background: none;
-}
-.squid-api-model-widget-Bookmark > button:before {
-    content: "\f006";
-    text-indent: 0%;
-    float: left;
-}
-.squid-api-Bookmark-model-widget-popup-container .squid-api-model-widget-Bookmark button:before {
-    text-indent: 0%;
-    content: none;
-}
-.squid-api-admin-widgets-Bookmark button i {
-    display: none;
-}
-.squid-api-admin-widgets-modal-form .Bookmark .config textarea {
-    height: 150px;
-}
-.squid-api-admin-widgets-modal-form .Bookmark .config #btn-use-current-config {
-    margin: 10px 0px 10px 0px;
-    float: right;
-    background: #ccc;
-}
-.squid-api-admin-widgets-modal-form .Bookmark .config label {
-    margin-top: 18px;
-}
-
 
 .squid-api-admin-widget-columns-management .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
     display: none;
