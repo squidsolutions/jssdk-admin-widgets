@@ -8,7 +8,7 @@
         typeLabelPlural : "Relations",
         modelView : null,
         template: template,
-        configParentId : "project",
+        configParentId : "domain",
 
         additionalEvents: {
             "click .cancel": function() {
@@ -59,17 +59,58 @@
             return models;
         },
 
-        init : function(options) {
-            var me = this;
+        // override initialize size we're not listening to the config
+        initialize : function(options) {
+            this.config = squid_api.model.config;
+            this.status = squid_api.model.status;
             this.modelView = squid_api.view.RelationModelManagementWidget;
             this.modelValue = options.modelValue;
-
-            squid_api.getSelectedProjectCollection(me.typeLabelPlural.toLowerCase()).done( function(collection) {
+            var me = this;
+            
+            if (options) {
+                if (options.type) {
+                    this.type = options.type;
+                }
+                if (options.comparator) {
+                    this.comparator = options.comparator;
+                } else {
+                    // default is : sort by alpha name and dynamic last
+                    this.comparator =  function(a, b) {
+                        var r = me.dynamicComparator(a,b);
+                        if (r === 0) {
+                            r = me.alphaNameComparator(a,b);
+                        }
+                        return r;
+                    };
+                }
+                if (options.cancelCallback) {
+                    this.cancelCallback = options.cancelCallback;
+                }
+                if (options.onSelect) {
+                    this.onSelect = options.onSelect;
+                }
+            }
+            
+            // init the relations collection
+            me.loadCollection(this.modelValue).done(function(collection) {
                 me.collection = collection;
-                me.initListeners();
+                me.render();
+            }).fail(function() {
                 me.render();
             });
+            
         },
+        
+        loadCollection : function(parentId) {
+            var me = this;
+            // load the project's relations
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get(me.typeLabelPlural.toLowerCase()).load();
+                });
+            });
+        },
+        
         render: function() {
             // store models
             if (this.collection) {

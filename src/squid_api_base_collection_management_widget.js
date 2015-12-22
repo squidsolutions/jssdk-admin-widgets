@@ -72,13 +72,13 @@
                         var parentId = config.get(me.configParentId);
                         me.collectionLoading = true;
                         if (parentId) {
-                            // set collection
+                            // set the collection to listen to
                             if (me.collection) {
                                 me.stopListening(me.collection);
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove", this.render);
+                                me.listenTo(me.collection, "sync remove", me.render);
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
                                     setSelectedModel(selectedId);
@@ -105,7 +105,7 @@
                     }
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
-                        me.listenTo(me.collection, "sync remove", this.render);
+                        me.listenTo(me.collection, "sync remove", me.render);
                         setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;
