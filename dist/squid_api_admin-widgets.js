@@ -414,6 +414,84 @@ function program21(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_metric_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\r\n    <select class=\"sq-select form-control squid-api-data-widgets-metric-selector\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\r\n        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.program(9, program9, data),fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</select>\r\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "multiple";
+  }
+
+function program4(depth0,data) {
+  
+  
+  return "\r\n            <option disabled=\"true\">No metrics available</option>\r\n        ";
+  }
+
+function program6(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n            <option value=\"";
+  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\r\n                ";
+  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n            </option>\r\n        ";
+  return buffer;
+  }
+function program7(depth0,data) {
+  
+  
+  return "selected";
+  }
+
+function program9(depth0,data) {
+  
+  
+  return "\r\n    ";
+  }
+
+function program11(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n    <!-- just display filter name -->\r\n    <label>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</label>\r\n    <span>-</span>\r\n";
+  return buffer;
+  }
+
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(11, program11, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -860,7 +938,7 @@ function program1(depth0,data) {
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove", this.render);
+                                me.listenTo(me.collection, "sync remove", me.render);
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
                                     setSelectedModel(selectedId);
@@ -887,7 +965,7 @@ function program1(depth0,data) {
                     }
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
-                        me.listenTo(me.collection, "sync remove", this.render);
+                        me.listenTo(me.collection, "sync remove", me.render);
                         setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;
@@ -1598,8 +1676,15 @@ function program1(depth0,data) {
                 // update all models at the same time
                 if (changeCount > 0) {
                     this.collection.saveAll(this.collection.models).then(function() {
+                        // TODO fetch the parent as it may have changed from non dynamic to dynamic
+                        // but this resets the parent collections as the API returns an empty array
+                        // me.collection.parent.fetch().done(function() {
+                        me.collection.parent.set("dynamic", false);
+                        
                         // force a filters re-computation because dimension selector uses it
+                        // TODO do not trigger if the collection is metrics
                         me.config.trigger("change:selection");
+                        
                     });
                 }
             },
@@ -2486,6 +2571,251 @@ function program1(depth0,data) {
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Metric",
         typeLabelPlural : "Metrics"
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricCollectionWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        configParentId : "domain",
+        
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        // listen to parent in case "dynamic" changes
+                        me.listenTo(domain, "change:dynamic", me.render);
+                        return domain.get("metrics").load();
+                    });
+                });
+            });
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricSelectorView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_metric_selector_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.MetricCollectionWidget.extend({
+        template : null,
+        metricIdList : null,
+        metricIndex: null,
+
+        init: function(options) {
+
+            // setup options
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.metricIdList) {
+                    this.metricIdList = options.metricIdList;
+                }
+                if (options.metricIndex !== null) {
+                    this.metricIndex = options.metricIndex;
+                }
+            }
+
+            // setup the models
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+
+            // initialize dimension collection for management view
+            this.metricCollection = new squid_api.view.MetricCollectionManagementWidget();
+
+            this.listenTo(this.config,"change:chosenMetrics", this.render);
+
+            // listen for global status change
+            this.listenTo(squid_api.model.status,"change:status", this.handleStatus);
+
+        },
+
+        handleStatus: function() {
+            var select = this.$el.find("select");
+            var multiSelectDropdown = this.$el.find(".multiselect-container");
+            if (select) {
+                var isMultiple = true;
+                if (this.metricIndex !== null) {
+                    isMultiple = false;
+                }
+                var running = (squid_api.model.status.get("status") !== squid_api.model.status.STATUS_DONE);
+                if (running) {
+                    // computation is running : disable input
+                    select.attr("disabled","disabled");
+                    if (isMultiple) {
+                        select.multiselect('disable');
+                        multiSelectDropdown.append("<div class='dropdownDisabled'></div>");
+                    }
+                } else {
+                    // computation is done : enable input
+                    select.removeAttr("disabled");
+                    if (isMultiple) {
+                        select.multiselect('enable');
+                        multiSelectDropdown.find(".dropdownDisabled").remove();
+                    }
+                }
+            }
+        },
+
+        events: {
+            "change": function() {
+                var oid = this.$el.find("select option:selected");
+                // Remove Button Title Tag
+                this.$el.find("button").removeAttr('title');
+
+                var chosenMetrics = this.config.get("chosenMetrics");
+                var selectedMetrics = [];
+
+                // build the selection array
+                for (i = 0; i < oid.length; i++) {
+                    var selectedOid = $(oid[i]).val();
+                    selectedMetrics.push(selectedOid);
+                }
+
+                // check for additions
+                chosenMetricsNew = _.intersection(_.union(chosenMetrics, selectedMetrics), selectedMetrics);
+
+                // Update
+                this.config.set({"chosenMetrics" : chosenMetricsNew});
+            }
+        },
+
+        render: function() {
+            if (this.collection) {
+                var me = this, isMultiple = true;
+
+                if (this.metricIndex !== null) {
+                    isMultiple = false;
+                }
+
+                var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
+                var selectorJsonData = [];
+
+                // iterate through all domains metrics
+                var metrics = this.collection;
+                var domain = this.collection.parent;
+                var noneSelected = true;
+                for (var idx=0; idx<metrics.models.length; idx++) {
+                    var metric = metrics.models[idx];
+
+                    // check if selected
+                    var selected = me.isChosen(metric);
+                    if (selected === true) {
+                        noneSelected = false;
+                    }
+                    
+                    var option = {
+                            "label" : metric.get("name"), 
+                            "value" : metric.get("oid"), 
+                            "selected" : selected
+                    };
+                    
+                    jsonData.options.push(option);
+                    
+                    // check dynamic rules
+                    if ((domain.get("dynamic") === true) || (metric.get("dynamic") === false)) {
+                        selectorJsonData.push(option);
+                    }
+                }
+
+                // Alphabetical Sorting
+                jsonData.options = me.sortMetrics(jsonData.options);
+
+                // check if empty
+                if (jsonData.options.length === 0) {
+                    jsonData.empty = true;
+                }
+
+                if (!me.$el.html()) {
+                    // fist render
+                    var html = me.template(jsonData);
+                    me.$el.html(html);
+                    me.$el.show();
+
+                    // Initialize plugin
+                    me.selector = me.$el.find("select");
+                    if (isMultiple) {
+                        me.selector.multiselect({
+                            "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
+                            "buttonText": function() {
+                                return 'Metrics';
+                            },
+                            "onDropdownShown": function() {
+                                me.showConfiguration();
+                            }
+                        });
+                    }
+
+                    // Remove Button Title Tag
+                    me.$el.find("button").removeAttr('title');
+                } else {
+                    // update render
+                    me.selector.multiselect("dataprovider", selectorJsonData);
+                    me.showConfiguration();
+                }
+            }
+            return this;
+        },
+
+        showConfiguration: function() {
+            var me = this;
+            squid_api.getSelectedProject().done( function(project) {
+                if (project.get("_role") === "WRITE" || project.get("_role") === "OWNER") {
+
+                    // place dimension collection in modal view
+                    var dimensionModal = new squid_api.view.ModalView({
+                        view : me.metricCollection
+                    });
+
+                    me.$el.find("li").first().before("<li class='configure'> configure</option>");
+                    me.$el.find("li").first().on("click", function() {
+                        // trigger dimension management view
+                        dimensionModal.render();
+                    });
+                }
+            });
+        },
+
+        sortMetrics: function(metrics) {
+            return metrics.sort(function(a, b) {
+                var labelA=a.label.toLowerCase(), labelB=b.label.toLowerCase();
+                if (labelA < labelB) {
+                    return -1;
+                }
+                if (labelA > labelB) {
+                    return 1;
+                }
+                return 0; // no sorting
+            });
+        },
+
+        isChosen : function(item) {
+            var selected = false;
+            var metrics = this.config.get("chosenMetrics");
+
+            if (metrics) {
+                for (var j=0; j<metrics.length; j++) {
+                    if (item.get("oid") === metrics[j]) {
+                        selected = true;
+                    }
+                }
+            }
+            return selected;
+        }
+
     });
 
     return View;

@@ -78,7 +78,7 @@
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove", this.render);
+                                me.listenTo(me.collection, "sync remove", me.render);
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
                                     setSelectedModel(selectedId);
@@ -105,7 +105,7 @@
                     }
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
-                        me.listenTo(me.collection, "sync remove", this.render);
+                        me.listenTo(me.collection, "sync remove", me.render);
                         setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;

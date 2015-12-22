@@ -61,8 +61,15 @@
                 // update all models at the same time
                 if (changeCount > 0) {
                     this.collection.saveAll(this.collection.models).then(function() {
+                        // TODO fetch the parent as it may have changed from non dynamic to dynamic
+                        // but this resets the parent collections as the API returns an empty array
+                        // me.collection.parent.fetch().done(function() {
+                        me.collection.parent.set("dynamic", false);
+                        
                         // force a filters re-computation because dimension selector uses it
+                        // TODO do not trigger if the collection is metrics
                         me.config.trigger("change:selection");
+                        
                     });
                 }
             },
