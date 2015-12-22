@@ -491,7 +491,6 @@
 }
 
 
-
 .squid-api-admin-widget-columns-management .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
     display: none;
 }
@@ -636,7 +635,6 @@
 }
 
 
-
 .squid-api-Relation-collection-management .domain {
     min-width: 60px;
     display: inline-block;
@@ -654,7 +652,6 @@
 .squid-api-Relation-collection-management .rightIcon {
     width: 120px;
 }
-
 
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;

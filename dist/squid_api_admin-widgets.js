@@ -196,15 +196,6 @@ function program4(depth0,data) {
   return buffer;
   });
 
-this["squid_api"]["template"]["squid_api_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "";
-
-
-  return buffer;
-  });
-
 this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -596,15 +587,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
-this["squid_api"]["template"]["squid_api_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "";
-
-
-  return buffer;
-  });
-
 this["squid_api"]["template"]["squid_api_project_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -928,15 +910,6 @@ function program28(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(28, program28, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n    <button type=\"button\" class=\"btn btn-default cancel\">Cancel</button>\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_relation_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "";
-
-
   return buffer;
   });
 
@@ -1721,10 +1694,7 @@ function program1(depth0,data) {
     return View;
 }));
 
-
-
 (function (root, factory) {
-<<<<<<< HEAD
     root.squid_api.view.CollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -2176,10 +2146,7 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.ColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
-=======
     root.squid_api.view.CollectionSelectorUtils = factory(root.Backbone, root.squid_api);
->>>>>>> feature/T672
 
 }(this, function (Backbone, squid_api) {
 
@@ -3444,7 +3411,6 @@ function program1(depth0,data) {
     return View;
 }));
 
-
 (function (root, factory) {
     root.squid_api.view.DomainSelectorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
 
@@ -3634,7 +3600,6 @@ function program1(depth0,data) {
 
     return View;
 }));
-
 
 (function (root, factory) {
     root.squid_api.view.ProjectCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_project_collection_management_widget);
@@ -3873,7 +3838,6 @@ function program1(depth0,data) {
 
     return View;
 }));
-
 
 (function (root, factory) {
     root.squid_api.view.RelationModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_model_management_widget);
