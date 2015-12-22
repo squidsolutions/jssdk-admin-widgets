@@ -86,8 +86,8 @@
             },
             "click .edit": function(event) {
                 var me = this;
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
+                var id = $(event.target).attr("data-value");
+                var model = this.collection.findWhere({"oid" : id});
                 // listen for model changes
                 me.listenTo(model, "change", function() {
                     me.render();
@@ -107,7 +107,7 @@
             "click .delete": function(event) {
                 var me = this;
                 var id = $(event.target).attr("data-value");
-                var model = this.collection.get(id);
+                var model = this.collection.findWhere({"oid" : id});
                 if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
                     if (true) {
                         model.destroy({
