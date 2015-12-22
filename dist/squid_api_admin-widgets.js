@@ -2702,7 +2702,6 @@ function program1(depth0,data) {
                 }
 
                 var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
-                var selectorJsonData = [];
 
                 // iterate through all domains metrics
                 var metrics = this.collection;
@@ -2723,11 +2722,9 @@ function program1(depth0,data) {
                             "selected" : selected
                     };
                     
-                    jsonData.options.push(option);
-                    
                     // check dynamic rules
                     if ((domain.get("dynamic") === true) || (metric.get("dynamic") === false)) {
-                        selectorJsonData.push(option);
+                        jsonData.options.push(option);
                     }
                 }
 
@@ -2739,8 +2736,8 @@ function program1(depth0,data) {
                     jsonData.empty = true;
                 }
 
-                if (!me.$el.html()) {
-                    // fist render
+                if ((!me.selector) || (jsonData.options.length === 0)) {
+                    // fist render or no data to display
                     var html = me.template(jsonData);
                     me.$el.html(html);
                     me.$el.show();
@@ -2763,7 +2760,7 @@ function program1(depth0,data) {
                     me.$el.find("button").removeAttr('title');
                 } else {
                     // update render
-                    me.selector.multiselect("dataprovider", selectorJsonData);
+                    me.selector.multiselect("dataprovider", jsonData.options);
                     me.showConfiguration();
                 }
             }
