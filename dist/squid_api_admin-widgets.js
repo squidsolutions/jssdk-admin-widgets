@@ -1271,7 +1271,6 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
-        setConfigOnSave : null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -1288,9 +1287,6 @@ function program1(depth0,data) {
             }
             if (options.cancelCallback) {
                 this.cancelCallback = options.cancelCallback;
-            }
-            if (options.setConfigOnSave) {
-                this.setConfigOnSave = options.setConfigOnSave;
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
@@ -1560,15 +1556,9 @@ function program1(depth0,data) {
             "editorClass" : "form-control",
             "fieldClass" : "path"
         },
-        "setConfig" : {
-            "type" : "SetConfig",
-            "fieldClass" : "squid-api-set-config",
-            "editorClass" : "form-control"
-        },
         "config" : {
-            "type" : "JsonTextArea",
+            "type" : "SetConfig",
             "title" : "Config",
-            "position" : 1,
             "fieldClass" : "config",
             "editorClass" : "form-control",
             "validators": [
@@ -1591,13 +1581,36 @@ function program1(depth0,data) {
     // Define "setConfig" Custom Editor
     var setConfigEditor = Backbone.Form.editors.Base.extend({
 
-        tagName: 'button',
-        defaultValue : "Set current config",
-
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            this.$el.attr("rows", 3);
         },
+
+        setValue: function(value) {
+            // beautify json value
+            var val;
+            if (value) {
+                val = JSON.stringify(value, null, 4);
+            }
+            this.$el.val(val);
+        },
+
+        getValue: function() {
+            // transform text value to json
+            var json;
+            var val = this.$el.val();
+            if (val) {
+                try {
+                    json = JSON.parse(val);
+                } catch (e) {
+                    // parse error, ignore to let validation proceed
+                    json = val;
+                }
+            }
+            return json;
+        },
+        
         events: {
             "click" : "setConfig"
         },
@@ -1614,17 +1627,15 @@ function program1(depth0,data) {
         },
         
         render: function() {
+            var id = this.$el.attr("id");
+            var name = this.$el.attr("name");
+            this.$el.removeAttr("id");
+            this.$el.removeAttr("name");
+            this.$el.removeAttr("class");
+            this.$el.append("<button></button>");
+            this.$el.append("<textarea rows=3 id='"+id+"'></textarea>");
             this.setValue(this.value);
-
             return this;
-        },
-
-        getValue: function() {
-            return this.$el.html();
-        },
-
-        setValue: function(value) {
-            this.$el.html(value);
         }
     });
 
