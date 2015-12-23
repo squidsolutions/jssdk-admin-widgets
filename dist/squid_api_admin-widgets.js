@@ -1271,7 +1271,6 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
-        setConfigOnSave : null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -1288,9 +1287,6 @@ function program1(depth0,data) {
             }
             if (options.cancelCallback) {
                 this.cancelCallback = options.cancelCallback;
-            }
-            if (options.setConfigOnSave) {
-                this.setConfigOnSave = options.setConfigOnSave;
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
