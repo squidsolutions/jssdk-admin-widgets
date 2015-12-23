@@ -986,25 +986,17 @@ function program1(depth0,data) {
                 }
             }
             
-            // setup models and listeners
+            this.initModel();
             
-            var setSelectedModel = function(modelId) {
-                if (this.selectedModel) {
-                    this.stopListening(me.selectedModel);
-                }
-                if (modelId) {
-                    me.collection.load(modelId).then(function(model) {
-                        me.collectionLoading = false;
-                        me.selectedModel = model;
-                        me.render();
-                        me.listenTo(me.selectedModel, "change", me.render);
-                    });
-                } else {
-                    me.collectionLoading = false;
-                    me.render();
-                }
-            };
-            
+            this.init(options);
+        },
+        
+        /**
+         * Init the Model : selectedModel, collection and listeners
+         */
+        initModel : function() {
+            var me = this;
+            // listen for config changes
             this.config.on("change", function (config) {
                 var selectedId = config.get(me.configSelectedId);
                 if (me.configParentId) {
@@ -1023,7 +1015,7 @@ function program1(depth0,data) {
                                 me.listenTo(me.collection, "sync remove", me.render);
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
-                                    setSelectedModel(selectedId);
+                                    me.setSelectedModel(selectedId);
                                 } else {
                                     me.collectionLoading = false;
                                     me.render();
@@ -1035,7 +1027,7 @@ function program1(depth0,data) {
                         }
                     } else if (config.hasChanged(me.configSelectedId)) {
                         // selection only has changed
-                        setSelectedModel(selectedId);
+                        me.setSelectedModel(selectedId);
                     }
                 } else if (config.hasChanged(me.configSelectedId)) {
                     // no parent but selection has changed
@@ -1047,16 +1039,37 @@ function program1(depth0,data) {
                     }
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
+                        // listen to collection fetch or removed element
                         me.listenTo(me.collection, "sync remove", me.render);
-                        setSelectedModel(selectedId);
+                        me.setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;
                         me.render();
                     });
                 }
             });
-
-            this.init(options);
+        },
+        
+        /**
+         * Set the selectedModel attribute.
+         * Loads the corresponding Model object and listen for its changes.
+         */
+        setSelectedModel : function(modelId) {
+            var me = this;
+            if (this.selectedModel) {
+                this.stopListening(me.selectedModel);
+            }
+            if (modelId) {
+                me.collection.load(modelId).then(function(model) {
+                    me.collectionLoading = false;
+                    me.selectedModel = model;
+                    me.render();
+                    me.listenTo(me.selectedModel, "change", me.render);
+                });
+            } else {
+                me.collectionLoading = false;
+                me.render();
+            }
         },
         
         init: function(options) {
@@ -1699,6 +1712,9 @@ function program1(depth0,data) {
 
 }(this, function (Backbone, squid_api) {
 
+    /**
+     * Utility class to provide common methods collection selectors
+     */
     var Utils = {
 
         handleStatus: function() {
@@ -1792,6 +1808,31 @@ function program1(depth0,data) {
                 }
             }
             return selected;
+        },
+        
+        renderButton: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection || this.collectionLoading) {
+                jsonData.visible = true;
+                if (this.selectedModel) {  
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(this.template(jsonData));
+
+            return this;
         }
 
     };
@@ -2897,33 +2938,11 @@ function program1(depth0,data) {
 
     var View = squid_api.view.DomainCollectionManagementWidget.extend({
         
-        render: function() {
-            var label = this.typeLabelPlural;
-            var jsonData = {
-                label : label,
-                visible : false,
-                collectionLoaded : !this.collectionLoading,
-                collection : this.collection,
-                typeLabelPlural : this.typeLabelPlural
-            };
-            if (this.collection || this.collectionLoading) {
-                jsonData.visible = true;
-                if (this.selectedModel) {  
-                    if (this.selectedModel.get("oid")) {
-                        jsonData.label = this.selectedModel.get("name");
-                    }
-                }
-            } else {
-                jsonData.visible = false;
-            }
-
-            this.$el.html(template(jsonData));
-
-            return this;
-        }
+        template : template,
+        
+        render : squid_api.view.CollectionSelectorUtils.renderButton
 
     });
-
     return View;
 }));
 
@@ -3224,27 +3243,9 @@ function program1(depth0,data) {
 
     var View = squid_api.view.ProjectCollectionManagementWidget.extend({
         
-        render: function() {
-            var label = this.typeLabelPlural;
-            var jsonData = {
-                label : label,
-                visible : true,
-                collectionLoaded : !this.collectionLoading,
-                collection : this.collection,
-                typeLabelPlural : this.typeLabelPlural
-            };
-            if (this.collection) {
-                if (this.selectedModel) {
-                    if (this.selectedModel.get("oid")) {
-                        jsonData.label = this.selectedModel.get("name");
-                    }
-                }
-            }
-
-            this.$el.html(template(jsonData));
-
-            return this;
-        }
+        template : template,
+        
+        render : squid_api.view.CollectionSelectorUtils.renderButton
 
     });
 
