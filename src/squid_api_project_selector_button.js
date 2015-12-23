@@ -5,27 +5,9 @@
 
     var View = squid_api.view.ProjectCollectionManagementWidget.extend({
         
-        render: function() {
-            var label = this.typeLabelPlural;
-            var jsonData = {
-                label : label,
-                visible : true,
-                collectionLoaded : !this.collectionLoading,
-                collection : this.collection,
-                typeLabelPlural : this.typeLabelPlural
-            };
-            if (this.collection) {
-                if (this.selectedModel) {
-                    if (this.selectedModel.get("oid")) {
-                        jsonData.label = this.selectedModel.get("name");
-                    }
-                }
-            }
-
-            this.$el.html(template(jsonData));
-
-            return this;
-        }
+        template : template,
+        
+        render : squid_api.view.CollectionSelectorUtils.renderButton
 
     });
 

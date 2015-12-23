@@ -3,6 +3,9 @@
 
 }(this, function (Backbone, squid_api) {
 
+    /**
+     * Utility class to provide common methods collection selectors
+     */
     var Utils = {
 
         handleStatus: function() {
@@ -96,6 +99,31 @@
                 }
             }
             return selected;
+        },
+        
+        renderButton: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : label,
+                visible : false,
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+            if (this.collection || this.collectionLoading) {
+                jsonData.visible = true;
+                if (this.selectedModel) {  
+                    if (this.selectedModel.get("oid")) {
+                        jsonData.label = this.selectedModel.get("name");
+                    }
+                }
+            } else {
+                jsonData.visible = false;
+            }
+
+            this.$el.html(this.template(jsonData));
+
+            return this;
         }
 
     };

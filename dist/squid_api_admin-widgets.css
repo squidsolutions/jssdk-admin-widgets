@@ -11,7 +11,6 @@
 
 .squid-api-collection-management-widget table tbody {
 	max-height: 400px;
-	display: inline-block;
 	width: 100%;
 	overflow-y: scroll;
 }
@@ -36,22 +35,13 @@
 }
 
 .squid-api-collection-management-widget table td.select {
-	padding-left: 20px;
-	width: 75%;
-	text-align: left;
 }
 
 .squid-api-collection-management-widget table tr {
-	min-width: 298px;
-	height: 45px;
-	display: table;
 	cursor: pointer;
 }
 
 .squid-api-collection-management-widget table td {
-	text-align: center;
-	width: 20px;
-	padding-left: 10px;
 }
 
 .squid-api-collection-management-widget table tr {
@@ -61,7 +51,6 @@
 
 .squid-api-collection-management-widget table tr td {
 	cursor: pointer;
-	padding: 15px;
 	font-size: 15px;
 }
 
@@ -74,26 +63,12 @@
 }
 
 .squid-api-collection-management-widget table .collection-option {
-	float: right;
-	padding: 15px 0px 0px 0px;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .squid-api-collection-management-widget table .collection-option:hover {
 	font-size: 20px;
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
-	-ms-transition: all 0.3s ease;
-}
-
-.squid-api-collection-management-widget table tr:hover .collection-option, .squid-api-collection-management-widget table tr.selected .collection-option {
-	display: inline-block;
-	width: 45px;
-	-webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
-       -moz-animation: fadein 1s; /* Firefox < 16 */
-        -ms-animation: fadein 1s; /* Internet Explorer */
-         -o-animation: fadein 1s; /* Opera < 12.1 */
-            animation: fadein 1s;
 }
 
 @keyframes fadein {
@@ -125,7 +100,7 @@
     to   { opacity: 1; }
 }
 
-.squid-api-collection-management-widget table .collection-option {
+.squid-api-collection-management-widget table .collection-option i {
 	display: none;
 }
 
@@ -636,21 +611,13 @@
 
 
 .squid-api-Relation-collection-management .domain {
-    min-width: 60px;
-    display: inline-block;
-    position: relative;
-    padding: 0px;
-    top: -3px;
-    left: 20px;
-    text-align: left;
 }
-.squid-api-Relation-collection-management .leftIcon, .squid-api-Relation-collection-management .rightIcon {
-    width: 95px;
-    display: inline-block;
+.squid-api-Relation-collection-management .leftIcon {
+	text-align: right;
 }
 
 .squid-api-Relation-collection-management .rightIcon {
-    width: 120px;
+	text-align: left;
 }
 
 #squid-api-admin-widgets-user-table td .group-value {
