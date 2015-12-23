@@ -162,6 +162,15 @@
         },
 
         originalEvents: {
+            'mouseenter tr': function(event) {
+                $(event.target).parent('tr').parent('table').find(".collection-option i").hide();
+                var elements = $(event.target).parent('tr').find(".collection-option i");
+                elements.show();
+            },
+            'mouseleave tr': function(event) {
+                var elements = $(event.target).parent('tr').find(".collection-option i");
+                elements.hide();
+            },
             // select
             "click .select": function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
