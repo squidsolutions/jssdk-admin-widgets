@@ -163,7 +163,8 @@
 
         originalEvents: {
             'mouseenter tr': function(event) {
-                $(event.target).parent('tr').parent('table').find(".collection-option i").hide();
+                // hide all (as sometimes when moving fast, some may still be visible)
+                $(event.target).parent('tr').parent().find(".collection-option i").hide();
                 var elements = $(event.target).parent('tr').find(".collection-option i");
                 elements.show();
             },
