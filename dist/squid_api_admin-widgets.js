@@ -1119,93 +1119,115 @@ function program1(depth0,data) {
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
-
-        originalEvents: {
-            'mouseenter tr': function(event) {
-                // hide all (as sometimes when moving fast, some may still be visible)
-                $(event.target).parent('tr').parent().find(".collection-option i").hide();
-                var elements = $(event.target).parent('tr').find(".collection-option i");
-                elements.show();
-            },
-            'mouseleave tr': function(event) {
-                var elements = $(event.target).parent('tr').find(".collection-option i");
-                elements.hide();
-            },
-            // select
-            "click .select": function(event) {
-                var value = $(event.target).parent('tr').attr('data-attr');
-                this.config.set(this.type.toLowerCase(), value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+        
+        getSelectedModel : function(event) {
+            var id = $(event.target).parents('tr').data("attr");
+            var model = this.collection.get(id);
+            return model;
+        },
+        
+        eventSelect :  function(event) {
+            var model = this.getSelectedModel(event);
+            this.config.set(this.type.toLowerCase(), model.get("oid"));
+            if (this.onSelect) {
+                this.onSelect.call();
+            }
+        },
+        
+        eventCreate : function() {
+            var me = this;
+            // create a new model
+            var model = new this.collection.model();
+            model.set("id", this.collection.parent.get("id"));
+            // listen for new model changes
+            me.listenTo(model, "sync", function() {
+                me.collection.add(model);
+                me.render();
+            });
+            
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
+                    me.render();
                 }
-            },
-            "click .refresh": function(event) {
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                squid_api.refreshObjectType(model);
-            },
-            "click .create" : function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
+            }));
+        },
+        
+        eventRefresh : function(event) {
+            var model = this.getSelectedModel(event);
+            squid_api.refreshObjectType(model);
+        },
+        
+        eventEdit : function(event) {
+            var me = this;
+            var model = this.getSelectedModel(event);
+            // listen for model changes (TODO check this code)
+            me.listenTo(model, "change", function() {
+                me.render();
+            });
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
                     me.render();
-                });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .edit" : function(event) {
-                var me = this;
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                // listen for model changes
-                me.listenTo(model, "change", function() {
-                    me.render();
-                });
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .delete": function(event) {
-                var me = this;
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = model.get("objectType") + " with name " + model.get("name") + " has been successfully deleted";
-                                me.status.set({'message' : message});
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
+                }
+            }));
+        },
+        
+        eventDelete : function(event) {
+            var me = this;
+            // 
+            var model = this.getSelectedModel(event);
+            if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                if (true) {
+                    model.destroy({
+                        wait : true,
+                        success:function(model) {
+                            // set status
+                            var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
+                            me.status.set({'message' : message});
+                        },
+                        error : function(collection, response) {
+                            me.status.set({'error' : response});
+                        }
+                    });
                 }
             }
         },
-
-        // Additional Events to be overridden
-        additionalEvents: {
-
+        
+        eventMouseEnter : function(event) {
+            // hide all (as sometimes when moving fast, some may still be visible)
+            $(event.target).parent('tr').parent().find(".collection-option i").hide();
+            var elements = $(event.target).parent('tr').find(".collection-option i");
+            elements.show();
+        },
+        
+        eventMouseLeave : function(event) {
+            var elements = $(event.target).parent('tr').find(".collection-option i");
+            elements.hide();
         },
 
-        events : function() {
-            return _.extend({},this.originalEvents,this.additionalEvents);
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            },
         },
 
         getCreateRole: function() {
@@ -1437,15 +1459,32 @@ function program1(depth0,data) {
         init : function() {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
-
-            // override select event
-            this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
-            this.originalEvents["click .select"] = function(event) {
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("bookmarks").load();
+                });
+            });
+        },
+        
+        createModel : function() {
+            var model = new this.collection.model();
+            // set config to current state
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            return model;
+        },
+        
+        events : {
+            "click .select" : function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
-            };
-            // override create event
-            this.originalEvents["click .create"] = function() {
+            },
+            "click .create" : function() {
                 var me = this;
                 // create a new model
                 var model = new this.collection.model();
@@ -1466,26 +1505,22 @@ function program1(depth0,data) {
                         me.render();
                     }
                 }));
-            };
-            
-        },
-        
-        loadCollection : function(parentId) {
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("bookmarks").load();
-                });
-            });
-        },
-        
-        createModel : function() {
-            var model = new this.collection.model();
-            // set config to current state
-            var config = this.config.toJSON();
-            delete config.bookmark;
-            delete config.project;
-            model.set("config",config);
-            return model;
+            },
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },   
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            }
         },
         
         getCreateRole: function() {
@@ -1864,6 +1899,16 @@ function program1(depth0,data) {
             });
         },
         
+        getSelectedModel : function(event) {
+            // handle both list and action buttons
+            var id = $(event.target).data("value");
+            if (!id) {
+                id = $(event.target).parents('tr').data("attr");
+            }
+            var model = this.collection.get(id);
+            return model;
+        },
+        
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -1930,63 +1975,14 @@ function program1(depth0,data) {
                     });
                 }
             },
-            "click .create": function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
-                    me.render();
-                });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
+            "click .create" : function(event) {
+                this.eventCreate(event);
             },
             "click .edit": function(event) {
-                var me = this;
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.findWhere({"oid" : id});
-                // listen for model changes
-                me.listenTo(model, "change", function() {
-                    me.render();
-                });
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .refresh": function(event) {
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.get(id);
-                squid_api.refreshObjectType(model);
+                this.eventEdit(event);
             },
             "click .delete": function(event) {
-                var me = this;
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.findWhere({"oid" : id});
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
-                                me.status.set({'message' : message});
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
-                }
+                this.eventDelete(event);
             }
         },
 
@@ -2900,7 +2896,28 @@ function program1(depth0,data) {
             });
         },
 
-        additionalEvents: {
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            },
             "click .relation": function(event) {
                 var me = this;
                 var modelValue = $(event.target).parents('tr').attr("data-attr");
@@ -3263,55 +3280,7 @@ function program1(depth0,data) {
         template: template,
         configParentId : "domain",
 
-        additionalEvents: {
-            "click .cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
-                }
-            }
-        },
-
-        viewData: function() {
-            var filteredModels = [];
-            for (i=0; i<this.collection.size(); i++) {
-                if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
-                    if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
-                        filteredModels.push(this.collection.at(i));
-                    }
-                }
-            }
-            var models = [];
-            for (ix=0; ix<filteredModels.length; ix++) {
-                var obj = {};
-                obj.oid = filteredModels[ix].get("oid");
-                obj.leftName = filteredModels[ix].get("leftName");
-                obj.rightName = filteredModels[ix].get("rightName");
-                obj.roles = this.getModelRoles(filteredModels[ix]);
-
-                // set cardinality booleans for handlebar display
-                var leftCardinality = filteredModels[ix].get("leftCardinality");
-                var rightCardinality = filteredModels[ix].get("rightCardinality");
-                if (leftCardinality == "MANY") {
-                    obj.leftMany = true;
-                } else if (leftCardinality == "ZERO_OR_ONE") {
-                    obj.leftZeroOrOne = true;
-                } else if (leftCardinality == "ONE") {
-                    obj.leftOne = true;
-                }
-                if (rightCardinality == "MANY") {
-                    obj.rightMany = true;
-                } else if (rightCardinality == "ZERO_OR_ONE") {
-                    obj.rightZeroOrOne = true;
-                } else if (rightCardinality == "ONE") {
-                    obj.rightOne = true;
-                }
-                models.push(obj);
-            }
-
-            return models;
-        },
-
+        
         // override initialize size we're not listening to the config
         initialize : function(options) {
             this.config = squid_api.model.config;
@@ -3364,6 +3333,76 @@ function program1(depth0,data) {
             });
         },
         
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            },
+            "click .cancel": function() {
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+            }
+        },
+        
+        viewData: function() {
+            var filteredModels = [];
+            for (i=0; i<this.collection.size(); i++) {
+                if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        filteredModels.push(this.collection.at(i));
+                    }
+                }
+            }
+            var models = [];
+            for (ix=0; ix<filteredModels.length; ix++) {
+                var obj = {};
+                obj.oid = filteredModels[ix].get("oid");
+                obj.leftName = filteredModels[ix].get("leftName");
+                obj.rightName = filteredModels[ix].get("rightName");
+                obj.roles = this.getModelRoles(filteredModels[ix]);
+
+                // set cardinality booleans for handlebar display
+                var leftCardinality = filteredModels[ix].get("leftCardinality");
+                var rightCardinality = filteredModels[ix].get("rightCardinality");
+                if (leftCardinality == "MANY") {
+                    obj.leftMany = true;
+                } else if (leftCardinality == "ZERO_OR_ONE") {
+                    obj.leftZeroOrOne = true;
+                } else if (leftCardinality == "ONE") {
+                    obj.leftOne = true;
+                }
+                if (rightCardinality == "MANY") {
+                    obj.rightMany = true;
+                } else if (rightCardinality == "ZERO_OR_ONE") {
+                    obj.rightZeroOrOne = true;
+                } else if (rightCardinality == "ONE") {
+                    obj.rightOne = true;
+                }
+                models.push(obj);
+            }
+
+            return models;
+        },
+
         render: function() {
             // store models
             if (this.collection) {

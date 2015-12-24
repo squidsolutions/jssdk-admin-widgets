@@ -13,15 +13,32 @@
         init : function() {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
-
-            // override select event
-            this.originalEvents = squid_api.view.BaseCollectionManagementWidget.prototype.originalEvents;
-            this.originalEvents["click .select"] = function(event) {
+        },
+        
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("bookmarks").load();
+                });
+            });
+        },
+        
+        createModel : function() {
+            var model = new this.collection.model();
+            // set config to current state
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            return model;
+        },
+        
+        events : {
+            "click .select" : function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
-            };
-            // override create event
-            this.originalEvents["click .create"] = function() {
+            },
+            "click .create" : function() {
                 var me = this;
                 // create a new model
                 var model = new this.collection.model();
@@ -42,26 +59,22 @@
                         me.render();
                     }
                 }));
-            };
-            
-        },
-        
-        loadCollection : function(parentId) {
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("bookmarks").load();
-                });
-            });
-        },
-        
-        createModel : function() {
-            var model = new this.collection.model();
-            // set config to current state
-            var config = this.config.toJSON();
-            delete config.bookmark;
-            delete config.project;
-            model.set("config",config);
-            return model;
+            },
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },   
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            }
         },
         
         getCreateRole: function() {
