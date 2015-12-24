@@ -154,6 +154,24 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_bookmark_config_editor"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n<br>\n<div id=\"bookmark-configPanel\" class=\"collapse\">\n	<br>\n	<textarea rows=3 id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" name=\"";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"form-control\"></textarea>\n	<br>\n	<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n</div>";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_button_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -1516,7 +1534,7 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_config_editor);
 
 }(this, function (Backbone, squid_api, template) {
     
@@ -1579,12 +1597,13 @@ function program1(depth0,data) {
     };
     
     // Define "setConfig" Custom Editor
-    var setConfigEditor = Backbone.Form.editors.Base.extend({
+    var configEditor = Backbone.Form.editors.Base.extend({
+        
+        template : template,
 
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
         },
 
         setValue: function(value) {
@@ -1593,13 +1612,13 @@ function program1(depth0,data) {
             if (value) {
                 val = JSON.stringify(value, null, 4);
             }
-            this.$el.val(val);
+            this.$el.find("textarea").val(val);
         },
 
         getValue: function() {
             // transform text value to json
             var json;
-            var val = this.$el.val();
+            var val = this.$el.find("textarea").val();
             if (val) {
                 try {
                     json = JSON.parse(val);
@@ -1612,18 +1631,17 @@ function program1(depth0,data) {
         },
         
         events: {
-            "click" : "setConfig"
+            "click #set" : "setConfig"
         },
 
         setConfig: function(event) {
-            var me = this;
             // prevent redirect
             event.preventDefault();
             // set config to current state
             var config = squid_api.model.config.toJSON();
             delete config.bookmark;
             delete config.project;
-            this.form.fields.config.setValue(config);
+            this.setValue(config);
         },
         
         render: function() {
@@ -1632,54 +1650,14 @@ function program1(depth0,data) {
             this.$el.removeAttr("id");
             this.$el.removeAttr("name");
             this.$el.removeAttr("class");
-            this.$el.append("<button></button>");
-            this.$el.append("<textarea rows=3 id='"+id+"'></textarea>");
+            var data = {"id" : id, "name" : name};
+            this.$el.append(this.template(data));
             this.setValue(this.value);
             return this;
         }
     });
 
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
-
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
-        initialize: function(options) {
-            // Call parent constructor
-            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
-        },
-
-        setValue: function(value) {
-            // beautify json value
-            var val;
-            if (value) {
-                val = JSON.stringify(value, null, 4);
-            }
-            this.$el.val(val);
-        },
-
-        getValue: function() {
-            // transform text value to json
-            var json;
-            var val = this.$el.val();
-            if (val) {
-                try {
-                    json = JSON.parse(val);
-                } catch (e) {
-                    // parse error, ignore to let validation proceed
-                    json = val;
-                }
-            }
-            return json;
-        },
-    });
-    
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
-    Backbone.Form.editors.SetConfig = setConfigEditor;
+    Backbone.Form.editors.SetConfig = configEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
