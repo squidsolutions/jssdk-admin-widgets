@@ -160,93 +160,137 @@
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
-
-        originalEvents: {
-            'mouseenter tr': function(event) {
-                // hide all (as sometimes when moving fast, some may still be visible)
-                $(event.target).parent('tr').parent().find(".collection-option i").hide();
-                var elements = $(event.target).parent('tr').find(".collection-option i");
-                elements.show();
-            },
-            'mouseleave tr': function(event) {
-                var elements = $(event.target).parent('tr').find(".collection-option i");
-                elements.hide();
-            },
-            // select
-            "click .select": function(event) {
-                var value = $(event.target).parent('tr').attr('data-attr');
-                this.config.set(this.type.toLowerCase(), value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+        
+        getSelectedModel : function(event) {
+            var id = $(event.target).parents('tr').data("attr");
+            var model = this.collection.get(id);
+            return model;
+        },
+        
+        eventSelect :  function(event) {
+            var model = this.getSelectedModel(event);
+            this.config.set(this.type.toLowerCase(), model.get("oid"));
+            if (this.onSelect) {
+                this.onSelect.call();
+            }
+        },
+        
+        eventCreate : function() {
+            var me = this;
+            // create a new model
+            var model = new this.collection.model();
+            model.set("id", this.collection.parent.get("id"));
+            // listen for new model changes
+            me.listenTo(model, "sync", function() {
+                me.collection.add(model);
+                me.render();
+            });
+            
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
+                    me.render();
                 }
-            },
-            "click .refresh": function(event) {
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                squid_api.refreshObjectType(model);
-            },
-            "click .create" : function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
-                    me.render();
+            }));
+        },
+        
+        eventRefresh : function(event) {
+            var model = this.getSelectedModel(event);
+            var objectType = model.get("objectType");
+            var url = squid_api.apiURL + "/projects/" + model.get("id").projectId;
+            if (objectType == "Project") {
+                url = url + "/refreshDatabase";
+            } else if (objectType == "Domain") {
+                url = url + "/domains/" + model.get("id").domainId + "/cache/refresh";
+            }
+            url = url + "?access_token=" + squid_api.model.login.get("accessToken");
+            if (model) {
+                var request = $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: 'json',
+                    contentType: 'application/json'
                 });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .edit" : function(event) {
-                var me = this;
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                // listen for model changes
-                me.listenTo(model, "change", function() {
-                    me.render();
+                request.done(function () {
+                    squid_api.model.status.set("message", objectType + " successfully refreshed");
                 });
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .delete": function(event) {
-                var me = this;
-                var id = $(event.target).parents('tr').attr("data-attr");
-                var model = this.collection.get(id);
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = model.get("objectType") + " with name " + model.get("name") + " has been successfully deleted";
-                                me.status.set({'message' : message});
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
+                request.fail(function () {
+                    squid_api.model.status.set("message", objectType + " refresh failed");
+                    squid_api.model.status.set("error", "error");
+                });
+            }
+        },
+        
+        eventEdit : function(event) {
+            var me = this;
+            var model = this.getSelectedModel(event);
+            // listen for model changes (TODO check this code)
+            me.listenTo(model, "change", function() {
+                me.render();
+            });
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
+                    me.render();
+                }
+            }));
+        },
+        
+        eventDelete : function(event) {
+            var me = this;
+            // 
+            var model = this.getSelectedModel(event);
+            if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                if (true) {
+                    model.destroy({
+                        wait : true,
+                        success:function(model) {
+                            // set status
+                            var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
+                            me.status.set({'message' : message});
+                        },
+                        error : function(collection, response) {
+                            me.status.set({'error' : response});
+                        }
+                    });
                 }
             }
         },
-
-        // Additional Events to be overridden
-        additionalEvents: {
-
+        
+        eventMouseEnter : function(event) {
+            // hide all (as sometimes when moving fast, some may still be visible)
+            $(event.target).parent('tr').parent().find(".collection-option i").hide();
+            var elements = $(event.target).parent('tr').find(".collection-option i");
+            elements.show();
+        },
+        
+        eventMouseLeave : function(event) {
+            var elements = $(event.target).parent('tr').find(".collection-option i");
+            elements.hide();
         },
 
-        events : function() {
-            return _.extend({},this.originalEvents,this.additionalEvents);
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            },
         },
 
         getCreateRole: function() {

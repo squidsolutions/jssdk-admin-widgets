@@ -23,6 +23,16 @@
             });
         },
         
+        getSelectedModel : function(event) {
+            // handle both list and action buttons
+            var id = $(event.target).data("value");
+            if (!id) {
+                id = $(event.target).parents('tr').data("attr");
+            }
+            var model = this.collection.get(id);
+            return model;
+        },
+        
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -89,63 +99,14 @@
                     });
                 }
             },
-            "click .create": function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
-                    me.render();
-                });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
+            "click .create" : function(event) {
+                this.eventCreate(event);
             },
             "click .edit": function(event) {
-                var me = this;
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.findWhere({"oid" : id});
-                // listen for model changes
-                me.listenTo(model, "change", function() {
-                    me.render();
-                });
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
-            },
-            "click .refresh": function(event) {
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.get(id);
-                squid_api.refreshObjectType(model);
+                this.eventEdit(event);
             },
             "click .delete": function(event) {
-                var me = this;
-                var id = $(event.target).attr("data-value");
-                var model = this.collection.findWhere({"oid" : id});
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " " + model.get("name") + "?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = me.type + " with name " + model.get("name") + " has been successfully deleted";
-                                me.status.set({'message' : message});
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
-                }
+                this.eventDelete(event);
             }
         },
 

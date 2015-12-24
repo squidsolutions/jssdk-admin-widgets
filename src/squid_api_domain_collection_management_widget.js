@@ -28,7 +28,28 @@
             });
         },
 
-        additionalEvents: {
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            },
             "click .relation": function(event) {
                 var me = this;
                 var modelValue = $(event.target).parents('tr').attr("data-attr");

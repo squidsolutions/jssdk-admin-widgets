@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_config_editor);
 
 }(this, function (Backbone, squid_api, template) {
     
@@ -39,15 +39,9 @@
             "editorClass" : "form-control",
             "fieldClass" : "path"
         },
-        "setConfig" : {
-            "type" : "SetConfig",
-            "fieldClass" : "squid-api-set-config",
-            "editorClass" : "form-control"
-        },
         "config" : {
-            "type" : "JsonTextArea",
+            "type" : "SetConfig",
             "title" : "Config",
-            "position" : 1,
             "fieldClass" : "config",
             "editorClass" : "form-control",
             "validators": [
@@ -68,57 +62,13 @@
     };
     
     // Define "setConfig" Custom Editor
-    var setConfigEditor = Backbone.Form.editors.Base.extend({
-
-        tagName: 'button',
-        defaultValue : "Set current config",
-
-        initialize: function(options) {
-            // Call parent constructor
-            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-        },
-        events: {
-            "click" : "setConfig"
-        },
-
-        setConfig: function(event) {
-            var me = this;
-            // prevent redirect
-            event.preventDefault();
-            // set config to current state
-            var config = squid_api.model.config.toJSON();
-            delete config.bookmark;
-            delete config.project;
-            this.form.fields.config.setValue(config);
-        },
+    var configEditor = Backbone.Form.editors.Base.extend({
         
-        render: function() {
-            this.setValue(this.value);
+        template : template,
 
-            return this;
-        },
-
-        getValue: function() {
-            return this.$el.html();
-        },
-
-        setValue: function(value) {
-            this.$el.html(value);
-        }
-    });
-
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
-
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
         },
 
         setValue: function(value) {
@@ -127,13 +77,13 @@
             if (value) {
                 val = JSON.stringify(value, null, 4);
             }
-            this.$el.val(val);
+            this.$el.find("textarea").val(val);
         },
 
         getValue: function() {
             // transform text value to json
             var json;
-            var val = this.$el.val();
+            var val = this.$el.find("textarea").val();
             if (val) {
                 try {
                     json = JSON.parse(val);
@@ -144,10 +94,35 @@
             }
             return json;
         },
+        
+        events: {
+            "click #set" : "setConfig"
+        },
+
+        setConfig: function(event) {
+            // prevent redirect
+            event.preventDefault();
+            // set config to current state
+            var config = squid_api.model.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            this.setValue(config);
+        },
+        
+        render: function() {
+            var id = this.$el.attr("id");
+            var name = this.$el.attr("name");
+            this.$el.removeAttr("id");
+            this.$el.removeAttr("name");
+            this.$el.removeAttr("class");
+            var data = {"id" : id, "name" : name};
+            this.$el.append(this.template(data));
+            this.setValue(this.value);
+            return this;
+        }
     });
-    
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
-    Backbone.Form.editors.SetConfig = setConfigEditor;
+
+    Backbone.Form.editors.SetConfig = configEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
