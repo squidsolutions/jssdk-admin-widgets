@@ -2523,14 +2523,14 @@ function program1(depth0,data) {
                     me.$el.removeClass("btn-danger");
                     me.$el.addClass("btn-success");
                     me.form.fields.dbSchemas.editor.setOptions(response.definitions);
-                    me.form.fields.dbSchemas.$el.find("ul").show();
+                    me.form.fields.dbSchemas.$el.show();
                 },
                 error: function(xhr, textStatus, error){
                     me.status.set({"error":xhr});
                     me.$el.removeClass("in-progress");
                     me.$el.removeClass("btn-success");
                     me.$el.addClass("btn-danger");
-                    me.form.fields.dbSchemas.$el.find("ul").hide();
+                    me.form.fields.dbSchemas.$el.hide();
                 }
 
             });
@@ -2839,7 +2839,15 @@ function program1(depth0,data) {
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
 
             // listen for global status change
-            this.status.on('change:status', this.enable, this);
+            this.listenTo(this.status,"change:status", this.enable);
+        },
+
+        enable: function() {
+            if (this.status.get("status") == "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
 
         render: function() {
@@ -3136,8 +3144,16 @@ function program1(depth0,data) {
             this.listenTo(this.config,"change:chosenMetrics", this.render);
 
             // listen for global status change
-            this.listenTo(squid_api.model.status,"change:status", this.handleStatus);
+            this.listenTo(this.status,"change:status", this.enable);
 
+        },
+
+        enable: function() {
+            if (this.status.get("status") == "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
         
         render: function() {

@@ -35,8 +35,16 @@
             this.listenTo(this.config,"change:chosenMetrics", this.render);
 
             // listen for global status change
-            this.listenTo(squid_api.model.status,"change:status", this.handleStatus);
+            this.listenTo(this.status,"change:status", this.enable);
 
+        },
+
+        enable: function() {
+            if (this.status.get("status") == "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
         
         render: function() {

@@ -386,14 +386,14 @@
                     me.$el.removeClass("btn-danger");
                     me.$el.addClass("btn-success");
                     me.form.fields.dbSchemas.editor.setOptions(response.definitions);
-                    me.form.fields.dbSchemas.$el.find("ul").show();
+                    me.form.fields.dbSchemas.$el.show();
                 },
                 error: function(xhr, textStatus, error){
                     me.status.set({"error":xhr});
                     me.$el.removeClass("in-progress");
                     me.$el.removeClass("btn-success");
                     me.$el.addClass("btn-danger");
-                    me.form.fields.dbSchemas.$el.find("ul").hide();
+                    me.form.fields.dbSchemas.$el.hide();
                 }
 
             });

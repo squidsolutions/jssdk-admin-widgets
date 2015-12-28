@@ -50,7 +50,15 @@
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
 
             // listen for global status change
-            this.status.on('change:status', this.enable, this);
+            this.listenTo(this.status,"change:status", this.enable);
+        },
+
+        enable: function() {
+            if (this.status.get("status") == "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
 
         render: function() {
