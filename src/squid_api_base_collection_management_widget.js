@@ -351,8 +351,10 @@
                     // detect selected model
                     if (model.value === this.config.get(this.type.toLowerCase())) {
                         model.selected = true;
+                        jsonData.collection.models.unshift(model);
+                    } else {
+                        jsonData.collection.models.push(model);
                     }
-                    jsonData.collection.models.push(model);
                 }
             }
             // print template

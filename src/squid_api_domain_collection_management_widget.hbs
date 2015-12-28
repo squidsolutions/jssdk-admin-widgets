@@ -20,16 +20,16 @@
                                             {{label}}
                                         </td>
                                         {{#if roles}}
-	                                        {{#if roles.delete}}
-	                                            <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
-	                                        {{/if}}
+                                            {{#if roles.edit}}
+                                                <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+                                            {{/if}}
 	                                        {{#if roles.refresh}}
 	                                            <td class="refresh collection-option"><i class="fa fa-refresh"></i></td>
 	                                        {{/if}}
 	                                        <td class="relation collection-option"><i class="fa fa-link"></i></td>
-	                                        {{#if roles.edit}}
-	                                            <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
-	                                        {{/if}}
+	                                        {{#if roles.delete}}
+                                                <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
+                                            {{/if}}
                                         {{/if}}
                                     </tr>
                                 {{/each}}
