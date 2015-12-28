@@ -34,7 +34,7 @@
         },
         
         events: {
-            "change select" : function(event) {
+            "change .bootstrap-duallistbox-container select" : function(event) {
                 var me = this;
                 var dynamic = [];
                 var nonDynamic = [];

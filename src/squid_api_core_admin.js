@@ -265,8 +265,8 @@
                         "fieldClass" : "hidden"
                     },
                     "dimensionId" : {
-                        "options" : [],
-                        "type" : "Text",
+                        "options" : [{val : null, label : " "}],
+                        "type" : "Select",
                         "editorClass" : "form-control",
                         "title" : "Parent Dimension"
                     }
