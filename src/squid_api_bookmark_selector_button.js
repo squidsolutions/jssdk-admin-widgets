@@ -17,6 +17,7 @@
             if (this.collection) {
                 jsonData.visible = true;
                 if (this.selectedModel) {
+                    this.configCompare();
                     if (this.selectedModel.get("oid")) {
                         // always display default label
                     }
@@ -28,6 +29,21 @@
             this.$el.html(template(jsonData));
 
             return this;
+        },
+
+        configCompare: function() {
+            /* add a class when the current config matches the selected models config */
+            if (this.selectedModel) {
+                if (JSON.stringify(this.selectedModel.get("config")) === JSON.stringify(_.omit(this.config.toJSON(), "project", "bookmark"))) {
+                    this.$el.find("button").addClass("match");
+                } else {
+                    this.$el.find("button").removeClass("match");
+                }
+            }
+        },
+
+        configChangeCallback: function() {
+            this.configCompare();
         }
 
     });
