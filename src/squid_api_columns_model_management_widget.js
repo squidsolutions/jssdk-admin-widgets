@@ -16,11 +16,10 @@
 
         onSave: function(model) {
             // to be overridden from other model management widgets
-            console.log("once saved");
         },
 
         formEvents: function() {
-            // to be overridden from other model management widgets
+            // parent ID population for dimensions
         }
 
     });

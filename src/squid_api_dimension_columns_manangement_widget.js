@@ -5,7 +5,12 @@
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Dimension",
-        typeLabelPlural : "Dimensions"
+        typeLabelPlural : "Dimensions",
+
+        init : function() {
+            var me = this;
+            this.modelView = squid_api.view.DimensionModelManagementWidget;
+        }
     });
 
     return View;
