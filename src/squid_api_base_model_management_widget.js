@@ -107,7 +107,12 @@
 
         render: function() {
             var me = this;
-            var jsonData = {};
+            var jsonData = {modelDefinition : "unknown"};
+
+            // add type to view data
+            if (this.model.definition) {
+                jsonData.modelDefinition = this.model.definition.toLowerCase();
+            }
 
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
