@@ -35,13 +35,11 @@
 }
 
 .squid-api-collection-management-widget table td.select {
-}
-
-.squid-api-collection-management-widget table tr {
-	cursor: pointer;
+	padding-left: 10px;
 }
 
 .squid-api-collection-management-widget table td {
+	cursor: pointer;
 }
 
 .squid-api-collection-management-widget table tr {

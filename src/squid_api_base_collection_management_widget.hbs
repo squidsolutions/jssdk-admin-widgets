@@ -20,11 +20,11 @@
                                             {{label}}
                                         </td>
                                         {{#if roles}}
+                                            {{#if roles.edit}}
+                                                <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+                                            {{/if}}
 	                                        {{#if roles.delete}}
 	                                            <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
-	                                        {{/if}}
-	                                        {{#if roles.edit}}
-	                                            <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
 	                                        {{/if}}
                                         {{/if}}
                                     </tr>

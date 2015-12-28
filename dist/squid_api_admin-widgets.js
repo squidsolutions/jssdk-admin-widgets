@@ -76,11 +76,11 @@ function program10(depth0,data) {
 function program12(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  buffer += "\n                                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                        ";
   return buffer;
@@ -88,13 +88,13 @@ function program12(depth0,data) {
 function program13(depth0,data) {
   
   
-  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  return "\n                                                <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                            ";
   }
 
 function program15(depth0,data) {
   
   
-  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
   }
 
 function program17(depth0,data) {
@@ -444,14 +444,14 @@ function program10(depth0,data) {
 function program12(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  buffer += "\n                                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                        ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                        <td class=\"relation collection-option\"><i class=\"fa fa-link\"></i></td>\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                        ";
   return buffer;
@@ -459,7 +459,7 @@ function program12(depth0,data) {
 function program13(depth0,data) {
   
   
-  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  return "\n                                                <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                            ";
   }
 
 function program15(depth0,data) {
@@ -471,7 +471,7 @@ function program15(depth0,data) {
 function program17(depth0,data) {
   
   
-  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  return "\n                                                <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n                                            ";
   }
 
 function program19(depth0,data) {
@@ -684,14 +684,14 @@ function program10(depth0,data) {
 function program12(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  buffer += "\n                                            ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	                                        ";
+  buffer += "\n                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                     ";
   return buffer;
@@ -699,19 +699,19 @@ function program12(depth0,data) {
 function program13(depth0,data) {
   
   
-  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
+  return "\n                                                <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                            ";
   }
 
 function program15(depth0,data) {
   
   
-  return "\n	                                            <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\"></i></td>\n	                                        ";
+  return "\n                                                <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\"></i></td>\n                                            ";
   }
 
 function program17(depth0,data) {
   
   
-  return "\n	                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n	                                        ";
+  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n	                                        ";
   }
 
 function program19(depth0,data) {
@@ -1314,8 +1314,10 @@ function program1(depth0,data) {
                     // detect selected model
                     if (model.value === this.config.get(this.type.toLowerCase())) {
                         model.selected = true;
+                        jsonData.collection.models.unshift(model);
+                    } else {
+                        jsonData.collection.models.push(model);
                     }
-                    jsonData.collection.models.push(model);
                 }
             }
             // print template
@@ -1940,7 +1942,7 @@ function program1(depth0,data) {
         },
         
         events: {
-            "change .bootstrap-duallistbox-container select" : function(event) {
+            "change select" : function(event) {
                 var me = this;
                 var dynamic = [];
                 var nonDynamic = [];
