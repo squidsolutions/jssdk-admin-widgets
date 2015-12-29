@@ -29,6 +29,11 @@
                 delete data.dbCheckConnection;
             }
             return data;
+        },
+        
+        onSave : function(model) {
+            // set new project as current
+            this.config.set("project", model.get("id").projectId);
         }
     });
 
