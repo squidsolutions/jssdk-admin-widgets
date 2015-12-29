@@ -1,11 +1,11 @@
 (function (root, factory) {
-    root.squid_api.view.DimensionColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.MetricColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
-        type : "Dimension",
-        typeLabelPlural : "Dimensions",
+        type : "Metric",
+        typeLabelPlural : "Metrics",
 
         init : function() {
             // no model view needed
@@ -26,9 +26,6 @@
                                 me.collection.parent.set("dynamic", domain.get("dynamic"));
                             }
                         });
-
-                        // force a filters re-computation because dimension selector uses it
-                        me.config.trigger("change:selection");
                     });
                 }
             },

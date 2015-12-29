@@ -1009,7 +1009,6 @@ function program1(depth0,data) {
             }
             
             this.initModel();
-            
             this.init(options);
         },
         
@@ -1068,10 +1067,6 @@ function program1(depth0,data) {
                         me.collectionLoading = false;
                         me.render();
                     });
-                }
-                // used to trigger custom function within child views
-                if (me.configChangeCallback) {
-                    me.configChangeCallback();
                 }
             });
         },
@@ -1746,6 +1741,11 @@ function program1(depth0,data) {
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
+
+        init : function() {
+            var me = this;
+            this.listenTo(this.config,"change", this.configCompare);
+        },
         
         render: function() {
             var label = this.typeLabelPlural;
@@ -1777,16 +1777,21 @@ function program1(depth0,data) {
         configCompare: function() {
             /* add a class when the current config matches the selected models config */
             if (this.selectedModel) {
-                if (JSON.stringify(this.selectedModel.get("config")) === JSON.stringify(_.omit(this.config.toJSON(), "project", "bookmark"))) {
+                var match = true;
+                var selectedModelConfig = this.selectedModel.get("config");
+                var globalConfig = _.omit(this.config.toJSON(), "project", "bookmark");
+                // ignore the order of the two configurations
+                for (var x in selectedModelConfig) {
+                    if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(globalConfig[x])) {
+                        match = false;
+                    }
+                }
+                if (match) {
                     this.$el.find("button").addClass("match");
                 } else {
                     this.$el.find("button").removeClass("match");
                 }
             }
-        },
-
-        configChangeCallback: function() {
-            this.configCompare();
         }
 
     });
@@ -1961,72 +1966,62 @@ function program1(depth0,data) {
             var model = this.collection.get(id);
             return model;
         },
+
+        eventSelect : function(event) {
+            var me = this;
+            var dynamic = [];
+            var nonDynamic = [];
+
+            // update edit element
+            var name = $(event.target).find("option:selected:last").html();
+            var value = $(event.target).find("option:selected:last").val();
+
+            //update edit / delete buttons
+            if (name !== undefined) {
+                this.$el.find(".edit").removeAttr("disabled");
+                this.$el.find(".edit").html("edit " + name);
+                this.$el.find(".edit").attr("data-value", value);
+
+                this.$el.find(".delete").removeAttr("disabled");
+                this.$el.find(".delete").html("delete " + name);
+                this.$el.find(".delete").attr("data-value", value);
+            }
+
+            // selected values in the second select box
+            var options1 = $(this.$el.find("select")[1]).find("option");
+            var options2 = $(this.$el.find("select")[0]).find("option");
+
+            // store visually updated attributes
+            for (i=0; i<options1.length; i++) {
+                nonDynamic.push(options1[i]);
+            }
+            for (i=0; i<options2.length; i++) {
+                dynamic.push(options2[i]);
+            }
+            // check nonDynamic Data
+            var model;
+            var changeCount = 0;
+            for (i=0; i<nonDynamic.length; i++) {
+                model = this.collection.get($(nonDynamic[i]).val());
+                if (model.get("dynamic") === true) {
+                    changeCount++;
+                    model.set({"dynamic":false},{silent: true});
+                }
+            }
+            // check dynamic Data
+            for (i=0; i<dynamic.length; i++) {
+                model = this.collection.get($(dynamic[i]).val());
+                if (model.get("dynamic") === false) {
+                    changeCount++;
+                    model.set({"dynamic":true},{silent: true});
+                }
+            }
+            return changeCount;
+        },
         
         events: {
             "change select" : function(event) {
-                var me = this;
-                var dynamic = [];
-                var nonDynamic = [];
-
-                // update edit element
-                var name = $(event.target).find("option:selected:last").html();
-                var value = $(event.target).find("option:selected:last").val();
-
-                //update edit / delete buttons
-                if (name !== undefined) {
-                    this.$el.find(".edit").removeAttr("disabled");
-                    this.$el.find(".edit").html("edit " + name);
-                    this.$el.find(".edit").attr("data-value", value);
-
-                    this.$el.find(".delete").removeAttr("disabled");
-                    this.$el.find(".delete").html("delete " + name);
-                    this.$el.find(".delete").attr("data-value", value);
-                }
-
-                // selected values in the second select box
-                var options1 = $(this.$el.find("select")[1]).find("option");
-                var options2 = $(this.$el.find("select")[0]).find("option");
-
-                // store visually updated attributes
-                for (i=0; i<options1.length; i++) {
-                    nonDynamic.push(options1[i]);
-                }
-                for (i=0; i<options2.length; i++) {
-                    dynamic.push(options2[i]);
-                }
-                // check nonDynamic Data
-                var model;
-                var changeCount = 0;
-                for (i=0; i<nonDynamic.length; i++) {
-                    model = this.collection.get($(nonDynamic[i]).val());
-                    if (model.get("dynamic") === true) {
-                        changeCount++;
-                        model.set({"dynamic":false},{silent: true});
-                    }
-                }
-                // check dynamic Data
-                for (i=0; i<dynamic.length; i++) {
-                    model = this.collection.get($(dynamic[i]).val());
-                    if (model.get("dynamic") === false) {
-                        changeCount++;
-                        model.set({"dynamic":true},{silent: true});
-                    }
-                }
-
-                // update all models at the same time
-                if (changeCount > 0) {
-                    this.collection.saveAll(this.collection.models).then(function() {
-                        // TODO fetch the parent as it may have changed from non dynamic to dynamic
-                        // but this resets the parent collections as the API returns an empty array
-                        // me.collection.parent.fetch().done(function() {
-                        me.collection.parent.set("dynamic", false);
-                        
-                        // force a filters re-computation because dimension selector uses it
-                        // TODO do not trigger if the collection is metrics
-                        me.config.trigger("change:selection");
-                        
-                    });
-                }
+                this.eventSelect(event);
             },
             "click .create" : function(event) {
                 this.eventCreate(event);
@@ -2737,8 +2732,39 @@ function program1(depth0,data) {
         typeLabelPlural : "Dimensions",
 
         init : function() {
-            var me = this;
-            this.modelView = squid_api.view.DimensionModelManagementWidget;
+            // no model view needed
+        },
+
+        events: {
+            "change select" : function(event) {
+                var me = this;
+                var changeCount = squid_api.view.ColumnsManagementWidget.prototype.eventSelect.call(this, event);
+
+                // update all models at the same time
+                if (changeCount > 0) {
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // clone and fetch parent to check dynamic status
+                        var parentClone = me.collection.parent.clone();
+                        parentClone.fetch({
+                            success: function (domain) {
+                                me.collection.parent.set("dynamic", domain.get("dynamic"));
+                            }
+                        });
+
+                        // force a filters re-computation because dimension selector uses it
+                        me.config.trigger("change:selection");
+                    });
+                }
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            }
         }
     });
 
@@ -3011,7 +3037,6 @@ function program1(depth0,data) {
 
         init : function() {
             var me = this;
-
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },
@@ -3091,19 +3116,6 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
-
-}(this, function (Backbone, squid_api, template) {
-
-    var View = squid_api.view.ColumnsManagementWidget.extend({
-        type : "Metric",
-        typeLabelPlural : "Metrics"
-    });
-
-    return View;
-}));
-
-(function (root, factory) {
     root.squid_api.view.MetricCollectionWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
@@ -3122,6 +3134,52 @@ function program1(depth0,data) {
                     });
                 });
             });
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricColumnsManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ColumnsManagementWidget.extend({
+        type : "Metric",
+        typeLabelPlural : "Metrics",
+
+        init : function() {
+            // no model view needed
+        },
+
+        events: {
+            "change select" : function(event) {
+                var me = this;
+                var changeCount = squid_api.view.ColumnsManagementWidget.prototype.eventSelect.call(this, event);
+
+                // update all models at the same time
+                if (changeCount > 0) {
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // clone and fetch parent to check dynamic status
+                        var parentClone = me.collection.parent.clone();
+                        parentClone.fetch({
+                            success: function (domain) {
+                                me.collection.parent.set("dynamic", domain.get("dynamic"));
+                            }
+                        });
+                    });
+                }
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            }
         }
     });
 
@@ -3160,7 +3218,7 @@ function program1(depth0,data) {
                 this.config = squid_api.model.config;
             }
 
-            this.collectionManagementView = new squid_api.view.MetricCollectionManagementWidget();
+            this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
             
             this.listenTo(this.config,"change:chosenMetrics", this.render);
 

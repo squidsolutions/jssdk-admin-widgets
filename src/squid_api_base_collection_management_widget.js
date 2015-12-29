@@ -46,7 +46,6 @@
             }
             
             this.initModel();
-            
             this.init(options);
         },
         
@@ -105,10 +104,6 @@
                         me.collectionLoading = false;
                         me.render();
                     });
-                }
-                // used to trigger custom function within child views
-                if (me.configChangeCallback) {
-                    me.configChangeCallback();
                 }
             });
         },
