@@ -1034,11 +1034,11 @@ function program1(depth0,data) {
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
                                 me.listenTo(me.collection, "sync remove", me.render);
+                                me.collectionLoading = false;
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
                                     me.setSelectedModel(selectedId);
                                 } else {
-                                    me.collectionLoading = false;
                                     me.render();
                                 }
                             }).fail(function() {
@@ -1062,6 +1062,7 @@ function program1(depth0,data) {
                         me.collection = collection;
                         // listen to collection fetch or removed element
                         me.listenTo(me.collection, "sync remove", me.render);
+                        me.collectionLoading = false;
                         me.setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;
@@ -1088,7 +1089,6 @@ function program1(depth0,data) {
                     me.listenTo(me.selectedModel, "change", me.render);
                 });
             } else {
-                me.collectionLoading = false;
                 me.render();
             }
         },
@@ -1919,10 +1919,7 @@ function program1(depth0,data) {
                         jsonData.label = this.selectedModel.get("name");
                     }
                 }
-            } else {
-                jsonData.visible = false;
             }
-
             this.$el.html(this.template(jsonData));
 
             return this;
@@ -3452,6 +3449,11 @@ function program1(depth0,data) {
                 delete data.dbCheckConnection;
             }
             return data;
+        },
+        
+        onSave : function(model) {
+            // set new project as current
+            this.config.set("project", model.get("id").projectId);
         }
     });
 

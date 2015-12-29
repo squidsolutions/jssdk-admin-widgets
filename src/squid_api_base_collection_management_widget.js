@@ -71,11 +71,11 @@
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
                                 me.listenTo(me.collection, "sync remove", me.render);
+                                me.collectionLoading = false;
                                 if (config.hasChanged(me.configSelectedId)) {
                                     // selected also changed
                                     me.setSelectedModel(selectedId);
                                 } else {
-                                    me.collectionLoading = false;
                                     me.render();
                                 }
                             }).fail(function() {
@@ -99,6 +99,7 @@
                         me.collection = collection;
                         // listen to collection fetch or removed element
                         me.listenTo(me.collection, "sync remove", me.render);
+                        me.collectionLoading = false;
                         me.setSelectedModel(selectedId);
                     }).fail(function() {
                         me.collectionLoading = false;
@@ -125,7 +126,6 @@
                     me.listenTo(me.selectedModel, "change", me.render);
                 });
             } else {
-                me.collectionLoading = false;
                 me.render();
             }
         },

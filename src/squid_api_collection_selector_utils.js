@@ -119,10 +119,7 @@
                         jsonData.label = this.selectedModel.get("name");
                     }
                 }
-            } else {
-                jsonData.visible = false;
             }
-
             this.$el.html(this.template(jsonData));
 
             return this;
