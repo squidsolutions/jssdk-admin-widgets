@@ -1583,14 +1583,16 @@ function program1(depth0,data) {
                 if (project.get("_role") === "WRITE" || project.get("_role") === "OWNER") {
 
                     // place dimension collection in modal view
-                    var dimensionModal = new squid_api.view.ModalView({
-                        view : me.collectionManagementView
-                    });
+                    if (! me.columnConfigurationModal) {
+                        me.columnConfigurationModal = new squid_api.view.ModalView({
+                            view : me.collectionManagementView
+                        });
+                    }
 
                     me.$el.find("li").first().before("<li class='configure'> configure</option>");
                     me.$el.find("li").first().on("click", function() {
                         // trigger dimension management view
-                        dimensionModal.render();
+                       me.columnConfigurationModal.render();
                     });
                 }
             });
