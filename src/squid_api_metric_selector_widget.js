@@ -30,7 +30,7 @@
                 this.config = squid_api.model.config;
             }
 
-            this.collectionManagementView = new squid_api.view.MetricCollectionManagementWidget();
+            this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
             
             this.listenTo(this.config,"change:chosenMetrics", this.render);
 

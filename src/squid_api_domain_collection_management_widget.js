@@ -15,7 +15,6 @@
 
         init : function() {
             var me = this;
-
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },

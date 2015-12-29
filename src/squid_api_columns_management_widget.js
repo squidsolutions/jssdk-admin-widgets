@@ -32,72 +32,62 @@
             var model = this.collection.get(id);
             return model;
         },
+
+        eventSelect : function(event) {
+            var me = this;
+            var dynamic = [];
+            var nonDynamic = [];
+
+            // update edit element
+            var name = $(event.target).find("option:selected:last").html();
+            var value = $(event.target).find("option:selected:last").val();
+
+            //update edit / delete buttons
+            if (name !== undefined) {
+                this.$el.find(".edit").removeAttr("disabled");
+                this.$el.find(".edit").html("edit " + name);
+                this.$el.find(".edit").attr("data-value", value);
+
+                this.$el.find(".delete").removeAttr("disabled");
+                this.$el.find(".delete").html("delete " + name);
+                this.$el.find(".delete").attr("data-value", value);
+            }
+
+            // selected values in the second select box
+            var options1 = $(this.$el.find("select")[1]).find("option");
+            var options2 = $(this.$el.find("select")[0]).find("option");
+
+            // store visually updated attributes
+            for (i=0; i<options1.length; i++) {
+                nonDynamic.push(options1[i]);
+            }
+            for (i=0; i<options2.length; i++) {
+                dynamic.push(options2[i]);
+            }
+            // check nonDynamic Data
+            var model;
+            var changeCount = 0;
+            for (i=0; i<nonDynamic.length; i++) {
+                model = this.collection.get($(nonDynamic[i]).val());
+                if (model.get("dynamic") === true) {
+                    changeCount++;
+                    model.set({"dynamic":false},{silent: true});
+                }
+            }
+            // check dynamic Data
+            for (i=0; i<dynamic.length; i++) {
+                model = this.collection.get($(dynamic[i]).val());
+                if (model.get("dynamic") === false) {
+                    changeCount++;
+                    model.set({"dynamic":true},{silent: true});
+                }
+            }
+            return changeCount;
+        },
         
         events: {
             "change select" : function(event) {
-                var me = this;
-                var dynamic = [];
-                var nonDynamic = [];
-
-                // update edit element
-                var name = $(event.target).find("option:selected:last").html();
-                var value = $(event.target).find("option:selected:last").val();
-
-                //update edit / delete buttons
-                if (name !== undefined) {
-                    this.$el.find(".edit").removeAttr("disabled");
-                    this.$el.find(".edit").html("edit " + name);
-                    this.$el.find(".edit").attr("data-value", value);
-
-                    this.$el.find(".delete").removeAttr("disabled");
-                    this.$el.find(".delete").html("delete " + name);
-                    this.$el.find(".delete").attr("data-value", value);
-                }
-
-                // selected values in the second select box
-                var options1 = $(this.$el.find("select")[1]).find("option");
-                var options2 = $(this.$el.find("select")[0]).find("option");
-
-                // store visually updated attributes
-                for (i=0; i<options1.length; i++) {
-                    nonDynamic.push(options1[i]);
-                }
-                for (i=0; i<options2.length; i++) {
-                    dynamic.push(options2[i]);
-                }
-                // check nonDynamic Data
-                var model;
-                var changeCount = 0;
-                for (i=0; i<nonDynamic.length; i++) {
-                    model = this.collection.get($(nonDynamic[i]).val());
-                    if (model.get("dynamic") === true) {
-                        changeCount++;
-                        model.set({"dynamic":false},{silent: true});
-                    }
-                }
-                // check dynamic Data
-                for (i=0; i<dynamic.length; i++) {
-                    model = this.collection.get($(dynamic[i]).val());
-                    if (model.get("dynamic") === false) {
-                        changeCount++;
-                        model.set({"dynamic":true},{silent: true});
-                    }
-                }
-
-                // update all models at the same time
-                if (changeCount > 0) {
-                    this.collection.saveAll(this.collection.models).then(function() {
-                        // TODO fetch the parent as it may have changed from non dynamic to dynamic
-                        // but this resets the parent collections as the API returns an empty array
-                        // me.collection.parent.fetch().done(function() {
-                        me.collection.parent.set("dynamic", false);
-                        
-                        // force a filters re-computation because dimension selector uses it
-                        // TODO do not trigger if the collection is metrics
-                        me.config.trigger("change:selection");
-                        
-                    });
-                }
+                this.eventSelect(event);
             },
             "click .create" : function(event) {
                 this.eventCreate(event);

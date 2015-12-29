@@ -8,8 +8,58 @@
         typeLabelPlural : "Dimensions",
 
         init : function() {
-            var me = this;
             this.modelView = squid_api.view.DimensionModelManagementWidget;
+        },
+
+        events: {
+            "change select" : function(event) {
+                var me = this;
+                var changeCount = squid_api.view.ColumnsManagementWidget.prototype.eventSelect.call(this, event);
+
+                // update all models at the same time
+                if (changeCount > 0) {
+                    this.collection.saveAll(this.collection.models).then(function() {
+                        // clone and fetch parent to check dynamic status
+                        var parentClone = me.collection.parent.clone();
+                        parentClone.fetch({
+                            success: function (domain) {
+                                me.collection.parent.set("dynamic", domain.get("dynamic"));
+                            }
+                        });
+
+                        // force a filters re-computation because dimension selector uses it
+                        me.config.trigger("change:selection");
+                    });
+                }
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .delete": function(event) {
+                var me = this;
+                var model = this.getSelectedModel(event);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
+                                me.status.set({'message' : message});
+
+                                // trigger change on delete
+                                me.config.trigger("change:selection");
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
+            }
         }
     });
 

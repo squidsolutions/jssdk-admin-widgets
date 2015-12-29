@@ -46,7 +46,6 @@
             }
             
             this.initModel();
-            
             this.init(options);
         },
         
@@ -106,10 +105,6 @@
                         me.collectionLoading = false;
                         me.render();
                     });
-                }
-                // used to trigger custom function within child views
-                if (me.configChangeCallback) {
-                    me.configChangeCallback();
                 }
             });
         },
@@ -242,7 +237,6 @@
         
         eventDelete : function(event) {
             var me = this;
-            // 
             var model = this.getSelectedModel(event);
             if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
                 if (true) {
