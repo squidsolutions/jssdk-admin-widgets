@@ -1759,7 +1759,6 @@ function program1(depth0,data) {
             if (this.collection) {
                 jsonData.visible = true;
                 if (this.selectedModel) {
-                    this.configCompare();
                     if (this.selectedModel.get("oid")) {
                         // always display default label
                     }
@@ -1769,6 +1768,8 @@ function program1(depth0,data) {
             }
 
             this.$el.html(template(jsonData));
+
+            this.configCompare();
 
             return this;
         },
