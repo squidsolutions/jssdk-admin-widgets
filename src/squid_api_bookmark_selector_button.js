@@ -42,10 +42,10 @@
             if (this.selectedModel) {
                 var match = true;
                 var selectedModelConfig = this.selectedModel.get("config");
-                var globalConfig = _.omit(this.config.toJSON(), "project", "bookmark");
+                var currentConfig = _.omit(this.config.toJSON(), "project", "bookmark");
                 // ignore the order of the two configurations
-                for (var x in selectedModelConfig) {
-                    if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(globalConfig[x])) {
+                for (var x in currentConfig) {
+                    if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(currentConfig[x])) {
                         match = false;
                     }
                 }
