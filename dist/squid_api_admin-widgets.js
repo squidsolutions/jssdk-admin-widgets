@@ -1200,7 +1200,6 @@ function program1(depth0,data) {
         
         eventDelete : function(event) {
             var me = this;
-            // 
             var model = this.getSelectedModel(event);
             if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
                 if (true) {
@@ -2732,7 +2731,7 @@ function program1(depth0,data) {
         typeLabelPlural : "Dimensions",
 
         init : function() {
-            // no model view needed
+            this.modelView = squid_api.view.DimensionModelManagementWidget;
         },
 
         events: {
@@ -2763,7 +2762,26 @@ function program1(depth0,data) {
                 this.eventEdit(event);
             },
             "click .delete": function(event) {
-                this.eventDelete(event);
+                var me = this;
+                var model = this.getSelectedModel(event);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
+                                me.status.set({'message' : message});
+
+                                // trigger change on delete
+                                me.config.trigger("change:selection");
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
             }
         }
     });
@@ -2792,8 +2810,7 @@ function program1(depth0,data) {
         },
 
         onSave: function(model) {
-            // to be overridden from other model management widgets
-            console.log("once saved");
+            this.config.trigger("change:selection");
         },
 
         formEvents: function() {
@@ -2824,9 +2841,6 @@ function program1(depth0,data) {
                     });
                 });
             });
-
-
-
             return dfd;
         }
     });
@@ -3148,10 +3162,6 @@ function program1(depth0,data) {
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Metric",
         typeLabelPlural : "Metrics",
-
-        init : function() {
-            // no model view needed
-        },
 
         events: {
             "change select" : function(event) {

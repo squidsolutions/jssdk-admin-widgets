@@ -8,7 +8,7 @@
         typeLabelPlural : "Dimensions",
 
         init : function() {
-            // no model view needed
+            this.modelView = squid_api.view.DimensionModelManagementWidget;
         },
 
         events: {
@@ -39,7 +39,26 @@
                 this.eventEdit(event);
             },
             "click .delete": function(event) {
-                this.eventDelete(event);
+                var me = this;
+                var model = this.getSelectedModel(event);
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
+                                me.status.set({'message' : message});
+
+                                // trigger change on delete
+                                me.config.trigger("change:selection");
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
+                            }
+                        });
+                    }
+                }
             }
         }
     });

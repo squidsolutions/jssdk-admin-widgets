@@ -19,8 +19,7 @@
         },
 
         onSave: function(model) {
-            // to be overridden from other model management widgets
-            console.log("once saved");
+            this.config.trigger("change:selection");
         },
 
         formEvents: function() {
@@ -51,9 +50,6 @@
                     });
                 });
             });
-
-
-
             return dfd;
         }
     });

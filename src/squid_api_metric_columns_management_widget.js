@@ -7,10 +7,6 @@
         type : "Metric",
         typeLabelPlural : "Metrics",
 
-        init : function() {
-            // no model view needed
-        },
-
         events: {
             "change select" : function(event) {
                 var me = this;

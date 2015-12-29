@@ -237,7 +237,6 @@
         
         eventDelete : function(event) {
             var me = this;
-            // 
             var model = this.getSelectedModel(event);
             if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
                 if (true) {
