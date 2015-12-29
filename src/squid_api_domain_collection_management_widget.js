@@ -1,14 +1,13 @@
 (function (root, factory) {
-    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_domain_collection_management_widget);
+    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api);
 
-}(this, function (Backbone, squid_api, template) {
+}(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
 
         typeLabelPlural : "Domains",
         type : "domain",
         modelView : null,
-        template : template,
         collectionLoading : false,
         configSelectedId : "domain",
         configParentId : "project",
@@ -71,6 +70,12 @@
             } else {
                 return model.get("name");
             }
+        },
+        
+        getModelRoles : function(model) {
+            var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
+            roles.relation = true;
+            return roles;
         }
 
     });
