@@ -764,8 +764,9 @@ function program1(depth0,data) {
                                     me.render();
                                 }
                             }).fail(function() {
+                                me.collection = null;
                                 me.collectionLoading = false;
-                                me.render();
+                                me.setSelectedModel(null);
                             });
                         }
                     } else if (config.hasChanged(me.configSelectedId)) {
@@ -787,6 +788,7 @@ function program1(depth0,data) {
                         me.collectionLoading = false;
                         me.setSelectedModel(selectedId);
                     }).fail(function() {
+                        me.collection = null;
                         me.collectionLoading = false;
                         me.render();
                     });
@@ -805,12 +807,12 @@ function program1(depth0,data) {
             }
             if (modelId) {
                 me.collection.load(modelId).then(function(model) {
-                    me.collectionLoading = false;
                     me.selectedModel = model;
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 });
             } else {
+                me.selectedModel = null;
                 me.render();
             }
         },
