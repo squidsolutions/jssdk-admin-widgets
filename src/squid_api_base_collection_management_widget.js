@@ -57,8 +57,11 @@
             // listen for config changes
             this.config.on("change", function (config) {
                 var selectedId = config.get(me.configSelectedId);
+                var parentChanged = config.hasChanged(me.configParentId);
+                var selectionChanged = config.hasChanged(me.configSelectedId);
+               
                 if (me.configParentId) {
-                    if (config.hasChanged(me.configParentId)) {
+                    if (parentChanged) {
                         // parent has changed
                         var parentId = config.get(me.configParentId);
                         me.collectionLoading = true;
@@ -72,7 +75,7 @@
                                 me.collection = collection;
                                 me.listenTo(me.collection, "sync remove", me.render);
                                 me.collectionLoading = false;
-                                if (config.hasChanged(me.configSelectedId)) {
+                                if (selectionChanged) {
                                     // selected also changed
                                     me.setSelectedModel(selectedId);
                                 } else {
@@ -84,11 +87,11 @@
                                 me.setSelectedModel(null);
                             });
                         }
-                    } else if (config.hasChanged(me.configSelectedId)) {
+                    } else if (selectionChanged) {
                         // selection only has changed
                         me.setSelectedModel(selectedId);
                     }
-                } else if (config.hasChanged(me.configSelectedId)) {
+                } else if (selectionChanged) {
                     // no parent but selection has changed
                     me.collectionLoading = true;
                     me.render();

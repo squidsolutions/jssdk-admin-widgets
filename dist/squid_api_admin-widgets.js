@@ -751,8 +751,11 @@ function program1(depth0,data) {
             // listen for config changes
             this.config.on("change", function (config) {
                 var selectedId = config.get(me.configSelectedId);
+                var parentChanged = config.hasChanged(me.configParentId);
+                var selectionChanged = config.hasChanged(me.configSelectedId);
+               
                 if (me.configParentId) {
-                    if (config.hasChanged(me.configParentId)) {
+                    if (parentChanged) {
                         // parent has changed
                         var parentId = config.get(me.configParentId);
                         me.collectionLoading = true;
@@ -766,7 +769,7 @@ function program1(depth0,data) {
                                 me.collection = collection;
                                 me.listenTo(me.collection, "sync remove", me.render);
                                 me.collectionLoading = false;
-                                if (config.hasChanged(me.configSelectedId)) {
+                                if (selectionChanged) {
                                     // selected also changed
                                     me.setSelectedModel(selectedId);
                                 } else {
@@ -778,11 +781,11 @@ function program1(depth0,data) {
                                 me.setSelectedModel(null);
                             });
                         }
-                    } else if (config.hasChanged(me.configSelectedId)) {
+                    } else if (selectionChanged) {
                         // selection only has changed
                         me.setSelectedModel(selectedId);
                     }
-                } else if (config.hasChanged(me.configSelectedId)) {
+                } else if (selectionChanged) {
                     // no parent but selection has changed
                     me.collectionLoading = true;
                     me.render();
@@ -3149,6 +3152,11 @@ function program1(depth0,data) {
                 return customer.get("projects").load();
             });
         },
+        
+        render : function() {
+            // useful for debugging
+            squid_api.view.BaseCollectionManagementWidget.prototype.render.call(this);
+        }
 
     });
 
@@ -3207,7 +3215,9 @@ function program1(depth0,data) {
         
         template : template,
         
-        render : squid_api.view.CollectionSelectorUtils.renderButton
+        render : function() {
+            squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+        }
 
     });
 
