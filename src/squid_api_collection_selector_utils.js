@@ -117,6 +117,7 @@
                 if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
+                        jsonData.selectedModel = true;
                     }
                 }
             }

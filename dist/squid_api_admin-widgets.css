@@ -463,7 +463,10 @@
     background: grey;
 }
 
-
+.squid-api-button-view.selected {
+    background: #ffe084;
+    border: none;
+}
 .squid-api-admin-widget-columns-management .Metric-primary .ok, .squid-api-admin-widgets-modal-form .Dimension-primary .ok {
     display: none;
 }
