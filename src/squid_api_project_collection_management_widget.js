@@ -22,6 +22,11 @@
                 return customer.get("projects").load();
             });
         },
+        
+        render : function() {
+            // useful for debugging
+            squid_api.view.BaseCollectionManagementWidget.prototype.render.call(this);
+        }
 
     });
 

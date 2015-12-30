@@ -7,7 +7,9 @@
         
         template : template,
         
-        render : squid_api.view.CollectionSelectorUtils.renderButton
+        render : function() {
+            squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+        }
 
     });
 
