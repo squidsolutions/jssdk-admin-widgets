@@ -251,6 +251,11 @@
                             // set status
                             var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
                             me.status.set({'message' : message});
+
+                            // call once saved
+                            if (me.onDelete) {
+                                me.onDelete(model);
+                            }
                         },
                         error : function(collection, response) {
                             me.status.set({'error' : response});
@@ -308,6 +313,10 @@
                 }
             }
             return role;
+        },
+
+        onDelete: function(model) {
+            // to be overridden from other collection management widgets
         },
 
         getModelRoles: function(model) {

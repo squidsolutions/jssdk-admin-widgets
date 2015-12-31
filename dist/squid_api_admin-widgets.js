@@ -945,6 +945,11 @@ function program1(depth0,data) {
                             // set status
                             var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
                             me.status.set({'message' : message});
+
+                            // call once saved
+                            if (me.onDelete) {
+                                me.onDelete(model);
+                            }
                         },
                         error : function(collection, response) {
                             me.status.set({'error' : response});
@@ -1002,6 +1007,10 @@ function program1(depth0,data) {
                 }
             }
             return role;
+        },
+
+        onDelete: function(model) {
+            // to be overridden from other collection management widgets
         },
 
         getModelRoles: function(model) {
@@ -2470,6 +2479,27 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.DimensionModelManagementWidget;
         },
 
+        onDelete: function(model) {
+            // reset filter selections
+            var selection = $.extend(true, {}, this.config.get("selection"));
+            if (selection) {
+                var facets = selection.facets;
+                var period = this.config.get("period");
+                if (facets) {
+                    var changed = false;
+                    for (var i=0; i<facets.length; i++) {
+                        var facet = facets[i];
+                        // reset selected facets
+                        if (model.get("oid") == facet.dimension.id.dimensionId) {
+                            facets.splice(i, 1);
+                        }
+                    }
+                    selection.facets = facets;
+                    this.config.set("selection", selection);
+                }
+            }
+        },
+
         events: {
             "change select" : function(event) {
                 var me = this;
@@ -2498,42 +2528,7 @@ function program1(depth0,data) {
                 this.eventEdit(event);
             },
             "click .delete": function(event) {
-                var me = this;
-                var model = this.getSelectedModel(event);
-                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
-                    if (true) {
-                        model.destroy({
-                            wait : true,
-                            success:function(model) {
-                                // set status
-                                var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
-                                me.status.set({'message' : message});
-
-                                // reset filter selections
-                                var selection = $.extend(true, {}, me.config.get("selection"));
-                                if (selection) {
-                                    var facets = selection.facets;
-                                    var period = me.config.get("period");
-                                    if (facets) {
-                                        var changed = false;
-                                        for (var i=0; i<facets.length; i++) {
-                                            var facet = facets[i];
-                                            // reset selected facets
-                                            if (model.get("oid") == facet.dimension.id.dimensionId) {
-                                                facets.splice(i, 1);
-                                            }
-                                        }
-                                        selection.facets = facets;
-                                        me.config.set("selection", selection);
-                                    }
-                                }
-                            },
-                            error : function(collection, response) {
-                                me.status.set({'error' : response});
-                            }
-                        });
-                    }
-                }
+                this.eventDelete(event);
             }
         }
     });
