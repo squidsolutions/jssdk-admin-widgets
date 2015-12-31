@@ -2518,13 +2518,6 @@ function program1(depth0,data) {
                                         var changed = false;
                                         for (var i=0; i<facets.length; i++) {
                                             var facet = facets[i];
-                                            // reset period
-                                            if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
-                                                if (model.get("oid") == period[domain]) {
-                                                    delete period[domain];
-                                                    me.config.set("period", period);
-                                                }
-                                            }
                                             // reset selected facets
                                             if (model.get("oid") == facet.dimension.id.dimensionId) {
                                                 facets.splice(i, 1);
