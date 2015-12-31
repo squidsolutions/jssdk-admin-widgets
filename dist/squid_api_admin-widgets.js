@@ -2509,8 +2509,31 @@ function program1(depth0,data) {
                                 var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
                                 me.status.set({'message' : message});
 
-                                // trigger change on delete
-                                me.config.trigger("change:selection");
+                                // reset filter selections
+                                var selection = $.extend(true, {}, me.config.get("selection"));
+                                if (selection) {
+                                    var facets = selection.facets;
+                                    var period = me.config.get("period");
+                                    if (facets) {
+                                        var changed = false;
+                                        for (var i=0; i<facets.length; i++) {
+                                            var facet = facets[i];
+                                            // reset period
+                                            if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
+                                                if (model.get("oid") == period[domain]) {
+                                                    delete period[domain];
+                                                    me.config.set("period", period);
+                                                }
+                                            }
+                                            // reset selected facets
+                                            if (model.get("oid") == facet.dimension.id.dimensionId) {
+                                                facets.splice(i, 1);
+                                            }
+                                        }
+                                        selection.facets = facets;
+                                        me.config.set("selection", selection);
+                                    }
+                                }
                             },
                             error : function(collection, response) {
                                 me.status.set({'error' : response});
