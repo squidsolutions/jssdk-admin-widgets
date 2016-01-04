@@ -1258,6 +1258,10 @@ function program1(depth0,data) {
             "click .select" : function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
+                
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
             },
             "click .create" : function() {
                 var me = this;
