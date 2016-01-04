@@ -128,7 +128,11 @@
 
         customDataManipulation: function(data) {
             return data;
-        }
+        },
+        onSave: function(model) {
+            // set bookmark as current
+            this.config.set("bookmark", model.get("id").bookmarkId);
+        },
     });
 
     return View;
