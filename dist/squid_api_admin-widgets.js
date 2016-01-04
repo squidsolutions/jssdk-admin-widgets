@@ -3211,6 +3211,8 @@ function program1(depth0,data) {
         onSave : function(model) {
             // set new project as current
             this.config.set("project", model.get("id").projectId);
+            // TODO: when saving a new project kraken should return the project role (T713)
+            this.model.set({"_role" : "OWNER"}, {silent : true});
         }
     });
 
