@@ -1,0 +1,9 @@
+{{#if visible}}
+	<button class="form-control squid-api-button-view {{#if selectedModel}}selected{{/if}}">
+	{{#if collectionLoaded}}
+        {{label}}
+    {{else}}
+    	<i class="fa fa-refresh fa-spin"></i> {{typeLabelPlural}} loading   
+    {{/if}}
+    </button>
+{{/if}}

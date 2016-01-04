@@ -1,0 +1,57 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title" id="myModalLabel">{{typeLabelPlural}}</h4>
+</div>
+<div class="modal-body">
+    <div class="squid-api-collection-management-widget">
+            <div class="squid-api-{{type}}-collection-management">
+                {{#if createRole}}
+                    <button type="button"  class="create btn btn-default">
+                        <i class="fa fa-plus"></i> New {{type}}
+                    </button>
+                {{/if}}
+                    <table style="width:100%">
+                        <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
+                        {{#if collectionLoaded}}
+                            {{#if collection.models}}
+                                {{#each collection.models}}
+                                    <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
+                                        <td class="select selected">
+                                            {{label}}
+                                        </td>
+                                        {{#if roles}}
+                                            {{#if roles.edit}}
+                                                <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+                                            {{/if}}
+                                            {{#if roles.refresh}}
+                                                <td class="refresh collection-option"><i class="fa fa-refresh"></i></td>
+                                            {{/if}}
+                                            {{#if roles.relation}}
+	                                        	<td class="relation collection-option"><i class="fa fa-link"></i></td>
+	                                        {{/if}}
+	                                        {{#if roles.delete}}
+	                                            <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
+	                                        {{/if}}
+                                        {{/if}}
+                                    </tr>
+                                {{/each}}
+                            {{else}}
+                                <div class="no-data">
+                                    No {{typeLabelPlural}} available
+                                </div>
+                            {{/if}}
+                        {{else}}
+                        	<div class="no-data">
+                            	<i class="fa fa-refresh fa-spin"></i> {{typeLabelPlural}} loading in progress...
+                            </div>
+                        {{/if}}
+                        </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+<div class="squid-api-model-management-footer">
+  	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
+<!--  end of modal - -->
+</div>

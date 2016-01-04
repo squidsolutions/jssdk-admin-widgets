@@ -47,13 +47,19 @@
                 "position" : 3,
                 "fieldClass" : "dbPassword"
             },
+            "dbCheckConnection" : {
+                "type" : "DbCheckConnection",
+                "fieldClass" : "squid-api-check-db-connection",
+                "editorClass" : "form-control",
+                "position" : 4
+            },
             "dbSchemas" : {
                 "title" : "Database Schemas",
                 "type" : "Checkboxes",
                 "editorClass" : " ",
                 "options" : [],
-                "position" : 4,
-                "fieldClass" : "dbSchemas"
+                "position" : 5,
+                "fieldClass" : "dbSchemas checkbox"
             }
     };
 
@@ -240,7 +246,7 @@
                     "label" : "Period"
                 } ],
                 "position" : 1,
-                "fieldClass" : "type"
+                "fieldClass" : "type checkbox"
             },
             "parentId" : {
                 "title" : " ",
@@ -259,8 +265,8 @@
                         "fieldClass" : "hidden"
                     },
                     "dimensionId" : {
-                        "options" : [],
-                        "type" : "Text",
+                        "options" : [{val : null, label : " "}],
+                        "type" : "Select",
                         "editorClass" : "form-control",
                         "title" : "Parent Dimension"
                     }
@@ -275,7 +281,8 @@
                     "value" : {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value"
+                        "title" : "Expression Value",
+                        "validators": ['required']
                     }
                 },
                 "position" : 3,
@@ -333,116 +340,77 @@
             }
     };
 
-    squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
-    squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
-    squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
-        "name" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "name"
-        },
-        "description" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "description"
-        },
-        "path" : {
-            "type" : "Text",
-            "editorClass" : "form-control",
-            "fieldClass" : "path"
-        },
-        "config" : {
-            "type" : "JsonTextArea",
-            "template" : _.template('\
-                            <div>\<div>\
-                                <button class="btn btn-default" id="btn-use-current-config" type="button"><span class="glyphicon glyphicon-save"></span>use current config</button>\
-                            </div>\<label for="<%= editorId %>">\
-                                <% if (titleHTML){ %><%= titleHTML %>\
-                                <% } else { %><%- title %><% } %>\
-                              </label>\
-                              <div>\
-                                <span data-editor></span>\
-                                <div class="error-text" data-error></div>\
-                                <div class="error-help"><%= help %></div>\
-                              </div>\
-                            </div>\
-                          ', null, null),
-            "title" : "Config",
-            "position" : 1,
-            "fieldClass" : "config",
-            "editorClass" : "form-control",
-            "validators": [
-                 function checkJSON(value, formValues) {
-                     try {
-                         if (value && (typeof value === "string")) {
-                             JSON.parse(value);
-                         }
-                     } catch (e) {
-                         return {
-                             type: 'config',
-                             message: 'Config must be valid JSON'
-                         };
-                     }
-                 }
-             ]
-        }
-    };
+    // Define "dbCheckConnection" Custom Editor
+    var dbCheckConnection = Backbone.Form.editors.Base.extend({
 
-    // Define "jsonTextArea" Custom Editor
-    var jsonTextArea = Backbone.Form.editors.Text.extend({
+        tagName: 'button',
+        defaultValue : "Check Connection",
 
-        tagName: 'textarea',
-
-        /**
-         * Override Text constructor so type property isn't set (issue #261)
-         */
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            this.$el.attr("rows", 3);
+
+            this.status = squid_api.model.status;
+            this.config = squid_api.model.config;
+            this.login = squid_api.model.login;
+        },
+        events: {
+            "click" : "checkConnection"
         },
 
-        setValue: function(value) {
-            // beautify json value
-            var val;
-            if (value) {
-                val = JSON.stringify(value, null, 4);
+        checkConnection: function(event) {
+            var me = this;
+
+            // prevent redirect
+            event.preventDefault();
+            // add class for spinning wheel
+            this.$el.addClass("in-progress");
+            // collect prerequisites
+            var dburl = this.form.fields.dbUrl.getValue();
+            var dbPassword =  this.form.fields.dbPassword.getValue();
+            var dbUser = this.form.fields.dbUser.getValue();
+            var projectId = this.form.fields.id.getValue().projectId;
+            var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
+            if (projectId) {
+                url = url + "&projectId="+projectId;
             }
-            this.$el.val(val);
+
+            $.ajax({
+                type: "GET",
+                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (response) {
+                    me.status.set({"error":null});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-danger");
+                    me.$el.addClass("btn-success");
+                    me.form.fields.dbSchemas.editor.setOptions(response.definitions);
+                    me.form.fields.dbSchemas.$el.show();
+                },
+                error: function(xhr, textStatus, error){
+                    me.status.set({"error":xhr});
+                    me.$el.removeClass("in-progress");
+                    me.$el.removeClass("btn-success");
+                    me.$el.addClass("btn-danger");
+                    me.form.fields.dbSchemas.$el.hide();
+                }
+
+            });
+        },
+        render: function() {
+            this.setValue(this.value);
+
+            return this;
         },
 
         getValue: function() {
-            // transform text value to json
-            var json;
-            var val = this.$el.val();
-            if (val) {
-                try {
-                    json = JSON.parse(val);
-                } catch (e) {
-                    // parse error, ignore to let validation proceed
-                    json = val;
-                }
-            }
-            return json;
+            return this.$el.html();
         },
+
+        setValue: function(value) {
+            this.$el.html(value);
+        }
     });
 
     // Define "baseExpressionEditor" Custom Editor
@@ -496,22 +464,43 @@
                     // append box if definitions exist
                     if (response.suggestions && response.suggestions.length > 0) {
                         // store offset
-                        var offset = response.filterIndex;
+                        var beginRange = me.$el.prop("selectionStart");
+                        var endRange = me.$el.prop("selectionEnd")-1;
+                        if (response.beginInsertPos !== undefined && response.endInsertPos !== undefined) {
+                            if (response.beginInsertPos<beginRange) {
+                                beginRange = response.beginInsertPos;
+                            }
+                            if (endRange<response.endInsertPos) {
+                                endRange = response.endInsertPos;
+                            }
+                        }
                         // append div
                         me.$el.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
+                        var suggestionList = me.$el.siblings(".squid-api-pre-suggestions").find("ul");
                         for (i=0; i<response.suggestions.length; i++) {
-                            me.$el.siblings(".squid-api-pre-suggestions").find("ul").append("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  response.suggestions[i].suggestion + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                            var suggestionDisplay = response.suggestions[i].suggestion;
+                            if (response.suggestions[i].display) {
+                                suggestionDisplay = response.suggestions[i].display;
+                            }
+                            var item = $("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  suggestionDisplay + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                            item.data("suggestion-value",response.suggestions[i].suggestion);
+                            item.appendTo(suggestionList);
                         }
                         me.$el.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
                             var item;
                             if ($(event.target).is("li")) {
-                                item = $(event.target).find(".suggestion").html();
+                                item = $(event.target).data("suggestion-value");
                             } else {
-                                item = $(event.target).parent().find(".suggestion").html();
+                                item = $(event.target).closest("li").data("suggestion-value");
                             }
-                            var str = me.$el.val().substring(0, offset) + item.substring(0);
+                            var value = me.$el.val();
+                            var str = value.substring(0, beginRange);
+                            str += item;
+                            var newPos = str.length;
+                            str += value.substring(endRange+1);
                             me.setValue(str);
                             me.renderDialog();
+                            me.$el[0].setSelectionRange(newPos,newPos);
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
@@ -538,7 +527,7 @@
 
     var domainExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -546,7 +535,7 @@
     });
     var dimensionExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/dimensions-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             data.dimensionId = this.modelId;
             this.performRequest(url, data);
@@ -555,7 +544,7 @@
     });
     var metricExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.config.get("project") + "/domains/" + squid_api.model.config.get("domain") + "/metrics-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
             this.performRequest(url, data);
 
@@ -563,19 +552,19 @@
     });
     var relationExpressionEditor = baseExpressionEditor.extend({
         renderDialog: function() {
-            var url = squid_api.apiURL + "/projects/" + squid_api.model.project.get("id").projectId + "/relations-suggestion";
+            var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/relations-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
-            data.leftDomainId = $(".squid-api-admin-widgets-modal-form .leftId select").val();
-            data.rightDomainId = $(".squid-api-admin-widgets-modal-form .rightId select").val();
+            data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
+            data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
 
         }
     });
 
     // Register custom editors
-    Backbone.Form.editors.JsonTextArea = jsonTextArea;
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
+    Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
 }));
