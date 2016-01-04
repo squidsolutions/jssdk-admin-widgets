@@ -1473,7 +1473,11 @@ function program1(depth0,data) {
 
         customDataManipulation: function(data) {
             return data;
-        }
+        },
+        onSave: function(model) {
+            // set bookmark as current
+            this.config.set("bookmark", model.get("id").bookmarkId);
+        },
     });
 
     return View;
