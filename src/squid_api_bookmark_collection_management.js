@@ -37,7 +37,7 @@
             "click .select" : function(event) {
                 var value = $(event.target).parent('tr').attr('data-attr');
                 squid_api.setBookmarkId(value);
-                
+
                 if (this.onSelect) {
                     this.onSelect.call();
                 }
