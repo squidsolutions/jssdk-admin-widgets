@@ -126,10 +126,13 @@
                 this.stopListening(me.selectedModel);
             }
             if (modelId) {
-                me.collection.load(modelId).then(function(model) {
+                me.collection.load(modelId).done(function(model) {
                     me.selectedModel = model;
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
+                }).fail(function() {
+                    me.selectedModel = null;
+                    me.render();
                 });
             } else {
                 me.selectedModel = null;
