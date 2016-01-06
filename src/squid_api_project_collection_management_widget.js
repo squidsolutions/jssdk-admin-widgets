@@ -4,9 +4,9 @@
 }(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-
+        type : "Project",
+        typeLabel : "Project",
         typeLabelPlural : "Projects",
-        type : "project",
         modelView : null,
         configSelectedId : "project",
         configParentId : "customer",

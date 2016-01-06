@@ -10,8 +10,8 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\n                    </button>\n                ";
   return buffer;
@@ -703,7 +703,9 @@ function program1(depth0,data) {
         selectedModel : null,
         config : null,
         type : null,
+        typeLabel : null,
         typeLabelPlural : null,
+        configSelectedId : null,
         comparator : null,
         parentType : null,
         modelView : null,
@@ -867,7 +869,7 @@ function program1(depth0,data) {
         
         eventSelect :  function(event) {
             var model = this.getSelectedModel(event);
-            this.config.set(this.type.toLowerCase(), model.get("oid"));
+            this.config.set(this.configSelectedId, model.get("oid"));
             if (this.onSelect) {
                 this.onSelect.call();
             }
@@ -896,9 +898,9 @@ function program1(depth0,data) {
             var model = this.getSelectedModel(event);
             var objectType = model.get("objectType");
             var url = squid_api.apiURL + "/projects/" + model.get("id").projectId;
-            if (objectType == "Project") {
+            if (objectType === "Project") {
                 url = url + "/refreshDatabase";
-            } else if (objectType == "Domain") {
+            } else if (objectType === "Domain") {
                 url = url + "/domains/" + model.get("id").domainId + "/cache/refresh";
             }
             url = url + "?access_token=" + squid_api.model.login.get("accessToken");
@@ -1039,9 +1041,9 @@ function program1(depth0,data) {
                 collection : this.collection,
                 roles : null,
                 createRole : null,
+                typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true,
-                type : this.type
+                modalHtml : true
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};
@@ -1055,7 +1057,7 @@ function program1(depth0,data) {
                     model.roles = this.getModelRoles(item);
 
                     // detect selected model
-                    if (model.value === this.config.get(this.type.toLowerCase())) {
+                    if (model.value === this.config.get(this.configSelectedId)) {
                         model.selected = true;
                         jsonData.collection.models.unshift(model);
                     } else {
@@ -1226,9 +1228,10 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         type : "Bookmark",
+        typeLabel : "Bookmark",
         typeLabelPlural : "Bookmarks",
-        modelView : null,
         configSelectedId : "bookmark",
+        modelView : null,
         configParentId : "project",
 
         init : function() {
@@ -1254,32 +1257,40 @@ function program1(depth0,data) {
             return model;
         },
         
+        eventSelect : function(event) {
+            var value = $(event.target).parent('tr').attr('data-attr');
+            squid_api.setBookmarkId(value);
+        },
+        
+        eventCreate : function() {
+            var me = this;
+            // create a new model
+            var model = new this.collection.model();
+            model.set("id", this.collection.parent.get("id"));
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            // listen for new model changes
+            me.listenTo(model, "sync", function() {
+                me.collection.add(model);
+                me.render();
+            });
+            
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
+                    me.render();
+                }
+            }));
+        },
+        
         events : {
             "click .select" : function(event) {
-                var value = $(event.target).parent('tr').attr('data-attr');
-                squid_api.setBookmarkId(value);
+                this.eventSelect(event);
             },
-            "click .create" : function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                var config = this.config.toJSON();
-                delete config.bookmark;
-                delete config.project;
-                model.set("config",config);
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
-                    me.render();
-                });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
+            "click .create" : function(event) {
+                this.eventCreate(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -1488,7 +1499,7 @@ function program1(depth0,data) {
 
         init : function() {
             var me = this;
-            this.listenTo(this.config,"change", this.configCompare);
+            this.listenTo(this.config,"change", this.renderButtonState);
         },
         
         render: function() {
@@ -1498,27 +1509,23 @@ function program1(depth0,data) {
                 visible : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
+                typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
                 jsonData.visible = true;
-                if (this.selectedModel) {
-                    if (this.selectedModel.get("oid")) {
-                        // always display default label
-                    }
-                }
             } else {
                 jsonData.visible = false;
             }
 
             this.$el.html(template(jsonData));
 
-            this.configCompare();
+            this.renderButtonState();
 
             return this;
         },
 
-        configCompare: function() {
+        renderButtonState: function() {
             /* add a class when the current config matches the selected models config */
             if (this.selectedModel) {
                 var match = true;
@@ -1695,7 +1702,7 @@ function program1(depth0,data) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(me.config.get("project")).then(function(project) {
                     return project.get("domains").load(parentId).then(function(domain) {
-                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                        return domain.get(me.configSelectedId).load();
                     });
                 });
             });
@@ -2473,6 +2480,7 @@ function program1(depth0,data) {
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Dimension",
+        typeLabel : "Dimension",
         typeLabelPlural : "Dimensions",
 
         init : function() {
@@ -2787,9 +2795,9 @@ function program1(depth0,data) {
 }(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-
+        type : "Domain",
+        typeLabel : "Domain",
         typeLabelPlural : "Domains",
-        type : "domain",
         modelView : null,
         collectionLoading : false,
         configSelectedId : "domain",
@@ -2913,6 +2921,7 @@ function program1(depth0,data) {
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Metric",
+        typeLabel : "Metric",
         typeLabelPlural : "Metrics",
 
         events: {
@@ -3145,9 +3154,9 @@ function program1(depth0,data) {
 }(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-
+        type : "Project",
+        typeLabel : "Project",
         typeLabelPlural : "Projects",
-        type : "project",
         modelView : null,
         configSelectedId : "project",
         configParentId : "customer",
@@ -3242,6 +3251,7 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         type : "Relation",
+        typeLabel : "Relation",
         typeLabelPlural : "Relations",
         modelView : null,
         template: template,

@@ -215,25 +215,6 @@
 		-moz-transform: rotate(360deg);
 	};
 }
-
-/* Form Elements CSS */
-.squid-api-check-db-connection {
-	width: 160px;
-	margin: 10px 0px;
-}
-.squid-api-check-db-connection button:before {
-	font-family: FontAwesome;
-	content: "\f021";
-	position: relative;
-	right: 5px;
-}
-.squid-api-check-db-connection button.in-progress:before {
-	animation: spin .7s infinite linear;
-}
-.squid-api-check-db-connection label {
-	display: none;
-}
-
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
 }
@@ -610,6 +591,23 @@
 	font-family: FontAwesome;
 }
 
+
+.squid-api-check-db-connection {
+	width: 160px;
+	margin: 10px 0px;
+}
+.squid-api-check-db-connection button:before {
+	font-family: FontAwesome;
+	content: "\f021";
+	position: relative;
+	right: 5px;
+}
+.squid-api-check-db-connection button.in-progress:before {
+	animation: spin .7s infinite linear;
+}
+.squid-api-check-db-connection label {
+	display: none;
+}
 
 .squid-api-relation-model-management .id {
 	display: none;

@@ -17,7 +17,7 @@
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(me.config.get("project")).then(function(project) {
                     return project.get("domains").load(parentId).then(function(domain) {
-                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                        return domain.get(me.configSelectedId).load();
                     });
                 });
             });

@@ -5,6 +5,7 @@
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Metric",
+        typeLabel : "Metric",
         typeLabelPlural : "Metrics",
 
         events: {
