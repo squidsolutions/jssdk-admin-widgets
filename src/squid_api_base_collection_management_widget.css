@@ -233,3 +233,9 @@
 .squid-api-check-db-connection label {
 	display: none;
 }
+
+.squid-api-collection-management-widget .list {
+	max-height: 500px;
+	overflow-y: scroll;
+	width: 100%;
+}
