@@ -3177,7 +3177,6 @@ function program1(depth0,data) {
             }
 
             this.$el.modal();
-
             me.view.render();
 
             return this;
