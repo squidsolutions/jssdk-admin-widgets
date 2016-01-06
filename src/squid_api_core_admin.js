@@ -24,28 +24,40 @@
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "my sports database"
+                }
             },
             "dbUrl" : {
                 "title" : "Database URL",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 1,
-                "fieldClass" : "dbUrl"
+                "fieldClass" : "dbUrl",
+                "editorAttrs" : {
+                    placeholder: "jdbc:[driver_name]://[host]:[port]/{[database]}{options}"
+                }
             },
             "dbUser" : {
                 "title" : "Database User",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 2,
-                "fieldClass" : "dbUser"
+                "fieldClass" : "dbUser",
+                "editorAttrs" : {
+                    placeholder: "user connection name"
+                }
             },
             "dbPassword" : {
                 "title" : "Database Password",
                 "type" : "Password",
                 "editorClass" : "form-control",
                 "position" : 3,
-                "fieldClass" : "dbPassword"
+                "fieldClass" : "dbPassword",
+                "editorAttrs" : {
+                    placeholder: "database connection value '***'"
+                }
             },
             "dbCheckConnection" : {
                 "type" : "DbCheckConnection",
@@ -89,7 +101,10 @@
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "table name"
+                }
             },
             "subject" : {
                 "type" : "Object",
@@ -98,7 +113,10 @@
                     "value" : {
                         "title" : "Subject Value",
                         "type" : "DomainExpressionEditor",
-                        "editorClass" : "form-control suggestion-box"
+                        "editorClass" : "form-control suggestion-box",
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 1,
@@ -233,7 +251,10 @@
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "column name"
+                }
             },
             "type" : {
                 "type" : "Checkboxes",
@@ -282,7 +303,10 @@
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
                         "title" : "Expression Value",
-                        "validators": ['required']
+                        "validators": ['required'],
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 3,
@@ -323,7 +347,10 @@
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "column name"
+                }
             },
             "expression" : {
                 "title" : "",
@@ -333,6 +360,9 @@
                         "title" : "Expression Value",
                         "type" : "MetricExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 1,

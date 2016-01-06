@@ -106,7 +106,7 @@ function program15(depth0,data) {
 function program17(depth0,data) {
   
   
-  return "\n	                                        	<td class=\"relation collection-option\"><i class=\"fa fa-link\"></i></td>\n	                                        ";
+  return "\n	                                        	<td class=\"relation collection-option\"><i class=\"fa fa-arrows-h\"></i></td>\n	                                        ";
   }
 
 function program19(depth0,data) {
@@ -1260,6 +1260,10 @@ function program1(depth0,data) {
         eventSelect : function(event) {
             var value = $(event.target).parent('tr').attr('data-attr');
             squid_api.setBookmarkId(value);
+
+            if (this.onSelect) {
+                this.onSelect.call();
+            }
         },
         
         eventCreate : function() {
@@ -1383,17 +1387,26 @@ function program1(depth0,data) {
         "name" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "name"
+            "fieldClass" : "name",
+            "editorAttrs" : {
+                placeholder: "usage overview"
+            }
         },
         "description" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "description"
+            "fieldClass" : "description",
+            "editorAttrs" : {
+                placeholder: "overview combining unique and recurring visits in 2014"
+            }
         },
         "path" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "path"
+            "fieldClass" : "path",
+            "editorAttrs" : {
+                placeholder: "/reports/annual/2014"
+            }
         },
         "config" : {
             "type" : "SetConfig",
@@ -1484,7 +1497,11 @@ function program1(depth0,data) {
 
         customDataManipulation: function(data) {
             return data;
-        }
+        },
+        onSave: function(model) {
+            // set bookmark as current
+            this.config.set("bookmark", model.get("id").bookmarkId);
+        },
     });
 
     return View;
@@ -1928,28 +1945,40 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "my sports database"
+                }
             },
             "dbUrl" : {
                 "title" : "Database URL",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 1,
-                "fieldClass" : "dbUrl"
+                "fieldClass" : "dbUrl",
+                "editorAttrs" : {
+                    placeholder: "jdbc:[driver_name]://[host]:[port]/{[database]}{options}"
+                }
             },
             "dbUser" : {
                 "title" : "Database User",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 2,
-                "fieldClass" : "dbUser"
+                "fieldClass" : "dbUser",
+                "editorAttrs" : {
+                    placeholder: "user connection name"
+                }
             },
             "dbPassword" : {
                 "title" : "Database Password",
                 "type" : "Password",
                 "editorClass" : "form-control",
                 "position" : 3,
-                "fieldClass" : "dbPassword"
+                "fieldClass" : "dbPassword",
+                "editorAttrs" : {
+                    placeholder: "database connection value '***'"
+                }
             },
             "dbCheckConnection" : {
                 "type" : "DbCheckConnection",
@@ -1993,7 +2022,10 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "table name"
+                }
             },
             "subject" : {
                 "type" : "Object",
@@ -2002,7 +2034,10 @@ function program1(depth0,data) {
                     "value" : {
                         "title" : "Subject Value",
                         "type" : "DomainExpressionEditor",
-                        "editorClass" : "form-control suggestion-box"
+                        "editorClass" : "form-control suggestion-box",
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 1,
@@ -2137,7 +2172,10 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "column name"
+                }
             },
             "type" : {
                 "type" : "Checkboxes",
@@ -2186,7 +2224,10 @@ function program1(depth0,data) {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
                         "title" : "Expression Value",
-                        "validators": ['required']
+                        "validators": ['required'],
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 3,
@@ -2227,7 +2268,10 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name"
+                "fieldClass" : "name",
+                "editorAttrs" : {
+                    placeholder: "column name"
+                }
             },
             "expression" : {
                 "title" : "",
@@ -2237,6 +2281,9 @@ function program1(depth0,data) {
                         "title" : "Expression Value",
                         "type" : "MetricExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
+                        "editorAttrs" : {
+                            placeholder: "start typing expression"
+                        }
                     }
                 },
                 "position" : 1,
@@ -3220,6 +3267,8 @@ function program1(depth0,data) {
         onSave : function(model) {
             // set new project as current
             this.config.set("project", model.get("id").projectId);
+            // TODO: when saving a new project kraken should return the project role (T713)
+            this.model.set({"_role" : "OWNER"}, {silent : true});
         }
     });
 

@@ -27,17 +27,26 @@
         "name" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "name"
+            "fieldClass" : "name",
+            "editorAttrs" : {
+                placeholder: "usage overview"
+            }
         },
         "description" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "description"
+            "fieldClass" : "description",
+            "editorAttrs" : {
+                placeholder: "overview combining unique and recurring visits in 2014"
+            }
         },
         "path" : {
             "type" : "Text",
             "editorClass" : "form-control",
-            "fieldClass" : "path"
+            "fieldClass" : "path",
+            "editorAttrs" : {
+                placeholder: "/reports/annual/2014"
+            }
         },
         "config" : {
             "type" : "SetConfig",
@@ -128,7 +137,11 @@
 
         customDataManipulation: function(data) {
             return data;
-        }
+        },
+        onSave: function(model) {
+            // set bookmark as current
+            this.config.set("bookmark", model.get("id").bookmarkId);
+        },
     });
 
     return View;
