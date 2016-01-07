@@ -46,11 +46,11 @@
                     this.onSelect = options.onSelect;
                 }
             }
-            
+
             this.initModel();
             this.init(options);
         },
-        
+
         /**
          * Init the Model : selectedModel, collection and listeners
          */
@@ -61,7 +61,7 @@
                 var selectedId = config.get(me.configSelectedId);
                 var parentChanged = config.hasChanged(me.configParentId);
                 var selectionChanged = config.hasChanged(me.configSelectedId);
-               
+
                 if (me.configParentId) {
                     if (parentChanged) {
                         // parent has changed
@@ -75,7 +75,7 @@
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove", me.render);
+                                me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
                                     // selected also changed
@@ -104,7 +104,7 @@
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
                         // listen to collection fetch or removed element
-                        me.listenTo(me.collection, "sync remove", me.render);
+                        me.listenTo(me.collection, "sync remove add", me.render);
                         me.collectionLoading = false;
                         me.setSelectedModel(selectedId);
                     }).fail(function() {
@@ -115,7 +115,7 @@
                 }
             });
         },
-        
+
         /**
          * Set the selectedModel attribute.
          * Loads the corresponding Model object and listen for its changes.
@@ -139,7 +139,7 @@
                 me.render();
             }
         },
-        
+
         init: function(options) {
             // may be overridden
         },
@@ -169,13 +169,13 @@
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
-        
+
         getSelectedModel : function(event) {
             var id = $(event.target).parents('tr').data("attr");
             var model = this.collection.get(id);
             return model;
         },
-        
+
         eventSelect :  function(event) {
             var model = this.getSelectedModel(event);
             this.config.set(this.configSelectedId, model.get("oid"));
@@ -183,7 +183,7 @@
                 this.onSelect.call();
             }
         },
-        
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -194,7 +194,7 @@
                 me.collection.add(model);
                 me.render();
             });
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
@@ -202,8 +202,9 @@
                 }
             }));
         },
-        
+
         eventRefresh : function(event) {
+            var me = this;
             var model = this.getSelectedModel(event);
             var objectType = model.get("objectType");
             var url = squid_api.apiURL + "/projects/" + model.get("id").projectId;
@@ -229,7 +230,7 @@
                 });
             }
         },
-        
+
         eventEdit : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
@@ -244,7 +245,7 @@
                 }
             }));
         },
-        
+
         eventDelete : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
@@ -269,17 +270,20 @@
                 }
             }
         },
-        
+
         eventMouseEnter : function(event) {
             // hide all (as sometimes when moving fast, some may still be visible)
-            $(event.target).parent('tr').parent().find(".collection-option i").hide();
-            var elements = $(event.target).parent('tr').find(".collection-option i");
-            elements.show();
+            var elements = [$(event.target).parent('tr').find(".collection-option i"), $(event.target).parent('tr').find(".collection-option svg")];
+            for (i=0; i<elements.length; i++) {
+                elements[i].show();
+            }
         },
-        
+
         eventMouseLeave : function(event) {
-            var elements = $(event.target).parent('tr').find(".collection-option i");
-            elements.hide();
+            var elements = [$(event.target).parent('tr').parent().find(".collection-option i"), $(event.target).parent('tr').parent().find(".collection-option svg")];
+            for (i=0; i<elements.length; i++) {
+                elements[i].hide();
+            }
         },
 
         events: {
@@ -334,7 +338,7 @@
             }
             return roles;
         },
-        
+
         getModelLabel: function(model) {
             return model.get("name");
         },

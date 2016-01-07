@@ -9,11 +9,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.typeLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += "\n                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                    </button>\n                ";
+    + "\n                </button>\n            ";
   return buffer;
   }
 
@@ -106,7 +106,7 @@ function program15(depth0,data) {
 function program17(depth0,data) {
   
   
-  return "\n	                                        	<td class=\"relation collection-option\"><i class=\"fa fa-arrows-h\"></i></td>\n	                                        ";
+  return "\n	                                        	<td class=\"relation collection-option\">\n	                                        	    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                    <defs>\n                                                    <clipPath id=\"clip1\">\n                                                      <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip2\">\n                                                      <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip3\">\n                                                      <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip4\">\n                                                      <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                    </clipPath>\n                                                    </defs>\n                                                    <g id=\"surface1\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                    </g>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                    </g>\n                                                    </g>\n                                                    </svg>\n	                                        	</td>\n	                                        ";
   }
 
 function program19(depth0,data) {
@@ -141,14 +141,14 @@ function program23(depth0,data) {
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-collection-management\">\n                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">\n                        ";
@@ -496,11 +496,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                    <button type=\"button\"  class=\"create btn btn-default\">\n                        <i class=\"fa fa-plus\"></i> New ";
+  buffer += "\n				<button type=\"button\"  class=\"create btn btn-default\">\n					<i class=\"fa fa-plus\"></i> New ";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                    </button>\n                ";
+    + "\n				</button>\n			";
   return buffer;
   }
 
@@ -546,11 +546,11 @@ function program8(depth0,data) {
   if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n            							</td>\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
+    + "</td>\n            							</td>\n            							";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n            						</tr>\n            					";
   return buffer;
@@ -625,13 +625,13 @@ function program22(depth0,data) {
 function program24(depth0,data) {
   
   
-  return "\n                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n                                        ";
+  return "\n											<td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n										";
   }
 
 function program26(depth0,data) {
   
   
-  return "\n                                            <td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"></i></td>\n                                        ";
+  return "\n                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"></i></td>\n                                        ";
   }
 
 function program28(depth0,data) {
@@ -649,14 +649,14 @@ function program28(depth0,data) {
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            <div class=\"squid-api-";
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n    		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-collection-management\">\n                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    <table style=\"width:100%\">\n                        <tbody ";
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">\n                            ";
@@ -740,11 +740,11 @@ function program1(depth0,data) {
                     this.onSelect = options.onSelect;
                 }
             }
-            
+
             this.initModel();
             this.init(options);
         },
-        
+
         /**
          * Init the Model : selectedModel, collection and listeners
          */
@@ -755,7 +755,7 @@ function program1(depth0,data) {
                 var selectedId = config.get(me.configSelectedId);
                 var parentChanged = config.hasChanged(me.configParentId);
                 var selectionChanged = config.hasChanged(me.configSelectedId);
-               
+
                 if (me.configParentId) {
                     if (parentChanged) {
                         // parent has changed
@@ -769,7 +769,7 @@ function program1(depth0,data) {
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove", me.render);
+                                me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
                                     // selected also changed
@@ -798,7 +798,7 @@ function program1(depth0,data) {
                     me.loadCollection(null).done(function(collection) {
                         me.collection = collection;
                         // listen to collection fetch or removed element
-                        me.listenTo(me.collection, "sync remove", me.render);
+                        me.listenTo(me.collection, "sync remove add", me.render);
                         me.collectionLoading = false;
                         me.setSelectedModel(selectedId);
                     }).fail(function() {
@@ -809,7 +809,7 @@ function program1(depth0,data) {
                 }
             });
         },
-        
+
         /**
          * Set the selectedModel attribute.
          * Loads the corresponding Model object and listen for its changes.
@@ -833,7 +833,7 @@ function program1(depth0,data) {
                 me.render();
             }
         },
-        
+
         init: function(options) {
             // may be overridden
         },
@@ -863,13 +863,13 @@ function program1(depth0,data) {
             var db = b.get("dynamic");
             return (da === db) ? 0 : da ? 1 : -1;
         },
-        
+
         getSelectedModel : function(event) {
             var id = $(event.target).parents('tr').data("attr");
             var model = this.collection.get(id);
             return model;
         },
-        
+
         eventSelect :  function(event) {
             var model = this.getSelectedModel(event);
             this.config.set(this.configSelectedId, model.get("oid"));
@@ -877,7 +877,7 @@ function program1(depth0,data) {
                 this.onSelect.call();
             }
         },
-        
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -888,7 +888,7 @@ function program1(depth0,data) {
                 me.collection.add(model);
                 me.render();
             });
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
@@ -896,8 +896,9 @@ function program1(depth0,data) {
                 }
             }));
         },
-        
+
         eventRefresh : function(event) {
+            var me = this;
             var model = this.getSelectedModel(event);
             var objectType = model.get("objectType");
             var url = squid_api.apiURL + "/projects/" + model.get("id").projectId;
@@ -923,7 +924,7 @@ function program1(depth0,data) {
                 });
             }
         },
-        
+
         eventEdit : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
@@ -938,7 +939,7 @@ function program1(depth0,data) {
                 }
             }));
         },
-        
+
         eventDelete : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
@@ -963,17 +964,20 @@ function program1(depth0,data) {
                 }
             }
         },
-        
+
         eventMouseEnter : function(event) {
             // hide all (as sometimes when moving fast, some may still be visible)
-            $(event.target).parent('tr').parent().find(".collection-option i").hide();
-            var elements = $(event.target).parent('tr').find(".collection-option i");
-            elements.show();
+            var elements = [$(event.target).parent('tr').find(".collection-option i"), $(event.target).parent('tr').find(".collection-option svg")];
+            for (i=0; i<elements.length; i++) {
+                elements[i].show();
+            }
         },
-        
+
         eventMouseLeave : function(event) {
-            var elements = $(event.target).parent('tr').find(".collection-option i");
-            elements.hide();
+            var elements = [$(event.target).parent('tr').parent().find(".collection-option i"), $(event.target).parent('tr').parent().find(".collection-option svg")];
+            for (i=0; i<elements.length; i++) {
+                elements[i].hide();
+            }
         },
 
         events: {
@@ -1028,7 +1032,7 @@ function program1(depth0,data) {
             }
             return roles;
         },
-        
+
         getModelLabel: function(model) {
             return model.get("name");
         },
@@ -1901,11 +1905,7 @@ function program1(depth0,data) {
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
         customDataManipulation: function(data) {
-            if (data.type.length === 0) {
-                data.type = "INDEX";
-            } else {
-                data.type = data.type[0];
-            }
+            // to be overridden from other model management widgets
             return data;
         },
 
@@ -1948,40 +1948,29 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name",
-                "editorAttrs" : {
-                    placeholder: "my sports database"
-                }
+                "fieldClass" : "name"
             },
             "dbUrl" : {
                 "title" : "Database URL",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 1,
-                "fieldClass" : "dbUrl",
-                "editorAttrs" : {
-                    placeholder: "jdbc:[driver_name]://[host]:[port]/{[database]}{options}"
-                }
+                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
+                "fieldClass" : "dbUrl"
             },
             "dbUser" : {
                 "title" : "Database User",
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 2,
-                "fieldClass" : "dbUser",
-                "editorAttrs" : {
-                    placeholder: "user connection name"
-                }
+                "fieldClass" : "dbUser"
             },
             "dbPassword" : {
                 "title" : "Database Password",
                 "type" : "Password",
                 "editorClass" : "form-control",
                 "position" : 3,
-                "fieldClass" : "dbPassword",
-                "editorAttrs" : {
-                    placeholder: "database connection value '***'"
-                }
+                "fieldClass" : "dbPassword"
             },
             "dbCheckConnection" : {
                 "type" : "DbCheckConnection",
@@ -2025,10 +2014,7 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name",
-                "editorAttrs" : {
-                    placeholder: "table name"
-                }
+                "fieldClass" : "name"
             },
             "subject" : {
                 "type" : "Object",
@@ -2037,10 +2023,7 @@ function program1(depth0,data) {
                     "value" : {
                         "title" : "Subject Value",
                         "type" : "DomainExpressionEditor",
-                        "editorClass" : "form-control suggestion-box",
-                        "editorAttrs" : {
-                            placeholder: "start typing expression"
-                        }
+                        "editorClass" : "form-control suggestion-box"
                     }
                 },
                 "position" : 1,
@@ -2175,10 +2158,7 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name",
-                "editorAttrs" : {
-                    placeholder: "column name"
-                }
+                "fieldClass" : "name"
             },
             "type" : {
                 "type" : "Checkboxes",
@@ -2227,10 +2207,7 @@ function program1(depth0,data) {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
                         "title" : "Expression Value",
-                        "validators": ['required'],
-                        "editorAttrs" : {
-                            placeholder: "start typing expression"
-                        }
+                        "validators": ['required']
                     }
                 },
                 "position" : 3,
@@ -2271,10 +2248,7 @@ function program1(depth0,data) {
             "name" : {
                 "type" : "Text",
                 "editorClass" : "form-control",
-                "fieldClass" : "name",
-                "editorAttrs" : {
-                    placeholder: "column name"
-                }
+                "fieldClass" : "name"
             },
             "expression" : {
                 "title" : "",
@@ -2283,10 +2257,7 @@ function program1(depth0,data) {
                     "value" : {
                         "title" : "Expression Value",
                         "type" : "MetricExpressionEditor",
-                        "editorClass" : "form-control suggestion-box",
-                        "editorAttrs" : {
-                            placeholder: "start typing expression"
-                        }
+                        "editorClass" : "form-control suggestion-box"
                     }
                 },
                 "position" : 1,
@@ -2699,7 +2670,6 @@ function program1(depth0,data) {
 
             // listen for selection change as we use it to get dimensions
             me.listenTo(this.filters,"change:selection", this.render);
-            me.listenTo(this.config,"change:chosenDimensions", this.render);
 
             // initilize dimension collection for management view
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -2718,7 +2688,7 @@ function program1(depth0,data) {
 
         render: function() {
             var me = this;
-            
+
             if ((this.config.get("project")) && (this.config.get("domain"))) {
                 var isMultiple = true;
 
@@ -3226,6 +3196,38 @@ function program1(depth0,data) {
         render : function() {
             // useful for debugging
             squid_api.view.BaseCollectionManagementWidget.prototype.render.call(this);
+        }
+
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ProjectCreatorButton = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_button_view);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = squid_api.view.ProjectCollectionManagementWidget.extend({
+
+        init : function() {
+            var me = this;
+            this.listenTo(this.config,"change", this.configCompare);
+        },
+
+        render: function() {
+            var label = this.typeLabelPlural;
+            var jsonData = {
+                label : "Create a new one",
+                visible : this.getCreateRole(),
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                typeLabelPlural : this.typeLabelPlural
+            };
+
+            this.$el.html(template(jsonData));
+
+            return this;
         }
 
     });
