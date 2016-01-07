@@ -5,6 +5,7 @@
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         type : "Relation",
+        typeLabel : "Relation",
         typeLabelPlural : "Relations",
         modelView : null,
         template: template,

@@ -5,6 +5,7 @@
 
     var View = squid_api.view.ColumnsManagementWidget.extend({
         type : "Dimension",
+        typeLabel : "Dimension",
         typeLabelPlural : "Dimensions",
 
         init : function() {

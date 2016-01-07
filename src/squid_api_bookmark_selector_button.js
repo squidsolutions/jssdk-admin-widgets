@@ -7,7 +7,7 @@
 
         init : function() {
             var me = this;
-            this.listenTo(this.config,"change", this.configCompare);
+            this.listenTo(this.config,"change", this.renderButtonState);
         },
         
         render: function() {
@@ -17,27 +17,23 @@
                 visible : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
+                typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
                 jsonData.visible = true;
-                if (this.selectedModel) {
-                    if (this.selectedModel.get("oid")) {
-                        // always display default label
-                    }
-                }
             } else {
                 jsonData.visible = false;
             }
 
             this.$el.html(template(jsonData));
 
-            this.configCompare();
+            this.renderButtonState();
 
             return this;
         },
 
-        configCompare: function() {
+        renderButtonState: function() {
             /* add a class when the current config matches the selected models config */
             if (this.selectedModel) {
                 var match = true;

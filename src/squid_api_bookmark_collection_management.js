@@ -5,9 +5,10 @@
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
         type : "Bookmark",
+        typeLabel : "Bookmark",
         typeLabelPlural : "Bookmarks",
-        modelView : null,
         configSelectedId : "bookmark",
+        modelView : null,
         configParentId : "project",
 
         init : function() {
@@ -33,36 +34,44 @@
             return model;
         },
         
+        eventSelect : function(event) {
+            var value = $(event.target).parent('tr').attr('data-attr');
+            squid_api.setBookmarkId(value);
+
+            if (this.onSelect) {
+                this.onSelect.call();
+            }
+        },
+        
+        eventCreate : function() {
+            var me = this;
+            // create a new model
+            var model = new this.collection.model();
+            model.set("id", this.collection.parent.get("id"));
+            var config = this.config.toJSON();
+            delete config.bookmark;
+            delete config.project;
+            model.set("config",config);
+            // listen for new model changes
+            me.listenTo(model, "sync", function() {
+                me.collection.add(model);
+                me.render();
+            });
+            
+            this.renderModelView(new this.modelView({
+                model : model,
+                cancelCallback : function() {
+                    me.render();
+                }
+            }));
+        },
+        
         events : {
             "click .select" : function(event) {
-                var value = $(event.target).parent('tr').attr('data-attr');
-                squid_api.setBookmarkId(value);
-
-                if (this.onSelect) {
-                    this.onSelect.call();
-                }
+                this.eventSelect(event);
             },
-            "click .create" : function() {
-                var me = this;
-                // create a new model
-                var model = new this.collection.model();
-                model.set("id", this.collection.parent.get("id"));
-                var config = this.config.toJSON();
-                delete config.bookmark;
-                delete config.project;
-                model.set("config",config);
-                // listen for new model changes
-                me.listenTo(model, "sync", function() {
-                    me.collection.add(model);
-                    me.render();
-                });
-                
-                this.renderModelView(new this.modelView({
-                    model : model,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
+            "click .create" : function(event) {
+                this.eventCreate(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);

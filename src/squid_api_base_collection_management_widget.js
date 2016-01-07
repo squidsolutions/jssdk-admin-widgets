@@ -9,7 +9,9 @@
         selectedModel : null,
         config : null,
         type : null,
+        typeLabel : null,
         typeLabelPlural : null,
+        configSelectedId : null,
         comparator : null,
         parentType : null,
         modelView : null,
@@ -124,10 +126,13 @@
                 this.stopListening(me.selectedModel);
             }
             if (modelId) {
-                me.collection.load(modelId).then(function(model) {
+                me.collection.load(modelId).done(function(model) {
                     me.selectedModel = model;
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
+                }).fail(function() {
+                    me.selectedModel = null;
+                    me.render();
                 });
             } else {
                 me.selectedModel = null;
@@ -173,7 +178,7 @@
 
         eventSelect :  function(event) {
             var model = this.getSelectedModel(event);
-            this.config.set(this.type.toLowerCase(), model.get("oid"));
+            this.config.set(this.configSelectedId, model.get("oid"));
             if (this.onSelect) {
                 this.onSelect.call();
             }
@@ -203,9 +208,9 @@
             var model = this.getSelectedModel(event);
             var objectType = model.get("objectType");
             var url = squid_api.apiURL + "/projects/" + model.get("id").projectId;
-            if (objectType == "Project") {
+            if (objectType === "Project") {
                 url = url + "/refreshDatabase";
-            } else if (objectType == "Domain") {
+            } else if (objectType === "Domain") {
                 url = url + "/domains/" + model.get("id").domainId + "/cache/refresh";
             }
             url = url + "?access_token=" + squid_api.model.login.get("accessToken");
@@ -349,9 +354,9 @@
                 collection : this.collection,
                 roles : null,
                 createRole : null,
+                typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
-                modalHtml : true,
-                type : this.type
+                modalHtml : true
             };
             if (this.collection) {
                 jsonData.collection = {"models" : []};
@@ -365,7 +370,7 @@
                     model.roles = this.getModelRoles(item);
 
                     // detect selected model
-                    if (model.value === this.config.get(this.type.toLowerCase())) {
+                    if (model.value === this.config.get(this.configSelectedId)) {
                         model.selected = true;
                         jsonData.collection.models.unshift(model);
                     } else {
