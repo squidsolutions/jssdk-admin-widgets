@@ -88,10 +88,6 @@
 	box-shadow: 0px 0px 6px 0px #27ae60;
 }
 
-.squid-api-model-management fieldset div {
-	position: relative;
-}
-
 .squid-api-model-management fieldset div.dbUrl div div {
 	font-size: 11px;
 	float: right;
