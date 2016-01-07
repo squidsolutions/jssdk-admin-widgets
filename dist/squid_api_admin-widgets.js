@@ -767,7 +767,7 @@ function program1(depth0,data) {
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                me.listenTo(me.collection, "sync remove add", me.render);
+                                me.listenTo(collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
                                     // selected also changed
@@ -904,6 +904,7 @@ function program1(depth0,data) {
             }
             url = url + "?access_token=" + squid_api.model.login.get("accessToken");
             if (model) {
+                squid_api.model.status.pushTask(model);
                 var request = $.ajax({
                     type: "GET",
                     url: url,
@@ -911,15 +912,20 @@ function program1(depth0,data) {
                     contentType: 'application/json'
                 });
                 request.done(function () {
-                    squid_api.model.status.set("message", objectType + " successfully refreshed");
-
-                    if (objectType == "Project") {
+                    if ((objectType === "Project") && (me.config.get("project") === model.get("oid"))) {
+                        // force project refresh
                         me.config.trigger("change change:project", me.config, true);
                     }
+                    if ((objectType === "Domain") && (me.config.get("domain") === model.get("oid"))) {
+                        // force domain refresh
+                        me.config.trigger("change change:domain", me.config, true);
+                    }
+                    squid_api.model.status.pullTask(model);
+                    squid_api.model.status.set("message", objectType + " successfully refreshed");
                 });
                 request.fail(function () {
-                    squid_api.model.status.set("message", objectType + " refresh failed");
-                    squid_api.model.status.set("error", "error");
+                    squid_api.model.status.pullTask(model);
+                    squid_api.model.status.set("error", objectType + " refresh failed");
                 });
             }
         },
