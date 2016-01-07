@@ -31,6 +31,7 @@
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "position" : 1,
+                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
                 "fieldClass" : "dbUrl"
             },
             "dbUser" : {
@@ -332,7 +333,7 @@
                     "value" : {
                         "title" : "Expression Value",
                         "type" : "MetricExpressionEditor",
-                        "editorClass" : "form-control suggestion-box",
+                        "editorClass" : "form-control suggestion-box"
                     }
                 },
                 "position" : 1,

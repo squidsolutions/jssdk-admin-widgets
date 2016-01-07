@@ -4,12 +4,12 @@
 </div>
 <div class="modal-body">
     <div class="squid-api-collection-management-widget">
-            <div class="squid-api-{{type}}-collection-management">
-                {{#if createRole}}
-                    <button type="button"  class="create btn btn-default">
-                        <i class="fa fa-plus"></i> New {{type}}
-                    </button>
-                {{/if}}
+    		{{#if createRole}}
+				<button type="button"  class="create btn btn-default">
+					<i class="fa fa-plus"></i> New {{type}}
+				</button>
+			{{/if}}
+            <div class="squid-api-{{type}}-collection-management list">
                     <table style="width:100%">
                         <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
                             {{#if models}}
@@ -69,11 +69,11 @@
             							{{/if}}
                                         <td class="domain">{{rightName}}</td>
             							</td>
+            							{{#if roles.edit}}
+											<td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
+										{{/if}}
                                         {{#if roles.delete}}
                                             <td class="delete collection-option"><i class="fa fa-trash-o"></i></td>
-                                        {{/if}}
-                                        {{#if roles.edit}}
-                                            <td class="edit collection-option"><i class="fa fa-pencil-square-o"></i></td>
                                         {{/if}}
             						</tr>
             					{{/each}}
