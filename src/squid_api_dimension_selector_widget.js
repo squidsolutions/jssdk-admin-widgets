@@ -44,7 +44,6 @@
 
             // listen for selection change as we use it to get dimensions
             me.listenTo(this.filters,"change:selection", this.render);
-            me.listenTo(this.config,"change:chosenDimensions", this.render);
 
             // initilize dimension collection for management view
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -63,7 +62,7 @@
 
         render: function() {
             var me = this;
-            
+
             if ((this.config.get("project")) && (this.config.get("domain"))) {
                 var isMultiple = true;
 

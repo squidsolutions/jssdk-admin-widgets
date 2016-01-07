@@ -6,11 +6,7 @@
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
         customDataManipulation: function(data) {
-            if (data.type.length === 0) {
-                data.type = "INDEX";
-            } else {
-                data.type = data.type[0];
-            }
+            // to be overridden from other model management widgets
             return data;
         },
 
