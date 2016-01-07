@@ -260,7 +260,7 @@
 }
 
 .squid-api-model-management fieldset > div input {
-	margin: 5px 0px 10px 0px;
+	margin-bottom: 10px;
 }
 
 .squid-api-admin-widgets-modal-form .modal-header {
@@ -327,6 +327,17 @@
 
 .squid-api-model-management .valid-expression {
 	box-shadow: 0px 0px 6px 0px #27ae60;
+}
+
+.squid-api-model-management fieldset div {
+	position: relative;
+}
+
+.squid-api-model-management fieldset div.dbUrl div div {
+	font-size: 11px;
+	float: right;
+	background: #f3f3f3;
+	border-radius: 10px;
 }
 
 .squid-api-suggestion-dialog {
