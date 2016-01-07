@@ -912,10 +912,6 @@ function program1(depth0,data) {
                 });
                 request.done(function () {
                     squid_api.model.status.set("message", objectType + " successfully refreshed");
-
-                    if (objectType == "Project") {
-                        me.config.trigger("change change:project", me.config, true);
-                    }
                 });
                 request.fail(function () {
                     squid_api.model.status.set("message", objectType + " refresh failed");
