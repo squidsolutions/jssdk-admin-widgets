@@ -350,7 +350,6 @@
 	cursor: pointer;
 	border: 1px solid #f3f3f3;
 	padding: 5px;
-	width: 568px !important;
 	opacity: 0.95;
 	z-index: 5000;
 	padding-left: 0px;
@@ -386,9 +385,9 @@
 	position: fixed;
 	background-color: #fff;
 	border: 1px solid #f2f2f2;
-	margin-left: 490px;
 	margin-top: 5px;
 	border-radius: 5px;
+	left: 80%;
 }
 
 .squid-api-suggestion-dialog .ui-dialog-titlebar-close:hover {

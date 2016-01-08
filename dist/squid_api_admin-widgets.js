@@ -771,7 +771,7 @@ function program1(depth0,data) {
                                 me.collection = collection;
                                 // add comparator for sorting
                                 me.collection.comparator = me.comparator;
-                                
+
                                 me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
@@ -2435,7 +2435,12 @@ function program1(depth0,data) {
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
-                            position: { my: "center top", at: "center bottom+4", of: me.$el },
+                            modal: true,
+                            width: "auto",
+                            position: { my: "left top", at: "left bottom", of: me.$el },
+                            open: function() {
+                                $(this).width($(".squid-api-model-management .suggestion-box").width());
+                            },
                             clickOutside: true, // clicking outside the dialog will close it
                             clickOutsideTrigger: me.$el, // Element (id or class) that triggers the dialog opening
                         });
