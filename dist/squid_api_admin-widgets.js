@@ -2435,7 +2435,6 @@ function program1(depth0,data) {
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
-                            modal: true,
                             width: "auto",
                             position: { my: "left top", at: "left bottom", of: me.$el },
                             open: function() {
