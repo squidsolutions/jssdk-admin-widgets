@@ -75,6 +75,9 @@
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
+                                // add comparator for sorting
+                                me.collection.comparator = me.comparator;
+                                
                                 me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
@@ -359,6 +362,9 @@
                 modalHtml : true
             };
             if (this.collection) {
+                // sort collection
+                this.collection.sort();
+
                 jsonData.collection = {"models" : []};
                 jsonData.createRole = this.getCreateRole();
 
