@@ -828,7 +828,6 @@ function program1(depth0,data) {
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
-                    me.selectedModel = null;
                     me.render();
                 });
             } else {
@@ -886,15 +885,16 @@ function program1(depth0,data) {
             // create a new model
             var model = new this.collection.model();
             model.set("id", this.collection.parent.get("id"));
-            // listen for new model changes
-            me.listenTo(model, "sync", function() {
-                me.collection.add(model);
-                me.render();
-            });
-
+            
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
+                    me.render();
+                },
+                onSave : function(model) {
+                    me.collection.add(model);
+                    // call any super onSave
+                    me.modelView.prototype.onSave.call(me, model);
                     me.render();
                 }
             }));
@@ -1288,15 +1288,16 @@ function program1(depth0,data) {
             delete config.bookmark;
             delete config.project;
             model.set("config",config);
-            // listen for new model changes
-            me.listenTo(model, "sync", function() {
-                me.collection.add(model);
-                me.render();
-            });
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
+                    me.render();
+                },
+                onSave : function(model) {
+                    me.collection.add(model);
+                    // call any super onSave
+                    me.modelView.prototype.onSave.call(me, model);
                     me.render();
                 }
             }));
@@ -2435,7 +2436,6 @@ function program1(depth0,data) {
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
-                            modal: true,
                             width: "auto",
                             position: { my: "left top", at: "left bottom", of: me.$el },
                             open: function() {
@@ -3246,7 +3246,6 @@ function program1(depth0,data) {
     return View;
 }));
 
-
 (function (root, factory) {
     root.squid_api.view.ProjectModelManagementWidget = factory(root.Backbone, root.squid_api);
 
@@ -3281,10 +3280,10 @@ function program1(depth0,data) {
         },
         
         onSave : function(model) {
+            // TODO: when saving a new project kraken should return the project role (T713)
+            model.set({"_role" : "OWNER"}, {silent : true});
             // set new project as current
             this.config.set("project", model.get("id").projectId);
-            // TODO: when saving a new project kraken should return the project role (T713)
-            this.model.set({"_role" : "OWNER"}, {silent : true});
         }
     });
 
@@ -3532,7 +3531,7 @@ function program1(depth0,data) {
                         error: function(xhr) {
                             me.status.set("error", xhr);
                         }
-            });
+                    });
 
                 }
             }
@@ -3540,7 +3539,6 @@ function program1(depth0,data) {
 
         onSave: function(model) {
             // to be overridden from other model management widgets
-            console.log("once saved");
         },
 
         formEvents: function() {

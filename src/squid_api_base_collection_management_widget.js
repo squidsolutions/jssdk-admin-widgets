@@ -134,7 +134,6 @@
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
-                    me.selectedModel = null;
                     me.render();
                 });
             } else {
@@ -192,15 +191,16 @@
             // create a new model
             var model = new this.collection.model();
             model.set("id", this.collection.parent.get("id"));
-            // listen for new model changes
-            me.listenTo(model, "sync", function() {
-                me.collection.add(model);
-                me.render();
-            });
-
+            
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
+                    me.render();
+                },
+                onSave : function(model) {
+                    me.collection.add(model);
+                    // call any super onSave
+                    me.modelView.prototype.onSave.call(me, model);
                     me.render();
                 }
             }));
