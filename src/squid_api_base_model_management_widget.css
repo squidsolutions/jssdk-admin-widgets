@@ -132,7 +132,7 @@
 }
 
 .squid-api-suggestion-dialog .ui-dialog-titlebar {
-	float: left;
+	float: right;
 	position: relative;
 }
 
@@ -140,9 +140,8 @@
 	position: fixed;
 	background-color: #fff;
 	border: 1px solid #f2f2f2;
-	margin-top: 5px;
 	border-radius: 5px;
-	left: 80%;
+	margin: 5px 0px 0px -55px;
 }
 
 .squid-api-suggestion-dialog .ui-dialog-titlebar-close:hover {

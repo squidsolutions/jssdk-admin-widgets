@@ -1041,7 +1041,10 @@ function program1(depth0,data) {
         },
 
         renderModelView: function(modelView) {
+            var me = this;
             this.$el.html(modelView.el);
+            // focus on first element
+            this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
 
         render: function() {
@@ -1113,6 +1116,9 @@ function program1(depth0,data) {
             }
             if (options.cancelCallback) {
                 this.cancelCallback = options.cancelCallback;
+            }
+            if (options.afterRender) {
+                this.afterRender = options.afterRender;
             }
             if (options.onSave) {
                 this.onSave = options.onSave;

@@ -348,6 +348,8 @@
 
         renderModelView: function(modelView) {
             this.$el.html(modelView.el);
+            // focus on first element
+            this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
 
         render: function() {
