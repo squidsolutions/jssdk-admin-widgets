@@ -46,11 +46,41 @@
                         parentClone.fetch({
                             success: function (domain) {
                                 me.collection.parent.set("dynamic", domain.get("dynamic"));
+
+                                /* sync config selection with dimension collection */
+
+                                var selection = me.config.get("selection");
+                                if (selection) {
+                                    var facets = selection.facets;
+                                    if (facets) {
+                                        for (i=0; i<facets.length; i++) {
+                                            for (ix=0; ix<me.collection.size(); ix++) {
+                                                var dimension = me.collection.at(ix);
+                                                if (dimension) {
+                                                    if (dimension.get("oid") == facets[i].dimension.oid) {
+                                                        // update dynamic status in config selection
+                                                        facets[i].dimension.dynamic = dimension.get("dynamic");
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                        // remove selectedItems from config
+                                        for (i=0; i<facets.length; i++) {
+                                            if (facets[i].dimension.dynamic && ! domain.get("dynamic") && facets[i].selectedItems.length > 0) {
+                                                facets[i].selectedItems = [];
+                                            }
+                                        }
+
+                                        // reset config silently
+                                        me.config.set({"selection" : selection}, {silent : true});
+                                    }
+                                }
+
+                                // force a filters re-computation
+                                me.config.trigger("change:selection");
                             }
                         });
-
-                        // force a filters re-computation because dimension selector uses it
-                        me.config.trigger("change:selection");
                     });
                 }
             },
