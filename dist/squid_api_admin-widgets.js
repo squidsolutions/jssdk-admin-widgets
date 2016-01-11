@@ -2777,7 +2777,8 @@ function program1(depth0,data) {
                             }
                         }
                         var noneSelected = true;
-                        for (var dimIdx=0; dimIdx<me.dimensions.length; dimIdx++) {
+                        var dimIdx;
+                        for (dimIdx=0; dimIdx<me.dimensions.length; dimIdx++) {
                             var facet1 = me.dimensions[dimIdx];
                             if (facet1) {
                                 // check if selected
@@ -2822,6 +2823,15 @@ function program1(depth0,data) {
                             me.showConfiguration();
                         }
                     });
+                    
+                    // error tooltips
+                    for (var i2=0; i2<jsonData.options.length; i2++) {
+                        var facet2 = jsonData.options[i2];
+                        if (facet2.error) {
+                            var input = me.$el.find(".squid-api-data-widgets-dimension-selector li:nth-child("+(i2+1)+") label");
+                            input.tooltip({"title" : "Facet computation failed"});
+                        }
+                    }
 
                     // Remove Button Title Tag
                     me.$el.find("button").removeAttr('title');
