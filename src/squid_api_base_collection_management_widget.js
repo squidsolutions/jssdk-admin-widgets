@@ -75,6 +75,9 @@
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
+                                // add comparator for sorting
+                                me.collection.comparator = me.comparator;
+
                                 me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
@@ -131,7 +134,6 @@
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
-                    me.selectedModel = null;
                     me.render();
                 });
             } else {
@@ -189,15 +191,16 @@
             // create a new model
             var model = new this.collection.model();
             model.set("id", this.collection.parent.get("id"));
-            // listen for new model changes
-            me.listenTo(model, "sync", function() {
-                me.collection.add(model);
-                me.render();
-            });
-
+            
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
+                    me.render();
+                },
+                onSave : function(model) {
+                    me.collection.add(model);
+                    // call any super onSave
+                    me.modelView.prototype.onSave.call(me, model);
                     me.render();
                 }
             }));
@@ -345,6 +348,8 @@
 
         renderModelView: function(modelView) {
             this.$el.html(modelView.el);
+            // focus on first element
+            this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
 
         render: function() {
@@ -359,6 +364,9 @@
                 modalHtml : true
             };
             if (this.collection) {
+                // sort collection
+                this.collection.sort();
+
                 jsonData.collection = {"models" : []};
                 jsonData.createRole = this.getCreateRole();
 

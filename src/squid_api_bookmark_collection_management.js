@@ -52,15 +52,16 @@
             delete config.bookmark;
             delete config.project;
             model.set("config",config);
-            // listen for new model changes
-            me.listenTo(model, "sync", function() {
-                me.collection.add(model);
-                me.render();
-            });
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
+                    me.render();
+                },
+                onSave : function(model) {
+                    me.collection.add(model);
+                    // call any super onSave
+                    me.modelView.prototype.onSave.call(me, model);
                     me.render();
                 }
             }));
