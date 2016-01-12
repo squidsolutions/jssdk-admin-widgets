@@ -769,9 +769,6 @@ function program1(depth0,data) {
                             }
                             me.loadCollection(parentId).done(function(collection) {
                                 me.collection = collection;
-                                // add comparator for sorting
-                                me.collection.comparator = me.comparator;
-
                                 me.listenTo(me.collection, "sync remove add", me.render);
                                 me.collectionLoading = false;
                                 if (selectionChanged) {
@@ -849,8 +846,15 @@ function program1(depth0,data) {
         },
 
         alphaNameComparator : function(a,b) {
-            var va = a.get("name").toLowerCase();
-            var vb = b.get("name").toLowerCase();
+            var va;
+            var vb;
+            if (a.name && b.name) {
+                va = a.name.toLowerCase();
+                vb = b.name.toLowerCase();
+            } else if (a.label && b.label) {
+                va = a.label.toLowerCase();
+                vb = b.label.toLowerCase();
+            }
             if (va < vb) {
                 return -1;
             }
@@ -861,8 +865,8 @@ function program1(depth0,data) {
         },
 
         dynamicComparator : function(a,b) {
-            var da = a.get("dynamic");
-            var db = b.get("dynamic");
+            var da = a.dynamic;
+            var db = b.dynamic;
             return (da === db) ? 0 : da ? 1 : -1;
         },
 
@@ -1058,29 +1062,38 @@ function program1(depth0,data) {
                 modalHtml : true
             };
             if (this.collection) {
-                // sort collection
-                this.collection.sort();
-
-                jsonData.collection = {"models" : []};
+                var models = [];
+                jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
 
+                // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
                     model.label = this.getModelLabel(item);
                     model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
+                    model.dynamic = item.get("dynamic");
+                    models.push(model);
+                }
 
-                    // detect selected model
-                    if (model.value === this.config.get(this.configSelectedId)) {
-                        model.selected = true;
-                        jsonData.collection.models.unshift(model);
-                    } else {
-                        jsonData.collection.models.push(model);
+                // sort model data
+                models.sort(this.comparator);
+
+                // place currently selected model at the top of the list
+                for (i=0; i<models.length; i++) {
+                    var collectionModel = models[i];
+                    if (models[i].value === this.config.get(this.configSelectedId)) {
+                        collectionModel.selected = true;
+                        // remove model from previous position
+                        models.splice(i, 1);
+                        // place selected model at the start of the array
+                        models.unshift(collectionModel);
                     }
                 }
+                // store model view data
+                jsonData.collection.models = models;
             }
-            // print template
             var html = this.template(jsonData);
             this.$el.html(html);
             return this;
