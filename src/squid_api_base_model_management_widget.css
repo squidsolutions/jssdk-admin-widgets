@@ -22,6 +22,22 @@
 	margin-bottom: 10px;
 }
 
+.squid-api-model-management input:focus::-webkit-input-placeholder {
+	color:transparent;
+}
+
+.squid-api-model-management input:focus::-moz-placeholder {
+	color:transparent;
+}
+
+.squid-api-model-management input:focus::-moz-placeholder {
+	color:transparent;
+}
+
+.squid-api-model-management input:focus::-ms-input-placeholder {
+	color:transparent;
+}
+
 .squid-api-admin-widgets-modal-form .modal-header {
     color: #fff;
     min-width: 135px;
