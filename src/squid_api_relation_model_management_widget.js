@@ -83,7 +83,7 @@
                 form.$el.find(".rightName input").val(rightText);
             });
         },
-        
+
         setSchema: function() {
             var dfd = $.Deferred();
             var schema = this.model.schema;
@@ -99,8 +99,8 @@
                             obj.label = domains.at(i).get("name");
                             arr.push(obj);
                         }
-                        schema.leftId.subSchema.domainId.options = arr;
-                        schema.rightId.subSchema.domainId.options = arr;
+                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
+                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
                         dfd.resolve(schema);
                     });
                 });

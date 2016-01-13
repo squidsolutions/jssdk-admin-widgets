@@ -27,6 +27,12 @@
             if (options.onSave) {
                 this.onSave = options.onSave;
             }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  squid_api.utils.defaultComparator;
+            }
             this.render();
         },
 

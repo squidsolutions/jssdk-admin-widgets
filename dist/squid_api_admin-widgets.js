@@ -733,13 +733,7 @@ function program1(depth0,data) {
                     this.comparator = options.comparator;
                 } else {
                     // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
+                    this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
@@ -1139,6 +1133,12 @@ function program1(depth0,data) {
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
+            }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  squid_api.utils.defaultComparator;
             }
             this.render();
         },
@@ -3619,7 +3619,7 @@ function program1(depth0,data) {
                 form.$el.find(".rightName input").val(rightText);
             });
         },
-        
+
         setSchema: function() {
             var dfd = $.Deferred();
             var schema = this.model.schema;
@@ -3635,8 +3635,8 @@ function program1(depth0,data) {
                             obj.label = domains.at(i).get("name");
                             arr.push(obj);
                         }
-                        schema.leftId.subSchema.domainId.options = arr;
-                        schema.rightId.subSchema.domainId.options = arr;
+                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
+                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
                         dfd.resolve(schema);
                     });
                 });

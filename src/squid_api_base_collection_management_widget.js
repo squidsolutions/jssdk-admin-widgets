@@ -31,13 +31,7 @@
                     this.comparator = options.comparator;
                 } else {
                     // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
+                    this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
