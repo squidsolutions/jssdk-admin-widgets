@@ -9,6 +9,7 @@
         template : null,
         views : [],
         el : "body",
+        fadeAnimation : false,
 
         initialize: function(options) {
             if (options.template) {
@@ -18,6 +19,9 @@
             }
             if (options.view) {
                 this.view = options.view;
+            }
+            if (options.fadeAnimation) {
+                this.fadeAnimation = options.fadeAnimation;
             }
             // output base html
             this.renderBase();
@@ -29,7 +33,8 @@
 
         renderBase: function() {
             var viewData = {
-                modalCount : $(".squid-api-modal-view").length
+                modalCount : $(".squid-api-modal-view").length,
+                fadeAnimation : this.fadeAnimation
             };
             var html = this.template(viewData);
             // print template
