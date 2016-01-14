@@ -673,8 +673,16 @@
 .squid-api-Relation-collection-management .leftIcon {
 	width: 100px;
 	position: relative;
+	left: -25px;
 }
-
+.squid-api-Relation-collection-management .rightIcon {
+	position: relative;
+	left: -25px;
+}
+.squid-api-Relation-collection-management .leftIcon svg, .squid-api-Relation-collection-management .rightIcon svg {
+	position: relative;
+	left: -25px;
+}
 
 .squid-api-relation-model-management .id {
     display: none;
