@@ -293,13 +293,6 @@
             }
         },
 
-        eventCopy: function(event) {
-            var clipboard = new Clipboard(".copy");
-            clipboard.on('success', function(e) {
-                squid_api.model.status.set("message", e.text + " has been copied to the clipboard");
-            });
-        },
-
         events: {
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -318,9 +311,6 @@
             },
             "click .delete": function(event) {
                 this.eventDelete(event);
-            },
-            "click .copy": function(event) {
-                this.eventCopy(event);
             },
             "click .select": function(event) {
                 this.eventSelect(event);

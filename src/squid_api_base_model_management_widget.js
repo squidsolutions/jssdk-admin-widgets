@@ -87,6 +87,12 @@
                         }
                     });
                 }
+            },
+            "click .copy-id": function() {
+                var clipboard = new Clipboard(".copy-id");
+                clipboard.on('success', function(e) {
+                    squid_api.model.status.set("message", e.text + " has been copied to the clipboard");
+                });
             }
         },
 
@@ -116,7 +122,7 @@
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
             }
 
             this.setSchema().then(function(schema) {
