@@ -20,15 +20,9 @@
                                             {{label}}
                                         </td>
                                         {{#if roles}}
-                                            {{#if roles.edit}}
-                                                <td class="edit collection-option" ><i class="fa fa-pencil-square-o" title="edit"></i></td>
-                                            {{/if}}
-                                            {{#if roles.refresh}}
-                                                <td class="refresh collection-option"><i class="fa fa-refresh" title="force refresh"></i></td>
-                                            {{/if}}
                                             {{#if roles.relation}}
-	                                        	<td class="relation collection-option">
-	                                        	    <svg title="relations" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.5" height="21" viewBox="0 0 44.09 50.85" version="1.1">
+                                                <td class="relation collection-option">
+                                                    <svg title="relations" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.5" height="21" viewBox="0 0 44.09 50.85" version="1.1">
                                                     <defs>
                                                     <clipPath id="clip1">
                                                       <path d="M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 "/>
@@ -62,8 +56,14 @@
                                                     </g>
                                                     </g>
                                                     </svg>
-	                                        	</td>
-	                                        {{/if}}
+                                                </td>
+                                            {{/if}}
+                                            {{#if roles.refresh}}
+                                                <td class="refresh collection-option"><i class="fa fa-refresh" title="force refresh"></i></td>
+                                            {{/if}}
+                                            {{#if roles.edit}}
+                                                <td class="edit collection-option" ><i class="fa fa-pencil-square-o" title="edit"></i></td>
+                                            {{/if}}
 	                                        {{#if roles.delete}}
 	                                            <td class="delete collection-option"><i class="fa fa-trash-o" title="delete"></i></td>
 	                                        {{/if}}
