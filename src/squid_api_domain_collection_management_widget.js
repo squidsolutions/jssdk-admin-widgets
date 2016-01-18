@@ -48,6 +48,9 @@
             "click .select": function(event) {
                 this.eventSelect(event);
             },
+            "click .copy-id": function(event) {
+                this.eventCopy(event);
+            },
             "click .relation": function(event) {
                 var me = this;
                 var modelValue = $(event.target).parents('tr').attr("data-attr");

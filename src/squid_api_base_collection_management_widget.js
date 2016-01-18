@@ -293,6 +293,13 @@
             }
         },
 
+        eventCopy: function(event) {
+            var clipboard = new Clipboard(".copy");
+            clipboard.on('success', function(e) {
+                squid_api.model.status.set("message", e.text + " has been copied to the clipboard");
+            });
+        },
+
         events: {
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -311,6 +318,9 @@
             },
             "click .delete": function(event) {
                 this.eventDelete(event);
+            },
+            "click .copy": function(event) {
+                this.eventCopy(event);
             },
             "click .select": function(event) {
                 this.eventSelect(event);
@@ -403,30 +413,6 @@
             var html = this.template(jsonData);
             this.$el.html(html);
 
-            // show dialog with model oid if user has create rights
-            if (this.collection) {
-                if (this.getCreateRole()) {
-                    this.$el.find("tr").popover({
-                        html: true,
-                        trigger: 'manual',
-                        container: $(this).attr('id'),
-                        placement: "top",
-                    }).on("mouseenter", function () {
-                        var _this = this;
-                        $(this).popover("show");
-                        $(this).siblings(".popover").on("mouseleave", function () {
-                            $(_this).popover('hide');
-                        });
-                    }).on("mouseleave", function () {
-                        var _this = this;
-                        setTimeout(function () {
-                            if (!$(".popover:hover").length) {
-                                $(_this).popover("hide");
-                            }
-                        }, 100);
-                    });
-                }
-            }
             return this;
         }
     });

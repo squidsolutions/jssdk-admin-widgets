@@ -15,13 +15,16 @@
                         {{#if collectionLoaded}}
                             {{#if collection.models}}
                                 {{#each collection.models}}
-                                    <tr {{#if selected}} class="selected" {{/if}} {{#if roles}} {{#if roles.edit}} data-content="{{value}}" {{/if}} {{/if}} data-attr="{{value}}">
+                                    <tr {{#if selected}} class="selected" {{/if}} data-attr="{{value}}">
                                         <td class="select selected">
                                             {{label}}
                                         </td>
                                         {{#if roles}}
                                             {{#if roles.edit}}
                                                 <td class="edit collection-option" ><i class="fa fa-pencil-square-o" title="edit"></i></td>
+                                            {{/if}}
+                                            {{#if ../../createRole}}
+                                                <td class="copy collection-option" data-clipboard-text="{{value}}"><i class="copy-id fa fa-files-o"></i></td>
                                             {{/if}}
                                             {{#if roles.refresh}}
                                                 <td class="refresh collection-option"><i class="fa fa-refresh" title="force refresh"></i></td>
