@@ -3618,6 +3618,18 @@ function program1(depth0,data) {
                 var rightText = form.$el.find(".rightId").find("select option:selected").text();
                 form.$el.find(".rightName input").val(rightText);
             });
+            this.formContent.on('leftCardinality:change', function(form) {
+                if (form.fields.leftCardinality.getValue() == "MANY" && form.fields.rightCardinality.getValue() == "MANY") {
+                    form.fields.leftCardinality.setValue("ZERO_OR_ONE");
+                    squid_api.model.status.set("message", "cannot set the cardinality many to many");
+                }
+            });
+            this.formContent.on('rightCardinality:change', function(form) {
+                if (form.fields.leftCardinality.getValue() == "MANY" && form.fields.rightCardinality.getValue() == "MANY") {
+                    form.fields.rightCardinality.setValue("ZERO_OR_ONE");
+                    squid_api.model.status.set("message", "cannot set the cardinality many to many");
+                }
+            });
         },
 
         setSchema: function() {
