@@ -308,7 +308,7 @@
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
+            }
         },
 
         getCreateRole: function() {
@@ -396,6 +396,7 @@
             }
             var html = this.template(jsonData);
             this.$el.html(html);
+
             return this;
         }
     });

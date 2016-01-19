@@ -167,8 +167,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
   if (helper = helpers.headerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.headerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body squid-api-";
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</h4>\n</div>\n<div class=\"modal-body squid-api-";
   if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -1010,7 +1010,7 @@ function program1(depth0,data) {
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
+            }
         },
 
         getCreateRole: function() {
@@ -1098,6 +1098,7 @@ function program1(depth0,data) {
             }
             var html = this.template(jsonData);
             this.$el.html(html);
+
             return this;
         }
     });
@@ -1200,6 +1201,12 @@ function program1(depth0,data) {
                         }
                     });
                 }
+            },
+            "click .copy-id": function() {
+                var clipboard = new Clipboard(".copy-id");
+                clipboard.on('success', function(e) {
+                    squid_api.model.status.set("message", e.text + " has been copied to the clipboard");
+                });
             }
         },
 
@@ -1229,7 +1236,7 @@ function program1(depth0,data) {
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
             }
 
             this.setSchema().then(function(schema) {
