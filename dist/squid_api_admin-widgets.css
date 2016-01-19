@@ -498,6 +498,18 @@
     background: grey;
 }
 
+.object-id {
+	border-top: 1px solid #aaa;
+	padding-top: 5px;
+}
+
+.object-id label {
+}
+
+.object-id-disabled {
+	color: #777;
+	border : none;
+}
 .squid-api-button-view.selected {
     background: #ffe084;
     border: none;

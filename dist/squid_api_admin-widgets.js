@@ -182,7 +182,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n<br>\n<div id=\"bookmark-configPanel\" class=\"collapse\">\n	<br>\n	<textarea rows=3 id=\"";
+  buffer += "<div style=\"\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  margin-bottom: 10px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n\">\n	<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n	<br>\n	<div id=\"bookmark-configPanel\" class=\"collapse\">\n		<br>\n		<textarea rows=3 id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -190,7 +190,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"form-control\"></textarea>\n	<br>\n	<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n</div>";
+    + "\" class=\"form-control\"></textarea>\n		<br>\n		<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n	</div>\n</div>";
   return buffer;
   });
 
@@ -1403,24 +1403,6 @@ function program1(depth0,data) {
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
         "name" : {
             "type" : "Text",
             "editorClass" : "form-control",
@@ -1464,6 +1446,12 @@ function program1(depth0,data) {
                      }
                  }
              ]
+        },
+        "id" : {
+            "title" : "Object ID",
+            "type" : "ObjectID",
+            "editorClass" : "form-control",
+            "fieldClass" : "object-id"
         }
     };
     
@@ -1528,7 +1516,39 @@ function program1(depth0,data) {
         }
     });
 
+    // Define "objectIDEditor" Custom Editor
+    var objectIDEditor = Backbone.Form.editors.Text.extend({
+
+        setValue: function(value) {
+            this.value = value;
+            this.$el.val(value.bookmarkId);
+        },
+
+        getValue: function() {
+            var val = this.$el.val();
+            return {
+                projectId : this.value.projectId,
+                bookmarkId : val
+            };
+        },
+        
+        render: function() {
+            if (this.value.bookmarkId) {
+                // editing not enabled
+                this.$el.attr("disabled", true);
+                this.$el.addClass("object-id-disabled");
+                this.$el.removeClass("form-control");
+            } else {
+                this.$el.removeAttr("disabled");
+                this.$el.removeClass("object-id-disabled");
+            }
+            this.setValue(this.value);
+            return this;
+        }
+    });
+
     Backbone.Form.editors.SetConfig = configEditor;
+    Backbone.Form.editors.ObjectID = objectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
 

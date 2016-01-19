@@ -251,3 +251,16 @@
 .squid-api-pre-suggestions .metric:before {
     background: grey;
 }
+
+.object-id {
+	border-top: 1px solid #aaa;
+	padding-top: 5px;
+}
+
+.object-id label {
+}
+
+.object-id-disabled {
+	color: #777;
+	border : none;
+}

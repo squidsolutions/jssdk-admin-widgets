@@ -1,8 +1,27 @@
-<a id="view" role="button"  data-toggle="collapse" aria-expanded="false" href="#bookmark-configPanel">View</a>
-<br>
-<div id="bookmark-configPanel" class="collapse">
+<div style="
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+">
+	<a id="view" role="button"  data-toggle="collapse" aria-expanded="false" href="#bookmark-configPanel">View</a>
 	<br>
-	<textarea rows=3 id="{{id}}" name="{{name}}" class="form-control"></textarea>
-	<br>
-	<a class="btn btn-default" id="set" role="button" >Replace with current config</a>
+	<div id="bookmark-configPanel" class="collapse">
+		<br>
+		<textarea rows=3 id="{{id}}" name="{{name}}" class="form-control"></textarea>
+		<br>
+		<a class="btn btn-default" id="set" role="button" >Replace with current config</a>
+	</div>
 </div>
