@@ -236,38 +236,47 @@
             var me = this;
             var model = this.getSelectedModel(event);
             // listen for model changes (TODO check this code)
-            me.listenTo(model, "change", function() {
-                me.render();
-            });
-            this.renderModelView(new this.modelView({
-                model : model,
-                cancelCallback : function() {
+            if (model) {
+                me.listenTo(model, "change", function() {
                     me.render();
-                }
-            }));
+                });
+                this.renderModelView(new this.modelView({
+                    model : model,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            }
         },
 
         eventDelete : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
-            if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
-                if (true) {
-                    model.destroy({
-                        wait : true,
-                        success:function(model) {
-                            // set status
-                            var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
-                            me.status.set({'message' : message});
+            if (model) {
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var name = model.get("name");
+                                var reference = model.get("oid");
+                                if (name) {
+                                    reference = name;
+                                }
+                                var message = model.get("objectType") + " '" + reference + "' has been successfully deleted";
+                                me.status.set({'message' : message});
 
-                            // call once saved
-                            if (me.onDelete) {
-                                me.onDelete(model);
+                                // call once saved
+                                if (me.onDelete) {
+                                    me.onDelete(model);
+                                }
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
                             }
-                        },
-                        error : function(collection, response) {
-                            me.status.set({'error' : response});
-                        }
-                    });
+                        });
+                    }
                 }
             }
         },
@@ -308,7 +317,7 @@
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
+            }
         },
 
         getCreateRole: function() {
@@ -390,6 +399,7 @@
             }
             var html = this.template(jsonData);
             this.$el.html(html);
+
             return this;
         }
     });

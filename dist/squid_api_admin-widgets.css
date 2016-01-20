@@ -663,7 +663,9 @@ div.object-id input[disabled] {
 	font-family: FontAwesome;
 }
 
-
+.modal-header .copy-id {
+    cursor: pointer;
+}
 .squid-api-check-db-connection {
 	width: 160px;
 	margin: 10px 0px;
