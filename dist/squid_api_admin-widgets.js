@@ -54,8 +54,8 @@ function program9(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " data-attr=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">\n                                        <td class=\"select selected\">\n                                            ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -732,7 +732,7 @@ function program1(depth0,data) {
                 if (options.comparator) {
                     this.comparator = options.comparator;
                 } else {
-                    // default is : sort by alpha name and dynamic last
+                    // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
@@ -1067,32 +1067,26 @@ function program1(depth0,data) {
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
+                
+                var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
+                    // copy model attributes
+                    for (var att in item.attributes) {
+                        model[att] = item.get(att);
+                    }
                     model.label = this.getModelLabel(item);
-                    model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
-                    model.dynamic = item.get("dynamic");
+                    model.selected = (model.oid === selectedId);
                     models.push(model);
                 }
 
                 // sort model data
                 models.sort(this.comparator);
 
-                // place currently selected model at the top of the list
-                for (i=0; i<models.length; i++) {
-                    var collectionModel = models[i];
-                    if (models[i].value === this.config.get(this.configSelectedId)) {
-                        collectionModel.selected = true;
-                        // remove model from previous position
-                        models.splice(i, 1);
-                        // place selected model at the start of the array
-                        models.unshift(collectionModel);
-                    }
-                }
                 // store model view data
                 jsonData.collection.models = models;
             }

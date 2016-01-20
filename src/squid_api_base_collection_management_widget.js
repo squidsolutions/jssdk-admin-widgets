@@ -30,7 +30,7 @@
                 if (options.comparator) {
                     this.comparator = options.comparator;
                 } else {
-                    // default is : sort by alpha name and dynamic last
+                    // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
@@ -365,32 +365,26 @@
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
+                
+                var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
+                    // copy model attributes
+                    for (var att in item.attributes) {
+                        model[att] = item.get(att);
+                    }
                     model.label = this.getModelLabel(item);
-                    model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
-                    model.dynamic = item.get("dynamic");
+                    model.selected = (model.oid === selectedId);
                     models.push(model);
                 }
 
                 // sort model data
                 models.sort(this.comparator);
 
-                // place currently selected model at the top of the list
-                for (i=0; i<models.length; i++) {
-                    var collectionModel = models[i];
-                    if (models[i].value === this.config.get(this.configSelectedId)) {
-                        collectionModel.selected = true;
-                        // remove model from previous position
-                        models.splice(i, 1);
-                        // place selected model at the start of the array
-                        models.unshift(collectionModel);
-                    }
-                }
                 // store model view data
                 jsonData.collection.models = models;
             }
