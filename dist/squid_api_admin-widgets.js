@@ -3622,9 +3622,9 @@ function program1(depth0,data) {
         },
 
         onSave: function(model) {
-            // to be overridden from other model management widgets
+            // reload filters
+            this.config.trigger("change:selection");
         },
-
         formEvents: function() {
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
