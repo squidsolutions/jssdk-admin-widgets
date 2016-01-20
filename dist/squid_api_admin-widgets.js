@@ -1530,11 +1530,9 @@ function program1(depth0,data) {
             if (this.value.bookmarkId) {
                 // editing not enabled
                 this.$el.attr("disabled", true);
-                this.$el.addClass("object-id-disabled");
                 this.$el.removeClass("form-control");
             } else {
                 this.$el.removeAttr("disabled");
-                this.$el.removeClass("object-id-disabled");
             }
             this.setValue(this.value);
             return this;

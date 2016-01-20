@@ -499,16 +499,22 @@
 }
 
 .object-id {
-	border-top: 1px solid #aaa;
 	padding-top: 5px;
 }
 
 .object-id label {
+	color: #aaa;
 }
 
-.object-id-disabled {
-	color: #777;
+div.object-id input {
+	color: #bbb;
+	width: 100%;
+}
+
+div.object-id input[disabled] {
+	color: #bbb;
 	border : none;
+	width: 100%;
 }
 .squid-api-button-view.selected {
     background: #ffe084;
