@@ -251,3 +251,22 @@
 .squid-api-pre-suggestions .metric:before {
     background: grey;
 }
+
+.object-id {
+	padding-top: 5px;
+}
+
+.object-id label {
+	color: #aaa;
+}
+
+div.object-id input {
+	color: #bbb;
+	width: 100%;
+}
+
+div.object-id input[disabled] {
+	color: #bbb;
+	border : none;
+	width: 100%;
+}

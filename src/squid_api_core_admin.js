@@ -508,7 +508,7 @@
                             width: "auto",
                             position: { my: "left top", at: "left bottom", of: me.$el },
                             open: function() {
-                                $(this).width($(".squid-api-model-management .suggestion-box").width());
+                                $(this).width($(me.el).width());
                             },
                             clickOutside: true, // clicking outside the dialog will close it
                             clickOutsideTrigger: me.$el, // Element (id or class) that triggers the dialog opening

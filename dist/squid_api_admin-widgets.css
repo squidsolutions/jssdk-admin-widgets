@@ -498,6 +498,24 @@
     background: grey;
 }
 
+.object-id {
+	padding-top: 5px;
+}
+
+.object-id label {
+	color: #aaa;
+}
+
+div.object-id input {
+	color: #bbb;
+	width: 100%;
+}
+
+div.object-id input[disabled] {
+	color: #bbb;
+	border : none;
+	width: 100%;
+}
 .squid-api-button-view.selected {
     background: #ffe084;
     border: none;
@@ -645,7 +663,9 @@
 	font-family: FontAwesome;
 }
 
-
+.modal-header .copy-id {
+    cursor: pointer;
+}
 .squid-api-check-db-connection {
 	width: 160px;
 	margin: 10px 0px;
@@ -663,28 +683,44 @@
 	display: none;
 }
 
-.squid-api-relation-model-management .id {
-	display: none;
-}
-
-.squid-api-relation-model-management .leftId, .squid-api-relation-model-management .rightId, .squid-api-relation-model-management .leftCardinality, .squid-api-relation-model-management .rightCardinality {
-	float: left;
+.squid-api-Relation-collection-management tr td {
 	width: 25%;
+	padding-left: 10px;
+}
+.squid-api-Relation-collection-management tr td.edit, .squid-api-Relation-collection-management tr td.delete {
+	width: 8%;
+}
+.squid-api-Relation-collection-management .leftIcon {
+	width: 100px;
+	position: relative;
+	left: -25px;
+}
+.squid-api-Relation-collection-management .rightIcon {
+	position: relative;
+	left: -25px;
+}
+.squid-api-Relation-collection-management .leftIcon svg, .squid-api-Relation-collection-management .rightIcon svg {
+	position: relative;
+	left: -25px;
 }
 
+.squid-api-relation-model-management .id {
+    display: none;
+}
+.squid-api-relation-model-management .leftId, .squid-api-relation-model-management .rightId, .squid-api-relation-model-management .leftCardinality, .squid-api-relation-model-management .rightCardinality {
+    float: left;
+    width: 25%;
+}
 .squid-api-relation-model-management .leftName, .squid-api-relation-model-management .rightName {
-	width: 50%;
-	float: left;
+    width: 50%;
+    float: left;
 }
-
 .squid-api-relation-model-management fieldset > div {
-	padding-right: 10px;
+    padding-right: 10px;
 }
-
 .squid-api-relation-model-management .leftId form fieldset > div:first-of-type, .squid-api-relation-model-management .rightId fieldset > div:first-of-type, .squid-api-relation-model-management .leftId > label:first-of-type, .squid-api-relation-model-management .rightId > label:first-of-type {
-	display: none;
+    display: none;
 }
-
 #squid-api-admin-widgets-user-table td .group-value {
 	display: inline-block;
 	padding: 7px;

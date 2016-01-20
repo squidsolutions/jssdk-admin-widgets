@@ -30,14 +30,8 @@
                 if (options.comparator) {
                     this.comparator = options.comparator;
                 } else {
-                    // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
+                    // default sorting
+                    this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
@@ -242,38 +236,47 @@
             var me = this;
             var model = this.getSelectedModel(event);
             // listen for model changes (TODO check this code)
-            me.listenTo(model, "change", function() {
-                me.render();
-            });
-            this.renderModelView(new this.modelView({
-                model : model,
-                cancelCallback : function() {
+            if (model) {
+                me.listenTo(model, "change", function() {
                     me.render();
-                }
-            }));
+                });
+                this.renderModelView(new this.modelView({
+                    model : model,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            }
         },
 
         eventDelete : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
-            if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
-                if (true) {
-                    model.destroy({
-                        wait : true,
-                        success:function(model) {
-                            // set status
-                            var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
-                            me.status.set({'message' : message});
+            if (model) {
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var name = model.get("name");
+                                var reference = model.get("oid");
+                                if (name) {
+                                    reference = name;
+                                }
+                                var message = model.get("objectType") + " '" + reference + "' has been successfully deleted";
+                                me.status.set({'message' : message});
 
-                            // call once saved
-                            if (me.onDelete) {
-                                me.onDelete(model);
+                                // call once saved
+                                if (me.onDelete) {
+                                    me.onDelete(model);
+                                }
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
                             }
-                        },
-                        error : function(collection, response) {
-                            me.status.set({'error' : response});
-                        }
-                    });
+                        });
+                    }
                 }
             }
         },
@@ -314,7 +317,7 @@
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
+            }
         },
 
         getCreateRole: function() {
@@ -371,37 +374,32 @@
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
+                
+                var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
+                    // copy model attributes
+                    for (var att in item.attributes) {
+                        model[att] = item.get(att);
+                    }
                     model.label = this.getModelLabel(item);
-                    model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
-                    model.dynamic = item.get("dynamic");
+                    model.selected = (model.oid === selectedId);
                     models.push(model);
                 }
 
                 // sort model data
                 models.sort(this.comparator);
 
-                // place currently selected model at the top of the list
-                for (i=0; i<models.length; i++) {
-                    var collectionModel = models[i];
-                    if (models[i].value === this.config.get(this.configSelectedId)) {
-                        collectionModel.selected = true;
-                        // remove model from previous position
-                        models.splice(i, 1);
-                        // place selected model at the start of the array
-                        models.unshift(collectionModel);
-                    }
-                }
                 // store model view data
                 jsonData.collection.models = models;
             }
             var html = this.template(jsonData);
             this.$el.html(html);
+
             return this;
         }
     });

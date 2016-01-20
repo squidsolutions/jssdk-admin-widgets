@@ -54,8 +54,8 @@ function program9(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " data-attr=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\">\n                                        <td class=\"select selected\">\n                                            ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -77,13 +77,13 @@ function program12(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.relation), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.relation), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	                                        ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
@@ -94,7 +94,7 @@ function program12(depth0,data) {
 function program13(depth0,data) {
   
   
-  return "\n                                                <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n                                            ";
+  return "\n                                                <td class=\"relation collection-option\">\n                                                    <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                    <defs>\n                                                    <clipPath id=\"clip1\">\n                                                      <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip2\">\n                                                      <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip3\">\n                                                      <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip4\">\n                                                      <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                    </clipPath>\n                                                    </defs>\n                                                    <g id=\"surface1\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                    </g>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                    </g>\n                                                    </g>\n                                                    </svg>\n                                                </td>\n                                            ";
   }
 
 function program15(depth0,data) {
@@ -106,7 +106,7 @@ function program15(depth0,data) {
 function program17(depth0,data) {
   
   
-  return "\n	                                        	<td class=\"relation collection-option\">\n	                                        	    <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                    <defs>\n                                                    <clipPath id=\"clip1\">\n                                                      <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip2\">\n                                                      <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip3\">\n                                                      <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip4\">\n                                                      <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                    </clipPath>\n                                                    </defs>\n                                                    <g id=\"surface1\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                    </g>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                    </g>\n                                                    </g>\n                                                    </svg>\n	                                        	</td>\n	                                        ";
+  return "\n                                                <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n                                            ";
   }
 
 function program19(depth0,data) {
@@ -167,8 +167,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
   if (helper = helpers.headerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.headerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body squid-api-";
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</h4>\n</div>\n<div class=\"modal-body squid-api-";
   if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -182,7 +182,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n<br>\n<div id=\"bookmark-configPanel\" class=\"collapse\">\n	<br>\n	<textarea rows=3 id=\"";
+  buffer += "<div style=\"\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  margin-bottom: 10px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n\">\n	<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n	<br>\n	<div id=\"bookmark-configPanel\" class=\"collapse\">\n		<br>\n		<textarea rows=3 id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -190,7 +190,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"form-control\"></textarea>\n	<br>\n	<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n</div>";
+    + "\" class=\"form-control\"></textarea>\n		<br>\n		<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n	</div>\n</div>";
   return buffer;
   });
 
@@ -477,14 +477,22 @@ function program11(depth0,data) {
 this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
+function program1(depth0,data) {
+  
+  
+  return "fade";
+  }
 
   buffer += "<div class=\"squid-api-modal-view squid-api-modal-view-";
   if (helper = helpers.modalCount) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modalCount); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n      \n  </div>\n</div>\n";
+    + " modal ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.fadeAnimation), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n      \n  </div>\n</div>\n";
   return buffer;
   });
 
@@ -724,14 +732,8 @@ function program1(depth0,data) {
                 if (options.comparator) {
                     this.comparator = options.comparator;
                 } else {
-                    // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
+                    // default sorting
+                    this.comparator =  squid_api.utils.defaultComparator;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
@@ -936,38 +938,47 @@ function program1(depth0,data) {
             var me = this;
             var model = this.getSelectedModel(event);
             // listen for model changes (TODO check this code)
-            me.listenTo(model, "change", function() {
-                me.render();
-            });
-            this.renderModelView(new this.modelView({
-                model : model,
-                cancelCallback : function() {
+            if (model) {
+                me.listenTo(model, "change", function() {
                     me.render();
-                }
-            }));
+                });
+                this.renderModelView(new this.modelView({
+                    model : model,
+                    cancelCallback : function() {
+                        me.render();
+                    }
+                }));
+            }
         },
 
         eventDelete : function(event) {
             var me = this;
             var model = this.getSelectedModel(event);
-            if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
-                if (true) {
-                    model.destroy({
-                        wait : true,
-                        success:function(model) {
-                            // set status
-                            var message = model.get("objectType") + " '" + model.get("name") + "' has been successfully deleted";
-                            me.status.set({'message' : message});
+            if (model) {
+                if (confirm("are you sure you want to delete the " + model.definition.toLowerCase() + " '" + model.get("name") + "'?")) {
+                    if (true) {
+                        model.destroy({
+                            wait : true,
+                            success:function(model) {
+                                // set status
+                                var name = model.get("name");
+                                var reference = model.get("oid");
+                                if (name) {
+                                    reference = name;
+                                }
+                                var message = model.get("objectType") + " '" + reference + "' has been successfully deleted";
+                                me.status.set({'message' : message});
 
-                            // call once saved
-                            if (me.onDelete) {
-                                me.onDelete(model);
+                                // call once saved
+                                if (me.onDelete) {
+                                    me.onDelete(model);
+                                }
+                            },
+                            error : function(collection, response) {
+                                me.status.set({'error' : response});
                             }
-                        },
-                        error : function(collection, response) {
-                            me.status.set({'error' : response});
-                        }
-                    });
+                        });
+                    }
                 }
             }
         },
@@ -1008,7 +1019,7 @@ function program1(depth0,data) {
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
+            }
         },
 
         getCreateRole: function() {
@@ -1065,37 +1076,32 @@ function program1(depth0,data) {
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
+                
+                var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
+                    // copy model attributes
+                    for (var att in item.attributes) {
+                        model[att] = item.get(att);
+                    }
                     model.label = this.getModelLabel(item);
-                    model.value = item.get("oid");
                     model.roles = this.getModelRoles(item);
-                    model.dynamic = item.get("dynamic");
+                    model.selected = (model.oid === selectedId);
                     models.push(model);
                 }
 
                 // sort model data
                 models.sort(this.comparator);
 
-                // place currently selected model at the top of the list
-                for (i=0; i<models.length; i++) {
-                    var collectionModel = models[i];
-                    if (models[i].value === this.config.get(this.configSelectedId)) {
-                        collectionModel.selected = true;
-                        // remove model from previous position
-                        models.splice(i, 1);
-                        // place selected model at the start of the array
-                        models.unshift(collectionModel);
-                    }
-                }
                 // store model view data
                 jsonData.collection.models = models;
             }
             var html = this.template(jsonData);
             this.$el.html(html);
+
             return this;
         }
     });
@@ -1131,6 +1137,12 @@ function program1(depth0,data) {
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
+            }
+            if (options.comparator) {
+                this.comparator = options.comparator;
+            } else {
+                // default is : sort by alpha name and dynamic last
+                this.comparator =  squid_api.utils.defaultComparator;
             }
             this.render();
         },
@@ -1192,6 +1204,12 @@ function program1(depth0,data) {
                         }
                     });
                 }
+            },
+            "click .copy-id": function() {
+                var clipboard = new Clipboard(".copy-id");
+                clipboard.on('success', function(e) {
+                    squid_api.model.status.set("message", e.text + " has been copied to the clipboard");
+                });
             }
         },
 
@@ -1221,7 +1239,7 @@ function program1(depth0,data) {
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name '" + this.model.get("name") + "'";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
             }
 
             this.setSchema().then(function(schema) {
@@ -1395,24 +1413,6 @@ function program1(depth0,data) {
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
         "name" : {
             "type" : "Text",
             "editorClass" : "form-control",
@@ -1456,6 +1456,12 @@ function program1(depth0,data) {
                      }
                  }
              ]
+        },
+        "id" : {
+            "title" : "Object ID",
+            "type" : "ObjectID",
+            "editorClass" : "form-control",
+            "fieldClass" : "object-id"
         }
     };
     
@@ -1520,7 +1526,37 @@ function program1(depth0,data) {
         }
     });
 
+    // Define "objectIDEditor" Custom Editor
+    var objectIDEditor = Backbone.Form.editors.Text.extend({
+
+        setValue: function(value) {
+            this.value = value;
+            this.$el.val(value.bookmarkId);
+        },
+
+        getValue: function() {
+            var val = this.$el.val();
+            return {
+                projectId : this.value.projectId,
+                bookmarkId : val
+            };
+        },
+        
+        render: function() {
+            if (this.value.bookmarkId) {
+                // editing not enabled
+                this.$el.attr("disabled", true);
+                this.$el.removeClass("form-control");
+            } else {
+                this.$el.removeAttr("disabled");
+            }
+            this.setValue(this.value);
+            return this;
+        }
+    });
+
     Backbone.Form.editors.SetConfig = configEditor;
+    Backbone.Form.editors.ObjectID = objectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
@@ -2454,7 +2490,7 @@ function program1(depth0,data) {
                             width: "auto",
                             position: { my: "left top", at: "left bottom", of: me.$el },
                             open: function() {
-                                $(this).width($(".squid-api-model-management .suggestion-box").width());
+                                $(this).width($(me.el).width());
                             },
                             clickOutside: true, // clicking outside the dialog will close it
                             clickOutsideTrigger: me.$el, // Element (id or class) that triggers the dialog opening
@@ -3186,6 +3222,7 @@ function program1(depth0,data) {
         template : null,
         views : [],
         el : "body",
+        fadeAnimation : false,
 
         initialize: function(options) {
             if (options.template) {
@@ -3195,6 +3232,9 @@ function program1(depth0,data) {
             }
             if (options.view) {
                 this.view = options.view;
+            }
+            if (options.fadeAnimation) {
+                this.fadeAnimation = options.fadeAnimation;
             }
             // output base html
             this.renderBase();
@@ -3206,7 +3246,8 @@ function program1(depth0,data) {
 
         renderBase: function() {
             var viewData = {
-                modalCount : $(".squid-api-modal-view").length
+                modalCount : $(".squid-api-modal-view").length,
+                fadeAnimation : this.fadeAnimation
             };
             var html = this.template(viewData);
             // print template
@@ -3593,9 +3634,9 @@ function program1(depth0,data) {
         },
 
         onSave: function(model) {
-            // to be overridden from other model management widgets
+            // reload filters
+            this.config.trigger("change:selection");
         },
-
         formEvents: function() {
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
@@ -3605,8 +3646,20 @@ function program1(depth0,data) {
                 var rightText = form.$el.find(".rightId").find("select option:selected").text();
                 form.$el.find(".rightName input").val(rightText);
             });
+            this.formContent.on('leftCardinality:change', function(form) {
+                if (form.fields.leftCardinality.getValue() == "MANY" && form.fields.rightCardinality.getValue() == "MANY") {
+                    form.fields.leftCardinality.setValue("ZERO_OR_ONE");
+                    squid_api.model.status.set("message", "cannot set the cardinality many to many");
+                }
+            });
+            this.formContent.on('rightCardinality:change', function(form) {
+                if (form.fields.leftCardinality.getValue() == "MANY" && form.fields.rightCardinality.getValue() == "MANY") {
+                    form.fields.rightCardinality.setValue("ZERO_OR_ONE");
+                    squid_api.model.status.set("message", "cannot set the cardinality many to many");
+                }
+            });
         },
-        
+
         setSchema: function() {
             var dfd = $.Deferred();
             var schema = this.model.schema;
@@ -3622,8 +3675,8 @@ function program1(depth0,data) {
                             obj.label = domains.at(i).get("name");
                             arr.push(obj);
                         }
-                        schema.leftId.subSchema.domainId.options = arr;
-                        schema.rightId.subSchema.domainId.options = arr;
+                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
+                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
                         dfd.resolve(schema);
                     });
                 });

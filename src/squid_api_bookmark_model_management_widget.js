@@ -6,24 +6,6 @@
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
-        "id" : {
-            "title" : " ",
-            "type" : "Object",
-            "subSchema" : {
-                "projectId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "hidden"
-                },
-                "bookmarkId" : {
-                    "options" : [],
-                    "type" : "Text",
-                    "editorClass" : "form-control"
-                }
-            },
-            "editorClass" : "hidden",
-            "fieldClass" : "id"
-        },
         "name" : {
             "type" : "Text",
             "editorClass" : "form-control",
@@ -67,6 +49,12 @@
                      }
                  }
              ]
+        },
+        "id" : {
+            "title" : "Object ID",
+            "type" : "ObjectID",
+            "editorClass" : "form-control",
+            "fieldClass" : "object-id"
         }
     };
     
@@ -131,7 +119,37 @@
         }
     });
 
+    // Define "objectIDEditor" Custom Editor
+    var objectIDEditor = Backbone.Form.editors.Text.extend({
+
+        setValue: function(value) {
+            this.value = value;
+            this.$el.val(value.bookmarkId);
+        },
+
+        getValue: function() {
+            var val = this.$el.val();
+            return {
+                projectId : this.value.projectId,
+                bookmarkId : val
+            };
+        },
+        
+        render: function() {
+            if (this.value.bookmarkId) {
+                // editing not enabled
+                this.$el.attr("disabled", true);
+                this.$el.removeClass("form-control");
+            } else {
+                this.$el.removeAttr("disabled");
+            }
+            this.setValue(this.value);
+            return this;
+        }
+    });
+
     Backbone.Form.editors.SetConfig = configEditor;
+    Backbone.Form.editors.ObjectID = objectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
 
