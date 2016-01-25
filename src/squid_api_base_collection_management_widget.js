@@ -349,8 +349,16 @@
             return roles;
         },
 
+        /**
+         * Method called to get displayed label for a model.
+         * If null is returned, this model not be displayed.
+         */
         getModelLabel: function(model) {
-            return model.get("name");
+            var label = model.get("name");
+            if (!label) {
+                label = model.get("oid");
+            }
+            return label;
         },
 
         renderModelView: function(modelView) {
@@ -381,14 +389,16 @@
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var model = {};
-                    // copy model attributes
-                    for (var att in item.attributes) {
-                        model[att] = item.get(att);
-                    }
                     model.label = this.getModelLabel(item);
-                    model.roles = this.getModelRoles(item);
-                    model.selected = (model.oid === selectedId);
-                    models.push(model);
+                    if (model.label !== null) {
+                        // copy model attributes
+                        for (var att in item.attributes) {
+                            model[att] = item.get(att);
+                        }
+                        model.roles = this.getModelRoles(item);
+                        model.selected = (model.oid === selectedId);
+                        models.push(model);
+                    }
                 }
 
                 // sort model data
