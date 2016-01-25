@@ -13,3 +13,5 @@ Admin widgets allow manipulation / creation of user based objects stored within 
 * options:
   * view (Backbone view object) : View to be passed into the modal
   * fadeAnimation (boolean) : If set to true then a fade in / fade out animation will occur on the given modal (default false)
+  * header : If set to true then a modal header will be rendered
+  * footer : If set to true then a modal footer will be rendered

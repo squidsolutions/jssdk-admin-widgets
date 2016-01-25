@@ -485,6 +485,23 @@ function program1(depth0,data) {
   return "fade";
   }
 
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n          <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.headerTitle) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.headerTitle); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n        </div>\n      ";
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
+  
+  return "\n        <div class=\"modal-footer\">\n          	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        </div>\n      ";
+  }
+
   buffer += "<div class=\"squid-api-modal-view squid-api-modal-view-";
   if (helper = helpers.modalCount) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modalCount); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -492,7 +509,13 @@ function program1(depth0,data) {
     + " modal ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.fadeAnimation), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n      \n  </div>\n</div>\n";
+  buffer += "\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n      ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.header), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n      <div class=\"content\">\n\n      </div>\n      ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.footer), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </div>\n</div>\n";
   return buffer;
   });
 
@@ -3223,6 +3246,9 @@ function program1(depth0,data) {
         views : [],
         el : "body",
         fadeAnimation : false,
+        header: null,
+        footer: null,
+        headerTitle: null,
 
         initialize: function(options) {
             if (options.template) {
@@ -3236,6 +3262,15 @@ function program1(depth0,data) {
             if (options.fadeAnimation) {
                 this.fadeAnimation = options.fadeAnimation;
             }
+            if (options.header) {
+                this.header = options.header;
+            }
+            if (options.headerTitle) {
+                this.headerTitle = options.headerTitle;
+            }
+            if (options.footer) {
+                this.footer = options.footer;
+            }
             // output base html
             this.renderBase();
         },
@@ -3247,7 +3282,10 @@ function program1(depth0,data) {
         renderBase: function() {
             var viewData = {
                 modalCount : $(".squid-api-modal-view").length,
-                fadeAnimation : this.fadeAnimation
+                fadeAnimation : this.fadeAnimation,
+                header: this.header,
+                footer: this.footer,
+                headerTitle: this.headerTitle
             };
             var html = this.template(viewData);
             // print template
@@ -3261,7 +3299,7 @@ function program1(depth0,data) {
 
             // insert template
             if (! this.viewInserted) {
-                this.$el.find(".modal-content").html(this.view.el);
+                this.$el.find(".content").html(this.view.el);
                 this.viewInserted = true;
             }
 

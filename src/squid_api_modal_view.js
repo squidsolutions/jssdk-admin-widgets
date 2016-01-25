@@ -10,6 +10,9 @@
         views : [],
         el : "body",
         fadeAnimation : false,
+        header: null,
+        footer: null,
+        headerTitle: null,
 
         initialize: function(options) {
             if (options.template) {
@@ -23,6 +26,15 @@
             if (options.fadeAnimation) {
                 this.fadeAnimation = options.fadeAnimation;
             }
+            if (options.header) {
+                this.header = options.header;
+            }
+            if (options.headerTitle) {
+                this.headerTitle = options.headerTitle;
+            }
+            if (options.footer) {
+                this.footer = options.footer;
+            }
             // output base html
             this.renderBase();
         },
@@ -34,7 +46,10 @@
         renderBase: function() {
             var viewData = {
                 modalCount : $(".squid-api-modal-view").length,
-                fadeAnimation : this.fadeAnimation
+                fadeAnimation : this.fadeAnimation,
+                header: this.header,
+                footer: this.footer,
+                headerTitle: this.headerTitle
             };
             var html = this.template(viewData);
             // print template
@@ -48,7 +63,7 @@
 
             // insert template
             if (! this.viewInserted) {
-                this.$el.find(".modal-content").html(this.view.el);
+                this.$el.find(".content").html(this.view.el);
                 this.viewInserted = true;
             }
 
