@@ -7,17 +7,6 @@ module.exports = function(grunt) {
                 clean : {
                     all : "dist/"
                 },
-                bower_concat : {
-                    all : {
-                        dest : 'build/_bower.js',
-                        exclude : [ 'squid_api', "jquery",
-                                    "underscore",
-                                    "backbone"],
-                        bowerOptions : {
-                            relative : false
-                        }
-                    }
-                },
                 concat : {
                     options : {
                         stripBanners : true,
@@ -57,8 +46,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-bower-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
 
-    grunt.registerTask('default', [ 'jshint', 'clean', 'handlebars', 'concat']);
+    grunt.registerTask('dev', [ 'jshint', 'handlebars']);
+
+    grunt.registerTask('default', [ 'jshint', 'clean', 'handlebars', 'concat:js', 'concat:css']);
 };
