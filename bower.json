@@ -9,7 +9,7 @@
     "dist/squid_api_admin-widgets.js",
     "dist/squid_api_admin-widgets.css"
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "private": true,
   "dependencies": {
     "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git",
