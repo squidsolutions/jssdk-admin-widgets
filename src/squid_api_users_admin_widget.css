@@ -32,6 +32,8 @@
 #squid-api-admin-widgets-user-table td label {
 	padding-right: 20px;
 	font-weight: inherit;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #squid-api-admin-widgets-user-table button.add {
