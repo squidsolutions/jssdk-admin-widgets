@@ -3,7 +3,9 @@
 	padding: 7px;
 	border: 1px solid #e7e7e7;
 	border-radius: 4px;
-	margin: 5px;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	cursor: pointer;
 	text-align: center;
 	position: relative;
@@ -12,7 +14,8 @@
 #squid-api-admin-widgets-user-table td .group-value .badge {
 	position: absolute;
 	top: -5px;
-	right: -11px;
+	right: -5px;
+	z-index: 9999;
 }
 
 #squid-api-admin-widgets-user-table td .orange {
@@ -32,6 +35,8 @@
 #squid-api-admin-widgets-user-table td label {
 	padding-right: 20px;
 	font-weight: inherit;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #squid-api-admin-widgets-user-table button.add {
@@ -127,7 +132,7 @@
 	box-shadow: 0 1px 2px #d1d1d1;
 }
 #squid-api-admin-widgets-user-table table th {
-	padding:21px 25px 22px 25px;
+	padding: 10px;
 	border-top:1px solid #fafafa;
 	border-bottom:1px solid #e0e0e0;
 	font-weight: inherit;
@@ -163,12 +168,6 @@
 	border-top: 1px solid #ffffff;
 	border-bottom:1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
-	padding: 8px 20px;
-}
-#squid-api-admin-widgets-user-table table tr.even td {
-	background: #f6f6f6;
-	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
-	background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
 }
 #squid-api-admin-widgets-user-table table tr:last-child td {
 	border-bottom:0;
