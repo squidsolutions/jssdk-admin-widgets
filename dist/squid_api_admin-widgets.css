@@ -516,6 +516,50 @@ div.object-id input[disabled] {
 	border : none;
 	width: 100%;
 }
+.squid-api-Bookmark-collection-management li {
+    list-style-type: none;
+    padding: 5px;
+    cursor: pointer;
+}
+.squid-api-Bookmark-collection-management .selected li, .squid-api-Bookmark-collection-management li:hover {
+    background-color: #f3f3f3;
+}
+.squid-api-Bookmark-collection-management li .edit {
+    padding-right: 20px;
+}
+.squid-api-Bookmark-collection-management li .delete {
+    padding-right: 10px;
+}
+.squid-api-Bookmark-collection-management li .edit, .squid-api-Bookmark-collection-management li .delete {
+    display: none;
+    float: right;
+    font-size: 14px;
+    position: relative;
+}
+.squid-api-Bookmark-collection-management .selected li .edit, .squid-api-Bookmark-collection-management .selected li .delete, .squid-api-Bookmark-collection-management li:hover .edit, .squid-api-Bookmark-collection-management li:hover .delete {
+    display: inherit;
+}
+.squid-api-Bookmark-collection-management .select i {
+    padding-right: 10px;
+    font-size: 14px;
+    position: relative;
+    top: 1px;
+    left: 5px;
+}
+.squid-api-Bookmark-collection-management .panel-title a:before {
+    font-family: FontAwesome;
+    padding: 1px 10px 0px 5px;
+}
+.squid-api-Bookmark-collection-management .panel-title a[aria-expanded='true']:before {
+    content: "\f07c";
+}
+.squid-api-Bookmark-collection-management .panel-title a[aria-expanded='false']:before {
+    content: "\f07b";
+}
+
+
+
+
 .squid-api-button-view.selected {
     background: #ffe084;
     border: none;

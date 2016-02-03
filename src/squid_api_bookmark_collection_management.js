@@ -1,9 +1,10 @@
 (function (root, factory) {
-    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        template: template,
         type : "Bookmark",
         typeLabel : "Bookmark",
         typeLabelPlural : "Bookmarks",
@@ -35,7 +36,7 @@
         },
         
         eventSelect : function(event) {
-            var value = $(event.target).parent('tr').attr('data-attr');
+            var value = $(event.target).parents("li").attr("data-attr");
             squid_api.setBookmarkId(value);
 
             if (this.onSelect) {
@@ -90,6 +91,12 @@
                 this.eventDelete(event);
             }
         },
+
+        getSelectedModel : function(event) {
+            var id = $(event.target).parents("li").attr("data-attr");
+            var model = this.collection.get(id);
+            return model;
+        },
         
         getCreateRole: function() {
             // anyone can create a bookmark
@@ -130,6 +137,93 @@
                 name = path +"/"+ name;
             }
             return name;
+        },
+        nth_ocurrence: function(str, needle, nth) {
+            for (i=0;i<str.length;i++) {
+                if (str.charAt(i) == needle) {
+                    if (!--nth) {
+                        return i;
+                    }
+                }
+            }
+            return false;
+        },
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var jsonData = {
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                roles : null,
+                createRole : null,
+                typeLabel : this.typeLabel,
+                typeLabelPlural : this.typeLabelPlural,
+                modalHtml : true,
+                type : this.type
+            };
+            if (this.collection) {
+                var collection = [];
+                var models = [];
+                jsonData.collection = {};
+                jsonData.createRole = this.getCreateRole();
+
+                var selectedId = this.config.get(this.configSelectedId);
+
+                // store model data
+                for (i=0; i<this.collection.size(); i++) {
+                    var item = this.collection.at(i);
+                    var bookmark = {
+                        label : item.get("name")
+                    };
+
+                    var existingPath = this.getModelLabel(item);
+                    var path = existingPath.substr(0, existingPath.lastIndexOf("/"));
+
+                    // see if path already exists
+                    var pathExists = false;
+                    for (ix=0; ix<collection.length; ix++) {
+                        if (collection[ix].path === path) {
+                            pathExists = true;
+                        }
+                    }
+                    if (! pathExists) {
+                        // store different paths
+                        collection.push({
+                            "path" : path,
+                            "bookmarks" : []
+                        });
+                    }
+
+                    // set updated path
+                    item.set({"path" : path}, {silent: true});
+
+                    // update collection models
+                    for (var x in collection) {
+                        if (collection[x].path == item.get("path")) {
+                            if (bookmark.label !== null) {
+                                // copy model attributes
+                                for (var att in item.attributes) {
+                                    bookmark[att] = item.get(att);
+                                }
+                                bookmark.roles = this.getModelRoles(item);
+                                bookmark.selected = (bookmark.oid === selectedId);
+                            }
+                            collection[x].bookmarks.push(bookmark);
+                        }
+                    }
+                }
+
+                // sort model data
+                models.sort(this.comparator);
+
+                // store model view data
+                jsonData.collection = collection;
+            }
+
+            // render template
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            return this;
         }
     });
 
