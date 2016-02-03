@@ -224,13 +224,13 @@ function program8(depth0,data) {
   }
 function program9(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\n                                    <div class=\"panel panel-default\">\n                                        <div class=\"panel-heading\" role=\"tab\">\n                                            <h4 class=\"panel-title\">\n                                                <a role=\"button\" data-toggle=\"collapse\" href=\"#bookmark-collapse-"
+  var buffer = "", stack1;
+  buffer += "\n                                    <div class=\"panel panel-default "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">\n                                        <div class=\"panel-heading\" role=\"tab\">\n                                            <h4 class=\"panel-title\">\n                                                <a role=\"button\" data-toggle=\"collapse\" href=\"#bookmark-collapse-"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    ";
-  if (helper = helpers.path) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.path); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.userFriendlyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingOne\">\n                                            <div class=\"panel-body\">\n                                                ";
@@ -1578,16 +1578,6 @@ function program1(depth0,data) {
             }
             return name;
         },
-        nth_ocurrence: function(str, needle, nth) {
-            for (i=0;i<str.length;i++) {
-                if (str.charAt(i) == needle) {
-                    if (!--nth) {
-                        return i;
-                    }
-                }
-            }
-            return false;
-        },
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
             var jsonData = {
@@ -1621,24 +1611,25 @@ function program1(depth0,data) {
                     // see if path already exists
                     var pathExists = false;
                     for (ix=0; ix<collection.length; ix++) {
-                        if (collection[ix].path === path) {
+                        if (collection[ix].path.value === path) {
                             pathExists = true;
                         }
                     }
                     if (! pathExists) {
                         // store different paths
                         collection.push({
-                            "path" : path,
+                            "path" : {
+                                "value" : path,
+                                "userFriendlyName" : path.replace(/\//g, ' > '),
+                                "type" : path.substr(1).split(" ", 1)[0]
+                            },
                             "bookmarks" : []
                         });
                     }
 
-                    // set updated path
-                    item.set({"path" : path}, {silent: true});
-
                     // update collection models
                     for (var x in collection) {
-                        if (collection[x].path == item.get("path")) {
+                        if (collection[x].path.value == path) {
                             if (bookmark.label !== null) {
                                 // copy model attributes
                                 for (var att in item.attributes) {

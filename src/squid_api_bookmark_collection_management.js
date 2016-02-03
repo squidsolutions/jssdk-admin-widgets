@@ -138,16 +138,6 @@
             }
             return name;
         },
-        nth_ocurrence: function(str, needle, nth) {
-            for (i=0;i<str.length;i++) {
-                if (str.charAt(i) == needle) {
-                    if (!--nth) {
-                        return i;
-                    }
-                }
-            }
-            return false;
-        },
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
             var jsonData = {
@@ -181,24 +171,25 @@
                     // see if path already exists
                     var pathExists = false;
                     for (ix=0; ix<collection.length; ix++) {
-                        if (collection[ix].path === path) {
+                        if (collection[ix].path.value === path) {
                             pathExists = true;
                         }
                     }
                     if (! pathExists) {
                         // store different paths
                         collection.push({
-                            "path" : path,
+                            "path" : {
+                                "value" : path,
+                                "userFriendlyName" : path.replace(/\//g, ' > '),
+                                "type" : path.substr(1).split(" ", 1)[0]
+                            },
                             "bookmarks" : []
                         });
                     }
 
-                    // set updated path
-                    item.set({"path" : path}, {silent: true});
-
                     // update collection models
                     for (var x in collection) {
-                        if (collection[x].path == item.get("path")) {
+                        if (collection[x].path.value == path) {
                             if (bookmark.label !== null) {
                                 // copy model attributes
                                 for (var att in item.attributes) {

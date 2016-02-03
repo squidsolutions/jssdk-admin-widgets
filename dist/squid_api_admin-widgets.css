@@ -556,6 +556,18 @@ div.object-id input[disabled] {
 .squid-api-Bookmark-collection-management .panel-title a[aria-expanded='false']:before {
     content: "\f07b";
 }
+.squid-api-Bookmark-collection-management .panel-group .Shared .panel-title:before, .squid-api-Bookmark-collection-management .panel-group .Shared .panel-title:before, .squid-api-Bookmark-collection-management .panel-group .My .panel-title:before {
+    font-family: FontAwesome;
+    color: #aaa;
+    float: right;
+}
+.squid-api-Bookmark-collection-management .panel-group .Shared .panel-title:before {
+    content: "\f064";
+}
+.squid-api-Bookmark-collection-management .panel-group .My .panel-title:before {
+    content: "\f015";
+}
+
 
 
 

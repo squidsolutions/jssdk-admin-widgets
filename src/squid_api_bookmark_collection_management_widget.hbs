@@ -16,11 +16,11 @@
                             {{#if collection}}
                              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                                 {{#each collection}}
-                                    <div class="panel panel-default">
+                                    <div class="panel panel-default {{path.type}}">
                                         <div class="panel-heading" role="tab">
                                             <h4 class="panel-title">
                                                 <a role="button" data-toggle="collapse" href="#bookmark-collapse-{{@index}}" aria-expanded="false" aria-controls="collapseOne">
-                                                    {{path}}
+                                                    {{path.userFriendlyName}}
                                                 </a>
                                             </h4>
                                         </div>
