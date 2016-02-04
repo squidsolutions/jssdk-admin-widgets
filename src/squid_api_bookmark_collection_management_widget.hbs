@@ -1,0 +1,70 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title" id="myModalLabel">{{typeLabelPlural}}</h4>
+</div>
+<div class="modal-body">
+    <div class="squid-api-collection-management-widget">
+            {{#if createRole}}
+                <button type="button"  class="create btn btn-default">
+                    <i class="fa fa-plus"></i> New {{type}}
+                </button>
+            {{/if}}
+            <div class="squid-api-{{type}}-collection-management list">
+                    <table style="width:100%">
+                        <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>
+                        {{#if collectionLoaded}}
+                            {{#if collection}}
+                             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                {{#each collection}}
+                                    <div class="panel panel-default {{path.type}}">
+                                        <div class="panel-heading" role="tab">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" href="#bookmark-collapse-{{@index}}" aria-expanded="false" aria-controls="collapseOne">
+                                                    {{{path.userFriendlyName}}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="bookmark-collapse-{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                            <div class="panel-body">
+                                                {{#each bookmarks}}
+                                                    <li data-toggle="tooltip" title="{{description}}" {{#if selected}} class="selected" {{/if}} data-attr="{{oid}}">
+                                                        <span class="select">
+                                                            <i class="fa fa-bookmark-o"></i> {{name}}
+                                                        </span>
+                                                        {{#if roles.delete}}
+                                                            <span class="delete collection-option">
+                                                                <i class="fa fa-trash-o" title="delete"></i>
+                                                            </span>
+                                                        {{/if}}
+                                                        {{#if roles.edit}}
+                                                            <span class="edit collection-option">
+                                                                <i class="fa fa-pencil-square-o" title="edit"></i>
+                                                            </span>
+                                                        {{/if}}
+                                                    </li>
+                                                {{/each}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/each}}
+                             </div>
+                            {{else}}
+                                <div class="no-data">
+                                    No {{typeLabelPlural}} available
+                                </div>
+                            {{/if}}
+                        {{else}}
+                        	<div class="no-data">
+                            	<i class="fa fa-refresh fa-spin"></i> {{typeLabelPlural}} loading in progress...
+                            </div>
+                        {{/if}}
+                        </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+<div class="squid-api-model-management-footer">
+  	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
+<!--  end of modal - -->
+</div>

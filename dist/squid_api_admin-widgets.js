@@ -176,6 +176,158 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_bookmark_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                </button>\n            ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  
+  return " ";
+  }
+
+function program5(depth0,data) {
+  
+  
+  return " class=\"no-values\" ";
+  }
+
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.program(17, program17, data),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                             <div class=\"panel-group\" id=\"accordion\" role=\"tablist\" aria-multiselectable=\"true\">\n                                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                             </div>\n                            ";
+  return buffer;
+  }
+function program9(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n                                    <div class=\"panel panel-default "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">\n                                        <div class=\"panel-heading\" role=\"tab\">\n                                            <h4 class=\"panel-title\">\n                                                <a role=\"button\" data-toggle=\"collapse\" href=\"#bookmark-collapse-"
+    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    ";
+  stack1 = ((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.userFriendlyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
+    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingOne\">\n                                            <div class=\"panel-body\">\n                                                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.bookmarks), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                            </div>\n                                        </div>\n                                    </div>\n                                ";
+  return buffer;
+  }
+function program10(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                                    <li data-toggle=\"tooltip\" title=\"";
+  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " data-attr=\"";
+  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                                                        <span class=\"select\">\n                                                            <i class=\"fa fa-bookmark-o\"></i> ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n                                                        </span>\n                                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                    </li>\n                                                ";
+  return buffer;
+  }
+function program11(depth0,data) {
+  
+  
+  return " class=\"selected\" ";
+  }
+
+function program13(depth0,data) {
+  
+  
+  return "\n                                                            <span class=\"delete collection-option\">\n                                                                <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                            </span>\n                                                        ";
+  }
+
+function program15(depth0,data) {
+  
+  
+  return "\n                                                            <span class=\"edit collection-option\">\n                                                                <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                            </span>\n                                                        ";
+  }
+
+function program17(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " available\n                                </div>\n                            ";
+  return buffer;
+  }
+
+function program19(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> ";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " loading in progress...\n                            </div>\n                        ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            <div class=\"squid-api-";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n                        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(19, program19, data),fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_bookmark_config_editor"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -1301,11 +1453,12 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_columns_management_widget);
+    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        template: template,
         type : "Bookmark",
         typeLabel : "Bookmark",
         typeLabelPlural : "Bookmarks",
@@ -1317,7 +1470,7 @@ function program1(depth0,data) {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
         },
-        
+
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
@@ -1325,7 +1478,7 @@ function program1(depth0,data) {
                 });
             });
         },
-        
+
         createModel : function() {
             var model = new this.collection.model();
             // set config to current state
@@ -1335,16 +1488,16 @@ function program1(depth0,data) {
             model.set("config",config);
             return model;
         },
-        
+
         eventSelect : function(event) {
-            var value = $(event.target).parent('tr').attr('data-attr');
+            var value = $(event.target).parents("li").attr("data-attr");
             squid_api.setBookmarkId(value);
 
             if (this.onSelect) {
                 this.onSelect.call();
             }
         },
-        
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -1368,7 +1521,7 @@ function program1(depth0,data) {
                 }
             }));
         },
-        
+
         events : {
             "click .select" : function(event) {
                 this.eventSelect(event);
@@ -1381,7 +1534,7 @@ function program1(depth0,data) {
             },
             'mouseleave tr': function(event) {
                 this.eventMouseLeave(event);
-            },   
+            },
             "click .edit": function(event) {
                 this.eventEdit(event);
             },
@@ -1392,12 +1545,18 @@ function program1(depth0,data) {
                 this.eventDelete(event);
             }
         },
-        
+
+        getSelectedModel : function(event) {
+            var id = $(event.target).parents("li").attr("data-attr");
+            var model = this.collection.get(id);
+            return model;
+        },
+
         getCreateRole: function() {
             // anyone can create a bookmark
             return true;
         },
-        
+
         getModelLabel : function(model) {
             var name = model.get("name");
             var path = model.get("path");
@@ -1432,6 +1591,174 @@ function program1(depth0,data) {
                 name = path +"/"+ name;
             }
             return name;
+        },
+        bookmarkFolderState: function(item, action) {
+            var project = this.config.get("project");
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            if (action == "show") {
+                if (bookmarkFolderState) {
+                    bookmarkFolderState[project] = item;
+                } else {
+                    var obj = {};
+                    obj[project] = item;
+                    bookmarkFolderState = obj;
+                }
+            } else if (action == "hidden") {
+                if (bookmarkFolderState) {
+                    delete bookmarkFolderState[project];
+                }
+            }
+            this.config.set("bookmarkFolderState", bookmarkFolderState);
+        },
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var project = this.config.get("project");
+
+            var jsonData = {
+                collectionLoaded : !this.collectionLoading,
+                collection : this.collection,
+                roles : null,
+                createRole : null,
+                typeLabel : this.typeLabel,
+                typeLabelPlural : this.typeLabelPlural,
+                modalHtml : true,
+                type : this.type
+            };
+            if (this.collection) {
+                var collection = [];
+                var models = [];
+                var paths = [];
+                jsonData.collection = {};
+                jsonData.createRole = this.getCreateRole();
+
+                var selectedId = this.config.get(this.configSelectedId);
+
+                // store model data
+                for (i=0; i<this.collection.size(); i++) {
+                    var item = this.collection.at(i);
+                    var bookmark = {
+                        label : item.get("name"),
+                        description : item.get("description")
+                    };
+
+                    var existingPath = this.getModelLabel(item);
+                    var path = existingPath.substr(0, existingPath.lastIndexOf("/"));
+                    var friendlyPath = path;
+
+                    // if multiple levels exist, remove the first folder from friendlypath
+                    if (friendlyPath.split("/").length > 1) {
+                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+                    }
+
+                    // replace all '/' with '>'
+                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
+
+                    // split friendlyPath to wrap styling divs
+                    var obj = friendlyPath.split(" ");
+                    var tmpString = "";
+                    for (var str in obj) {
+                        if (obj[str] == ">") {
+                            tmpString += "<span>" + obj[str] + "</span>";
+                        } else {
+                            tmpString += obj[str];
+                        }
+                    }
+
+                    friendlyPath = tmpString;
+
+                    // see if path already exists
+                    var pathExists = false;
+                    for (ix=0; ix<collection.length; ix++) {
+                        if (collection[ix].path.value === path) {
+                            pathExists = true;
+                        }
+                    }
+                    if (! pathExists) {
+                        // store different paths
+                        paths.push(path);
+                        collection.push({
+                            "path" : {
+                                "value" : path,
+                                "userFriendlyName" : path,
+                                "type" : path.substr(1).split(" ", 1)[0]
+                            },
+                            "bookmarks" : []
+                        });
+                    }
+
+                    // update collection models
+                    for (var x in collection) {
+                        if (collection[x].path.value == path) {
+                            if (bookmark.label !== null) {
+                                // copy model attributes
+                                for (var att in item.attributes) {
+                                    bookmark[att] = item.get(att);
+                                }
+                                bookmark.roles = this.getModelRoles(item);
+                                bookmark.selected = (bookmark.oid === selectedId);
+                            }
+                            if (bookmark.selected) {
+                                collection[x].bookmarks.unshift(bookmark);
+                            } else {
+                                collection[x].bookmarks.push(bookmark);
+                            }
+                        }
+                    }
+                }
+
+                // store model view data
+                collection.sort(function(a, b) {
+                    if (a.path.type==("Shared")) {
+                        if (b.path.type!=("Shared")) {
+                            return -1;
+                        }
+                    }
+                    if (b.path.type==("Shared")) {
+                        if (a.path.type!=("Shared")) {
+                            return 1;
+                        }
+                    }
+                    var textA = a.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
+                    var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
+                    return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
+                });
+                jsonData.collection = collection;
+                console.log(paths);
+            }
+
+            // render template
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            this.templateWidgets();
+
+            // open folder if stored in config
+            if (bookmarkFolderState) {
+                if (bookmarkFolderState[project]) {
+                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
+                }
+            }
+
+            return this;
+        },
+        templateWidgets: function() {
+            // hoverover
+            this.$el.find("li").tooltip({
+                placement: "top",
+                trigger: "hover"
+            });
+
+            // accordion & events
+            this.$el.find(".collapse").collapse('hide');
+            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "hidden");
+            });
+            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "show");
+            });
         }
     });
 
