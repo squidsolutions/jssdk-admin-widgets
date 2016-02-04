@@ -1628,6 +1628,7 @@ function program1(depth0,data) {
             if (this.collection) {
                 var collection = [];
                 var models = [];
+                var paths = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
 
@@ -1675,10 +1676,11 @@ function program1(depth0,data) {
                     }
                     if (! pathExists) {
                         // store different paths
+                        paths.push(path);
                         collection.push({
                             "path" : {
                                 "value" : path,
-                                "userFriendlyName" : friendlyPath,
+                                "userFriendlyName" : path,
                                 "type" : path.substr(1).split(" ", 1)[0]
                             },
                             "bookmarks" : []
@@ -1707,11 +1709,22 @@ function program1(depth0,data) {
 
                 // store model view data
                 collection.sort(function(a, b) {
-                    if(a.path.value < b.path.value) return -1;
-                    if(a.path.value > b.firstname) return 1;
-                    return 0;
+                    if (a.path.type==("Shared")) {
+                        if (b.path.type!=("Shared")) {
+                            return -1;
+                        }
+                    }
+                    if (b.path.type==("Shared")) {
+                        if (a.path.type!=("Shared")) {
+                            return 1;
+                        }
+                    }
+                    var textA = a.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
+                    var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
+                    return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
                 jsonData.collection = collection;
+                console.log(paths);
             }
 
             // render template
