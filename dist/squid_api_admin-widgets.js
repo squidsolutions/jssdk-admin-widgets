@@ -1457,7 +1457,7 @@ function program1(depth0,data) {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
         },
-        
+
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
@@ -1465,7 +1465,7 @@ function program1(depth0,data) {
                 });
             });
         },
-        
+
         createModel : function() {
             var model = new this.collection.model();
             // set config to current state
@@ -1475,7 +1475,7 @@ function program1(depth0,data) {
             model.set("config",config);
             return model;
         },
-        
+
         eventSelect : function(event) {
             var value = $(event.target).parents("li").attr("data-attr");
             squid_api.setBookmarkId(value);
@@ -1484,7 +1484,7 @@ function program1(depth0,data) {
                 this.onSelect.call();
             }
         },
-        
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -1508,7 +1508,7 @@ function program1(depth0,data) {
                 }
             }));
         },
-        
+
         events : {
             "click .select" : function(event) {
                 this.eventSelect(event);
@@ -1521,7 +1521,7 @@ function program1(depth0,data) {
             },
             'mouseleave tr': function(event) {
                 this.eventMouseLeave(event);
-            },   
+            },
             "click .edit": function(event) {
                 this.eventEdit(event);
             },
@@ -1538,12 +1538,12 @@ function program1(depth0,data) {
             var model = this.collection.get(id);
             return model;
         },
-        
+
         getCreateRole: function() {
             // anyone can create a bookmark
             return true;
         },
-        
+
         getModelLabel : function(model) {
             var name = model.get("name");
             var path = model.get("path");
@@ -1579,8 +1579,30 @@ function program1(depth0,data) {
             }
             return name;
         },
+        bookmarkFolderState: function(item, action) {
+            var project = this.config.get("project");
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            if (action == "show") {
+                if (bookmarkFolderState) {
+                    bookmarkFolderState[project] = item;
+                } else {
+                    var obj = {};
+                    obj[project] = item;
+                    bookmarkFolderState = obj;
+                }
+            } else if (action == "hidden") {
+                if (bookmarkFolderState) {
+                    delete bookmarkFolderState[project];
+                }
+            }
+            this.config.set("bookmarkFolderState", bookmarkFolderState);
+        },
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
+            var me = this;
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var project = this.config.get("project");
+
             var jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -1676,6 +1698,25 @@ function program1(depth0,data) {
             // render template
             var html = this.template(jsonData);
             this.$el.html(html);
+
+            // accordion & events
+            this.$el.find(".collapse").collapse('hide');
+            this.$el.find(".collapse").on('hidden.bs.collapse', { context: me }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "hidden");
+            });
+            this.$el.find(".collapse").on('show.bs.collapse', { context: me }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "show");
+            });
+
+            // open folder if stored in config
+            if (bookmarkFolderState) {
+                if (bookmarkFolderState[project]) {
+                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
+                }
+            }
+
 
             return this;
         }
