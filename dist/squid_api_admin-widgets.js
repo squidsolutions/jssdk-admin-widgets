@@ -2727,6 +2727,7 @@ function program1(depth0,data) {
                 customer.get("projects").load(project).then(function(project) {
                     project.get("domains").load(domain).then(function(domain) {
                         domain.get("dimensions").load().then(function(dimensions) {
+                            me.model.schema.parentId.subSchema.dimensionId.options = [];
                             for (i=0; i<dimensions.size(); i++) {
                                 if (dimensions.models[i].get("oid") !== me.model.get("oid")) {
                                     if (dimensions.models[i].get("dynamic") === false) {
