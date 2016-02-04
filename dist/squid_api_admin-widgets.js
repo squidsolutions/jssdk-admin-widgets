@@ -229,9 +229,10 @@ function program9(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n                                        <div class=\"panel-heading\" role=\"tab\">\n                                            <h4 class=\"panel-title\">\n                                                <a role=\"button\" data-toggle=\"collapse\" href=\"#bookmark-collapse-"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.userFriendlyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
+    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    ";
+  stack1 = ((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.userFriendlyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingOne\">\n                                            <div class=\"panel-body\">\n                                                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.bookmarks), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
@@ -1607,6 +1608,28 @@ function program1(depth0,data) {
 
                     var existingPath = this.getModelLabel(item);
                     var path = existingPath.substr(0, existingPath.lastIndexOf("/"));
+                    var friendlyPath = path;
+
+                    // if multiple levels exist, remove the first folder from friendlypath
+                    if (friendlyPath.split("/").length > 1) {
+                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+                    }
+
+                    // replace all '/' with '>'
+                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
+
+                    // split friendlyPath to wrap styling divs
+                    var obj = friendlyPath.split(" ");
+                    var tmpString = "";
+                    for (var str in obj) {
+                        if (obj[str] == ">") {
+                            tmpString += "<span>" + obj[str] + "</span>";
+                        } else {
+                            tmpString += obj[str];
+                        }
+                    }
+
+                    friendlyPath = tmpString;
 
                     // see if path already exists
                     var pathExists = false;
@@ -1620,7 +1643,7 @@ function program1(depth0,data) {
                         collection.push({
                             "path" : {
                                 "value" : path,
-                                "userFriendlyName" : path.replace(/\//g, ' > '),
+                                "userFriendlyName" : friendlyPath,
                                 "type" : path.substr(1).split(" ", 1)[0]
                             },
                             "bookmarks" : []

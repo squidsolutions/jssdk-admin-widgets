@@ -167,6 +167,28 @@
 
                     var existingPath = this.getModelLabel(item);
                     var path = existingPath.substr(0, existingPath.lastIndexOf("/"));
+                    var friendlyPath = path;
+
+                    // if multiple levels exist, remove the first folder from friendlypath
+                    if (friendlyPath.split("/").length > 1) {
+                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+                    }
+
+                    // replace all '/' with '>'
+                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
+
+                    // split friendlyPath to wrap styling divs
+                    var obj = friendlyPath.split(" ");
+                    var tmpString = "";
+                    for (var str in obj) {
+                        if (obj[str] == ">") {
+                            tmpString += "<span>" + obj[str] + "</span>";
+                        } else {
+                            tmpString += obj[str];
+                        }
+                    }
+
+                    friendlyPath = tmpString;
 
                     // see if path already exists
                     var pathExists = false;
@@ -180,7 +202,7 @@
                         collection.push({
                             "path" : {
                                 "value" : path,
-                                "userFriendlyName" : path.replace(/\//g, ' > '),
+                                "userFriendlyName" : friendlyPath,
                                 "type" : path.substr(1).split(" ", 1)[0]
                             },
                             "bookmarks" : []
