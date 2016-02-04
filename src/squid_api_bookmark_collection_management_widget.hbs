@@ -27,7 +27,7 @@
                                         <div id="bookmark-collapse-{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                             <div class="panel-body">
                                                 {{#each bookmarks}}
-                                                    <li data-attr="{{oid}}">
+                                                    <li data-toggle="tooltip" title="{{description}}" {{#if selected}} class="selected" {{/if}} data-attr="{{oid}}">
                                                         <span class="select">
                                                             <i class="fa fa-bookmark-o"></i> {{name}}
                                                         </span>

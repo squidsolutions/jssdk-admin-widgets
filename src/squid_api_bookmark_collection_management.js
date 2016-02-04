@@ -158,7 +158,6 @@
         },
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            var me = this;
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
 
@@ -184,7 +183,8 @@
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
                     var bookmark = {
-                        label : item.get("name")
+                        label : item.get("name"),
+                        description : item.get("description")
                     };
 
                     var existingPath = this.getModelLabel(item);
@@ -242,15 +242,21 @@
                                 bookmark.roles = this.getModelRoles(item);
                                 bookmark.selected = (bookmark.oid === selectedId);
                             }
-                            collection[x].bookmarks.push(bookmark);
+                            if (bookmark.selected) {
+                                collection[x].bookmarks.unshift(bookmark);
+                            } else {
+                                collection[x].bookmarks.push(bookmark);
+                            }
                         }
                     }
                 }
 
-                // sort model data
-                models.sort(this.comparator);
-
                 // store model view data
+                collection.sort(function(a, b) {
+                    if(a.path.value < b.path.value) return -1;
+                    if(a.path.value > b.firstname) return 1;
+                    return 0;
+                });
                 jsonData.collection = collection;
             }
 
@@ -258,16 +264,7 @@
             var html = this.template(jsonData);
             this.$el.html(html);
 
-            // accordion & events
-            this.$el.find(".collapse").collapse('hide');
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: me }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: me }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "show");
-            });
+            this.templateWidgets();
 
             // open folder if stored in config
             if (bookmarkFolderState) {
@@ -276,8 +273,25 @@
                 }
             }
 
-
             return this;
+        },
+        templateWidgets: function() {
+            // hoverover
+            this.$el.find("li").tooltip({
+                placement: "top",
+                trigger: "hover"
+            });
+
+            // accordion & events
+            this.$el.find(".collapse").collapse('hide');
+            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "hidden");
+            });
+            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
+                var item = $(this).attr("id");
+                event.data.context.bookmarkFolderState(item, "show");
+            });
         }
     });
 

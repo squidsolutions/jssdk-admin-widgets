@@ -3,7 +3,7 @@
     padding: 5px;
     cursor: pointer;
 }
-.squid-api-Bookmark-collection-management .selected li, .squid-api-Bookmark-collection-management li:hover {
+.squid-api-Bookmark-collection-management li.selected, .squid-api-Bookmark-collection-management li:hover {
     background-color: #f3f3f3;
 }
 .squid-api-Bookmark-collection-management li .edit {
@@ -22,7 +22,7 @@
     width: 80%;
     display: inline-block;
 }
-.squid-api-Bookmark-collection-management .selected li .edit, .squid-api-Bookmark-collection-management .selected li .delete, .squid-api-Bookmark-collection-management li:hover .edit, .squid-api-Bookmark-collection-management li:hover .delete {
+.squid-api-Bookmark-collection-management li.selected .edit, .squid-api-Bookmark-collection-management li.selected .delete, .squid-api-Bookmark-collection-management li:hover .edit, .squid-api-Bookmark-collection-management li:hover .delete {
     display: inherit;
 }
 .squid-api-Bookmark-collection-management .select i {
