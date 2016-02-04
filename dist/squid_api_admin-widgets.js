@@ -1680,7 +1680,7 @@ function program1(depth0,data) {
                         collection.push({
                             "path" : {
                                 "value" : path,
-                                "userFriendlyName" : path,
+                                "userFriendlyName" : friendlyPath,
                                 "type" : path.substr(1).split(" ", 1)[0]
                             },
                             "bookmarks" : []
