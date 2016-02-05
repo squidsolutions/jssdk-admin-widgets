@@ -3056,11 +3056,13 @@ function program1(depth0,data) {
                         domain.get("dimensions").load().then(function(dimensions) {
                             me.model.schema.parentId.subSchema.dimensionId.options = [];
                             for (i=0; i<dimensions.size(); i++) {
-                                if (dimensions.models[i].get("oid") !== me.model.get("oid")) {
-                                    if (dimensions.models[i].get("dynamic") === false) {
-                                        var obj = {};
-                                        obj.val = dimensions.models[i].get("oid");
-                                        obj.label = dimensions.models[i].get("name");
+                                var dimension = dimensions.at(i);
+                                if (dimension.get("oid") !== me.model.get("oid")) {
+                                    if (dimension.get("dynamic") === false && dimension.get("valueType") !== "OBJECT") {
+                                        var obj = {
+                                            "val" : dimension.get("oid"),
+                                            "label" : dimension.get("name")
+                                        };
                                         me.model.schema.parentId.subSchema.dimensionId.options.push(obj);
                                     }
                                 }
