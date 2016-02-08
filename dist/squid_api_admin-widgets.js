@@ -918,73 +918,74 @@ function program1(depth0,data) {
                 }
             }
 
-            this.initModel();
+            this.initModel(this.config, true, false);
+            // listen for config change
+            this.listenTo(this.config,"change", function () {
+                var parentChanged = this.config.hasChanged(me.configParentId);
+                var selectionChanged = this.config.hasChanged(me.configSelectedId);
+                this.initModel(this.config, parentChanged, selectionChanged);
+            });
             this.init(options);
         },
 
         /**
          * Init the Model : selectedModel, collection and listeners
          */
-        initModel : function() {
+        initModel : function(config, loadParent, loadSelection) {
             var me = this;
-            // listen for config changes
-            this.config.on("change", function (config) {
-                var selectedId = config.get(me.configSelectedId);
-                var parentChanged = config.hasChanged(me.configParentId);
-                var selectionChanged = config.hasChanged(me.configSelectedId);
+            var selectedId = config.get(me.configSelectedId);
 
-                if (me.configParentId) {
-                    if (parentChanged) {
-                        // parent has changed
-                        var parentId = config.get(me.configParentId);
-                        me.collectionLoading = true;
-                        me.render();
-                        if (parentId) {
-                            // set the collection to listen to
-                            if (me.collection) {
-                                me.stopListening(me.collection);
-                            }
-                            me.loadCollection(parentId).done(function(collection) {
-                                me.collection = collection;
-                                me.listenTo(me.collection, "sync remove add", me.render);
-                                me.collectionLoading = false;
-                                if (selectionChanged) {
-                                    // selected also changed
-                                    me.setSelectedModel(selectedId);
-                                } else {
-                                    me.render();
-                                }
-                            }).fail(function() {
-                                me.collection = null;
-                                me.collectionLoading = false;
-                                me.setSelectedModel(null);
-                            });
-                        }
-                    } else if (selectionChanged) {
-                        // selection only has changed
-                        me.setSelectedModel(selectedId);
-                    }
-                } else if (selectionChanged) {
-                    // no parent but selection has changed
-                    me.collectionLoading = true;
+            if (me.configParentId) {
+                if (loadParent) {
+                    // parent has changed
+                    var parentId = config.get(me.configParentId);
                     me.render();
-                    // set collection
-                    if (me.collection) {
-                        me.stopListening(me.collection);
+                    if (parentId) {
+                        // set the collection to listen to
+                        if (me.collection) {
+                            me.stopListening(me.collection);
+                        }
+                        me.collectionLoading = true;
+                        me.loadCollection(parentId).done(function(collection) {
+                            me.collection = collection;
+                            me.listenTo(me.collection, "sync remove add", me.render);
+                            me.collectionLoading = false;
+                            if (loadSelection) {
+                                // selected also changed
+                                me.setSelectedModel(selectedId);
+                            } else {
+                                me.render();
+                            }
+                        }).fail(function() {
+                            me.collection = null;
+                            me.collectionLoading = false;
+                            me.setSelectedModel(null);
+                        });
                     }
-                    me.loadCollection(null).done(function(collection) {
-                        me.collection = collection;
-                        // listen to collection fetch or removed element
-                        me.listenTo(me.collection, "sync remove add", me.render);
-                        me.collectionLoading = false;
-                        me.setSelectedModel(selectedId);
-                    }).fail(function() {
-                        me.collection = null;
-                        me.collectionLoading = false;
-                        me.render();
-                    });
+                } else if (loadSelection) {
+                    // selection only has changed
+                    me.setSelectedModel(selectedId);
                 }
-            });
+            } else if (loadSelection) {
+                // no parent but selection has changed
+                me.collectionLoading = true;
+                me.render();
+                // set collection
+                if (me.collection) {
+                    me.stopListening(me.collection);
+                }
+                me.loadCollection(null).done(function(collection) {
+                    me.collection = collection;
+                    // listen to collection fetch or removed element
+                    me.listenTo(me.collection, "sync remove add", me.render);
+                    me.collectionLoading = false;
+                    me.setSelectedModel(selectedId);
+                }).fail(function() {
+                    me.collection = null;
+                    me.collectionLoading = false;
+                    me.render();
+                });
+            }
         },
 
         /**
